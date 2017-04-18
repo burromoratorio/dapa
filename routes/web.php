@@ -10,7 +10,10 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
+$app->get('packet', 'PacketController@index');
+$app->post('packet', 'PacketController@create');
+//$app->patch('reenvios/{id}', 'ReenvioController@update');
 
-$app->get('/', function () use ($app) {
+/*$app->get('/', function () use ($app) {
     return $app->version();
-});
+});*/
