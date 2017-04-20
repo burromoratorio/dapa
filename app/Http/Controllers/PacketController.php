@@ -6,7 +6,7 @@ Use Log;
 use stdClass;
 use Storage;
 use DB;
-use App\Http\Controllers\PuertoController as Puerto;
+use App\Http\Controllers\PuertoController;
 class PacketController extends BaseController
 {
    public function index(Request $request) {
@@ -17,10 +17,15 @@ class PacketController extends BaseController
         if ($request->isMethod('post')) {
 	    $jsonReq = $request->json()->all();
            if(isset($jsonReq["cadena"])){
-               $puerto = Puerto::getInstance();
-               $imei = $puerto.getImei($jsonReq["cadena"]);
-               Log::error("cadena entrante: ::".$jsonReq['cadena']);
-               Log::info("el imei obtenido es:".$imei);
+               try{
+                 $puerto = PuertoController::getInstance();
+                 $imei = $puerto.getImei($jsonReq["cadena"]);
+                 Log::error("cadena entrante: ::".$jsonReq['cadena']);
+                 Log::info("el imei obtenido es:".$imei);
+               }catch(Exception $e){
+                 Log::error($e);
+               }
+               
                return "ok";
            }else{
               return "ERROR:Json mal formado!";
