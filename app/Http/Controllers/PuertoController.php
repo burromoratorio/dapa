@@ -30,7 +30,7 @@ class PuertoController extends BaseController
     //a simple method to echo something
     public function GreetMe()
     {
-        echo '<br />Hello, this method is called by using a singleton object..';
+        Log::error('<br />Hello, this method is called by using a singleton object..');
     }
     public function getImei($paquete=""){
         $this->cadena = $paquete;
