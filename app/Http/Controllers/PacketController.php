@@ -1,8 +1,4 @@
 <?php
-/*namespace App\Http\Controllers;
-use Illuminate\Http\Request;
-use Laravel\Lumen\Routing\Controller as BaseController;
-use Log;*/
 namespace App\Http\Controllers;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
@@ -10,8 +6,7 @@ Use Log;
 use stdClass;
 use Storage;
 use DB;
-
-
+use App\Http\Controllers\PuertoController as Puerto;
 class PacketController extends BaseController
 {
    public function index(Request $request) {
@@ -22,7 +17,10 @@ class PacketController extends BaseController
         if ($request->isMethod('post')) {
 	    $jsonReq = $request->json()->all();
            if(isset($jsonReq["cadena"])){
+               $puerto = Puerto::getInstance();
+               $imei = $puerto.getImei($jsonReq["cadena"]);
                Log::error("cadena entrante: ::".$jsonReq['cadena']);
+               Log::info("el imei obtenido es:".$imei);
                return "ok";
            }else{
               return "ERROR:Json mal formado!";
