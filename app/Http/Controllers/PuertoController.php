@@ -19,13 +19,18 @@ class PuertoController extends BaseController
     private function __construct() { 
            
     } //Prevent any oustide instantiation of this class
-    
-    public static function getInstance()
+    public static function getInstance() {
+        if (empty(static::$_instance)) {
+            static::$_instance = new static;
+        }
+        return static::$_instance;
+    }
+    /*public static function getInstance()
     {
         if( !is_object(self::$_instance) )  //or if( is_null(self::$_instance) ) or if( self::$_instance == null )
             self::$_instance = new PuertoController();
         return self::$_instance;
-    }
+    }*/
     ///Now we are all done, we can now proceed to have any other method logic we want
     //a simple method to echo something
     public function GreetMe()
