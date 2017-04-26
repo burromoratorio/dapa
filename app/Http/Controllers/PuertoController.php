@@ -22,6 +22,7 @@ class PuertoController extends BaseController
     } 
     private static function setCadena($paquete){
         self::$cadena=$paquete;
+        Log::info("en self cadena:".self::$cadena);
     }
     public static function setMovilesActivos($moviles){
         self::$moviles_activos = $moviles;
@@ -30,6 +31,7 @@ class PuertoController extends BaseController
         Log::error('<br />Hello, this method is called by using a singleton object..');
     }
     public static function getImei($paquete){
+        Log::info("la cadena en que llega es:".$paquete);
         self::setCadena($paquete);
         Log::info("la cadena en static:".self::$cadena);
         $imei="";
