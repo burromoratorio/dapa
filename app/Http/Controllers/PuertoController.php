@@ -18,13 +18,13 @@ class PuertoController extends BaseController
     private function __clone() {} //Prevent any copy of this object
     private function __wakeup() {}
     private function __construct() { 
-            
+                
     } 
     private static function setCadena($paquete){
         self::$cadena=$paquete;
     }
-    public static function setMovilesActivos($moviles){
-        self::$moviles_activos = $moviles;
+    public static function setMovilesActivos(   ){
+        self::$moviles_activos="movil1,movil3,movil-ero";
     }
     public function GreetMe(){
         Log::error('<br />Hello, this method is called by using a singleton object..');
