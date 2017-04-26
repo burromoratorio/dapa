@@ -20,7 +20,7 @@ class PuertoController extends BaseController
     private function __construct() { 
             
     } 
-    private function setCadena($paquete){
+    private static function setCadena($paquete){
         self::$cadena=$paquete;
     }
     public static function setMovilesActivos($moviles){
