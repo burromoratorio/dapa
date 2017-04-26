@@ -35,7 +35,7 @@ class PuertoController extends BaseController
         if(self::$cadena!=""){
             $arrCadena = explode(";",self::$cadena); 
             $imei = $arrCadena[0];
-            Log::info("imei en getImei:".print_r($arrCadena));
+            Log::info("imei en getImei:".$imei);
         }
         return $imei;
     }
