@@ -13,15 +13,15 @@ class PuertoController extends BaseController
 {
 
     private static $_instance = null;
-    private $cadena;
-    static $moviles_activos = null;
+    private static $cadena;
+    static  $moviles_activos = null;
     private function __clone() {} //Prevent any copy of this object
     private function __wakeup() {}
     private function __construct() { 
             
     } 
     private static function setCadena($paquete){
-        self->$cadena=$paquete;
+        self::$cadena=$paquete;
     }
     public static function setMovilesActivos($moviles){
         self::$moviles_activos = $moviles;
@@ -32,8 +32,8 @@ class PuertoController extends BaseController
     public static function getImei($paquete=""){
         self::setCadena($paquete);
         $imei="";
-        if(self->$cadena!=""){
-            $arrCadena = explode(self->$cadena,";");
+        if(self::$cadena!=""){
+            $arrCadena = explode(self::$cadena,";");
             $imei = $arrCadena[0];
         }
         return $imei;
