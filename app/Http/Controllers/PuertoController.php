@@ -20,6 +20,9 @@ class PuertoController extends BaseController
     private function __construct() { 
             
     } 
+    private function setCadena($paquete){
+        PuertoController->cadena=$paquete;
+    }
     public static function setMovilesActivos($moviles){
         $this->moviles_activos = $moviles;
     }
@@ -27,10 +30,10 @@ class PuertoController extends BaseController
         Log::error('<br />Hello, this method is called by using a singleton object..');
     }
     public static function getImei($paquete=""){
-        $this->cadena = $paquete;
+        $this->setCadena($paquete);
         $imei="";
-        if($this->cadena!=""){
-            $arrCadena = explode($this->cadena,";");
+        if(PuertoController->cadena!=""){
+            $arrCadena = explode(PuertoController->cadena,";");
             $imei = $arrCadena[0];
         }
         return $imei;
