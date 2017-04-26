@@ -33,7 +33,7 @@ class PuertoController extends BaseController
         self::setCadena($paquete);
         $imei="";
         if(self::$cadena!=""){
-            $arrCadena = explode(self::$cadena,";");
+            $arrCadena = explode(";",self::$cadena); 
             $imei = $arrCadena[0];
             Log::info("imei en getImei:".print_r($arrCadena));
         }
