@@ -17,15 +17,15 @@ class PacketController extends BaseController
         if ($request->isMethod('post')) {
 	    $jsonReq = $request->json()->all();
            if(isset($jsonReq["cadena"])){
-               try{
+              try{
                  $imei = PuertoController::getImei($jsonReq['cadena']) ;
                  Log::error("cadena entrante: ::".$jsonReq['cadena']);
                  Log::info("el imei obtenido es:".$imei);
-               }catch(Exception $e){
+              }catch(Exception $e){
                  Log::error($e);
-               }
+              }
                
-               return "ok";
+              return "ok";
            }else{
               return "ERROR:Json mal formado!";
               Log::error("Error:json mal formado, ver palabra clave");

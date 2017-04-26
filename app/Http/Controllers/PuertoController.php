@@ -29,8 +29,9 @@ class PuertoController extends BaseController
     public function GreetMe(){
         Log::error('<br />Hello, this method is called by using a singleton object..');
     }
-    public static function getImei($paquete=""){
+    public static function getImei($paquete){
         self::setCadena($paquete);
+        Log::info("la cadena en static:".self::$cadena);
         $imei="";
         if(self::$cadena!=""){
             $arrCadena = explode(self::$cadena,";");
