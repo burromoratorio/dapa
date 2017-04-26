@@ -14,27 +14,16 @@ class PuertoController extends BaseController
 
     private static $_instance = null;
     private $cadena;
+    static $moviles_activos = null;
     private function __clone() {} //Prevent any copy of this object
     private function __wakeup() {}
     private function __construct() { 
-           
-    } //Prevent any oustide instantiation of this class
-    public static function getInstance() {
-        if (empty(static::$_instance)) {
-            static::$_instance = new static;
-        }
-        return static::$_instance;
+            
+    } 
+    public static function setMovilesActivos($moviles){
+        $this->moviles_activos = $moviles;
     }
-    /*public static function getInstance()
-    {
-        if( !is_object(self::$_instance) )  //or if( is_null(self::$_instance) ) or if( self::$_instance == null )
-            self::$_instance = new PuertoController();
-        return self::$_instance;
-    }*/
-    ///Now we are all done, we can now proceed to have any other method logic we want
-    //a simple method to echo something
-    public function GreetMe()
-    {
+    public function GreetMe(){
         Log::error('<br />Hello, this method is called by using a singleton object..');
     }
     public function getImei($paquete=""){

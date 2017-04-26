@@ -18,7 +18,7 @@ class PacketController extends BaseController
 	    $jsonReq = $request->json()->all();
            if(isset($jsonReq["cadena"])){
                try{
-                 $puerto = PuertoController::getInstance();
+                 $puerto = new() PuertoController ;
                  $imei = $puerto.GreetMe();
                  Log::error("cadena entrante: ::".$jsonReq['cadena']);
                  Log::info("el imei obtenido es:".$imei);
