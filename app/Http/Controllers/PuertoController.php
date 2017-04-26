@@ -21,7 +21,7 @@ class PuertoController extends BaseController
             
     } 
     private static function setCadena($paquete){
-        self::$cadena=$paquete;
+        self->$cadena=$paquete;
     }
     public static function setMovilesActivos($moviles){
         self::$moviles_activos = $moviles;
@@ -32,8 +32,8 @@ class PuertoController extends BaseController
     public static function getImei($paquete=""){
         self::setCadena($paquete);
         $imei="";
-        if(self::$cadena!=""){
-            $arrCadena = explode(self::$cadena,";");
+        if(self->$cadena!=""){
+            $arrCadena = explode(self->$cadena,";");
             $imei = $arrCadena[0];
         }
         return $imei;
