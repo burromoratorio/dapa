@@ -6,7 +6,7 @@ Use Log;
 use stdClass;
 use Storage;
 use DB;
-use App\Http\Controllers\PuertoController;
+//use App\Http\Controllers\PuertoController;
 Use Puerto;
 class PacketController extends BaseController
 {
