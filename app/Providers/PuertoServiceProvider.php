@@ -14,11 +14,12 @@ class PuertoServiceProvider extends ServiceProvider
     private static $_instance = null;
     private static $cadena;
     static  $moviles_activos = null;
-    private function __clone() {} //Prevent any copy of this object
+    /*private function __clone() {} //Prevent any copy of this object
     private function __wakeup() {}
     private function __construct() { 
                 
-    } 
+    }*/
+    public function register(){ } 
     private static function setCadena($paquete){
         self::$cadena=$paquete;
     }
