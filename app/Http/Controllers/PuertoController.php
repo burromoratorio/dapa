@@ -21,19 +21,19 @@ class PuertoController extends BaseController
             
     } 
     private function setCadena($paquete){
-        PuertoController->cadena=$paquete;
+        self::$cadena=$paquete;
     }
     public static function setMovilesActivos($moviles){
-        $this->moviles_activos = $moviles;
+        self::$moviles_activos = $moviles;
     }
     public function GreetMe(){
         Log::error('<br />Hello, this method is called by using a singleton object..');
     }
     public static function getImei($paquete=""){
-        $this->setCadena($paquete);
+        self::setCadena($paquete);
         $imei="";
-        if(PuertoController->cadena!=""){
-            $arrCadena = explode(PuertoController->cadena,";");
+        if(self::$cadena!=""){
+            $arrCadena = explode(self::$cadena,";");
             $imei = $arrCadena[0];
         }
         return $imei;
