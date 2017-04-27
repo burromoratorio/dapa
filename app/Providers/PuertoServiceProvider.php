@@ -4,7 +4,7 @@ namespace App\Providers;
 Use Log;
 use Illuminate\Support\ServiceProvider;
 use App\Http\Controllers\PuertoController;
-class Puerto extends ServiceProvider
+class PuertoServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -19,7 +19,12 @@ class Puerto extends ServiceProvider
     private function __construct() { 
                 
     }*/
-    public function register(){ } 
+    public function register(){  
+        $this->app->singleton('Puerto', function(){
+            return new PuertoServiceProvider();
+        });
+    }
+   //public function register(){ } 
     private static function setCadena($paquete){
         self::$cadena=$paquete;
     }
