@@ -4,7 +4,7 @@ namespace App\Providers;
 Use Log;
 use Illuminate\Support\ServiceProvider;
 use App\Http\Controllers\PuertoController;
-class PuertoServiceProvider extends ServiceProvider
+class Puerto extends ServiceProvider
 {
     /**
      * Register any application services.
