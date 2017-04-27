@@ -20,9 +20,9 @@ class PuertoServiceProvider extends ServiceProvider
                 
     }*/
     public function register(){  
-        $this->app->singleton('Puerto', function(){
+       /* $this->app->singleton('Puerto', function(){
             return new PuertoServiceProvider();
-        });
+        });*/
     }
    //public function register(){ } 
     private static function setCadena($paquete){
