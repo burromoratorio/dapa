@@ -11,7 +11,9 @@ class PuertoServiceProvider extends ServiceProvider
     private static $cadena;
     static  $moviles_activos = null;
     
-    public function register(){ } 
+    public function register(){
+        self::setMovilesActivos();
+    } 
     private static function setCadena($paquete){
         self::$cadena=$paquete;
     }
@@ -28,6 +30,7 @@ class PuertoServiceProvider extends ServiceProvider
             $arrCadena = explode(";",self::$cadena); 
             $imei = $arrCadena[0];
             Log::info("imei en getImei:".$imei);
+            Log::info("moviles activos::".self::$moviles_activos);
         }
         return $imei;
     }
