@@ -47,7 +47,7 @@ $app->singleton(
     Illuminate\Contracts\Console\Kernel::class,
     App\Console\Kernel::class
 );
-$app->singleton('Puerto',
+$app->singleton(
     App\Providers\PuertoServiceProvider::class
 );
 /*
@@ -83,10 +83,10 @@ $app->singleton('Puerto',
 // $app->register(App\Providers\AppServiceProvider::class);
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
-   $app->register(App\Providers\PuertoServiceProvider::class);
-   /*if (!class_exists('Puerto')) {
+   //$app->register(App\Providers\PuertoServiceProvider::class);
+   if (!class_exists('Puerto')) {
     	class_alias('App\Providers\PuertoServiceProvider', 'Puerto');
-	}*/
+	}
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
