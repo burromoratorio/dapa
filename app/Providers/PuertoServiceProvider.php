@@ -6,25 +6,12 @@ use Illuminate\Support\ServiceProvider;
 //use App\Http\Controllers\PuertoController;
 class PuertoServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
+   
     private static $_instance = null;
     private static $cadena;
     static  $moviles_activos = null;
-    /*private function __clone() {} //Prevent any copy of this object
-    private function __wakeup() {}
-    private function __construct() { 
-                
-    }*/
-    public function register(){  
-       /* $this->app->singleton('Puerto', function(){
-            return new PuertoServiceProvider();
-        });*/
-    }
-   //public function register(){ } 
+    
+    public function register(){ } 
     private static function setCadena($paquete){
         self::$cadena=$paquete;
     }
@@ -44,18 +31,7 @@ class PuertoServiceProvider extends ServiceProvider
         }
         return $imei;
     }
-    /*public function register(){  
-        $this->app->singleton('Puerto', function(){
-            return new PueroController();
-        });
-
-        // Shortcut so developers don't need to add an Alias in app/config/app.php
-        $this->app->booting(function()
-        {
-            $loader = \Illuminate\Foundation\AliasLoader::getInstance();
-            $loader->alias('Puerto', 'CLG\Facility\Facades\FacilityFacade');
-        });
-    }*/
+    
 }
 
     
