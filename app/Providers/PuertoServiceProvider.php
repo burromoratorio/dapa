@@ -3,6 +3,10 @@
 namespace App\Providers;
 Use Log;
 use Illuminate\Support\ServiceProvider;
+use stdClass;
+use Storage;
+use DB;
+Use Movil;
 //use App\Http\Controllers\PuertoController;
 class PuertoServiceProvider extends ServiceProvider
 {
@@ -18,7 +22,8 @@ class PuertoServiceProvider extends ServiceProvider
         self::$cadena=$paquete;
     }
     public static function setMovilesActivos(   ){
-        self::$moviles_activos="movil1,movil3,movil-ero";
+        self::$moviles_activos=Movil::where('activo',1)->get();
+        //self::$moviles_activos="movil1,movil3,movil-ero";
     }
     public function GreetMe(){
         Log::error('<br />Hello, this method is called by using a singleton object..');
@@ -30,7 +35,10 @@ class PuertoServiceProvider extends ServiceProvider
             $arrCadena = explode(";",self::$cadena); 
             $imei = $arrCadena[0];
             Log::info("imei en getImei:".$imei);
-            Log::info("moviles activos::".self::$moviles_activos);
+            foreach (self::$moviles_activos as $movil) {
+               Log::info("moviles activos::".$movil->alias);
+            }
+            
         }
         return $imei;
     }
