@@ -6,7 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use stdClass;
 use Storage;
 use DB;
-Use Movil;
+Use App\Movil;
 //use App\Http\Controllers\PuertoController;
 class PuertoServiceProvider extends ServiceProvider
 {
