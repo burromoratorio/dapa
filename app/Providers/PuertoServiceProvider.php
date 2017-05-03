@@ -23,7 +23,6 @@ class PuertoServiceProvider extends ServiceProvider
     }
     public static function setMovilesActivos(   ){
         self::$moviles_activos=Movil::where('activo',1)->get();
-        //self::$moviles_activos="movil1,movil3,movil-ero";
     }
     public static function getImei($paquete){
         self::setCadena($paquete);
@@ -31,7 +30,7 @@ class PuertoServiceProvider extends ServiceProvider
         if(self::$cadena!=""){
             $arrCampos = self::cadenaString2array(self::$cadena);
             $jsonCadena= json_encode($arrCampos);
-            Log::info("cadena pasada a json:".$jsonCadena);
+            Log::info("cadena pasada a json:".$jsonCadena->imei);
             /*foreach (self::$moviles_activos as $movil) {
                Log::info("moviles activos::".$movil->alias);
             }*/
@@ -46,12 +45,6 @@ class PuertoServiceProvider extends ServiceProvider
           $key      = array_shift($arrCampo);
           $datos    = implode(",", $arrCampo);
           $campos[trim($key)]=trim($datos);
-          /*foreach ($arrCampo as $dato) {
-          
-          }
-           Log::info("deglose del campo:{".$key.":".$datos."}"); 
-          */
-         
         }
         return $campos;
     }
