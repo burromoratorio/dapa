@@ -32,17 +32,8 @@ class PuertoServiceProvider extends ServiceProvider
         self::setCadena($paquete);
         $imei="";
         if(self::$cadena!=""){
-            $jsonCadena= json_encode(self::$cadena);
-            $arrCadena = explode(";",self::$cadena); 
-            foreach($arrCadena as $campo){
-               $arrCampo = explode(",",$campo); 
-               $key      = array_shift($arrCampo);
-               $datos    = implode(",", $arrCampo);
-               /*foreach ($arrCampo as $dato) {
-                  
-               }*/
-               Log::info("deglose del campo:{".$key.":".$datos."}"); 
-            }
+            $arrCampos = cadenaString2array($cadena)
+            $jsonCadena= json_encode($arrCampos);
             $imei = $arrCadena[0];
             Log::info("cadena pasada a json:".$jsonCadena);
             Log::info("imei en getImei:".$imei);
@@ -52,7 +43,23 @@ class PuertoServiceProvider extends ServiceProvider
         }
         return $imei;
     }
-    
+    public function cadenaString2array($cadena){
+        $campos    = array();
+        $arrCadena = explode(";",self::$cadena); 
+        foreach($arrCadena as $campo){
+          $arrCampo = explode(",",$campo); 
+          $key      = array_shift($arrCampo);
+          $datos    = implode(",", $arrCampo);
+          $campos[$key]=$datos;
+          return $campos;
+          /*foreach ($arrCampo as $dato) {
+          
+          }
+           Log::info("deglose del campo:{".$key.":".$datos."}"); 
+          */
+         
+        }
+    }
 }
 
     
