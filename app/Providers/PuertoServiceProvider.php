@@ -32,7 +32,7 @@ class PuertoServiceProvider extends ServiceProvider
         self::setCadena($paquete);
         $imei="";
         if(self::$cadena!=""){
-            $jsonCadena= json_encode($cadena);
+            $jsonCadena= json_encode(self::$cadena);
             $arrCadena = explode(";",self::$cadena); 
             $imei = $arrCadena[0];
             Log::info("cadena pasada a json:".$jsonCadena);
