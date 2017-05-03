@@ -34,6 +34,15 @@ class PuertoServiceProvider extends ServiceProvider
         if(self::$cadena!=""){
             $jsonCadena= json_encode(self::$cadena);
             $arrCadena = explode(";",self::$cadena); 
+            foreach($arrCadena as $campo){
+               $arrCampo = explode(",",$campo); 
+               $key      = array_pop($arrCampo);
+               $datos    = implode(",", $arrCampo);
+               /*foreach ($arrCampo as $dato) {
+                  
+               }*/
+               Log::info("deglose del campo:{".$key.":".$datos); 
+            }
             $imei = $arrCadena[0];
             Log::info("cadena pasada a json:".$jsonCadena);
             Log::info("imei en getImei:".$imei);
