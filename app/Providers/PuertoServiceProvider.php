@@ -37,9 +37,9 @@ class PuertoServiceProvider extends ServiceProvider
             $imei = $arrCadena[0];
             Log::info("cadena pasada a json:".$jsonCadena);
             Log::info("imei en getImei:".$imei);
-            foreach (self::$moviles_activos as $movil) {
+            /*foreach (self::$moviles_activos as $movil) {
                Log::info("moviles activos::".$movil->alias);
-            }
+            }*/
         }
         return $imei;
     }
