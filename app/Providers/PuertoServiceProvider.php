@@ -25,14 +25,11 @@ class PuertoServiceProvider extends ServiceProvider
         self::$moviles_activos=Movil::where('activo',1)->get();
         //self::$moviles_activos="movil1,movil3,movil-ero";
     }
-    public function GreetMe(){
-        Log::error('<br />Hello, this method is called by using a singleton object..');
-    }
     public static function getImei($paquete){
         self::setCadena($paquete);
         $imei="";
         if(self::$cadena!=""){
-            $arrCampos = $this->cadenaString2array($cadena);
+            $arrCampos = self::cadenaString2array($cadena);
             $jsonCadena= json_encode($arrCampos);
             $imei = $arrCadena[0];
             Log::info("cadena pasada a json:".$jsonCadena);
@@ -43,7 +40,7 @@ class PuertoServiceProvider extends ServiceProvider
         }
         return $imei;
     }
-    public function cadenaString2array($cadena){
+    public static function cadenaString2array($cadena){
         $campos    = array();
         $arrCadena = explode(";",self::$cadena); 
         foreach($arrCadena as $campo){
