@@ -46,7 +46,6 @@ class PuertoServiceProvider extends ServiceProvider
           $key      = array_shift($arrCampo);
           $datos    = implode(",", $arrCampo);
           $campos[$key]=$datos;
-          return $campos;
           /*foreach ($arrCampo as $dato) {
           
           }
@@ -54,6 +53,7 @@ class PuertoServiceProvider extends ServiceProvider
           */
          
         }
+        return $campos;
     }
 }
 
