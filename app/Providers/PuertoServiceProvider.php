@@ -28,6 +28,7 @@ class PuertoServiceProvider extends ServiceProvider
     public static function getImei($paquete){
         self::setCadena($paquete);
         self::$moviles_activos= null;
+        self::setMovilesActivos();
         $imei="";
         if(self::$cadena!=""){
             $arrCampos = self::cadenaString2array(self::$cadena);
