@@ -22,7 +22,7 @@ class PuertoServiceProvider extends ServiceProvider
         self::$cadena=$paquete;
     }
     public static function setMovilesActivos(   ){
-        self::$moviles_activos=Movil::hasOne('instalacion')->where('activo',1)->get();
+        self::$moviles_activos=Movil::with('instalacion')->where('activo',1)->first();
     }
     public static function getImei($paquete){
         self::setCadena($paquete);
