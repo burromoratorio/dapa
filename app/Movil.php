@@ -30,7 +30,7 @@ class Movil extends Model
     static function instalados(){
         return Movil::wherehas('instalacion',function($query){ 
                 $query->select('instalacion_id','movil_id')
-                ->where('activo',1)->get();
+                ->where('activo',1)->get();}
     }
     public function viajes() {
         return $this->hasMany('App\Viaje');
