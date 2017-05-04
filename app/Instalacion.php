@@ -9,6 +9,7 @@ class Instalacion extends Model
     protected $table = 'INSTALACIONES';
     protected $primaryKey = 'instalacion_id';
     public $timestamps = false;
+    protected $fillable 	= ['equipo_id', 'localidad_id', 'movil_id'];
 
     /*public function movil() {
         return $this->hasOne('App\Movil');
