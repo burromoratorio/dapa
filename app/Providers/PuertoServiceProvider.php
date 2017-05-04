@@ -27,13 +27,18 @@ class PuertoServiceProvider extends ServiceProvider
     }
     public static function getImei($paquete){
         self::setCadena($paquete);
+        self::$moviles_activos= null;
         $imei="";
         if(self::$cadena!=""){
             $arrCampos = self::cadenaString2array(self::$cadena);
             //$jsonCadena= json_encode($arrCampos);
             //Log::info("cadena pasada a json:".$arrCampos["IMEI"]);
-            foreach (self::$moviles_activos as $movil) {
-               Log::info("moviles activos::".$movil->alias);
+            if(is_null(self::$moviles_activos)){
+            Log::info("no values");
+            }else{
+                foreach (self::$moviles_activos as $movil) {
+                Log::info("moviles activos::".$movil->alias);
+                }
             }
         }
         return $imei;
