@@ -38,6 +38,6 @@ class Movil extends Model
         return $this->hasMany('App\Viaje');
     }
     public function instalacion() {
-        return $this->hasOne('App\Instalacion');
+        return $this->hasOne('App\Instalacion','movil_id');
     }
 }
