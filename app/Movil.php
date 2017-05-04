@@ -3,7 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
+use DB;
 class Movil extends Model
 {
     protected $table = 'MOVILES';
@@ -28,11 +28,11 @@ class Movil extends Model
                 ->where('dominio',$dominio)->first();
     }
     static function instalados(){
-        return Movil::wherehas('instalacion',function($query){ 
-                $query->select('instalacion_id','movil_id');
-               })
-               ->where('activo',1)->get();
-
+        $moviles = DB::table('MOVILES')
+        ->where('MOVILES.actio' ,'=', 1)
+        ->join('INSTALACIONES', 'MOVILES.movil_id', '=', 'INSTALACIONES.user_id')
+        ->get();
+        return $moviles;
     }
     public function viajes() {
         return $this->hasMany('App\Viaje');
