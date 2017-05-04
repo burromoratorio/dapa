@@ -10,8 +10,8 @@ class Instalacion extends Model
     protected $primaryKey = 'instalacion_id';
     public $timestamps = false;
 
-    public function movil() {
+    /*public function movil() {
         return $this->hasOne('App\Movil');
-    }
+    }*/
 
 }
