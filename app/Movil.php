@@ -29,7 +29,7 @@ class Movil extends Model
     }
     static function instalados(){
         $moviles = DB::table('MOVILES')
-        ->where('MOVILES.actio' ,'=', 1)
+        ->where('MOVILES.activo' ,'=', 1)
         ->join('INSTALACIONES', 'MOVILES.movil_id', '=', 'INSTALACIONES.movil_id')
         ->get();
         return $moviles;
