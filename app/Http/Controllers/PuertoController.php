@@ -18,7 +18,8 @@ class PuertoController extends BaseController
     private function __clone() {} //Prevent any copy of this object
     private function __wakeup() {}
     private function __construct() { 
-        self::setMovilesActivos();        
+        self::setMovilesActivos();   
+        Log::info("new de puertoController");     
     } 
     private static function setCadena($paquete){
         self::$cadena=$paquete;
