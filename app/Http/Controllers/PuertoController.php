@@ -17,7 +17,7 @@ class PuertoController extends BaseController
     static  $moviles_activos = null;
     private function __clone() {} //Prevent any copy of this object
     private function __wakeup() {}
-    public function construct() { 
+    public function __construct() { 
         self::setMovilesActivos();   
         Log::info("new de puertoController");     
     } 
