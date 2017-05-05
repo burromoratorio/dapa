@@ -17,11 +17,9 @@ class PuertoServiceProvider extends ServiceProvider
     public function register()
     {
         Log::info("registrando");
-        $this->app->singleton(PuertoController::class, function ($app) {
-            Log::info("en singleton");
+        /*$this->app->singleton(PuertoController::class, function ($app) {
             return new PuertoController();
-
-        });
+        });*/
     }
    /* public function register(){
         Log::info("registrando");
