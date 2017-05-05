@@ -22,8 +22,8 @@ class PuertoServiceProvider extends ServiceProvider
         self::$cadena=$paquete;
     }
     public static function setMovilesActivos(   ){
-       // self::$moviles_activos=Movil::with('instalacion')->where('activo',1)->first();
-        self::$moviles_activos=Movil::instalados();
+        self::$moviles_activos=Movil::with('instalacion')->where('activo',1)->first();
+        //self::$moviles_activos=Movil::instalados();
     }
     public static function getImei($paquete){
         self::setCadena($paquete);
@@ -38,7 +38,7 @@ class PuertoServiceProvider extends ServiceProvider
             //Log::info("no values");
             //}else{
                 foreach (self::$moviles_activos as $movil) {
-                Log::info("moviles activos::".$movil->alias);
+                  Log::info("moviles activos::".$movil->alias);
                 }
             //}
         }
