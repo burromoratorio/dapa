@@ -34,13 +34,13 @@ class PuertoServiceProvider extends ServiceProvider
         $imei="";
         if(self::$cadena!=""){
             $arrCampos = self::cadenaString2array(self::$cadena);
-            //if(count(self::$moviles_activos)){
-               //Log::info("no values");
-            //}else{
-                foreach (self::$moviles_activos as $movil) {
+            if(count(self::$moviles_activos)>0){
+               foreach (self::$moviles_activos as $movil) {
                   Log::info("moviles activos::".$movil->alias);
                 }
-            //}
+            }else{
+                Log::info("no values");
+            }
         }
         return $imei;
     }
