@@ -7,7 +7,7 @@ use stdClass;
 use Storage;
 use DB;
 //use App\Http\Controllers\PuertoController;
-Use Puerto;
+//Use Puerto;
 class PacketController extends BaseController
 {
   public function index(Request $request) {
@@ -19,7 +19,7 @@ class PacketController extends BaseController
 	  $jsonReq = $request->json()->all();
       if(isset($jsonReq["cadena"])){
         try{
-          $imei = Puerto::getImei($jsonReq['cadena']) ;
+          $imei = PuertoController::getImei($jsonReq['cadena']) ;
           Log::error("cadena entrante: ::".$jsonReq['cadena']);
           //Log::info("el imei obtenido es:".$imei);
         }catch(Exception $e){
