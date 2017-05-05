@@ -5,17 +5,22 @@ Use Log;
 use Illuminate\Support\ServiceProvider;
 use stdClass;
 use Storage;
-use DB;
-Use App\Movil;
-//use App\Http\Controllers\PuertoController;
+//use DB;
+//Use App\Movil;
+use App\Http\Controllers\PuertoController;
 class PuertoServiceProvider extends ServiceProvider
 {
    
     private static $_instance = null;
     private static $cadena;
     static  $moviles_activos = null;
-    
-    public function register(){
+    public function register()
+    {
+        $this->app->singleton('App\Http\Controllers\PuertoController', function ($app) {
+            return new PuertoController();
+        });
+    }
+   /* public function register(){
         Log::info("registrando");
         self::setMovilesActivos();
     } 
@@ -55,7 +60,7 @@ class PuertoServiceProvider extends ServiceProvider
           $campos[trim($key)]=trim($datos);
         }
         return $campos;
-    }
+    }*/
 }
 
     
