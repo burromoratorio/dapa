@@ -35,9 +35,10 @@ class PuertoServiceProvider extends ServiceProvider
         if(self::$cadena!=""){
             $arrCampos = self::cadenaString2array(self::$cadena);
             if(count(self::$moviles_activos)>0){
-               foreach (self::$moviles_activos as $movil) {
+               /*foreach (self::$moviles_activos as $movil) {
                   Log::info("moviles activos::".$movil->alias);
-                }
+                }*/
+                Log::info("total de moviles:".count(self::$moviles_activos));
             }else{
                 Log::info("no values");
             }
