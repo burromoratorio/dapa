@@ -16,6 +16,7 @@ class PuertoServiceProvider extends ServiceProvider
     static  $moviles_activos = null;
     
     public function register(){
+        Log::info("registrando");
         self::setMovilesActivos();
     } 
     private static function setCadena($paquete){
