@@ -16,6 +16,7 @@ class PuertoServiceProvider extends ServiceProvider
     static  $moviles_activos = null;
     public function register()
     {
+        Log::info("registrando");
         $this->app->singleton('Puerto', function ($app) {
             return new PuertoController();
         });
