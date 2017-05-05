@@ -19,7 +19,7 @@ class PacketController extends BaseController
 	  $jsonReq = $request->json()->all();
       if(isset($jsonReq["cadena"])){
         try{
-          $imei = PuertoController::getImei($jsonReq['cadena']) ;
+          $imei = Puerto::getImei($jsonReq['cadena']) ;
           Log::error("cadena entrante: ::".$jsonReq['cadena']);
           //Log::info("el imei obtenido es:".$imei);
         }catch(Exception $e){
@@ -31,8 +31,8 @@ class PacketController extends BaseController
         Log::error("Error:json mal formado, ver palabra clave");
       }
     }else{
-     return "ERROR:Metodo no permitido";
-     Log::error("Error:metodo no permitido,utilizar POST");
+      return "ERROR:Metodo no permitido";
+      Log::error("Error:metodo no permitido,utilizar POST");
     }
   }
    
