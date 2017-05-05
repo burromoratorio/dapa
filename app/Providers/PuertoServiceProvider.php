@@ -22,25 +22,23 @@ class PuertoServiceProvider extends ServiceProvider
         self::$cadena=$paquete;
     }
     public static function setMovilesActivos(   ){
-        self::$moviles_activos=Movil::with('instalacion')->where('activo',1)->first();
-        //self::$moviles_activos=Movil::instalados();
+        //self::$moviles_activos=Movil::with('instalacion')->where('activo',1)->first();
+        self::$moviles_activos=Movil::instalados();
     }
     public static function getImei($paquete){
         self::setCadena($paquete);
         self::$moviles_activos= null;
-        self::setMovilesActivos();
+        //self::setMovilesActivos();
         $imei="";
         if(self::$cadena!=""){
             $arrCampos = self::cadenaString2array(self::$cadena);
-            //$jsonCadena= json_encode($arrCampos);
-            //Log::info("cadena pasada a json:".$arrCampos["IMEI"]);
-            //if(is_null(self::$moviles_activos)){
-            //Log::info("no values");
-            //}else{
+            if(count(self::$moviles_activos)){
+               Log::info("no values");
+            }else{
                 foreach (self::$moviles_activos as $movil) {
                   Log::info("moviles activos::".$movil->alias);
                 }
-            //}
+            }
         }
         return $imei;
     }
