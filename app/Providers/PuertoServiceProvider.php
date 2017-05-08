@@ -33,8 +33,7 @@ class PuertoServiceProvider extends ServiceProvider
     }
     
     public static function setMovilesActivos(   ){
-        Log::info("entrando a moviles activos");
-        $this->moviles_activos=Movil::instalados();
+      self::$moviles_activos=Movil::instalados();
     }
    /* public function register(){
         Log::info("registrando");
