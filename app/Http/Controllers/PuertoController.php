@@ -35,7 +35,7 @@ class PuertoController extends BaseController
 
             if(count(self::$moviles_activos)>0){
                foreach (self::$moviles_activos as $movil) {
-                  Log::info("moviles activos::".$movil->alias);
+                  //Log::info("moviles activos::".$movil->alias);
                 }
                 Log::info("total de moviles:".count(self::$moviles_activos));
             }else{
