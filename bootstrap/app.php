@@ -47,7 +47,7 @@ $app->singleton(
     Illuminate\Contracts\Console\Kernel::class,
     App\Console\Kernel::class
 );
-$this->app->singleton('Puerto', function ($app) {
+$app->singleton('Puerto', function ($app) {
     return new PuertoController();
 });
 /*$app->singleton(
