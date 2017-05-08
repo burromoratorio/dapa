@@ -7,7 +7,7 @@ use stdClass;
 use Storage;
 use DB;
 //use App\Http\Controllers\PuertoController;
-Use Puerto;
+//Use Puerto;
 class PacketController extends BaseController
 {
   public function index(Request $request) {
