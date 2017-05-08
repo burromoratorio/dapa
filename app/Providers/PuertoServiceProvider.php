@@ -11,15 +11,16 @@ use App\Http\Controllers\PuertoController;
 class PuertoServiceProvider extends ServiceProvider
 {
    
-    private static $_instance = null;
-    private static $cadena;
-    static  $moviles_activos = null;
+    //private static $_instance = null;
+    //private static $cadena;
+    //static  $moviles_activos = null;
     public function register()
     {
         //Log::info("registrando");
         //return new PuertoController();
-        $this->app->singleton(PuertoController::class, function ($app) {
+        $this->app->singleton('Puerto', function ($app) {
             Log::info("dentro de llamda a singleton");
+            return new PuertoController();
             //return new App\Http\Controllers\PuertoController($app->make('PuertoController'));
         });
     }
