@@ -29,8 +29,7 @@ class PuertoServiceProvider extends ServiceProvider
             return $this->puerto=new PuertoController($this->moviles_activos);
             //return new App\Http\Controllers\PuertoController($app->make('PuertoController'));
         });
-        App::make('moviles');
-        App::make('Puerto');
+        
     }
     
     public static function setMovilesActivos(   ){
