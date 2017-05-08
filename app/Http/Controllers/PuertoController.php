@@ -12,30 +12,27 @@ use App\Http\Controllers\MovilController;
 class PuertoController extends BaseController
 {
 
-    private static $_instance = null;
+    //private static $_instance = null;
     private static $cadena;
-    static  $moviles_activos = null;
+    protected static $moviles_activos = null;
     private function __clone() {} //Prevent any copy of this object
     private function __wakeup() {}
-    public function __construct() { 
-        self::setMovilesActivos();   
+    public function __construct($moviles) { 
+        self::$moviles_activos=$moviles;   
         Log::info("new de puertoController");     
     } 
     private static function setCadena($paquete){
         self::$cadena=$paquete;
     }
-    public static function setMovilesActivos(   ){
-        Log::info("entrando a moviles activos");
-        //self::$moviles_activos=Movil::with('instalacion')->where('activo',1)->first();
-        self::$moviles_activos=Movil::instalados();
-    }
-    public static function getImei($paquete){
+    
+    public function getImei($paquete){
         self::setCadena($paquete);
         //self::$moviles_activos= null;
         //self::setMovilesActivos();
         $imei="";
         if(self::$cadena!=""){
             $arrCampos = self::cadenaString2array(self::$cadena);
+
             if(count(self::$moviles_activos)>0){
                foreach (self::$moviles_activos as $movil) {
                   Log::info("moviles activos::".$movil->alias);
