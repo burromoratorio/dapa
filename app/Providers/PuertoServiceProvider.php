@@ -13,7 +13,7 @@ class PuertoServiceProvider extends ServiceProvider
    
     //private static $_instance = null;
     //private static $cadena;
-    protected $moviles_activos = null;
+    protected static $moviles_activos = null;
     protected $puerto=null;
     public function register()
     {
@@ -22,11 +22,11 @@ class PuertoServiceProvider extends ServiceProvider
         //return new PuertoController();
         self::setMovilesActivos();
         $this->app->singleton('moviles', function ($app) {
-            return $this->moviles_activos;
+            return self::$moviles_activos;
             //return new App\Http\Controllers\PuertoController($app->make('PuertoController'));
         });
          $this->app->singleton('Puerto', function ($app) {
-            return $this->puerto=new PuertoController($this->moviles_activos);
+            return $this->puerto=new PuertoController(self::$moviles_activos);
             //return new App\Http\Controllers\PuertoController($app->make('PuertoController'));
         });
         
