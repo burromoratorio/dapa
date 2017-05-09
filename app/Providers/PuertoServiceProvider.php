@@ -27,7 +27,7 @@ class PuertoServiceProvider extends ServiceProvider
     }
     
     public static function setMovilesActivos(   ){
-        if(count($GLOBALS['moviles_activos'])>0{
+        if(count($GLOBALS['moviles_activos'])>0){
            Log::info("moviles activos>0, no se consulta de nuevo");
         }else{
            self::$moviles_activos=Movil::instalados();
