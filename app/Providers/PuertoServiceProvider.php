@@ -21,7 +21,7 @@ class PuertoServiceProvider extends ServiceProvider
         });
          $this->app->singleton('Puerto', function ($app) {
             self::setMovilesActivos();
-            return $this->app['Puerto']=new PuertoController($GLOBALS['moviles_activos']);
+            return $this->app['Puerto']=new PuertoController(config(['moviles_activos']));
         });
         
     }
