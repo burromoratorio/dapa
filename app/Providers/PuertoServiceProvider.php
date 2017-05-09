@@ -21,19 +21,19 @@ class PuertoServiceProvider extends ServiceProvider
         });
          $this->app->singleton('Puerto', function ($app) {
             self::setMovilesActivos();
-            return $this->app['Puerto']=new PuertoController(config(['moviles_activos']));
+            return $this->app['Puerto']=new PuertoController(config(['app.moviles_activos']));
         });
         
     }
     
     public static function setMovilesActivos(   ){
 
-        if(count(config(['moviles_activos'])>0)) {
+        if(count(config(['app.moviles_activos'])>0)) {
            Log::info("moviles activos>0, no se consulta de nuevo");
-           Log::info("lo que tiene el config:".config(['moviles_activos']));
+           Log::info("lo que tiene el config:".config(['app.moviles_activos']));
         }else{
            self::$moviles_activos=Movil::instalados();
-           config(['moviles_activos' => self::$moviles_activos]);
+           config(['app.moviles_activos' => self::$moviles_activos]);
         }
         
     }
