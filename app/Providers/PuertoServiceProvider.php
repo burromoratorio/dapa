@@ -30,7 +30,7 @@ class PuertoServiceProvider extends ServiceProvider
 
         if(count(config(['moviles_activos'])>0)) {
            Log::info("moviles activos>0, no se consulta de nuevo");
-           Log::info("lo que tiene el config:".config(['moviles_activos'));
+           Log::info("lo que tiene el config:".config(['moviles_activos']));
         }else{
            self::$moviles_activos=Movil::instalados();
            config(['moviles_activos' => self::$moviles_activos]);
