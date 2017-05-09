@@ -21,7 +21,7 @@ class PacketController extends BaseController
         try{
           $imei = app()->Puerto->getImei($jsonReq['cadena']) ;
           Log::error("cadena entrante: ::".$jsonReq['cadena']);
-          //Log::info("el imei obtenido es:".$imei);
+          Log::info("el imei obtenido es:".$imei);
         }catch(Exception $e){
           Log::error($e);
         }

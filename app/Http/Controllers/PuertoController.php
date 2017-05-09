@@ -29,6 +29,7 @@ class PuertoController extends BaseController
         $imei="";
         if(self::$cadena!=""){
             $arrCampos = self::cadenaString2array(self::$cadena);
+            $imei = $arrCampos['GPRMC'];
             if(count(self::$moviles_activos)>0){
                foreach (self::$moviles_activos as $movil) {
                   //Log::info("moviles activos::".$movil->alias);
