@@ -29,7 +29,7 @@ class PuertoController extends BaseController
         $imei="";
         if(self::$cadena!=""){
             $arrCampos = self::cadenaString2array(self::$cadena);
-            if(self::validateImei($arrCampos['GPRMC'])){
+            if(self::validateImei($arrCampos['IMEI'])){
                 Log::info("imei valido");
             }else{
                 Log::info("imei invalido");
