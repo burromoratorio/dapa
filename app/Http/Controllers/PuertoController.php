@@ -57,10 +57,10 @@ class PuertoController extends BaseController
         return $campos;
     }
     public static function validateImei($imei){
-        if(!is_numeric($imei)) {
-            return false;
-        }else{
+        if(preg_match("/^[0-9]+$/", $imei)) {
             return true;
+        }else{
+            return false;
         } 
     }
     public function store(Request $request) {
