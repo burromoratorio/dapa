@@ -57,6 +57,7 @@ class PuertoController extends BaseController
         return $campos;
     }
     public static function validateImei($imei){
+        Log::info("lega este imei a comprobacion:".$imei);
         if(preg_match("/^[0-9]+$/", $imei)) {
             return true;
         }else{
