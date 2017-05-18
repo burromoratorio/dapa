@@ -8,7 +8,7 @@ use Storage;
 use DB;
 use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\MovilController;
-
+use App\GprmcEntrada;
 class PuertoController extends BaseController
 {
 
@@ -24,12 +24,16 @@ class PuertoController extends BaseController
         self::$cadena=$paquete;
     }
     
-    public function getImei($paquete){
+    public function analizeReport($paquete){
         self::setCadena($paquete);
         $imei="";
         if(self::$cadena!=""){
             $arrCampos = self::cadenaString2array(self::$cadena);
-            $imei = $arrCampos['GPRMC'];
+            if(validateImei($arrCampos['GPRMC'])){
+                Log::info("imei valido");
+            }else{
+                Log::info("imei invalido");
+            }
             if(count(self::$moviles_activos)>0){
                foreach (self::$moviles_activos as $movil) {
                   //Log::info("moviles activos::".$movil->alias);
@@ -51,6 +55,25 @@ class PuertoController extends BaseController
           $campos[trim($key)]=trim($datos);
         }
         return $campos;
+    }
+    public function validateImei($imei){
+        if(!is_numeric($imei)) {
+            return false;
+        }else{
+            return true;
+        } 
+    }
+    public function store(Request $request) {
+        $evento = GprmcEntrada::create([
+            'imei'=>,'gprmc'=>,'fecha_mensaje'=>,'latitud'=>,'longitud'=>,'velocidad'=>,'rumbo'=>,
+            'io'=>,'panico'=>,'desenganche'=>,'encendido'=>,'corte'=>,'dcx'=>,'senial'=>,'tasa_error'=>
+            'pre'=>,'sim_activa'=>,'sim_roaming'=>,'vba'=>,'voltaje_bateria'=>,'dad'=>,'fecha_desconexion'=>,
+            'cant_desconexiones'=>,'senial_desconexion'=>,'sim_desconexion'=>,'roaming_desconexion'=>,
+            'tasa_error_desconexion'=>,'motivo_desconexion'=>,'fr'=>,'frecuencia_reporte'=>,'tipo_reporte'=>
+            'lac'=>,'cod_area'=>,'id_celda'=>,'kmt'=>,'km_totales'=>,'odp'=>,'mts_parciales'=>,
+            'ala'=>,'mcp'=>,'cfg_principal'=>,'cfg_auxiliar'=>,'per'=>,'log'=>,'gprmc_error_id'=>
+        ]);
+        return "OK\n";
     }
 
 }
