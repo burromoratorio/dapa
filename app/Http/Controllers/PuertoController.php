@@ -64,7 +64,7 @@ class PuertoController extends BaseController
         } 
     }
     public function store(Request $request) {
-        $evento = GprmcEntrada::create([
+        /*$evento = GprmcEntrada::create([
             'imei'=>,'gprmc'=>,'fecha_mensaje'=>,'latitud'=>,'longitud'=>,'velocidad'=>,'rumbo'=>,
             'io'=>,'panico'=>,'desenganche'=>,'encendido'=>,'corte'=>,'dcx'=>,'senial'=>,'tasa_error'=>
             'pre'=>,'sim_activa'=>,'sim_roaming'=>,'vba'=>,'voltaje_bateria'=>,'dad'=>,'fecha_desconexion'=>,
@@ -72,7 +72,7 @@ class PuertoController extends BaseController
             'tasa_error_desconexion'=>,'motivo_desconexion'=>,'fr'=>,'frecuencia_reporte'=>,'tipo_reporte'=>
             'lac'=>,'cod_area'=>,'id_celda'=>,'kmt'=>,'km_totales'=>,'odp'=>,'mts_parciales'=>,
             'ala'=>,'mcp'=>,'cfg_principal'=>,'cfg_auxiliar'=>,'per'=>,'log'=>,'gprmc_error_id'=>
-        ]);
+        ]);*/
         return "OK\n";
     }
 
