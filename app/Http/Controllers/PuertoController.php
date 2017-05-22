@@ -28,9 +28,10 @@ class PuertoController extends BaseController
         self::setCadena($paquete);
         $imei="";
         if(self::$cadena!=""){
-            $arrCampos = self::cadenaString2array(self::$cadena);
+            $arrCampos = self::changeString2array(self::$cadena);
             if(self::validateImei($arrCampos['IMEI'])){
                 Log::info("imei valido");
+                self::store($arrCampos);
             }else{
                 Log::info("imei invalido");
             }
@@ -45,7 +46,7 @@ class PuertoController extends BaseController
         }
         return $imei;
     }
-    public static function cadenaString2array($cadena){
+    public static function changeString2array($cadena){
         $campos    = array();
         $arrCadena = explode(";",self::$cadena); 
         foreach($arrCadena as $campo){
@@ -65,16 +66,30 @@ class PuertoController extends BaseController
             return false;
         } 
     }
-    public function store(Request $request) {
-        /*$evento = GprmcEntrada::create([
-            'imei'=>,'gprmc'=>,'fecha_mensaje'=>,'latitud'=>,'longitud'=>,'velocidad'=>,'rumbo'=>,
-            'io'=>,'panico'=>,'desenganche'=>,'encendido'=>,'corte'=>,'dcx'=>,'senial'=>,'tasa_error'=>
-            'pre'=>,'sim_activa'=>,'sim_roaming'=>,'vba'=>,'voltaje_bateria'=>,'dad'=>,'fecha_desconexion'=>,
-            'cant_desconexiones'=>,'senial_desconexion'=>,'sim_desconexion'=>,'roaming_desconexion'=>,
-            'tasa_error_desconexion'=>,'motivo_desconexion'=>,'fr'=>,'frecuencia_reporte'=>,'tipo_reporte'=>
-            'lac'=>,'cod_area'=>,'id_celda'=>,'kmt'=>,'km_totales'=>,'odp'=>,'mts_parciales'=>,
-            'ala'=>,'mcp'=>,'cfg_principal'=>,'cfg_auxiliar'=>,'per'=>,'log'=>,'gprmc_error_id'=>
-        ]);*/
+    public static function store($report) {
+        $gprmcData  = explode(",",$report['GPRMC']);
+        $ioData     = explode(",",$report['IO']);
+        $panico     = str_replace("I0", "",$ioData[0] );
+        $dcxData    = explode(",",$report['DCX']);
+        $preData    = explode(",",$report['PRE']);
+        $dadData    = explode(",",$report['DAD']);
+        $frData     = explode(",",$report['FR']);
+        $lacData    = explode(",",$report['LAC']);
+        $mcpData    = explode(",",$report['MCP']);
+        $evento = GprmcEntrada::create([
+            'imei'=>$report['IMEI'],'gprmc'=>$report['GPRMC'],'fecha_mensaje'=>$gprmcData[8],'latitud'=>$gprmcData[2],
+            'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],'rumbo'=>$gprmcData[7],'io'=>$report['IO'],
+            'panico'=>$panico,'desenganche'=>'0','encendido'=>'0','corte'=>'0','dcx'=>$report['DCX'],
+            'senial'=>$dcxData[0],'tasa_error'=>$dcxData[1]'pre'=>$report['PRE'],'sim_activa'=>$preData[0],
+            'sim_roaming'=>$preData[1],'vba'=>$report['VBA'],'voltaje_bateria'=>$report['VBA'],
+            'dad'=>$report['DAD'],'fecha_desconexion'=>$dadData[0],
+            'cant_desconexiones'=>$dadData[2],'senial_desconexion'=>$dadData[3],'sim_desconexion'=>$dadData[4],
+            'roaming_desconexion'=>$dadData[5],'tasa_error_desconexion'=>$dadData[6],'motivo_desconexion'=>$dadData[7],
+            'fr'=>$report['FR'],'frecuencia_reporte'=>$frData[0],'tipo_reporte'=>$frData[1],'lac'=>$report['LAC'],
+            'cod_area'=>$lacData[0],'id_celda'=>$lacData[1],'kmt'=>$report['KMT'],'km_totales'=>$report['KMT'],
+            'odp'=>$report['ODP'],'mts_parciales'=>$report['ODP'],'ala'=>$report['ALA'],'mcp'=>$report['MCP'],
+            'cfg_principal'=>$mcpData[0],'cfg_auxiliar'=>$mcpData[1],
+            'per'=>$report['PER'] ]);
         return "OK\n";
     }
 
