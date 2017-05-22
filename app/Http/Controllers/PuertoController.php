@@ -80,7 +80,7 @@ class PuertoController extends BaseController
             'imei'=>$report['IMEI'],'gprmc'=>$report['GPRMC'],'fecha_mensaje'=>$gprmcData[8],'latitud'=>$gprmcData[2],
             'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],'rumbo'=>$gprmcData[7],'io'=>$report['IO'],
             'panico'=>$panico,'desenganche'=>'0','encendido'=>'0','corte'=>'0','dcx'=>$report['DCX'],
-            'senial'=>$dcxData[0],'tasa_error'=>$dcxData[1]'pre'=>$report['PRE'],'sim_activa'=>$preData[0],
+            'senial'=>$dcxData[0],'tasa_error'=>$dcxData[1],'pre'=>$report['PRE'],'sim_activa'=>$preData[0],
             'sim_roaming'=>$preData[1],'vba'=>$report['VBA'],'voltaje_bateria'=>$report['VBA'],
             'dad'=>$report['DAD'],'fecha_desconexion'=>$dadData[0],
             'cant_desconexiones'=>$dadData[2],'senial_desconexion'=>$dadData[3],'sim_desconexion'=>$dadData[4],
