@@ -52,7 +52,7 @@ return [
             'prefix' => '',
         ],
 
-        'mysql' => [
+        'baymax' => [
             'driver' => 'mysql',
             'host' => env('DB_HOST', 'localhost'),
             'port' => env('DB_PORT', '3306'),
