@@ -76,8 +76,9 @@ class PuertoController extends BaseController
         $frData     = explode(",",$report['FR']);
         $lacData    = explode(",",$report['LAC']);
         $mcpData    = explode(",",$report['MCP']);
+        $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0]);
         $evento = GprmcEntrada::create([
-            'imei'=>$report['IMEI'],'gprmc'=>$report['GPRMC'],'fecha_mensaje'=>$gprmcData[8],'latitud'=>$gprmcData[2],
+            'imei'=>$report['IMEI'],'gprmc'=>$report['GPRMC'],'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],
             'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],'rumbo'=>$gprmcData[7],'io'=>$report['IO'],
             'panico'=>$panico,'desenganche'=>'0','encendido'=>'0','corte'=>'0','dcx'=>$report['DCX'],
             'senial'=>$dcxData[0],'tasa_error'=>$dcxData[1],'pre'=>$report['PRE'],'sim_activa'=>$preData[0],
@@ -91,6 +92,9 @@ class PuertoController extends BaseController
             'cfg_principal'=>$mcpData[0],'cfg_auxiliar'=>$mcpData[1],
             'per'=>$report['PER'] ]);
         return "OK\n";
+    }
+    public static function ddmmyy2yyyymmdd($fecha,$hora){
+        return date("Ymd", mktime(0, 0, 0, substr($fecha, 2,2), substr($fecha, 0,2), substr($fecha, -2,2)));
     }
 
 }
