@@ -94,7 +94,7 @@ class PuertoController extends BaseController
         return "OK\n";
     }
     public static function ddmmyy2yyyymmdd($fecha,$hora){
-        return date("Ymd", mktime(substr($hora, 0,2), substr($hora, 2,2), substr($hora, 4,2), substr($fecha, 2,2), substr($fecha, 0,2), substr($fecha, -2,2)));
+        return date("Ymd H:i:s", mktime(substr($hora, 0,2), substr($hora, 2,2), substr($hora, 4,2), substr($fecha, 2,2), substr($fecha, 0,2), substr($fecha, -2,2)));
     }
 
 }
