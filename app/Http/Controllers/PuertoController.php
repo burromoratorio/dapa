@@ -57,6 +57,13 @@ class PuertoController extends BaseController
         }
         return $campos;
     }
+    public static function validateGprmc($gprmc){
+        if(count($gprmc)<12){
+           return "gprmc invalido, error de cadena";    
+        }else{
+            return "gprmc valido";
+        }
+    }
     public static function validateImei($imei){
         //maximo 15 caracteres numericos
         Log::info("lega este imei a comprobacion:".$imei);
@@ -67,7 +74,9 @@ class PuertoController extends BaseController
         } 
     }
     public static function store($report) {
+        $errorLog   = "";
         $gprmcData  = explode(",",$report['GPRMC']);
+        $errorLog   = self::validateGprmc($gprmcData);
         $ioData     = explode(",",$report['IO']);
         $panico     = str_replace("I0", "",$ioData[0] );
         $dcxData    = explode(",",$report['DCX']);
@@ -90,12 +99,11 @@ class PuertoController extends BaseController
             'cod_area'=>$lacData[0],'id_celda'=>$lacData[1],'kmt'=>$report['KMT'],'km_totales'=>$report['KMT'],
             'odp'=>$report['ODP'],'mts_parciales'=>$report['ODP'],'ala'=>$report['ALA'],'mcp'=>$report['MCP'],
             'cfg_principal'=>$mcpData[0],'cfg_auxiliar'=>$mcpData[1],
-            'per'=>$report['PER'] ]);
+            'per'=>$report['PER'],'log'=>$errorLog ]);
         return "OK\n";
     }
     public static function ddmmyy2yyyymmdd($fecha,$hora){
         $formatFecha = date("Y-m-d h:i:s", mktime(substr($hora, 0,2), substr($hora, 2,2), substr($hora, 4,2), substr($fecha, 2,2), substr($fecha, 0,2), substr($fecha, -2,2)));
-         Log::info("fecha:".$formatFecha);
          return $formatFecha;
     }
 
