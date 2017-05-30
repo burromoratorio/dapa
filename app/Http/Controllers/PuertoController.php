@@ -125,6 +125,7 @@ class PuertoController extends BaseController
         if(isset($arrCadena[$index])){
           if(in_array($index, $directString)){
             $arrData = $arrCadena[$index];
+            Log::info("se formo el arrdata:".$arrData);
           }else{
             $arrData = explode(",",$arrCadena[$index]); 
             $arrData[$index] = $arrCadena[$index];
