@@ -77,7 +77,7 @@ class PuertoController extends BaseController
         $errorLog   = "";
         $gprmcData  = explode(",",$report['GPRMC']);
         $errorLog   = self::validateGprmc($gprmcData);
-        $ioData     = explode(",",$report['IO']);
+        $ioData     = self::validateIndexCadena("IO",$report,2);
         $panico     = str_replace("I0", "",$ioData[0] );
         $dcxData    = explode(",",$report['DCX']);
         $preData    = explode(",",$report['PRE']);
@@ -88,7 +88,7 @@ class PuertoController extends BaseController
         $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0]);
         $evento = GprmcEntrada::create([
             'imei'=>$report['IMEI'],'gprmc'=>$report['GPRMC'],'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],
-            'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],'rumbo'=>$gprmcData[7],'io'=>$report['IO'],
+            'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],'rumbo'=>$gprmcData[7],'io'=>$ioData['IO'],
             'panico'=>$panico,'desenganche'=>'0','encendido'=>'0','corte'=>'0','dcx'=>$report['DCX'],
             'senial'=>$dcxData[0],'tasa_error'=>$dcxData[1],'pre'=>$report['PRE'],'sim_activa'=>$preData[0],
             'sim_roaming'=>$preData[1],'vba'=>$report['VBA'],'voltaje_bateria'=>$report['VBA'],
@@ -105,6 +105,22 @@ class PuertoController extends BaseController
     public static function ddmmyy2yyyymmdd($fecha,$hora){
         $formatFecha = date("Y-m-d h:i:s", mktime(substr($hora, 0,2), substr($hora, 2,2), substr($hora, 4,2), substr($fecha, 2,2), substr($fecha, 0,2), substr($fecha, -2,2)));
          return $formatFecha;
+    }
+    public static function validateIndexCadena($index,$arrCadena,$totalPieces){
+        $arrData = array();
+        if(isset($arrCadena[$index])){
+          $arrData = explode(",",$arrCadena[$index]); 
+          $arrData[$index] = $arrCadena;
+        }else{
+            for($i=0;$i<$totalPieces;$i++){
+            $arrData[$i]="NULL";
+          }
+          $arrData[$index]="NULL";
+        }
+        return $arrData;        
+       //explode(",",$report['IO']); 
+
+       
     }
 
 }
