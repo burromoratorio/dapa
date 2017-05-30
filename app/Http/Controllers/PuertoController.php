@@ -79,25 +79,32 @@ class PuertoController extends BaseController
         $errorLog   = self::validateGprmc($gprmcData);
         $ioData     = self::validateIndexCadena("IO",$report,2);
         $panico     = str_replace("I0", "",$ioData[0] );
-        $dcxData    = explode(",",$report['DCX']);
+        $dcxData    = self::validateIndexCadena("DCX",$report,2);
+        $preData    = self::validateIndexCadena("PRE",$report,2);
+        $dadData    = self::validateIndexCadena("DAD",$report,8);
+        $frData     = self::validateIndexCadena("FR",$report,2);
+        $lacData    = self::validateIndexCadena("LAC",$report,2);
+        $mcpData    = self::validateIndexCadena("MCP",$report,2);
+        $alaField   = self::validateIndexCadena("ALA",$report);
+        /*$dcxData    = explode(",",$report['DCX']);
         $preData    = explode(",",$report['PRE']);
         $dadData    = explode(",",$report['DAD']);
         $frData     = explode(",",$report['FR']);
         $lacData    = explode(",",$report['LAC']);
-        $mcpData    = explode(",",$report['MCP']);
+        $mcpData    = explode(",",$report['MCP']);*/
         $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0]);
         $evento = GprmcEntrada::create([
             'imei'=>$report['IMEI'],'gprmc'=>$report['GPRMC'],'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],
             'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],'rumbo'=>$gprmcData[7],'io'=>$ioData['IO'],
-            'panico'=>$panico,'desenganche'=>'0','encendido'=>'0','corte'=>'0','dcx'=>$report['DCX'],
-            'senial'=>$dcxData[0],'tasa_error'=>$dcxData[1],'pre'=>$report['PRE'],'sim_activa'=>$preData[0],
+            'panico'=>$panico,'desenganche'=>'0','encendido'=>'0','corte'=>'0','dcx'=>$dcxData['DCX'],
+            'senial'=>$dcxData[0],'tasa_error'=>$dcxData[1],'pre'=>$preData['PRE'],'sim_activa'=>$preData[0],
             'sim_roaming'=>$preData[1],'vba'=>$report['VBA'],'voltaje_bateria'=>$report['VBA'],
-            'dad'=>$report['DAD'],'fecha_desconexion'=>$dadData[0],
+            'dad'=>$dadData['DAD'],'fecha_desconexion'=>$dadData[0],
             'cant_desconexiones'=>$dadData[2],'senial_desconexion'=>$dadData[3],'sim_desconexion'=>$dadData[4],
             'roaming_desconexion'=>$dadData[5],'tasa_error_desconexion'=>$dadData[6],'motivo_desconexion'=>$dadData[7],
-            'fr'=>$report['FR'],'frecuencia_reporte'=>$frData[0],'tipo_reporte'=>$frData[1],'lac'=>$report['LAC'],
+            'fr'=>$frData['FR'],'frecuencia_reporte'=>$frData[0],'tipo_reporte'=>$frData[1],'lac'=>$lacData['LAC'],
             'cod_area'=>$lacData[0],'id_celda'=>$lacData[1],'kmt'=>$report['KMT'],'km_totales'=>$report['KMT'],
-            'odp'=>$report['ODP'],'mts_parciales'=>$report['ODP'],'ala'=>$report['ALA'],'mcp'=>$report['MCP'],
+            'odp'=>$report['ODP'],'mts_parciales'=>$report['ODP'],'ala'=>$alaField,'mcp'=>$mcpData['MCP'],
             'cfg_principal'=>$mcpData[0],'cfg_auxiliar'=>$mcpData[1],
             'per'=>$report['PER'],'log'=>$errorLog ]);
         return "OK\n";
@@ -106,12 +113,17 @@ class PuertoController extends BaseController
         $formatFecha = date("Y-m-d h:i:s", mktime(substr($hora, 0,2), substr($hora, 2,2), substr($hora, 4,2), substr($fecha, 2,2), substr($fecha, 0,2), substr($fecha, -2,2)));
          return $formatFecha;
     }
-    public static function validateIndexCadena($index,$arrCadena,$totalPieces){
+    public static function validateIndexCadena($index,$arrCadena,$totalPieces=0){
+        $directString = array("ALA","VBA","KMT","ODP","PER");
         $arrData = array();
         Log::info("indice a buscar:".$index);
         if(isset($arrCadena[$index])){
-          $arrData = explode(",",$arrCadena[$index]); 
-          $arrData[$index] = $arrCadena[$index];
+          if(in_array($index, $directString)){
+            $arrData = $arrCadena[$index];
+          }else{
+            $arrData = explode(",",$arrCadena[$index]); 
+            $arrData[$index] = $arrCadena[$index];
+          }  
           Log::info("el indice:".$index. "se encontro en la cadena:");
         }else{
             Log::info("el indice:".$index. "se encontro NOOOO en la cadena:");
@@ -122,8 +134,6 @@ class PuertoController extends BaseController
         }
         return $arrData;        
        //explode(",",$report['IO']); 
-
-       
     }
 
 }
