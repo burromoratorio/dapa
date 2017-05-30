@@ -108,10 +108,13 @@ class PuertoController extends BaseController
     }
     public static function validateIndexCadena($index,$arrCadena,$totalPieces){
         $arrData = array();
+        Log::info("indice a buscar:".$index);
         if(isset($arrCadena[$index])){
           $arrData = explode(",",$arrCadena[$index]); 
           $arrData[$index] = $arrCadena;
+          Log::info("el indice:".$index. "se encontro en la cadena:".$arrCadena);
         }else{
+            Log::info("el indice:".$index. "se encontro NOOOO en la cadena:".$arrCadena);
             for($i=0;$i<$totalPieces;$i++){
             $arrData[$i]="NULL";
           }
