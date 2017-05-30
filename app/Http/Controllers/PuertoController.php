@@ -97,20 +97,21 @@ class PuertoController extends BaseController
         $lacData    = explode(",",$report['LAC']);
         $mcpData    = explode(",",$report['MCP']);*/
         $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0]);
+        $fechaDad      = ($dadData[0]!="NULL")?self::ddmmyy2yyyymmdd($dadData[0],"000000"):"NULL";
         $evento = GprmcEntrada::create([
             'imei'=>$report['IMEI'],'gprmc'=>$report['GPRMC'],'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],
             'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],'rumbo'=>$gprmcData[7],'io'=>$ioData['IO'],
             'panico'=>$panico,'desenganche'=>'0','encendido'=>'0','corte'=>'0','dcx'=>$dcxData['DCX'],
             'senial'=>$dcxData[0],'tasa_error'=>$dcxData[1],'pre'=>$preData['PRE'],'sim_activa'=>$preData[0],
-            'sim_roaming'=>$preData[1],'vba'=>$vbaField,'voltaje_bateria'=>$vbaField,
-            'dad'=>$dadData['DAD'],'fecha_desconexion'=>$dadData[0],
+            'sim_roaming'=>$preData[1],'vba'=>$vbaField['VBA'],'voltaje_bateria'=>$vbaField['VBA'],
+            'dad'=>$dadData['DAD'],'fecha_desconexion'=>$fechaDad,
             'cant_desconexiones'=>$dadData[2],'senial_desconexion'=>$dadData[3],'sim_desconexion'=>$dadData[4],
             'roaming_desconexion'=>$dadData[5],'tasa_error_desconexion'=>$dadData[6],'motivo_desconexion'=>$dadData[7],
             'fr'=>$frData['FR'],'frecuencia_reporte'=>$frData[0],'tipo_reporte'=>$frData[1],'lac'=>$lacData['LAC'],
-            'cod_area'=>$lacData[0],'id_celda'=>$lacData[1],'kmt'=>$kmtField,'km_totales'=>$kmtField,
-            'odp'=>$odpField,'mts_parciales'=>$odpField,'ala'=>$alaField,'mcp'=>$mcpData['MCP'],
+            'cod_area'=>$lacData[0],'id_celda'=>$lacData[1],'kmt'=>$kmtField['KMT'],'km_totales'=>$kmtField['KMT'],
+            'odp'=>$odpField['ODP'],'mts_parciales'=>$odpField['ODP'],'ala'=>$alaField['ALA'],'mcp'=>$mcpData['MCP'],
             'cfg_principal'=>$mcpData[0],'cfg_auxiliar'=>$mcpData[1],
-            'per'=>$perField,'log'=>$errorLog ]);
+            'per'=>$perField['PER'],'log'=>$errorLog ]);
         return "OK\n";
     }
     public static function ddmmyy2yyyymmdd($fecha,$hora){
