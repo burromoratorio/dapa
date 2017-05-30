@@ -86,6 +86,10 @@ class PuertoController extends BaseController
         $lacData    = self::validateIndexCadena("LAC",$report,2);
         $mcpData    = self::validateIndexCadena("MCP",$report,2);
         $alaField   = self::validateIndexCadena("ALA",$report);
+        $perField   = self::validateIndexCadena("PER",$report);
+        $kmtField   = self::validateIndexCadena("KMT",$report);
+        $vbaField   = self::validateIndexCadena("VBA",$report);
+        $odpField   = self::validateIndexCadena("ODP",$report);
         /*$dcxData    = explode(",",$report['DCX']);
         $preData    = explode(",",$report['PRE']);
         $dadData    = explode(",",$report['DAD']);
@@ -98,15 +102,15 @@ class PuertoController extends BaseController
             'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],'rumbo'=>$gprmcData[7],'io'=>$ioData['IO'],
             'panico'=>$panico,'desenganche'=>'0','encendido'=>'0','corte'=>'0','dcx'=>$dcxData['DCX'],
             'senial'=>$dcxData[0],'tasa_error'=>$dcxData[1],'pre'=>$preData['PRE'],'sim_activa'=>$preData[0],
-            'sim_roaming'=>$preData[1],'vba'=>$report['VBA'],'voltaje_bateria'=>$report['VBA'],
+            'sim_roaming'=>$preData[1],'vba'=>$vbaField,'voltaje_bateria'=>$vbaField,
             'dad'=>$dadData['DAD'],'fecha_desconexion'=>$dadData[0],
             'cant_desconexiones'=>$dadData[2],'senial_desconexion'=>$dadData[3],'sim_desconexion'=>$dadData[4],
             'roaming_desconexion'=>$dadData[5],'tasa_error_desconexion'=>$dadData[6],'motivo_desconexion'=>$dadData[7],
             'fr'=>$frData['FR'],'frecuencia_reporte'=>$frData[0],'tipo_reporte'=>$frData[1],'lac'=>$lacData['LAC'],
-            'cod_area'=>$lacData[0],'id_celda'=>$lacData[1],'kmt'=>$report['KMT'],'km_totales'=>$report['KMT'],
-            'odp'=>$report['ODP'],'mts_parciales'=>$report['ODP'],'ala'=>$alaField,'mcp'=>$mcpData['MCP'],
+            'cod_area'=>$lacData[0],'id_celda'=>$lacData[1],'kmt'=>$kmtField,'km_totales'=>$kmtField,
+            'odp'=>$odpField,'mts_parciales'=>$odpField,'ala'=>$alaField,'mcp'=>$mcpData['MCP'],
             'cfg_principal'=>$mcpData[0],'cfg_auxiliar'=>$mcpData[1],
-            'per'=>$report['PER'],'log'=>$errorLog ]);
+            'per'=>$perField,'log'=>$errorLog ]);
         return "OK\n";
     }
     public static function ddmmyy2yyyymmdd($fecha,$hora){
