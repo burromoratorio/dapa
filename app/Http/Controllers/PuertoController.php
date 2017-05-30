@@ -111,10 +111,10 @@ class PuertoController extends BaseController
         Log::info("indice a buscar:".$index);
         if(isset($arrCadena[$index])){
           $arrData = explode(",",$arrCadena[$index]); 
-          $arrData[$index] = $arrCadena;
-          Log::info("el indice:".$index. "se encontro en la cadena:".$arrCadena);
+          $arrData[$index] = $arrCadena[$index];
+          Log::info("el indice:".$index. "se encontro en la cadena:");
         }else{
-            Log::info("el indice:".$index. "se encontro NOOOO en la cadena:".$arrCadena);
+            Log::info("el indice:".$index. "se encontro NOOOO en la cadena:");
             for($i=0;$i<$totalPieces;$i++){
             $arrData[$i]="NULL";
           }
