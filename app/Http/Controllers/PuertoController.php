@@ -9,6 +9,8 @@ use DB;
 use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\MovilController;
 use App\GprmcEntrada;
+use App\GprmcDesconexion;
+
 class PuertoController extends BaseController
 {
 
@@ -30,19 +32,37 @@ class PuertoController extends BaseController
         if(self::$cadena!=""){
             $arrCampos = self::changeString2array(self::$cadena);
             if(self::validateImei($arrCampos['IMEI'])){
-                Log::info("imei valido");
-                self::store($arrCampos);
+                switch (self::positionOrDesconect($arrCampos)) {
+                    case 'GPRMC':
+                        Log::info("Reporte Normal GPRMC");
+                        self::storeGprmc($arrCampos);
+                        break;
+                    case 'DAD':
+                        Log::info("Reporte Desconexion DAD");
+                        self::storeDad($arrCampos);
+                        break;
+                    case 'NODAD':
+                        Log::info("Reporte Desconexion Sin Fecha NODAD");
+                        break;
+                    default:
+                        # code...
+                        break;
+                }
+                
+                
             }else{
                 Log::info("imei invalido");
             }
+            /*
+            *****Por ahora no uso el listado de moviles********
             if(count(self::$moviles_activos)>0){
                foreach (self::$moviles_activos as $movil) {
-                  //Log::info("moviles activos::".$movil->alias);
+                  Log::info("moviles activos::".$movil->alias);
                 }
                 Log::info("total de moviles:".count(self::$moviles_activos));
             }else{
                 Log::info("no values");
-            }
+            }*/
         }
         return $imei;
     }
@@ -73,7 +93,27 @@ class PuertoController extends BaseController
             return false;
         } 
     }
-    public static function store($report) {
+    public static function positionOrDesconect($report){
+        $typeReport = "";
+        if(isset($report["GPRMC"])){
+            $typeReport = "GPRMC";
+        }elseif (isset($report["DAD"]) {
+            $dadData  = explode(",",$report['GPRMC']);
+            $typeReport=(count($dadData)<8)?"NODAD":"DAD";
+        }
+        return $typeReport;
+    }
+    public static function storeDad($report){
+        $dadData    = self::validateIndexCadena("DAD",$report,8);
+        $fechaDad   = ($dadData[0]!="NULL")?self::ddmmyy2yyyymmdd($dadData[0],"000000"):"NULL";
+        $evento = GprmcEntrada::create([
+            'imei'=>$report['IMEI'],'dad'=>$dadData['DAD'],'fecha_desconexion'=>$fechaDad,
+            'cant_desconexiones'=>$dadData[2],'senial_desconexion'=>$dadData[3],'sim_desconexion'=>$dadData[4],
+            'roaming_desconexion'=>$dadData[5],'tasa_error_desconexion'=>$dadData[6],'motivo_desconexion'=>$dadData[7],
+        ]);
+        
+    }
+    public static function storeGprmc($report) {
         $errorLog   = "";
         $gprmcData  = explode(",",$report['GPRMC']);
         $errorLog   = self::validateGprmc($gprmcData);
@@ -81,7 +121,7 @@ class PuertoController extends BaseController
         $panico     = str_replace("I0", "",$ioData[0] );
         $dcxData    = self::validateIndexCadena("DCX",$report,2);
         $preData    = self::validateIndexCadena("PRE",$report,2);
-        $dadData    = self::validateIndexCadena("DAD",$report,8);
+        //$dadData    = self::validateIndexCadena("DAD",$report,8);
         $frData     = self::validateIndexCadena("FR",$report,2);
         $lacData    = self::validateIndexCadena("LAC",$report,2);
         $mcpData    = self::validateIndexCadena("MCP",$report,2);
@@ -90,23 +130,14 @@ class PuertoController extends BaseController
         $kmtField   = self::validateIndexCadena("KMT",$report);
         $vbaField   = self::validateIndexCadena("VBA",$report);
         $odpField   = self::validateIndexCadena("ODP",$report);
-        /*$dcxData    = explode(",",$report['DCX']);
-        $preData    = explode(",",$report['PRE']);
-        $dadData    = explode(",",$report['DAD']);
-        $frData     = explode(",",$report['FR']);
-        $lacData    = explode(",",$report['LAC']);
-        $mcpData    = explode(",",$report['MCP']);*/
         $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0]);
-        $fechaDad      = ($dadData[0]!="NULL")?self::ddmmyy2yyyymmdd($dadData[0],"000000"):"NULL";
+        
         $evento = GprmcEntrada::create([
             'imei'=>$report['IMEI'],'gprmc'=>$report['GPRMC'],'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],
             'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],'rumbo'=>$gprmcData[7],'io'=>$ioData['IO'],
             'panico'=>$panico,'desenganche'=>'0','encendido'=>'0','corte'=>'0','dcx'=>$dcxData['DCX'],
             'senial'=>$dcxData[0],'tasa_error'=>$dcxData[1],'pre'=>$preData['PRE'],'sim_activa'=>$preData[0],
             'sim_roaming'=>$preData[1],'vba'=>$vbaField['VBA'],'voltaje_bateria'=>$vbaField['VBA'],
-            'dad'=>$dadData['DAD'],'fecha_desconexion'=>$fechaDad,
-            'cant_desconexiones'=>$dadData[2],'senial_desconexion'=>$dadData[3],'sim_desconexion'=>$dadData[4],
-            'roaming_desconexion'=>$dadData[5],'tasa_error_desconexion'=>$dadData[6],'motivo_desconexion'=>$dadData[7],
             'fr'=>$frData['FR'],'frecuencia_reporte'=>$frData[0],'tipo_reporte'=>$frData[1],'lac'=>$lacData['LAC'],
             'cod_area'=>$lacData[0],'id_celda'=>$lacData[1],'kmt'=>$kmtField['KMT'],'km_totales'=>$kmtField['KMT'],
             'odp'=>$odpField['ODP'],'mts_parciales'=>$odpField['ODP'],'ala'=>$alaField['ALA'],'mcp'=>$mcpData['MCP'],
