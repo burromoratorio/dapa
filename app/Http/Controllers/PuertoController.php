@@ -105,11 +105,18 @@ class PuertoController extends BaseController
     }
     public static function storeDad($report){
         $dadData    = self::validateIndexCadena("DAD",$report,8);
+        $frData     = self::validateIndexCadena("FR",$report,2);
+        $lacData    = self::validateIndexCadena("LAC",$report,2);
+        $kmtField   = self::validateIndexCadena("KMT",$report);
+        $odpField   = self::validateIndexCadena("ODP",$report);
         $fechaDad   = ($dadData[0]!="NULL")?self::ddmmyy2yyyymmdd($dadData[0],"000000"):"NULL";
         $evento = GprmcDesconexion::create([
             'imei'=>$report['IMEI'],'dad'=>$dadData['DAD'],'fecha_desconexion'=>$fechaDad,
             'cant_desconexiones'=>$dadData[2],'senial_desconexion'=>$dadData[3],'sim_desconexion'=>$dadData[4],
             'roaming_desconexion'=>$dadData[5],'tasa_error_desconexion'=>$dadData[6],'motivo_desconexion'=>$dadData[7],
+            'fr'=>$frData['FR'],'frecuencia_reporte'=>$frData[0],'tipo_reporte'=>$frData[1],'lac'=>$lacData['LAC'],
+            'cod_area'=>$lacData[0],'id_celda'=>$lacData[1],'kmt'=>$kmtField['KMT'],'km_totales'=>$kmtField['KMT'],
+            'odp'=>$odpField['ODP'],'mts_parciales'=>$odpField['ODP'],'ala'=>$alaField['ALA'],'mcp'=>$mcpData['MCP']
         ]);
         
     }
