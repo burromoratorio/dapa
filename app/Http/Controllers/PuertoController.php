@@ -98,7 +98,7 @@ class PuertoController extends BaseController
         if(isset($report["GPRMC"])){
             $typeReport = "GPRMC";
         }elseif (isset($report["DAD"])) {
-            $dadData  = explode(",",$report['GPRMC']);
+            $dadData  = explode(",",$report['DAD']);
             $typeReport=(count($dadData)<8)?"NODAD":"DAD";
         }
         return $typeReport;
