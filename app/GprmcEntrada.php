@@ -8,7 +8,7 @@ class GprmcEntrada extends Model
 {
     protected $table 	= 'gprmc_entrada';
     protected $primaryKey = 'id';
-    public $timestamps 	= false;
+    public $timestamps 	= true;
     protected $guarded = ['id'];
     protected $connection = 'baymax';
     /*
