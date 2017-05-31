@@ -8,7 +8,7 @@ class GprmcDesconexion extends Model
 {
     protected $table 	= 'gprmc_desconexiones';
     protected $primaryKey = 'id';
-    public $timestamps 	= false;
+    public $timestamps 	= true;
     protected $guarded = ['id'];
     protected $connection = 'baymax';
     /*
