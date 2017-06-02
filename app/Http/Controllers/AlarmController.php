@@ -19,9 +19,8 @@ class AlarmController extends BaseController
 	  $jsonReq = $request->json()->all();
       if(isset($jsonReq["cadena"])){
         try{
-          $imei = app()->Puerto->getImei($jsonReq['cadena']) ;
+          app()->Puerto->analizeReport($jsonReq['cadena']) ;
           Log::error("cadena entrante: ::".$jsonReq['cadena']);
-          Log::info("el imei obtenido es:".$imei);
         }catch(Exception $e){
           Log::error($e);
         }
