@@ -200,7 +200,7 @@ class PuertoController extends BaseController
             //vino el campo alarma pero vacio
             Log::info("el campo ala tiene:".$alaField['ALA']);
         }
-        Log::info();
+        
         /*
         $dadData    = self::validateIndexCadena("DAD",$report,8);
         $frData     = self::validateIndexCadena("FR",$report,2);
