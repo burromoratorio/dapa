@@ -20,7 +20,7 @@ class NormalReportController extends BaseController
       if(isset($jsonReq["cadena"])){
         try{
           app()->Puerto->analizeReport($jsonReq['cadena']) ;
-          Log::error("cadena entrante: ::".$jsonReq['cadena']);
+          Log::error("cadena entrante en NormalReportController: ::".$jsonReq['cadena']);
         }catch(Exception $e){
           Log::error($e);
         }
