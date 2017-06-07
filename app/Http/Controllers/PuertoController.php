@@ -197,6 +197,9 @@ class PuertoController extends BaseController
         $perField   = self::validateIndexCadena("PER",$report);
         if($alaField['ALA']!="NULL"){
             //entonces vino el campo alarma con datos
+            $posicion = GprmcAlarma::create([
+            'imei'=>$report['IMEI'],'entrada_id'=>$posicionID,'ala'=>$alaField['ALA'],'per'=>$perField['PER'] ]);
+        return $posicion->id;
             Log::info("el campo ala tiene:".$alaField['ALA']."-->Posicion:".$posicionID);
         }else{
             //vino el campo alarma pero vacio
