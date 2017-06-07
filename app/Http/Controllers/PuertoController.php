@@ -10,6 +10,7 @@ use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\MovilController;
 use App\GprmcEntrada;
 use App\GprmcDesconexion;
+use App\GprmcAlarma;
 
 class PuertoController extends BaseController
 {
@@ -35,8 +36,9 @@ class PuertoController extends BaseController
                 switch (self::positionOrDesconect($arrCampos)) {
                     case 'GPRMC':
                         Log::info("Reporte Normal GPRMC");
-                        self::findAndStoreAlarm($arrCampos);
-                        self::storeGprmc($arrCampos);
+                        $posicionID=self::storeGprmc($arrCampos);
+                        self::findAndStoreAlarm($arrCampos,$posicionID);
+                        
                         break;
                     case 'DAD':
                         Log::info("Reporte Desconexion DAD");
@@ -190,12 +192,12 @@ class PuertoController extends BaseController
             'per'=>$perField['PER'],'log'=>$errorLog ]);
         return $posicion->id;
     }
-    public static function findAndStoreAlarm($report){
+    public static function findAndStoreAlarm($report,$posicionID){
         $alaField   = self::validateIndexCadena("ALA",$report);
         $perField   = self::validateIndexCadena("PER",$report);
         if($alaField['ALA']!="NULL"){
             //entonces vino el campo alarma con datos
-            Log::info("el campo ala tiene:".$alaField['ALA']);
+            Log::info("el campo ala tiene:".$alaField['ALA']."-->Posicion:".$posicionID);
         }else{
             //vino el campo alarma pero vacio
             Log::info("el campo ala tiene:".$alaField['ALA']);
