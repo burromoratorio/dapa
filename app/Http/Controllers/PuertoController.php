@@ -163,6 +163,7 @@ class PuertoController extends BaseController
     */
     public static function storeGprmc($report) {
         $errorLog   = "";
+        Log::info("lo que trae el GPRMC:::".$report['GPRMC']);
         $gprmcData  = explode(",",$report['GPRMC']);
         $errorLog   = self::validateGprmc($gprmcData);
         $ioData     = self::validateIndexCadena("IO",$report,2);
