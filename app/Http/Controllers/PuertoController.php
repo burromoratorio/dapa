@@ -37,8 +37,11 @@ class PuertoController extends BaseController
                     case 'GPRMC':
                         Log::info("Reporte Normal GPRMC");
                         $posicionID=self::storeGprmc($arrCampos);
-                        self::findAndStoreAlarm($arrCampos,$posicionID);
-                        
+                        if($posicionID!='0'){
+                            self::findAndStoreAlarm($arrCampos,$posicionID);
+                        }else{
+                            Log::error("Cadena GPRMC vacia");
+                        }
                         break;
                     case 'DAD':
                         Log::info("Reporte Desconexion DAD");
@@ -164,34 +167,39 @@ class PuertoController extends BaseController
     public static function storeGprmc($report) {
         $errorLog   = "";
         Log::info("lo que trae el GPRMC:::".$report['GPRMC']);
-        $gprmcData  = explode(",",$report['GPRMC']);
-        $errorLog   = self::validateGprmc($gprmcData);
-        $ioData     = self::validateIndexCadena("IO",$report,2);
-        $panico     = str_replace("I0", "",$ioData[0] );
-        $dcxData    = self::validateIndexCadena("DCX",$report,2);
-        $preData    = self::validateIndexCadena("PRE",$report,2);
-        $frData     = self::validateIndexCadena("FR",$report,2);
-        $lacData    = self::validateIndexCadena("LAC",$report,2);
-        $mcpData    = self::validateIndexCadena("MCP",$report,2);
-        $alaField   = self::validateIndexCadena("ALA",$report);
-        $perField   = self::validateIndexCadena("PER",$report);
-        $kmtField   = self::validateIndexCadena("KMT",$report);
-        $vbaField   = self::validateIndexCadena("VBA",$report);
-        $odpField   = self::validateIndexCadena("ODP",$report);
-        $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0]);
+        if($report['GPRMC']!=''){
+            $gprmcData  = explode(",",$report['GPRMC']);
+            $errorLog   = self::validateGprmc($gprmcData);
+            $ioData     = self::validateIndexCadena("IO",$report,2);
+            $panico     = str_replace("I0", "",$ioData[0] );
+            $dcxData    = self::validateIndexCadena("DCX",$report,2);
+            $preData    = self::validateIndexCadena("PRE",$report,2);
+            $frData     = self::validateIndexCadena("FR",$report,2);
+            $lacData    = self::validateIndexCadena("LAC",$report,2);
+            $mcpData    = self::validateIndexCadena("MCP",$report,2);
+            $alaField   = self::validateIndexCadena("ALA",$report);
+            $perField   = self::validateIndexCadena("PER",$report);
+            $kmtField   = self::validateIndexCadena("KMT",$report);
+            $vbaField   = self::validateIndexCadena("VBA",$report);
+            $odpField   = self::validateIndexCadena("ODP",$report);
+            $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0]);
+            
+            $posicion = GprmcEntrada::create([
+                'imei'=>$report['IMEI'],'gprmc'=>$report['GPRMC'],'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],
+                'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],'rumbo'=>$gprmcData[7],'io'=>$ioData['IO'],
+                'panico'=>$panico,'desenganche'=>'0','encendido'=>'0','corte'=>'0','dcx'=>$dcxData['DCX'],
+                'senial'=>$dcxData[0],'tasa_error'=>$dcxData[1],'pre'=>$preData['PRE'],'sim_activa'=>$preData[0],
+                'sim_roaming'=>$preData[1],'vba'=>$vbaField['VBA'],'voltaje_bateria'=>$vbaField['VBA'],
+                'fr'=>$frData['FR'],'frecuencia_reporte'=>$frData[0],'tipo_reporte'=>$frData[1],'lac'=>$lacData['LAC'],
+                'cod_area'=>$lacData[0],'id_celda'=>$lacData[1],'kmt'=>$kmtField['KMT'],'km_totales'=>$kmtField['KMT'],
+                'odp'=>$odpField['ODP'],'mts_parciales'=>$odpField['ODP'],'ala'=>$alaField['ALA'],'mcp'=>$mcpData['MCP'],
+                'cfg_principal'=>$mcpData[0],'cfg_auxiliar'=>$mcpData[1],
+                'per'=>$perField['PER'],'log'=>$errorLog ]);
+            return $posicion->id;
+        }else{
+            return "0";
+        }
         
-        $posicion = GprmcEntrada::create([
-            'imei'=>$report['IMEI'],'gprmc'=>$report['GPRMC'],'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],
-            'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],'rumbo'=>$gprmcData[7],'io'=>$ioData['IO'],
-            'panico'=>$panico,'desenganche'=>'0','encendido'=>'0','corte'=>'0','dcx'=>$dcxData['DCX'],
-            'senial'=>$dcxData[0],'tasa_error'=>$dcxData[1],'pre'=>$preData['PRE'],'sim_activa'=>$preData[0],
-            'sim_roaming'=>$preData[1],'vba'=>$vbaField['VBA'],'voltaje_bateria'=>$vbaField['VBA'],
-            'fr'=>$frData['FR'],'frecuencia_reporte'=>$frData[0],'tipo_reporte'=>$frData[1],'lac'=>$lacData['LAC'],
-            'cod_area'=>$lacData[0],'id_celda'=>$lacData[1],'kmt'=>$kmtField['KMT'],'km_totales'=>$kmtField['KMT'],
-            'odp'=>$odpField['ODP'],'mts_parciales'=>$odpField['ODP'],'ala'=>$alaField['ALA'],'mcp'=>$mcpData['MCP'],
-            'cfg_principal'=>$mcpData[0],'cfg_auxiliar'=>$mcpData[1],
-            'per'=>$perField['PER'],'log'=>$errorLog ]);
-        return $posicion->id;
     }
     public static function findAndStoreAlarm($report,$posicionID){
         $alaField   = self::validateIndexCadena("ALA",$report);
