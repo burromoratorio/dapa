@@ -15,16 +15,18 @@ class CommandController extends BaseController
   }      //
   public function create(Request $request){
     $method = $request->method();
+    $response = "";
     if ($request->isMethod('post')) {
 	  $jsonReq = $request->json()->all();
       if(isset($jsonReq["cadena"])){
         try{
           //app()->Puerto->analizeReport($jsonReq['cadena']) ;
+          $response ="AT+GETGP?";//"$9\r\nAT+GETGP?\r\n";
           Log::error("cadena entrante en CommansController ::".$jsonReq['cadena']);
         }catch(Exception $e){
           Log::error($e);
         }
-        return "$9\r\nAT+GETGP?\r\n";
+        return $response;
       }else{
         return "ERROR:Json mal formado!";
         Log::error("Error:json mal formado, ver palabra clave");
