@@ -14,7 +14,7 @@ $app->post('reportes-normales', 'NormalReportController@create');
 $app->post('reportes-curvos', 'CurveReportController@create');
 $app->post('alarmas', 'AlarmController@create');
 $app->post('keep-alives', 'KeepAliveController@create');
-
+$app->post('comandos', 'CommandController@create');
 //$app->patch('reenvios/{id}', 'ReenvioController@update');
 
 /*$app->get('/', function () use ($app) {
