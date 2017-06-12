@@ -21,7 +21,7 @@ class CommandController extends BaseController
       if(isset($jsonReq["cadena"])){
         try{
           //app()->Puerto->analizeReport($jsonReq['cadena']) ;
-          $response ="AT+GETGP?";//"$9\r\nAT+GETGP?\r\n";
+          $response ="$9\r\nAT+GETGP?\r\n";
           Log::error("cadena entrante en CommansController ::".$jsonReq['cadena']);
         }catch(Exception $e){
           Log::error($e);
