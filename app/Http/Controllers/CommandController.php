@@ -36,5 +36,20 @@ class CommandController extends BaseController
       Log::error("Error:metodo no permitido,utilizar POST");
     }
   }
+  public function send(){
+    $connection = new AMQPStreamConnection('192.168.1.228', 5672, 'siacadmin', 'siac2010');
+    $channel  = $connection->channel();
+    $channel->exchange_declare('comandos', 'direct', false, false, false);
+    $imei     = '863835020075979';
+    $data   = 'AT+GETGP?';
+    $msg    = new AMQPMessage($data);
+    $channel->basic_publish($msg, 'comandos', $imei);
+    
+    Log::info(" [x] enviado ".$imei.':'.$data);
+    
+    $channel->close();
+    $connection->close();
+      
+  }
    
 }
