@@ -232,10 +232,7 @@ class PuertoController extends BaseController
         ]);*/
         
     }
-    public static function dameMoviles(){
-        $movileros  = array("KEY"=>"CM","DT"=>array("IMEI"=>"863835020075979","RT"=>"zaraza"));
-        return json_encode($movileros);
-    }
+   
     
 
 }
