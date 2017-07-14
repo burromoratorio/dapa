@@ -232,6 +232,9 @@ class PuertoController extends BaseController
         ]);*/
         
     }
+    public static function dameMoviles(){
+        return json_encode({"KEY":"CM","DT":{"IMEI":"863835020075979","RT":"zaraza"}});
+    }
     
 
 }
