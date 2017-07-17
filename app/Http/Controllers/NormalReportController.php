@@ -35,7 +35,8 @@ class NormalReportController extends BaseController
     }
   }
    public static function dameMoviles(){
-        $movileros  = array("KEY"=>"CM","DT"=>array("IMEI"=>"863835020075979","RT"=>"zaraza"));
+        $movileros  = array( array('IMEI' =>'863835020075979' ,'alias'=>'sba000' ), 
+                            array('IMEI' =>'863835020075979' ,'alias'=>'sba000' ) );
         Log::error("pidiendo moviles");
         return json_encode($movileros);
     }
