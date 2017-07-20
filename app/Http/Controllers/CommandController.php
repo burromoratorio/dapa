@@ -38,7 +38,7 @@ class CommandController extends BaseController
     }
   }
   public function send(Request $request){
-    $connection = new AMQPStreamConnection('192.168.1.228', 5672, 'siacadmin', 'siac2010');
+    $connection = new AMQPStreamConnection('192.168.0.228', 5672, 'siacadmin', 'siac2010');
     $channel    = $connection->channel();
     $channel->exchange_declare('comandos', 'direct', false, false, false);
     $imei       = '863835020075979';
