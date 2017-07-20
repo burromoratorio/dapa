@@ -17,7 +17,7 @@ class CommandController extends BaseController
     $method = $request->method();
     $response = "";
     if ($request->isMethod('post')) {
-	  $jsonReq = $request->json()->all();
+	    $jsonReq = $request->json()->all();
       if(isset($jsonReq["cadena"])){
         try{
           //app()->Puerto->analizeReport($jsonReq['cadena']) ;
@@ -36,13 +36,17 @@ class CommandController extends BaseController
       Log::error("Error:metodo no permitido,utilizar POST");
     }
   }
-  public function send(){
+  public function send(Request $request){
     $connection = new AMQPStreamConnection('192.168.1.228', 5672, 'siacadmin', 'siac2010');
-    $channel  = $connection->channel();
+    $channel    = $connection->channel();
     $channel->exchange_declare('comandos', 'direct', false, false, false);
-    $imei     = '863835020075979';
-    $data   = 'AT+GETGP?';
-    $msg    = new AMQPMessage($data);
+    $imei       = '863835020075979';
+    $jsonReq    = $request->json()->all();
+    if(isset($jsonReq["cadena"])){
+      $data     = $jsonReq['cadena'];
+    }
+    //$data   = 'AT+GETGP?';
+    $msg        = new AMQPMessage($data);
     $channel->basic_publish($msg, 'comandos', $imei);
     
     Log::info(" [x] enviado ".$imei.':'.$data);
