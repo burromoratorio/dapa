@@ -15,6 +15,7 @@ $app->post('reportes-curvos', 'CurveReportController@create');
 $app->post('alarmas', 'AlarmController@create');
 $app->post('keep-alives', 'KeepAliveController@create');
 $app->post('comandos', 'CommandController@send');
+$app->post('listen', 'CommandController@listen');
 $app->get('moviles', 'NormalReportController@dameMoviles');
 //$app->patch('reenvios/{id}', 'ReenvioController@update');
 

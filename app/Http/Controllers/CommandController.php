@@ -57,5 +57,65 @@ class CommandController extends BaseController
     $connection->close();
       
   }
+  public function listen()
+    {
+        $connection = new AMQPStreamConnection('192.168.0.228', 5672, 'siacadmin', 'siac2010');
+        $channel = $connection->channel();
+        
+        $channel->queue_declare( 'rpc_queue',false,false,false,false);
+                  #queue ,#passive,#durable,#exclusive,#autodelete
+        $channel->basic_qos(null,1, null );
+            #prefetch size,#prefetch count,#global
+        $channel->basic_consume('rpc_queue','', false,false,false,false,array($this, 'callback') );
+                #queue,#consumer tag,#no local,#no ack,#exclusive,#no wait,#callback
+        while(count($channel->callbacks)) {
+            $channel->wait();
+        }
+        
+        $channel->close();
+        $connection->close();
+    }
+
+    /**
+     * Executes when a message is received.
+     *
+     * @param AMQPMessage $req
+     */
+    public function callback(AMQPMessage $req) {
+        
+      $credentials = json_decode($req->body);
+      $authResult = $this->auth($credentials);
+       Log::info("Listen 2- On Callback ".print_r($credentials, true));
+      /*
+       * Creating a reply message with the same correlation id than the incoming message
+       */
+      $msg = new AMQPMessage(json_encode(array('status' => $authResult)),array('correlation_id' => $req->get('correlation_id'))  );
+                        #message,                   #options
+      Log::info("Listen 3- OnCallback retorna desde Auth ".$msg->body);                   
+      /*
+       * Publishing to the same channel from the incoming message
+       */
+      $req->delivery_info['channel']->basic_publish($msg,'',$req->get('reply_to') );
+                        #message, #exchange,#routing key
+      /*
+       * Acknowledging the message
+       */
+      $req->delivery_info['channel']->basic_ack($req->delivery_info['delivery_tag']);
+                           #delivery tag
+    }
+
+    /**
+     * @param \stdClass $credentials
+     * @return bool
+     */
+    private function auth(\stdClass $credentials) {
+      if (($credentials->imei == '863835020075979') && ($credentials->key == 'CM')) {
+          //return true;
+          $data   = 'AT+GETGP?';
+          return $data;
+      } else {
+          return false;
+      }
+    }
    
 }
