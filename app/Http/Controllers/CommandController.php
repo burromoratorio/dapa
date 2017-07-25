@@ -13,7 +13,7 @@ use DB;
 class CommandController extends BaseController
 {
   public function index(Request $request) {
-    return "ok";
+    //return "ok";
   }      //
   public function create(Request $request){
     $method = $request->method();
@@ -23,7 +23,7 @@ class CommandController extends BaseController
       if(isset($jsonReq["cadena"])){
         try{
           //app()->Puerto->analizeReport($jsonReq['cadena']) ;
-          $response ="AT+GETGP?";//"$9\r\nAT+GETGP?\r\n";
+          //$response ="AT+GETGP?";//"$9\r\nAT+GETGP?\r\n";
           Log::error("cadena entrante en CommansController ::".$jsonReq['cadena']);
         }catch(Exception $e){
           Log::error($e);
