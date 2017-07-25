@@ -8,6 +8,7 @@ Use Log;
 use stdClass;
 use Storage;
 use DB;
+use App\GprmcComando;
 //use App\Http\Controllers\PuertoController;
 //Use Puerto;
 class CommandController extends BaseController
@@ -109,7 +110,20 @@ class CommandController extends BaseController
      * @return bool
      */
     private function auth(\stdClass $credentials) {
-      if (($credentials->imei == '863835020075979') && ($credentials->key == 'CM')) {
+      switch( $credentials->key  ){
+            case "KA":
+              /*$formatFecha = date("Y-m-d h:i:s", date()); 
+              $comando = GprmcComando::create([
+                'imei'=>$credentials->imei,'mensaje'=>$comando,'fecha_mensaje'=>$formatFecha,'status'=>'1');*/
+              $comando = GprmcComando::where('imei','=',$credentials->imei)->Where('status', '=', '1')->last();
+              $comando->mensaje;
+              LOG::info("se obtuvo el comando::".$posicion->id);
+            break;
+            case "CM";
+
+            break;
+      } 
+      if (($credentials->imei == '863835020075979') && ($credentials->key == 'KA')) {
           //return true;
           $data   = 'AT+GETGP?';
           return $data;
