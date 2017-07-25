@@ -117,8 +117,8 @@ class CommandController extends BaseController
                 'imei'=>$credentials->imei,'mensaje'=>$comando,'fecha_mensaje'=>$formatFecha,'status'=>'1');*/
               $comando = GprmcComando::where('imei','=',$credentials->imei)->Where('status', '=', '1')->first();
               $resultado = (count($comando)>0)?$comando->mensaje:'no_comand';
+              LOG::info("se obtuvo el comando::".$resultado);
               return $resultado;
-              LOG::info("se obtuvo el comando::".$comando->mensaje);
             break;
             case "CM";
 
