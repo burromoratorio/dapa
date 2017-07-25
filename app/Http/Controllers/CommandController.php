@@ -116,20 +116,21 @@ class CommandController extends BaseController
               $comando = GprmcComando::create([
                 'imei'=>$credentials->imei,'mensaje'=>$comando,'fecha_mensaje'=>$formatFecha,'status'=>'1');*/
               $comando = GprmcComando::where('imei','=',$credentials->imei)->Where('status', '=', '1')->first();
-              $comando->mensaje;
+              $resultado = (count($comando)>0)?$comando->mensaje:'no_comand';
+              return $resultado;
               LOG::info("se obtuvo el comando::".$comando->mensaje);
             break;
             case "CM";
 
             break;
       } 
-      if (($credentials->imei == '863835020075979') && ($credentials->key == 'KA')) {
+      /*if (($credentials->imei == '863835020075979') && ($credentials->key == 'KA')) {
           //return true;
           $data   = 'AT+GETGP?';
           return $data;
       } else {
           return false;
-      }
+      }*/
     }
    
 }
