@@ -17,7 +17,7 @@ $app->post('keep-alives', 'KeepAliveController@create');
 //$app->post('comandos', 'CommandController@send');
 $app->post('listen', 'CommandController@listen');
 $app->get('moviles', 'NormalReportController@dameMoviles');
-//$app->patch('reenvios/{id}', 'ReenvioController@update');
+$app->patch('comandos/{imei}', 'CommandController@update');
 
 /*$app->get('/', function () use ($app) {
     return $app->version();

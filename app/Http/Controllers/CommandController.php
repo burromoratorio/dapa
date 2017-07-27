@@ -13,6 +13,9 @@ use App\GprmcComando;
 //Use Puerto;
 class CommandController extends BaseController
 {
+  const ESTADO_PENDIENTE = 1;
+  const ESTADO_EN_PROCESO = 2;
+  const ESTADO_OK = 3;
   public function index(Request $request) {
     //return "ok";
   }      //
@@ -131,6 +134,20 @@ class CommandController extends BaseController
       } else {
           return false;
       }*/
+    }
+    public function update(Request $request, $imei) {
+        $comandoRta = $request->input('rta');
+        $estado   = $request->input('estado_comando_id');
+        Log::info('recibido en dapa, IMEI:'.$imei.' rta:'.$comandoRta);
+        //$comando  = GprmcComando::findOrFail($imei);
+        
+        /*if ($estado == static::ESTADO_EN_PROCESO) {
+            
+        }
+        $comando->status    = $estado;
+        $comando->fecha_rta = $estado;
+        $comando->save();*/
+        return "Update OK";
     }
    
 }
