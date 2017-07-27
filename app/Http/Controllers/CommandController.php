@@ -138,7 +138,7 @@ class CommandController extends BaseController
     public function update(Request $request, $imei) {
         $comandoRta = $request->input('rta');
         $estado   = $request->input('estado_comando_id');
-        Log::info('recibido en dapa, IMEI:'.$imei.' rta:'.$comandoRta);
+        Log::info('recibido en dapa, IMEI:'.$imei.' rta:'.$comandoRta.' estado:'.$estado);
         //$comando  = GprmcComando::findOrFail($imei);
         
         /*if ($estado == static::ESTADO_EN_PROCESO) {
