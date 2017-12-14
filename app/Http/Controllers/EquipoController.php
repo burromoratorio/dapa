@@ -93,10 +93,10 @@ class EquipoController extends Controller
         //
     }
     public function findImei($equipoId){
-        $equipo         = array('id'=>sprintf("%%d = '%d'", $equipoId),'imei'=>'not_found');
+        $equipo         = array('id'=>sprintf("%%d", $equipoId),'imei'=>'not_found');
         $findedEquipo   = Equipo::with('placa_celular')->where('equipo_id',$equipoId)->first();
         if(!is_null($findedEquipo) && !is_null($findedEquipo->placa_celular)){
-             $equipo['imei'] = sprintf("%%u = '%u'", $findedEquipo->placa_celular->imei);
+             $equipo['imei'] = sprintf("%%u", $findedEquipo->placa_celular->imei);
         }
         return json_encode($equipo);
     }
