@@ -38,8 +38,8 @@ class AlarmController extends BaseController
   }
   public function tratarReporte($cadena){
     try{
-      app()->Puerto->analizeReport($jsonReq['cadena']) ;
-      Log::error("cadena entrante en AlarmController ::".$jsonReq['cadena']);
+      app()->Puerto->analizeReport($cadena) ;
+      Log::error("cadena entrante en AlarmController ::".$cadena);
     }catch(Exception $e){
       Log::error($e);
     }
