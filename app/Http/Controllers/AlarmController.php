@@ -16,15 +16,17 @@ class AlarmController extends BaseController
   public function create(Request $request){
     $method = $request->method();
     if ($request->isMethod('post')) {
+      $rta="";
 	  $jsonReq = $request->json()->all();
       if(isset($jsonReq["cadena"])){
-        try{
-          app()->Puerto->analizeReport($jsonReq['cadena']) ;
-          Log::error("cadena entrante en AlarmController ::".$jsonReq['cadena']);
-        }catch(Exception $e){
-          Log::error($e);
+        $rta  = $this->tratarReporte($jsonReq['cadena']);
+        return $rta;
+      }elseif($jsonReq["KEY"]=="AL"){
+        foreach($jsonReq["PA"] as $posicion){
+          Log::info($posicion["PS"]);
+          $rta  = $this->tratarReporte($posicion["PS"]);
         }
-        return "ok";
+        return $rta;
       }else{
         return "ERROR:Json mal formado!";
         Log::error("Error:json mal formado, ver palabra clave");
@@ -34,5 +36,13 @@ class AlarmController extends BaseController
       Log::error("Error:metodo no permitido,utilizar POST");
     }
   }
-   
+  public function tratarReporte($cadena){
+    try{
+      app()->Puerto->analizeReport($jsonReq['cadena']) ;
+      Log::error("cadena entrante en AlarmController ::".$jsonReq['cadena']);
+    }catch(Exception $e){
+      Log::error($e);
+    }
+    return "ok";
+  }
 }
