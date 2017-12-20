@@ -16,15 +16,17 @@ class NormalReportController extends BaseController
   public function create(Request $request){
     $method = $request->method();
     if ($request->isMethod('post')) {
-	  $jsonReq = $request->json()->all();
+	    $rta="";
+      $jsonReq = $request->json()->all();
       if(isset($jsonReq["cadena"])){
-        try{
-          app()->Puerto->analizeReport($jsonReq['cadena']) ;
-          Log::error("cadena entrante en NormalReportController: ::".$jsonReq['cadena']);
-        }catch(Exception $e){
-          Log::error($e);
+        $rta  = $this->tratarReporte($jsonReq['cadena']);
+        return $rta;
+       }elseif($jsonReq["KEY"]=="NR"){
+        foreach($jsonReq["PA"] as $posicion){
+          Log::info($posicion["PS"]);
+          $rta  = $this->tratarReporte($posicion["PS"]);
         }
-        return "ok";
+        return $rta;
       }else{
         return "ERROR:Json mal formado!";
         Log::error("Error:json mal formado, ver palabra clave");
@@ -40,5 +42,13 @@ class NormalReportController extends BaseController
         Log::error("pidiendo moviles");
         return json_encode($movileros);
     }
-   
+  public function tratarReporte($cadena){
+    try{
+      app()->Puerto->analizeReport($cadena) ;
+      Log::error("cadena entrante en NormalReportController ::".$cadena);
+    }catch(Exception $e){
+      Log::error($e);
+    }
+    return "ok";
+  } 
 }

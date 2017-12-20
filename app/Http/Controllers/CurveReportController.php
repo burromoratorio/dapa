@@ -16,24 +16,37 @@ class CurveReportController extends BaseController
   public function create(Request $request){
     $method = $request->method();
     if ($request->isMethod('post')) {
-	  $jsonReq = $request->json()->all();
+      /**/
+      $rta="";
+      $jsonReq = $request->json()->all();
       if(isset($jsonReq["cadena"])){
-        try{
-          $imei = app()->Puerto->getImei($jsonReq['cadena']) ;
-          Log::error("cadena entrante: ::".$jsonReq['cadena']);
-          Log::info("el imei obtenido es:".$imei);
-        }catch(Exception $e){
-          Log::error($e);
+        $rta  = $this->tratarReporte($jsonReq['cadena']);
+        return $rta;
+       }elseif($jsonReq["KEY"]=="CR"){
+        foreach($jsonReq["PA"] as $posicion){
+          Log::info($posicion["PS"]);
+          $rta  = $this->tratarReporte($posicion["PS"]);
         }
-        return "ok";
+        return $rta;
       }else{
         return "ERROR:Json mal formado!";
         Log::error("Error:json mal formado, ver palabra clave");
       }
+      /**/
+	  
     }else{
       return "ERROR:Metodo no permitido";
       Log::error("Error:metodo no permitido,utilizar POST");
     }
   }
+  public function tratarReporte($cadena){
+    try{
+      app()->Puerto->analizeReport($cadena) ;
+      Log::error("cadena entrante en NormalReportController ::".$cadena);
+    }catch(Exception $e){
+      Log::error($e);
+    }
+    return "ok";
+  } 
    
 }
