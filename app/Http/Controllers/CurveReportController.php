@@ -29,12 +29,11 @@ class CurveReportController extends BaseController
         }
         return $rta;
       }else{
-        return "ERROR:Json mal formado!";
         Log::error("Error:json mal formado, ver palabra clave");
+        return "ERROR:Json mal formado!";
       }
       /**/
-	  
-    }else{
+	  }else{
       return "ERROR:Metodo no permitido";
       Log::error("Error:metodo no permitido,utilizar POST");
     }
@@ -42,7 +41,7 @@ class CurveReportController extends BaseController
   public function tratarReporte($cadena){
     try{
       app()->Puerto->analizeReport($cadena) ;
-      Log::error("cadena entrante en NormalReportController ::".$cadena);
+      Log::error("cadena entrante en CurveReportController ::".$cadena);
     }catch(Exception $e){
       Log::error($e);
     }
