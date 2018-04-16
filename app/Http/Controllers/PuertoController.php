@@ -165,6 +165,12 @@ class PuertoController extends BaseController
         funcion para almacenar un reporte de posicion
     */
     public static function storeGprmc($report) {
+        /*en db PRIMARIA agrego el pid
+        y los caracteres GPRMC en el campo
+
+        */
+        $pid        = getmypid();
+        $sec_pid    = rand(0,1000);
         $errorLog   = "";
         Log::info("lo que trae el GPRMC:::".$report['GPRMC']);
         if($report['GPRMC']!=''){
