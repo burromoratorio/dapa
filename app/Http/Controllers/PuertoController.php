@@ -191,7 +191,7 @@ class PuertoController extends BaseController
             $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0]);
             
             $posicion = GprmcEntrada::create([
-                'imei'=>$report['IMEI'],'gprmc'=>$report['GPRMC'],'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],
+                'imei'=>$report['IMEI'],'gprmc'=>$report['GPRMC'],'pid'=>$pid,'sec_pid'=>$sec_pid,'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],
                 'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],'rumbo'=>$gprmcData[7],'io'=>$ioData['IO'],
                 'panico'=>$panico,'desenganche'=>'0','encendido'=>'0','corte'=>'0','dcx'=>$dcxData['DCX'],
                 'senial'=>$dcxData[0],'tasa_error'=>$dcxData[1],'pre'=>$preData['PRE'],'sim_activa'=>$preData[0],
