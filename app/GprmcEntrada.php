@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class GprmcEntrada extends Model
 {
-    protected $table 	= 'gprmc_entrada';
+    //protected $table 	= 'gprmc_entrada';
+    protected $table 	= 'GPRMC_ENTRADA';
     protected $primaryKey = 'id';
     public $timestamps 	= true;
     protected $guarded = ['id'];
