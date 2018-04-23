@@ -25,6 +25,7 @@ class NormalReportController extends BaseController
         foreach($jsonReq["PA"] as $posicion){
           Log::info($posicion["PS"]);
           $rta  = $this->tratarReporte($posicion["PS"]);
+          Log::info("va a devolver esto:".$rta);
         }
         return $rta;
       }else{
