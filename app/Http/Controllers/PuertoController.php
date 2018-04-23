@@ -203,7 +203,7 @@ class PuertoController extends BaseController
                 'odp'=>$odpField['ODP'],'mts_parciales'=>$odpField['ODP'],'ala'=>$alaField['ALA'],'mcp'=>$mcpData['MCP'],
                 'cfg_principal'=>$mcpData[0],'cfg_auxiliar'=>$mcpData[1],
                 'per'=>$perField['PER'],'log'=>$errorLog ]);
-            return $posicion->id;
+            return $posicion->pid;
         }else{
             return "0";
         }
