@@ -39,8 +39,10 @@ class PuertoController extends BaseController
                         $posicionID=self::storeGprmc($arrCampos);
                         if($posicionID!='0'){
                             self::findAndStoreAlarm($arrCampos,$posicionID);
+                            $imei="ok";
                         }else{
                             Log::error("Cadena GPRMC vacia");
+                            $imei="error";
                         }
                         break;
                     case 'DAD':

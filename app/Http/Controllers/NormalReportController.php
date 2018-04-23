@@ -43,12 +43,14 @@ class NormalReportController extends BaseController
         return json_encode($movileros);
     }
   public function tratarReporte($cadena){
+    $rta  = "";
     try{
-      app()->Puerto->analizeReport($cadena) ;
+      $rta  = app()->Puerto->analizeReport($cadena) ;
       Log::error("cadena entrante en NormalReportController ::".$cadena);
     }catch(Exception $e){
+      $rta  = "error";
       Log::error($e);
     }
-    return "ok";
+    return $rta;
   } 
 }
