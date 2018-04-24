@@ -38,7 +38,8 @@ class PuertoController extends BaseController
                         Log::info("Reporte Normal GPRMC");
                         $posicionID=self::storeGprmc($arrCampos);
                         if($posicionID!='0'){
-                            self::findAndStoreAlarm($arrCampos,$posicionID);
+                           /* no guardo las alarmas en dbPrimaria
+                           self::findAndStoreAlarm($arrCampos,$posicionID);*/
                             $imei="ok";
                         }else{
                             Log::error("Cadena GPRMC vacia");
@@ -169,7 +170,8 @@ class PuertoController extends BaseController
     public static function storeGprmc($report) {
         /*en db PRIMARIA agrego el pid
         y los caracteres GPRMC en el campo
-
+        Ademas agrego los encabezados a cada campo
+        ej: ALA,NSD..FR,60,0 =>>ALA y FR
         */
         $pid        = getmypid();
         $sec_pid    = rand(0,1000);
@@ -193,14 +195,14 @@ class PuertoController extends BaseController
             $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0]);
             
             $posicion = GprmcEntrada::create([
-                'imei'=>$report['IMEI'],'gprmc'=>$report['GPRMC'],'pid'=>$pid,'sec_pid'=>$sec_pid,'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],
-                'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],'rumbo'=>$gprmcData[7],'io'=>$ioData['IO'],
-                'panico'=>$panico,'desenganche'=>'0','encendido'=>'0','corte'=>'0','dcx'=>$dcxData['DCX'],
-                'senial'=>$dcxData[0],'tasa_error'=>$dcxData[1],'pre'=>$preData['PRE'],'sim_activa'=>$preData[0],
+                'imei'=>$report['IMEI'],'gprmc'=>'GPRMC,'.$report['GPRMC'],'pid'=>$pid,'sec_pid'=>$sec_pid,'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],
+                'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],'rumbo'=>$gprmcData[7],'io'=>'IO,'.$ioData['IO'],
+                'panico'=>$panico,'desenganche'=>'0','encendido'=>'0','corte'=>'0','dcx'=>'DCX,'.$dcxData['DCX'],
+                'senial'=>$dcxData[0],'tasa_error'=>$dcxData[1],'pre'=>'PRE,'.$preData['PRE'],'sim_activa'=>$preData[0],
                 'sim_roaming'=>$preData[1],'vba'=>$vbaField['VBA'],'voltaje_bateria'=>$vbaField['VBA'],
-                'fr'=>$frData['FR'],'frecuencia_reporte'=>$frData[0],'tipo_reporte'=>$frData[1],'lac'=>$lacData['LAC'],
-                'cod_area'=>$lacData[0],'id_celda'=>$lacData[1],'kmt'=>$kmtField['KMT'],'km_totales'=>$kmtField['KMT'],
-                'odp'=>$odpField['ODP'],'mts_parciales'=>$odpField['ODP'],'ala'=>$alaField['ALA'],'mcp'=>$mcpData['MCP'],
+                'fr'=>'FR,'.$frData['FR'],'frecuencia_reporte'=>$frData[0],'tipo_reporte'=>$frData[1],'lac'=>'LAC,'.$lacData['LAC'],
+                'cod_area'=>$lacData[0],'id_celda'=>$lacData[1],'kmt'=>'KMT,'.$kmtField['KMT'],'km_totales'=>$kmtField['KMT'],
+                'odp'=>'ODP,'.$odpField['ODP'],'mts_parciales'=>$odpField['ODP'],'ala'=>'ALA,'.$alaField['ALA'],'mcp'=>$mcpData['MCP'],
                 'cfg_principal'=>$mcpData[0],'cfg_auxiliar'=>$mcpData[1],
                 'per'=>$perField['PER'],'log'=>$errorLog ]);
             return $posicion->pid;
