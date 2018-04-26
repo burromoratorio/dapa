@@ -73,6 +73,7 @@ class PuertoController extends BaseController
                 Log::info("no values");
             }*/
         }
+        Log::info("respuesta en analize report de PTController:".$imei);
         return $imei;
     }
     public static function changeString2array($cadena){
@@ -123,20 +124,20 @@ class PuertoController extends BaseController
     public static function validateIndexCadena($index,$arrCadena,$totalPieces=0){
         $directString = array("ALA","VBA","KMT","ODP","PER");
         $arrData = array();
-        Log::info("indice a buscar:".$index);
+        //Log::info("indice a buscar:".$index);
 
         if(isset($arrCadena[$index])){
           if(in_array($index, $directString)){
             $arrData[$index] = $arrCadena[$index];
-            Log::info("se formo el arrdata:".$arrData[$index]);
+            //Log::info("se formo el arrdata:".$arrData[$index]);
           }else{
             $arrData = explode(",",$arrCadena[$index]); 
             $arrData[$index] = $arrCadena[$index];
           }  
-          Log::info("el indice:".$index. "se encontro en la cadena:");
+          //Log::info("el indice:".$index. "se encontro en la cadena:");
         }else{
             //si el indice a buscar no viene en la cadena entonces preparo el array con null
-            Log::info("el indice:".$index. "se encontro NOOOO en la cadena:");
+            //Log::info("el indice:".$index. "se encontro NOOOO en la cadena:");
             for($i=0;$i<$totalPieces;$i++){
             $arrData[$i]="NULL";
             }

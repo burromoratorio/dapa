@@ -21,7 +21,7 @@ class NormalReportController extends BaseController
       if(isset($jsonReq["cadena"])){
         $rta  = $this->tratarReporte($jsonReq['cadena']);
         return $rta;
-       }elseif($jsonReq["KEY"]=="NR"){
+      }elseif($jsonReq["KEY"]=="NR"){
         foreach($jsonReq["PA"] as $posicion){
           Log::info($posicion["PS"]);
           $rta  = $this->tratarReporte($posicion["PS"]);
@@ -52,6 +52,7 @@ class NormalReportController extends BaseController
       $rta  = "error";
       Log::error($e);
     }
+    Log::info("rta en tratar reporte de NRController:".$rta);
     return $rta;
   } 
 }
