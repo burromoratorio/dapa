@@ -18,7 +18,8 @@ class NormalReportController extends BaseController
     if ($request->isMethod('post')) {
 	    $rta="";
       $jsonReq = $request->json()->all();
-      Log::info("mira lo que llega a normal controller en DAPA:".print_r($jsonReq, true));
+      Log::info("mira lo que llega a normal controller en DAPA:");
+      Log::error(print_r($jsonReq, true));
       if(isset($jsonReq["cadena"])){
         $rta  = $this->tratarReporte($jsonReq['cadena']);
         return $rta;
