@@ -22,7 +22,11 @@ class NormalReportController extends BaseController
       Log::error(print_r($jsonReq, true));
       if(isset($jsonReq["cadena"])){
         $rta  = $this->tratarReporte($jsonReq['cadena']);
-        return $rta;
+        return response()->json([
+            'name' => 'Abigail',
+            'state' => 'CA'
+        ]);
+        //return $rta;
       }elseif($jsonReq["KEY"]=="NR"){
         foreach($jsonReq["PA"] as $posicion){
           Log::info($posicion["PS"]);
