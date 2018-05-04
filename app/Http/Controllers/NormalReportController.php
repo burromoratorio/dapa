@@ -22,10 +22,7 @@ class NormalReportController extends BaseController
       Log::error(print_r($jsonReq, true));
       if(isset($jsonReq["cadena"])){
         $rta  = $this->tratarReporte($jsonReq['cadena']);
-        return response()->json([
-            'name' => 'Abigail',
-            'state' => 'CA'
-        ]);
+        
         //return $rta;
       }elseif($jsonReq["KEY"]=="NR"){
         foreach($jsonReq["PA"] as $posicion){
@@ -33,11 +30,15 @@ class NormalReportController extends BaseController
           $rta  = $this->tratarReporte($posicion["PS"]);
           Log::info("va a devolver esto:".$rta);
         }
-        return $rta;
+        //return $rta;
       }else{
         return "ERROR:Json mal formado!";
         Log::error("Error:json mal formado, ver palabra clave");
       }
+      return response()->json([
+            'name' => 'Abigail',
+            'state' => 'CA'
+        ]);
     }else{
       return "ERROR:Metodo no permitido";
       Log::error("Error:metodo no permitido,utilizar POST");
