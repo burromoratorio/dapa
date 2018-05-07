@@ -9,6 +9,7 @@ class Movil extends Model
     protected $table = 'MOVILES';
     protected $primaryKey = 'movil_id';
     public $timestamps = false;
+    protected $connection = 'moviles';
 
     public function posiciones() {
         return $this->hasMany('App\Posiciones');
