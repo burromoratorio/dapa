@@ -30,7 +30,7 @@ class Movil extends Model
                 ->where('dominio',$dominio)->first();
     }
     static function instalados(){
-        $moviles = DB::table('MOVILES')->select('movil_id','equipo_id')
+        $moviles = DB::table('MOVILES')->select('MOVILES.movil_id','equipo_id')
         ->where('MOVILES.activo' ,'=', 1)
         ->join('INSTALACIONES', 'MOVILES.movil_id', '=', 'INSTALACIONES.movil_id')
         ->get();
