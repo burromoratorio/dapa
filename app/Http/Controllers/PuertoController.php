@@ -88,13 +88,12 @@ class PuertoController extends BaseController
         return $campos;
     }
     public static function validateGprmc($gprmc){
-        Log::info("validando esta cadena:");
-        Log::error(print_r($gprmc, true));
+        Log::info("validando esta cadena:".implode(',',$gprmc) );
         if(count($gprmc)<12){
-            Log::error("GPRMC - Numero de parametros incorrecto:".$gprmc);
-            return "GPRMC - Numero de parametros incorrecto:".$gprmc;    
+            Log::error("GPRMC - Numero de parametros incorrecto:".implode(',',$gprmc) );
+            return false;    
         }else{
-            return "gprmc valido";
+            return true;
         }
     }
     public static function validateImei($imei){
@@ -177,43 +176,48 @@ class PuertoController extends BaseController
         Ademas agrego los encabezados a cada campo
         ej: ALA,NSD..FR,60,0 =>>ALA y FR
         */
+        $respuesta  = "0";
         $pid        = getmypid();
         $sec_pid    = rand(0,1000);
         $errorLog   = "";
         Log::info("Validando cadena a insertar...".$report['GPRMC']);
         if($report['GPRMC']!=''){
             $gprmcData  = explode(",",$report['GPRMC']);
-            $errorLog   = self::validateGprmc($gprmcData);
-            $ioData     = self::validateIndexCadena("IO",$report,2);
-            $panico     = str_replace("I0", "",$ioData[0] );
-            $dcxData    = self::validateIndexCadena("DCX",$report,2);
-            $preData    = self::validateIndexCadena("PRE",$report,2);
-            $frData     = self::validateIndexCadena("FR",$report,2);
-            $lacData    = self::validateIndexCadena("LAC",$report,2);
-            $mcpData    = self::validateIndexCadena("MCP",$report,2);
-            $alaField   = self::validateIndexCadena("ALA",$report);
-            $perField   = self::validateIndexCadena("PER",$report);
-            $kmtField   = self::validateIndexCadena("KMT",$report);
-            $vbaField   = self::validateIndexCadena("VBA",$report);
-            $odpField   = self::validateIndexCadena("ODP",$report);
-            $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0]);
-            
-            $posicion = GprmcEntrada::create([
-                'imei'=>$report['IMEI'],'gprmc'=>'GPRMC,'.$report['GPRMC'],'pid'=>$pid,'sec_pid'=>$sec_pid,'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],
-                'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],'rumbo'=>$gprmcData[7],'io'=>'IO,'.$ioData['IO'],
-                'panico'=>$panico,'desenganche'=>'0','encendido'=>'0','corte'=>'0','dcx'=>'DCX,'.$dcxData['DCX'],
-                'senial'=>$dcxData[0],'tasa_error'=>$dcxData[1],'pre'=>'PRE,'.$preData['PRE'],'sim_activa'=>$preData[0],
-                'sim_roaming'=>$preData[1],'vba'=>$vbaField['VBA'],'voltaje_bateria'=>$vbaField['VBA'],
-                'fr'=>'FR,'.$frData['FR'],'frecuencia_reporte'=>$frData[0],'tipo_reporte'=>$frData[1],'lac'=>'LAC,'.$lacData['LAC'],
-                'cod_area'=>$lacData[0],'id_celda'=>$lacData[1],'kmt'=>'KMT,'.$kmtField['KMT'],'km_totales'=>$kmtField['KMT'],
-                'odp'=>'ODP,'.$odpField['ODP'],'mts_parciales'=>$odpField['ODP'],'ala'=>'ALA,'.$alaField['ALA'],'mcp'=>$mcpData['MCP'],
-                'cfg_principal'=>$mcpData[0],'cfg_auxiliar'=>$mcpData[1],
-                'per'=>$perField['PER'],'log'=>$errorLog ]);
-            return $posicion->pid;
+            $gprmcVal   = self::validateGprmc($gprmcData);
+            if($gprmcVal){
+                $ioData     = self::validateIndexCadena("IO",$report,2);
+                $panico     = str_replace("I0", "",$ioData[0] );
+                $dcxData    = self::validateIndexCadena("DCX",$report,2);
+                $preData    = self::validateIndexCadena("PRE",$report,2);
+                $frData     = self::validateIndexCadena("FR",$report,2);
+                $lacData    = self::validateIndexCadena("LAC",$report,2);
+                $mcpData    = self::validateIndexCadena("MCP",$report,2);
+                $alaField   = self::validateIndexCadena("ALA",$report);
+                $perField   = self::validateIndexCadena("PER",$report);
+                $kmtField   = self::validateIndexCadena("KMT",$report);
+                $vbaField   = self::validateIndexCadena("VBA",$report);
+                $odpField   = self::validateIndexCadena("ODP",$report);
+                $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0]);
+                
+                $posicion = GprmcEntrada::create([
+                    'imei'=>$report['IMEI'],'gprmc'=>'GPRMC,'.$report['GPRMC'],'pid'=>$pid,'sec_pid'=>$sec_pid,'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],
+                    'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],'rumbo'=>$gprmcData[7],'io'=>'IO,'.$ioData['IO'],
+                    'panico'=>$panico,'desenganche'=>'0','encendido'=>'0','corte'=>'0','dcx'=>'DCX,'.$dcxData['DCX'],
+                    'senial'=>$dcxData[0],'tasa_error'=>$dcxData[1],'pre'=>'PRE,'.$preData['PRE'],'sim_activa'=>$preData[0],
+                    'sim_roaming'=>$preData[1],'vba'=>$vbaField['VBA'],'voltaje_bateria'=>$vbaField['VBA'],
+                    'fr'=>'FR,'.$frData['FR'],'frecuencia_reporte'=>$frData[0],'tipo_reporte'=>$frData[1],'lac'=>'LAC,'.$lacData['LAC'],
+                    'cod_area'=>$lacData[0],'id_celda'=>$lacData[1],'kmt'=>'KMT,'.$kmtField['KMT'],'km_totales'=>$kmtField['KMT'],
+                    'odp'=>'ODP,'.$odpField['ODP'],'mts_parciales'=>$odpField['ODP'],'ala'=>'ALA,'.$alaField['ALA'],'mcp'=>$mcpData['MCP'],
+                    'cfg_principal'=>$mcpData[0],'cfg_auxiliar'=>$mcpData[1],
+                    'per'=>$perField['PER'],'log'=>'cadena valida' ]);
+                $respuesta  = $posicion->pid;
+            }else{
+                $respuesta  = "0";
+            }
         }else{
-            return "0";
+            $respuesta  = "0";
         }
-        
+        return $respuesta;
     }
     public static function findAndStoreAlarm($report,$posicionID){
         $alaField   = self::validateIndexCadena("ALA",$report);
