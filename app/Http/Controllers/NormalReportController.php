@@ -18,6 +18,7 @@ class NormalReportController extends BaseController
     desde Puerto_lite con ($jsonReq["KEY"]
   */   //
   public function create(Request $request){
+    
     $method = $request->method();
     if ($request->isMethod('post')) {
 	    $rta="";
@@ -25,6 +26,7 @@ class NormalReportController extends BaseController
       //Log::error(print_r($jsonReq, true));
       if(isset($jsonReq["cadena"])){
         Log::info("Ingresando por MONA");
+        Log::info(print_r(app()->moviles(),true));
         $rta  = $this->tratarReporte($jsonReq['cadena']);
       }elseif($jsonReq["KEY"]=="NR"){
         Log::info("Ingresando por Puerto_lite");
@@ -33,7 +35,7 @@ class NormalReportController extends BaseController
           $rta  = $this->tratarReporte($posicion["PS"]);
         }
       }else{
-        $rta= "ERROR:Json mal formado!";
+        $rta= "ERROR:Json mal formado, ver palabra clave!";
         Log::error("Error:json mal formado, ver palabra clave");
       }
     }else{

@@ -88,16 +88,15 @@ class PuertoController extends BaseController
         return $campos;
     }
     public static function validateGprmc($gprmc){
-        Log::info("validando esta cadena:".implode(',',$gprmc) );
-        if(count($gprmc)<12){
+         if(count($gprmc)<12){
             Log::error("GPRMC - Numero de parametros incorrecto:".implode(',',$gprmc) );
             return false;    
         }else{
             return true;
         }
     }
+    /*maximo 15 caracteres numericos*/
     public static function validateImei($imei){
-        //maximo 15 caracteres numericos
         if(preg_match("/^[0-9]{15,15}$/", $imei)) {
             return true;
         }else{
