@@ -17,6 +17,9 @@ class PuertoServiceProvider extends ServiceProvider
     {
         
         $this->app->singleton('moviles', function ($app) {
+            if(!count(self::$moviles_activos)>0){
+                self::$moviles_activos  = self::setMovilesActivos();
+            }
             return self::$moviles_activos;
         });
          $this->app->singleton('Puerto', function ($app) {
