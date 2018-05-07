@@ -33,6 +33,7 @@ class Movil extends Model
         ->where('MOVILES.activo' ,'=', 1)
         ->join('INSTALACIONES', 'MOVILES.movil_id', '=', 'INSTALACIONES.movil_id')
         ->get();
+        Log::info(print_r($moviles,true));
         return $moviles;
     }
     public function viajes() {
