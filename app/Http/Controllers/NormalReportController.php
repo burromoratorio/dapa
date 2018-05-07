@@ -54,7 +54,7 @@ class NormalReportController extends BaseController
    public static function dameMoviles(){
         $movileros  = array( array('IMEI' =>'863835020075979' ,'alias'=>'sba000','cmd'=>'AT+GETGP?\r\n' ), 
                             array('IMEI' =>'863835020075978' ,'alias'=>'sba001','cmd'=>'AT+GETGP?\r\n' ) );
-        Log::error("pidiendo moviles");
+        Log::error("pidiendo moviles dameMoviles");
         return json_encode($movileros);
     }
   public function tratarReporte($cadena){
