@@ -40,7 +40,7 @@ class PuertoController extends BaseController
                         if($posicionID!='0'){
                            /* no guardo las alarmas en dbPrimaria
                            self::findAndStoreAlarm($arrCampos,$posicionID);*/
-                            $imei="si";
+                            $imei="OK";
                         }else{
                             Log::error("Cadena GPRMC vacia");
                             $imei="error";
@@ -60,7 +60,7 @@ class PuertoController extends BaseController
                 
                 
             }else{
-                Log::info("imei invalido");
+                Log::info("imei invalido:".$arrCampos['IMEI']);
             }
             /*
             *****Por ahora no uso el listado de moviles********
@@ -73,7 +73,7 @@ class PuertoController extends BaseController
                 Log::info("no values");
             }*/
         }
-        Log::info("respuesta en analize report de PTController:".$imei);
+        //Log::info("respuesta en analize report de PTController:".$imei);
         return $imei;
     }
     public static function changeString2array($cadena){
