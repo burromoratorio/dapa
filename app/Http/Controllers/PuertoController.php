@@ -88,7 +88,8 @@ class PuertoController extends BaseController
         return $campos;
     }
     public static function validateGprmc($gprmc){
-        Log::info("validando esta cadena:".$gprmc['GPRMC']);
+        Log::info("validando esta cadena:");
+        Log::error(print_r($gprmc, true));
         if(count($gprmc)<12){
             Log::error("GPRMC - Numero de parametros incorrecto:".$gprmc);
             return "GPRMC - Numero de parametros incorrecto:".$gprmc;    
