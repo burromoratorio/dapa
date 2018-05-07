@@ -26,7 +26,7 @@ class NormalReportController extends BaseController
       //Log::error(print_r($jsonReq, true));
       if(isset($jsonReq["cadena"])){
         Log::info("Ingresando por MONA");
-        Log::info(print_r(app()->moviles(),true));
+        Log::info(print_r(app()->moviles,true));
         $rta  = $this->tratarReporte($jsonReq['cadena']);
       }elseif($jsonReq["KEY"]=="NR"){
         Log::info("Ingresando por Puerto_lite");
