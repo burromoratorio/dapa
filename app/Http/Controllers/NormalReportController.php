@@ -27,7 +27,7 @@ class NormalReportController extends BaseController
       if(isset($jsonReq["cadena"])){
         Log::info("Ingresando por MONA");
         if(!count(app()->moviles)>0){
-          app()->Puerto::setMovilesActivos();
+          app()->Puerto->setMovilesActivos();
           Log::info(print_r(app()->moviles,true));
         }
         
