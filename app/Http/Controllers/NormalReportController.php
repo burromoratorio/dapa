@@ -12,21 +12,25 @@ class NormalReportController extends BaseController
 {
   public function index(Request $request) {
     return "ok";
-  }      //
+  }   
+  /*
+    desde MONA ingresa con $jsonReq["cadena"]
+    desde Puerto_lite con ($jsonReq["KEY"]
+  */   //
   public function create(Request $request){
     $method = $request->method();
     if ($request->isMethod('post')) {
 	    $rta="";
       $jsonReq = $request->json()->all();
-      Log::info("mira lo que llega a normal controller en DAPA:");
-      Log::error(print_r($jsonReq, true));
+      //Log::error(print_r($jsonReq, true));
       if(isset($jsonReq["cadena"])){
+        Log::info("Ingresando por MONA");
         $rta  = $this->tratarReporte($jsonReq['cadena']);
       }elseif($jsonReq["KEY"]=="NR"){
+        Log::info("Ingresando por Puerto_lite");
         foreach($jsonReq["PA"] as $posicion){
           Log::info($posicion["PS"]);
           $rta  = $this->tratarReporte($posicion["PS"]);
-          Log::info("va a devolver esto:".$rta);
         }
       }else{
         $rta= "ERROR:Json mal formado!";
@@ -50,8 +54,8 @@ class NormalReportController extends BaseController
   public function tratarReporte($cadena){
     $rta  = "";
     try{
-      $rta  = app()->Puerto->analizeReport($cadena) ;
       Log::error("cadena entrante en NormalReportController ::".$cadena);
+      $rta  = app()->Puerto->analizeReport($cadena) ;
     }catch(Exception $e){
       $rta  = "error";
       Log::error($e);
