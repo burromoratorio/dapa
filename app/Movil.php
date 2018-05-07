@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use DB;
+Use Log;
 class Movil extends Model
 {
     protected $table = 'MOVILES';
