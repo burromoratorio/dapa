@@ -21,6 +21,7 @@ class PuertoServiceProvider extends ServiceProvider
                 Log::info("entro en app()->moviles");
                 self::$moviles_activos  = self::setMovilesActivos();
             }
+            Log::info(print_r(self::$moviles_activos,true));
             return self::$moviles_activos;
         });
          $this->app->singleton('Puerto', function ($app) {
