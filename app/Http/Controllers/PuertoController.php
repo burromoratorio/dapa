@@ -88,18 +88,20 @@ class PuertoController extends BaseController
         return $campos;
     }
     public static function validateGprmc($gprmc){
+        Log::info("validando esta cadena:".$gprmc);
         if(count($gprmc)<12){
-           return "gprmc invalido, error de cadena";    
+            Log::error("GPRMC - Numero de parametros incorrecto:".$gprmc);
+            return "GPRMC - Numero de parametros incorrecto:".$gprmc;    
         }else{
             return "gprmc valido";
         }
     }
     public static function validateImei($imei){
         //maximo 15 caracteres numericos
-        Log::info("lega este imei a comprobacion:".$imei);
         if(preg_match("/^[0-9]{15,15}$/", $imei)) {
             return true;
         }else{
+            Log::info("IMEI invalido:".$imei);
             return false;
         } 
     }
@@ -177,7 +179,7 @@ class PuertoController extends BaseController
         $pid        = getmypid();
         $sec_pid    = rand(0,1000);
         $errorLog   = "";
-        Log::info("lo que trae el GPRMC:::".$report['GPRMC']);
+        Log::info("Validando cadena a insertar...".$report['GPRMC']);
         if($report['GPRMC']!=''){
             $gprmcData  = explode(",",$report['GPRMC']);
             $errorLog   = self::validateGprmc($gprmcData);
