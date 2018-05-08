@@ -15,7 +15,6 @@ class PuertoServiceProvider extends ServiceProvider
     protected $puerto=null;
     public function register()
     {
-        $this->app->configure() ;
         $this->app->singleton('moviles', function ($app) {
             if(is_null(self::$moviles_activos)){
                 Log::info("entro en app()->moviles");
@@ -34,14 +33,15 @@ class PuertoServiceProvider extends ServiceProvider
     
     public static function setMovilesActivos(   ){
         self::$moviles_activos=Movil::instalados();
-         Log::info("entra a pedir moviles");
-        if(Config::get('app.moviles_activos')!='0') {
+        Log::info("entra a pedir moviles");
+        app('config')->set('app.moviles_activos', self::$moviles_activos);
+        /*if(Config::get('app.moviles_activos')!='0') {
            Log::info("moviles activos>0, no se consulta de nuevo");
            Log::info("lo que tiene el config:".Config::get('app.moviles_activos'));
         }else{
            self::$moviles_activos=Movil::instalados();
            config(['app.moviles_activos' => self::$moviles_activos]);
-        }
+        }*/
         
     }
    
