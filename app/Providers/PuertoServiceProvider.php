@@ -37,7 +37,7 @@ class PuertoServiceProvider extends ServiceProvider
             Log::info("entra a pedir moviles");
             app('config')->set('app.moviles_activos', self::$moviles_activos);
         }
-        
+        Log::info(print_r(app('config')->get('app.moviles_activos'),true));
         /*if(Config::get('app.moviles_activos')!='0') {
            Log::info("moviles activos>0, no se consulta de nuevo");
            Log::info("lo que tiene el config:".Config::get('app.moviles_activos'));
