@@ -33,8 +33,8 @@ class PuertoServiceProvider extends ServiceProvider
     
     public static function setMovilesActivos(   ){
         self::$moviles_activos=Movil::instalados();
-        Log::info("entra a pedir moviles");
         if(app('config')->get('app.moviles_activos')==null){
+            Log::info("entra a pedir moviles");
             app('config')->set('app.moviles_activos', self::$moviles_activos);
         }
         
