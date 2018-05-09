@@ -21,8 +21,8 @@
         },
         /*"files": [
             "app/Helpers/MemVar.php"
-        ]
-    },*/
+        ]*/
+    },
     "autoload-dev": {
         "classmap": [
             "tests/",
