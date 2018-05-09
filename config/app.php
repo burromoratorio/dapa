@@ -98,8 +98,7 @@ return [
     'key' => env('APP_KEY'),
 
     'cipher' => 'AES-256-CBC',
-    'moviles_activos'=>array(),
-
+   
     /*
     |--------------------------------------------------------------------------
     | Logging Configuration
