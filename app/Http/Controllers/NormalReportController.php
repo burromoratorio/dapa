@@ -8,7 +8,7 @@ use Storage;
 use DB;
 
 /*Helpers*/
-use MemVar;
+use App\Helpers\MemVar;
 //use App\Http\Controllers\PuertoController;
 //Use Puerto;
 class NormalReportController extends BaseController
