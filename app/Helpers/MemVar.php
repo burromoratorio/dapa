@@ -1,5 +1,6 @@
 <?php
 namespace App\Helpers;
+use Log;
 /************ class MemVar ***********************/
 class MemVar {
  
@@ -14,7 +15,8 @@ class MemVar {
 	}
 
 	function setValue( $_keyvar , $_valor ) {
-	@shm_put_var( $this->$identifier , $_keyvar  , $_valor  );
+		Log::info("en setValue:".$_keyvar. "el valor:".$_valor);	
+	//@shm_put_var( $this->$identifier , $_keyvar  , $_valor  );
 	}
 
 	function getValue( $_keyvar ) {
