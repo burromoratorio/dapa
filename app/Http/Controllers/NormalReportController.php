@@ -6,6 +6,9 @@ Use Log;
 use stdClass;
 use Storage;
 use DB;
+
+/*Helpers*/
+use MemVar;
 //use App\Http\Controllers\PuertoController;
 //Use Puerto;
 class NormalReportController extends BaseController
@@ -26,7 +29,7 @@ class NormalReportController extends BaseController
       //Log::error(print_r($jsonReq, true));
       if(isset($jsonReq["cadena"])){
         Log::info("Ingresando por MONA");
-        /*$memvar = new MemVar( 100 );
+        $memvar = new MemVar( 100 );
         $memvar->setValue( 1 , "valor de la variable en memoria compartida" );
         Log::info("puesto valor");
         $memvar->close();
@@ -34,7 +37,7 @@ class NormalReportController extends BaseController
         $memvar = new MemVar( 100 );
         Log::info( "valor = ".$memvar->getValue( 1 ));
         $memvar->close();
-         */
+        
         //if(!count(app()->moviles)>0){
           //app()->Puerto->moviles_activos;
           //Log::info(print_r(app()->moviles,true));
