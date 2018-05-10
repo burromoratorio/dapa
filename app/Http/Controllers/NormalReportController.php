@@ -29,13 +29,13 @@ class NormalReportController extends BaseController
       //Log::error(print_r($jsonReq, true));
       if(isset($jsonReq["cadena"])){
         Log::info("Ingresando por MONA");
-        $memvar = new MemVar( 100 );
-        $memvar->setValue( 1 , "valor de la variable en memoria compartida" );
+        $memvar = new MemVar("863835020075979" );
+        $memvar->setValue(  "valor de la variable en memoria compartida" );
         Log::info("puesto valor");
         $memvar->close();
         
-        $memvar = new MemVar( 100 );
-        Log::info( "valor = ".$memvar->getValue( 1 ));
+        $memvar = new MemVar( "863835020075979" );
+        Log::info( "valor = ".$memvar->getValue( ));
         $memvar->close();
         
         //if(!count(app()->moviles)>0){
