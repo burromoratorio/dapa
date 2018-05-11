@@ -29,7 +29,7 @@ class NormalReportController extends BaseController
       //Log::error(print_r($jsonReq, true));
       if(isset($jsonReq["cadena"])){
         Log::info("Ingresando por MONA");
-        $memvar = new MemVar( 100,0644, 100 );
+        $memvar = new MemVar( 100,420, 100 );
         $memvar->setValue( "valor de la variable en memoria compartida" );
         Log::info("puesto valor");
         $memvar->close();
