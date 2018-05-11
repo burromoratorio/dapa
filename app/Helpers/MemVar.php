@@ -49,11 +49,12 @@ var $size 	= 0;
  
 function __construct( $_key,$_permission,$_size ) {
   
-  	$this->key = 0xee4;
+  	$this->key = $_key;
   	Log::info("kreando..".$this->key);
   	//$this->identifier = @shm_attach( $_key );0644, 100
-  	exec("sudo -u www-data php -r 'shmop_open(0xee4, "w", 0770, 100);'");
-  	$this->identifier = shmop_open(0xee4, "w", 0644, 100);
+  	  	//exec("sudo -u www-data php -r 'shmop_open(0xee4, "w", 0770, 100);'");
+
+  	$this->identifier = shmop_open($_key, "w", $_permission, $_size);
 	if (!$this->identifier) {
 	    Log::info("Couldn't create shared memory segment");
 	}
