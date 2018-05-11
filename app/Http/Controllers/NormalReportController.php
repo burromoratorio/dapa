@@ -29,13 +29,14 @@ class NormalReportController extends BaseController
       //Log::error(print_r($jsonReq, true));
       if(isset($jsonReq["cadena"])){
         Log::info("Ingresando por MONA");
-         $memvar = new MemVar( 100 );
- $memvar->setValue( 1 , "valor de la variable en memoria compartida" );
-Log::info("puesto valor");
- $memvar->close();
- $memvar = new MemVar( 100 );
-  Log::info( "valor = ".$memvar->getValue( 1 ));
- $memvar->close();
+        $memvar = new MemVar( 100,0644, 100 );
+        $memvar->setValue( "valor de la variable en memoria compartida" );
+        Log::info("puesto valor");
+        $memvar->close();
+        //Note: the 3rd and 4th should be entered as 0 if you are opening an existing memory segment. 
+        $memvar = new MemVar( 100,0,0 );
+        Log::info( "valor = ".$memvar->getValue());
+        $memvar->close();
 
        /* $memvar = new MemVar("863835020075979" );
         $memvar->setValue( 1 , "valor de la variable en memoria compartida" );
