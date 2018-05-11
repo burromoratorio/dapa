@@ -47,7 +47,7 @@ var $identifier=0;
 var $key = "";
 var $size 	= 0;
  
-function MemVar( $_key,$_permission,$_size ) {
+function __construct( $_key,$_permission,$_size ) {
   
   	$this->key = $_key;
   	Log::info("kreando..".$this->key);
