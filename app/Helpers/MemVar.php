@@ -43,13 +43,14 @@ class MemVar {
 */
 class MemVar {
  
-var $identifier="";
+var $identifier=0;
 var $key = "";
 var $size 	= 0;
  
 function MemVar( $_key,$_permission,$_size ) {
   
   	$this->key = $_key;
+  	Log::info("kreando..".$this->key);
   	//$this->identifier = @shm_attach( $_key );0644, 100
   	$this->identifier = shmop_open($_key, "w", $_permission, $_size);
 	if (!$this->identifier) {
