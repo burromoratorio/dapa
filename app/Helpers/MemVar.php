@@ -54,7 +54,7 @@ function __construct( $_key,$_permission,$_size ) {
   	//$this->identifier = @shm_attach( $_key );0644, 100
   	  	//exec("sudo -u www-data php -r 'shmop_open(0xee4, "w", 0770, 100);'");
 
-  	$this->identifier = shmop_open(0xff3, "c", 0644, 100);//shmop_open($_key, "c", $_permission, $_size);
+  	$this->identifier = shmop_open($this->key, "c", 0644, 100);//shmop_open($_key, "c", $_permission, $_size);
 	if (!$this->identifier) {
 	    Log::info("Couldn't create shared memory segment");
 	}
