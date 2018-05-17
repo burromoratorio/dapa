@@ -39,9 +39,9 @@ class NormalReportController extends BaseController
         Log::info( "valor = ".$memvar->getValue());
         $memvar->close();
         
-        $codeRta  = $this->obtenerMoviles();
-        Log::error(print_r($codeRta, true));
-        
+        //$codeRta  = $this->obtenerMoviles();
+        //Log::error(print_r($codeRta, true));
+
        /* $memvar = new MemVar("863835020075979" );
         $memvar->setValue( 1 , "valor de la variable en memoria compartida" );
         Log::info("puesto valor");
