@@ -9,6 +9,7 @@ use DB;
 
 /*Helpers*/
 use App\Helpers\MemVar;
+use GuzzleHttp\Client;
 //use App\Http\Controllers\PuertoController;
 //Use Puerto;
 class NormalReportController extends BaseController
@@ -37,7 +38,10 @@ class NormalReportController extends BaseController
         $memvar = new MemVar( 100,0,0 );
         Log::info( "valor = ".$memvar->getValue());
         $memvar->close();
-
+        
+        $codeRta  = $this->obtenerMoviles();
+        Log::error(print_r($codeRta, true));
+        
        /* $memvar = new MemVar("863835020075979" );
         $memvar->setValue( 1 , "valor de la variable en memoria compartida" );
         Log::info("puesto valor");
@@ -72,7 +76,17 @@ class NormalReportController extends BaseController
             'estado' => $rta
         ]);
   }
-   public static function dameMoviles(){
+  protected function obtenerMoviles() {
+      //Se arrancan pruebas con guzzle
+      Log::error("Buscando moviles en code.siacseguridad.com");
+      $urlP         = 'http://code.siacseguridad.com:8080/api/moviles/cliente/1';
+      $client   = new Client();
+      $request  = $client->get($urlP);
+      $response = $request->getBody();
+
+      return $response->getBody();
+  }
+  public static function dameMoviles(){
     Log::error("pidiendo moviles dameMoviles");
         $movileros  = array( array('IMEI' =>'863835020075979' ,'alias'=>'sba000','cmd'=>'AT+GETGP?\r\n' ), 
                             array('IMEI' =>'863835020075978' ,'alias'=>'sba001','cmd'=>'AT+GETGP?\r\n' ) );
