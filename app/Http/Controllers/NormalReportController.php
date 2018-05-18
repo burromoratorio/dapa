@@ -29,16 +29,13 @@ class NormalReportController extends BaseController
       $jsonReq = $request->json()->all();
       //Log::error(print_r($jsonReq, true));
       if(isset($jsonReq["cadena"])){
-                
         $apiRta  = $this->obtenerMoviles();
-        $code     = $apiRta->getStatusCode(); // 200
-        $reason   = $apiRta->getReasonPhrase(); // OK
+        $code     = $apiRta->getStatusCode(); 
+        $reason   = $apiRta->getReasonPhrase();
         if($code=="200" && $reason=="OK"){
-          Log::error("la respuesta:::".(string)$apiRta->getBody());
-          Log::error("el Content-Length tiene:::");
-          //cantidad de octetos en la rta, es decir rta*8=xbits==es decir con los bytes
+          Log::error("Moviles en api:::".(string)$apiRta->getBody());
+          //cantidad de octetos en la rta, es decir rta*8=xbits==es decir son los bytes
           $length   = $apiRta->getHeader('Content-Length');
-          Log::info("Ingresando por MONA");
           $memvar = new MemVar( 100,420, $length );
           $memvar->setValue( (string)$apiRta->getBody() );
           Log::info("puesto valor");
@@ -47,28 +44,9 @@ class NormalReportController extends BaseController
           $memvar = new MemVar( 100,0,0 );
           Log::info( "valor = ".$memvar->getValue());
           $memvar->close();
-
-
-
         }else{
-          Log::error("Bad Response chavon:: code:".$code." reason::".$reason);
+          Log::error("Bad Response :: code:".$code." reason::".$reason);
         }
-        
-
-       /* $memvar = new MemVar("863835020075979" );
-        $memvar->setValue( 1 , "valor de la variable en memoria compartida" );
-        Log::info("puesto valor");
-        $memvar->close();
-        
-        $memvar = new MemVar( 100 );
-        Log::info( "valor = ".$memvar->getValue( 1 ));
-        $memvar->close();*/
-        
-        //if(!count(app()->moviles)>0){
-          //app()->Puerto->moviles_activos;
-          //Log::info(print_r(app()->moviles,true));
-        //}
-        
         $rta  = $this->tratarReporte($jsonReq['cadena']);
       }elseif($jsonReq["KEY"]=="NR"){
         Log::info("Ingresando por Puerto_lite");
