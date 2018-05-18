@@ -79,12 +79,12 @@ class NormalReportController extends BaseController
   protected function obtenerMoviles() {
       //Se arrancan pruebas con guzzle
       Log::error("Buscando moviles en code.siacseguridad.com");
-      $urlP         = 'http://code.siacseguridad.com:8080/api/moviles/cliente/1';
-      $client   = new Client();
-      $request  = $client->get($urlP);
-      $response = $request->getBody();
+      // Create a client with a base URI
+      $client = new Client(['base_uri' => 'http://code.siacseguridad.com:8080/api/']);
+      // Send a request to https://foo.com/api/test
+      $response = $client->request('GET', 'moviles/cliente/1');
 
-      return $response->getBody();
+      return $response;
   }
   public static function dameMoviles(){
     Log::error("pidiendo moviles dameMoviles");
