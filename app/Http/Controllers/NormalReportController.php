@@ -40,7 +40,9 @@ class NormalReportController extends BaseController
         $memvar->close();
         
         $codeRta  = $this->obtenerMoviles();
-        Log::error(print_r($codeRta->getBody(), true));
+        $body     = $codeRta->getBody();
+        
+        Log::error($body->getContents());
 
        /* $memvar = new MemVar("863835020075979" );
         $memvar->setValue( 1 , "valor de la variable en memoria compartida" );
