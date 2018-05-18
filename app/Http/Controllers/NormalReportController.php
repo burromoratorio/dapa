@@ -39,8 +39,15 @@ class NormalReportController extends BaseController
         Log::info( "valor = ".$memvar->getValue());
         $memvar->close();
         
-        $codeRta  = $this->obtenerMoviles();
-        Log::error("la respuesta:::".(string)$codeRta->getBody());
+        $apiRta  = $this->obtenerMoviles();
+        $code     = $apiRta->getStatusCode(); // 200
+        $reason   = $apiRta->getReasonPhrase(); // OK
+        if($code==200 && $reason=="ok"){
+          Log::error("la respuesta:::".(string)$apiRta->getBody());
+        }else{
+          Log::error("Bad Response chavon");
+        }
+        
 
        /* $memvar = new MemVar("863835020075979" );
         $memvar->setValue( 1 , "valor de la variable en memoria compartida" );
