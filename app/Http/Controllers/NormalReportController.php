@@ -29,21 +29,25 @@ class NormalReportController extends BaseController
       $jsonReq = $request->json()->all();
       //Log::error(print_r($jsonReq, true));
       if(isset($jsonReq["cadena"])){
-        Log::info("Ingresando por MONA");
-        $memvar = new MemVar( 100,420, 100 );
-        $memvar->setValue( "valor de la variable en memoria compartida" );
-        Log::info("puesto valor");
-        $memvar->close();
-        //Note: the 3rd and 4th should be entered as 0 if you are opening an existing memory segment. 
-        $memvar = new MemVar( 100,0,0 );
-        Log::info( "valor = ".$memvar->getValue());
-        $memvar->close();
-        
+                
         $apiRta  = $this->obtenerMoviles();
         $code     = $apiRta->getStatusCode(); // 200
         $reason   = $apiRta->getReasonPhrase(); // OK
         if($code=="200" && $reason=="OK"){
           Log::error("la respuesta:::".(string)$apiRta->getBody());
+          Log::error("el Content-Length tiene:::".$apiRta->getHeader('Content-Length'));
+          Log::info("Ingresando por MONA");
+          /*$memvar = new MemVar( 100,420, 100 );
+          $memvar->setValue( (string)$apiRta->getBody() );
+          Log::info("puesto valor");
+          $memvar->close();
+          //Note: the 3rd and 4th should be entered as 0 if you are opening an existing memory segment. 
+          $memvar = new MemVar( 100,0,0 );
+          Log::info( "valor = ".$memvar->getValue());
+          $memvar->close();*/
+
+
+
         }else{
           Log::error("Bad Response chavon:: code:".$code." reason::".$reason);
         }
