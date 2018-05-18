@@ -42,7 +42,7 @@ class NormalReportController extends BaseController
         $apiRta  = $this->obtenerMoviles();
         $code     = $apiRta->getStatusCode(); // 200
         $reason   = $apiRta->getReasonPhrase(); // OK
-        if($code==200 && $reason=="ok"){
+        if($code=="200" && $reason=="OK"){
           Log::error("la respuesta:::".(string)$apiRta->getBody());
         }else{
           Log::error("Bad Response chavon:: code:".$code." reason::".$reason);
