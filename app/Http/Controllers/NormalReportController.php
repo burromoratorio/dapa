@@ -36,16 +36,17 @@ class NormalReportController extends BaseController
         if($code=="200" && $reason=="OK"){
           Log::error("la respuesta:::".(string)$apiRta->getBody());
           Log::error("el Content-Length tiene:::");
-          Log::error(print_r($apiRta->getHeader('Content-Length'), true));
+          //cantidad de octetos en la rta, es decir rta*8=xbits==es decir con los bytes
+          $length   = $apiRta->getHeader('Content-Length');
           Log::info("Ingresando por MONA");
-          /*$memvar = new MemVar( 100,420, 100 );
+          $memvar = new MemVar( 100,420, $length );
           $memvar->setValue( (string)$apiRta->getBody() );
           Log::info("puesto valor");
           $memvar->close();
           //Note: the 3rd and 4th should be entered as 0 if you are opening an existing memory segment. 
           $memvar = new MemVar( 100,0,0 );
           Log::info( "valor = ".$memvar->getValue());
-          $memvar->close();*/
+          $memvar->close();
 
 
 
