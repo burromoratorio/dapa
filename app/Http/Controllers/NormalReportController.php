@@ -35,7 +35,8 @@ class NormalReportController extends BaseController
         $reason   = $apiRta->getReasonPhrase(); // OK
         if($code=="200" && $reason=="OK"){
           Log::error("la respuesta:::".(string)$apiRta->getBody());
-          Log::error("el Content-Length tiene:::".$apiRta->getHeader('Content-Length'));
+          Log::error("el Content-Length tiene:::");
+          Log::error(print_r($apiRta->getHeader('Content-Length'), true));
           Log::info("Ingresando por MONA");
           /*$memvar = new MemVar( 100,420, 100 );
           $memvar->setValue( (string)$apiRta->getBody() );
