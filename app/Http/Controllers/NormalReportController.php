@@ -45,7 +45,7 @@ class NormalReportController extends BaseController
         if($code==200 && $reason=="ok"){
           Log::error("la respuesta:::".(string)$apiRta->getBody());
         }else{
-          Log::error("Bad Response chavon");
+          Log::error("Bad Response chavon:: code:".$code." reason::".$reason);
         }
         
 
