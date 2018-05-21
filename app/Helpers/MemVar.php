@@ -51,7 +51,7 @@ function __construct( $_key,$_permission,$_size ) {
   
   	$this->key 		= $_key;
   	$this->size 	= $_size;
-  	Log::info("kreando..".$this->key);
+  	Log::info("kreando..".$this->key." tamanio:".$this->size);
   	$this->identifier = shmop_open($this->key, "c", 0644,$this->size);
   	//$this->identifier = @shm_attach( $_key );0644, 100
   	//exec("sudo -u www-data php -r 'shmop_open(0xee4, "w", 0770, 100);'");
