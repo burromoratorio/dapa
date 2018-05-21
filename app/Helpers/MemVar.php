@@ -45,7 +45,7 @@ class MemVar {
  
 var $identifier=0;
 var $key = "";
-var $size 	= 0;
+var $size 	= "";
  
 function __construct( $_key,$_permission,$_size ) {
   
