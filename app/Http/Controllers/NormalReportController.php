@@ -82,7 +82,7 @@ class NormalReportController extends BaseController
     //863835020075979
     //Note: the 3rd and 4th should be entered as 0 if you are opening an existing memory segment. 
     $memvar       = new MemVar( 100,0,0 );
-    $jsonMoviles  = json_encode($memvar->getValue());
+    $jsonMoviles  = json_decode($memvar->getValue());
     foreach ($jsonMoviles as $movil) {
       Log::info( "valor compruebaMovilMC = ".print_r($movil, true));
     }
