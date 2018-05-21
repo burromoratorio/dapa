@@ -37,6 +37,7 @@ class NormalReportController extends BaseController
           Log::error("Moviles en api:::".(string)$apiRta->getBody());
           //cantidad de octetos en la rta, es decir rta*8=xbits==es decir son los bytes
           $length   = $apiRta->getHeader('Content-Length');
+          Log::info("length::".$length);
           $memvar = new MemVar( 100,420, $length );
           $memvar->setValue( (string)$apiRta->getBody() );
           Log::info("puesto valor");
