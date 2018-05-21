@@ -20,7 +20,7 @@ class NormalReportController extends BaseController
   /*
     desde MONA ingresa con $jsonReq["cadena"]
     desde Puerto_lite con ($jsonReq["KEY"]
-  */   //
+  */   // probar con este imei 863835020075979
   public function create(Request $request){
     
     $method = $request->method();
@@ -29,7 +29,8 @@ class NormalReportController extends BaseController
       $jsonReq = $request->json()->all();
       //Log::error(print_r($jsonReq, true));
       if(isset($jsonReq["cadena"])){
-        $apiRta  = $this->obtenerMoviles();
+        $mcRta    = $this->compruebaMovilMC('863835020075979');
+        $apiRta   = $this->obtenerMoviles();
         $code     = $apiRta->getStatusCode(); 
         $reason   = $apiRta->getReasonPhrase();
         if($code=="200" && $reason=="OK"){
@@ -76,6 +77,15 @@ class NormalReportController extends BaseController
       $response = $client->request('GET', 'moviles/cliente/1');
 
       return $response;
+  }
+  public function compruebaMovilMC($imei){
+    //863835020075979
+    //Note: the 3rd and 4th should be entered as 0 if you are opening an existing memory segment. 
+    $memvar       = new MemVar( 100,0,0 );
+    $jsonMoviles  = json_encode($memvar->getValue());
+    Log::info( "valor compruebaMovilMC = ".print_r($jsonMoviles, true));
+    $memvar->close();
+    return '1';
   }
   public static function dameMoviles(){
     Log::error("pidiendo moviles dameMoviles");
