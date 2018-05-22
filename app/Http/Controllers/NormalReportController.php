@@ -42,9 +42,9 @@ class NormalReportController extends BaseController
           $largo  = (int)$length[0];
           //self::$memvar->eliminar();
           self::$memvar = new MemVar( 0,420,$largo  );
-          self::$memvar->setValue( (string)$apiRta->getBody() );
+          //self::$memvar->setValue( (string)$apiRta->getBody() );
           Log::info("puesto valor");
-          self::$memvar->close();
+          //self::$memvar->close();
           //Note: the 3rd and 4th should be entered as 0 if you are opening an existing memory segment. 
           //self::$memvar = new MemVar( 100,0,0 );
           //Log::info( "valor = ".$memvar->getValue());

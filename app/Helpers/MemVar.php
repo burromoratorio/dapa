@@ -11,21 +11,23 @@ class MemVar {
 
  
 	public function __construct( $_key,$_permission,$_size ) {
-	  
 	  	self::$key 		= $_key;
 	  	self::$size 	= $_size;
 	  	Log::info("kreando..".self::$key." tamanio:".self::$size);
+	}
+	
+	public private function crear(){
+		
 	  	//self::$identifier = shmop_open(self::$key, "c", 0644,self::$size);
-
-	  	self::$identifier = shmop_open($_key, "c", 0644, self::$size);
+		self::$identifier = shmop_open(self::$key, "c", 0644, self::$size);
 		if (!self::$identifier) {
 		    Log::info("Couldn't create shared memory segment");
 		}
 		// Obtener tamaño del segmento de memoria compartida
 		self::$size = shmop_size(self::$identifier);
 		Log::info("SHM Block Size: " . self::$size . " has been created.");
-	}
-	 
+
+	} 
 	public function static setValue( $_valor ) {
 		// Escribir una cadena de prueba en la memoria compartida
 		$shm_bytes_written = shmop_write(self::$identifier, $_valor, 0);
