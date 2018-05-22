@@ -64,9 +64,9 @@ final class MemVar
      *
      * @return UserFactory
      */
-    private $identifier = 0;
+    private static $identifier = 0;
     private static $key  = '';
-    private $size = 0;
+    private static $size = 0;
 
     public static function Instance()
     {
@@ -89,7 +89,7 @@ final class MemVar
     }
     public function init(){
     	self::$key 	= 1;
-    	$this->size = 500;
-    	Log::info("creando singleton. key:". self::$key."  size:".$this->size);
+    	self::$size = 500;
+    	Log::info("creando singleton. key:". self::$key."  size:".self::$size);
     }
 }
