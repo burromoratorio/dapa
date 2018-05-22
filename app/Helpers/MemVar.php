@@ -66,9 +66,11 @@ final class MemVar
      */
     public static function Instance()
     {
-        static $inst = null;
-        if ($inst === null) {
-            $inst = new MemVar();
+        private $identifier = 'Gamma, Helm, Johnson, and Vlissides';
+    	private $size  		= 'Design Patterns';
+       	private  static $inst= null;
+        if (self::$inst === null) {
+           self:: $inst = new MemVar();
         }
         Log::info("creando singleton");
         return $inst;
@@ -82,4 +84,43 @@ final class MemVar
     {
 
     }
+    private function init($_key,$_size){
+    	Log::info("creando singleton");
+    	$this->key 		= $_key;
+  		$this->size 	= $_size;
+  		Log::info("varibles, key:".$this->key." size:".$this->size);
+    }
 }
+/*class BookSingleton {
+    private $author = 'Gamma, Helm, Johnson, and Vlissides';
+    private $title  = 'Design Patterns';
+    private static $book = NULL;
+    private static $isLoanedOut = FALSE;
+
+    private function __construct() {
+    }
+
+    static function borrowBook() {
+      if (FALSE == self::$isLoanedOut) {
+        if (NULL == self::$book) {
+           self::$book = new BookSingleton();
+        }
+        self::$isLoanedOut = TRUE;
+        return self::$book;
+      } else {
+        return NULL;
+      }
+    }
+
+    function returnBook(BookSingleton $bookReturned) {
+        self::$isLoanedOut = FALSE;
+    }
+
+    function getAuthor() {return $this->author;}
+
+    function getTitle() {return $this->title;}
+
+    function getAuthorAndTitle() {
+      return $this->getTitle() . ' by ' . $this->getAuthor();
+    }
+  }/*
