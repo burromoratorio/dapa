@@ -64,11 +64,14 @@ final class MemVar
      *
      * @return UserFactory
      */
+    private $author = 'Gamma, Helm, Johnson, and Vlissides';
+    private $title  = 'Design Patterns';
     public static function Instance()
     {
         static $inst = null;
         if ($inst === null) {
             $inst = new MemVar();
+            $inst->author= "zaraza";
         }
         Log::info("creando singleton");
         return $inst;
@@ -83,6 +86,6 @@ final class MemVar
 
     }
     public function init(){
-    	Log::info("creando singleton");
+    	Log::info("creando singleton.". $inst->author);
     }
 }
