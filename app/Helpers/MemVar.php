@@ -82,7 +82,7 @@ final class MemVar
     {
 
     }
-    private function init(){
+    public function init(){
     	Log::info("creando singleton");
     }
 }
