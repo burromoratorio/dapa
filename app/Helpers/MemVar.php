@@ -66,12 +66,11 @@ final class MemVar
      */
     public static function Instance()
     {
-        private $identifier = 0;
-        private $key 		= "";
-    	private $size  		= 0;
-       	private $inst= null;
+        private $author = 'Gamma, Helm, Johnson, and Vlissides';
+    	private $title  = 'Design Patterns';
+        static $inst = null;
         if ($inst === null) {
-           $inst = new MemVar();
+            $inst = new MemVar();
         }
         Log::info("creando singleton");
         return $inst;
@@ -85,11 +84,8 @@ final class MemVar
     {
 
     }
-    public function init($_key,$_size){
+    private function init(){
     	Log::info("creando singleton");
-    	$this->key 		= $_key;
-  		$this->size 	= $_size;
-  		Log::info("varibles, key:".$this->key." size:".$this->size);
     }
 }
 /*class BookSingleton {
@@ -124,4 +120,4 @@ final class MemVar
     function getAuthorAndTitle() {
       return $this->getTitle() . ' by ' . $this->getAuthor();
     }
-  }/*
+  }*/
