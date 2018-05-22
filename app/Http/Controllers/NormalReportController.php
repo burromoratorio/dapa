@@ -38,7 +38,7 @@ class NormalReportController extends BaseController
           //cantidad de octetos en la rta, es decir rta*8=xbits==es decir son los bytes
          $length   = $apiRta->getHeader('Content-Length');
           Log::info("length::".$length[0]);
-          $largo  = int()$length[0];
+          $largo  = (int)$length[0];
           $memvar = new MemVar( 100,420,$largo  );
           $memvar->setValue( (string)$apiRta->getBody() );
           Log::info("puesto valor");
