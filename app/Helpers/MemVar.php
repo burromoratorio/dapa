@@ -66,8 +66,9 @@ final class MemVar
      */
     public static function Instance()
     {
-        private $identifier = 'Gamma, Helm, Johnson, and Vlissides';
-    	private $size  		= 'Design Patterns';
+        private $identifier = 0;
+        private $key 		= "";
+    	private $size  		= 0;
        	private  static $inst= null;
         if (self::$inst === null) {
            self:: $inst = new MemVar();
@@ -84,7 +85,7 @@ final class MemVar
     {
 
     }
-    private function init($_key,$_size){
+    public function init($_key,$_size){
     	Log::info("creando singleton");
     	$this->key 		= $_key;
   		$this->size 	= $_size;
