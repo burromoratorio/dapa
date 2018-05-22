@@ -14,8 +14,8 @@ use GuzzleHttp\Client;
 //Use Puerto;
 class NormalReportController extends BaseController
 {
-  static $memvar;
-  
+  //static $memvar;
+
   public function index(Request $request) {
     return "ok";
   }   
