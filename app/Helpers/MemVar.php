@@ -1,46 +1,8 @@
 <?php
 namespace App\Helpers;
 use Log;
-/************ class MemVar **********************
-class MemVar {
- 
-	var $identifier="";
-	var $key = "";
-	var $shm_size=0;
-	function MemVar( $_key ) {
+/************ class MemVar **********************/
 
-		$this->key 			= $_key;
-		$this->identifier 	= shmop_open($_key, "w", 0644, 100);
-		
-		//$this->$identifier = @shm_attach( $_key );
-	}
-
-	function setValue( $_valor ) {
-		if ($this->$identifier) {
-		  	Log::info("en setValue:".$_keyvar. "el valor:".$_valor);
-			shmop_write($this->$identifier, $_valor, 0);	
-			$this->shm_size 	= shmop_size($this->identifier);
-		} else {
-		   #you need to create it with shmop_open using "c" only
-		}
-		
-	}
-
-	function getValue( $_keyvar ) {
-		$my_string = shmop_read($this->identifier, 0, $this->shm_size);
-		
-		return $my_string;
-	}
-
-	function eliminar( ) {
-	@shm_remove( $this->$identifier  );
-	}
-
-	function close( ) {
-	@shm_detach( $this->$identifier );
-	}
-}
-*/
 class MemVar {
  
 var $identifier=0;
@@ -54,7 +16,7 @@ function __construct( $_key,$_permission,$_size ) {
   	Log::info("kreando..".$this->key." tamanio:".$this->size);
   	//$this->identifier = shmop_open($this->key, "c", 0644,$this->size);
 
-  	$this->identifier = shmop_open($_key, "c", 0644, 100);
+  	$this->identifier = shmop_open($_key, "c", 0644, $this->size);
 	if (!$this->identifier) {
 	    Log::info("Couldn't create shared memory segment");
 	}
