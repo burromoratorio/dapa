@@ -2,7 +2,7 @@
 namespace App\Helpers;
 use Log;
 /************ class MemVar **********************/
-
+/*
 class MemVar {
  
 var $identifier	=0;
@@ -52,4 +52,34 @@ function eliminar( ) {
 function close( ) {
 	shmop_close($this->identifier);
 }
+}*/
+/**
+ * Singleton class
+ *
+ */
+final class MemVar
+{
+    /**
+     * Call this method to get singleton
+     *
+     * @return UserFactory
+     */
+    public static function Instance()
+    {
+        static $inst = null;
+        if ($inst === null) {
+            $inst = new MemVar();
+        }
+        Log::info("creando singleton");
+        return $inst;
+    }
+
+    /**
+     * Private ctor so nobody else can instantiate it
+     *
+     */
+    private function __construct()
+    {
+
+    }
 }

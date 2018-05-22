@@ -39,10 +39,10 @@ class NormalReportController extends BaseController
          $length   = $apiRta->getHeader('Content-Length');
           Log::info("length::".$length[0]);
           $largo  = (int)$length[0];
-          $memvar = new MemVar( 0,420,$largo  );
-          $memvar->setValue( (string)$apiRta->getBody() );
+          $memvar = MemVar::Instance();// new MemVar( 0,420,$largo  );
+          //$memvar->setValue( (string)$apiRta->getBody() );
           Log::info("puesto valor");
-          $memvar->close();
+          //$memvar->close();
           //Note: the 3rd and 4th should be entered as 0 if you are opening an existing memory segment. 
           //$memvar = new MemVar( 100,0,0 );
           //Log::info( "valor = ".$memvar->getValue());
@@ -82,14 +82,14 @@ class NormalReportController extends BaseController
   public function compruebaMovilMC($imei){
     //863835020075979
     //Note: the 3rd and 4th should be entered as 0 if you are opening an existing memory segment. 
-    $memvar       = new MemVar( 100,0,0 );
-    $jsonMoviles  = json_decode($memvar->getValue());
-    var_dump($jsonMoviles);
+    //$memvar       = new MemVar( 100,0,0 );
+    //$jsonMoviles  = json_decode($memvar->getValue());
+    //var_dump($jsonMoviles);
     /*foreach ($jsonMoviles as $movil) {
       Log::info( "valor compruebaMovilMC = ".print_r($movil, true));
     }*/
     
-    $memvar->close();
+    //$memvar->close();
     return '1';
   }
   /*public static function dameMoviles(){
