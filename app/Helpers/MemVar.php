@@ -4,57 +4,52 @@ use Log;
 /************ class MemVar **********************/
 
 class MemVar {
-	 
-	static $identifier  = 0;
-	static $size 		= 0;
-	static $key 		= "";
-
  
-	public function __construct( ) {
-	}
-	
-	public static inicializar( $_key,$_permission,$_size){
-		self::$key 		= $_key;
-	  	self::$size 	= $_size;
-	  	Log::info("kreando..".self::$key." tamanio:".self::$size);
-	}
-	public private function crear(){
-		
-	  	//self::$identifier = shmop_open(self::$key, "c", 0644,self::$size);
-		self::$identifier = shmop_open(self::$key, "c", 0644, self::$size);
-		if (!self::$identifier) {
-		    Log::info("Couldn't create shared memory segment");
-		}
-		// Obtener tamaño del segmento de memoria compartida
-		self::$size = shmop_size(self::$identifier);
-		Log::info("SHM Block Size: " . self::$size . " has been created.");
+var $identifier	=0;
+var $key 		= "";
+var $size 		= 0;
+ 
+function __construct( $_key,$_permission,$_size ) {
+  
+  	$this->key 		= $_key;
+  	$this->size 	= $_size;
+  	Log::info("kreando..".$this->key." tamanio:".$this->size);
+  	//$this->identifier = shmop_open($this->key, "c", 0644,$this->size);
 
-	} 
-	public function static setValue( $_valor ) {
-		// Escribir una cadena de prueba en la memoria compartida
-		$shm_bytes_written = shmop_write(self::$identifier, $_valor, 0);
-		// @shm_put_var( self::$identifier , $_keyvar  , $_valor  );
+  	$this->identifier = shmop_open($_key, "c", 0644, $this->size);
+	if (!$this->identifier) {
+	    Log::info("Couldn't create shared memory segment");
 	}
-	 
-	public function static getValue( ) {
-		// Ahora vamos a leer la cadena de texto
-		$my_string = shmop_read(self::$identifier, 0, self::$size);
-		if (!$my_string) {
-		    Log::info("Couldn't read from shared memory block");
-		}
-		Log::info("The data inside shared memory was: " . $my_string );
-		return $my_string;
-		//return @shm_get_var( self::$identifier , $_keyvar );
+	// Obtener tamaño del segmento de memoria compartida
+	$this->size = shmop_size($this->identifier);
+	Log::info("SHM Block Size: " . $this->size . " has been created.");
+}
+ 
+function setValue( $_valor ) {
+	// Escribir una cadena de prueba en la memoria compartida
+	$shm_bytes_written = shmop_write($this->identifier, $_valor, 0);
+	// @shm_put_var( $this->identifier , $_keyvar  , $_valor  );
+}
+ 
+function getValue( ) {
+	// Ahora vamos a leer la cadena de texto
+	$my_string = shmop_read($this->identifier, 0, $this->size);
+	if (!$my_string) {
+	    Log::info("Couldn't read from shared memory block");
 	}
-	 
-	public function static eliminar( ) {
-		//Ahora vamos a eliminar y cerrar el segmento de memoria compartida
-		if (!shmop_delete(self::$identifier)) {
-		Log::info("couldn't mark shared memory block for deletion.");
-		}
+	Log::info("The data inside shared memory was: " . $my_string );
+	return $my_string;
+	//return @shm_get_var( $this->identifier , $_keyvar );
+}
+ 
+function eliminar( ) {
+	//Ahora vamos a eliminar y cerrar el segmento de memoria compartida
+	if (!shmop_delete($this->identifier)) {
+	Log::info("couldn't mark shared memory block for deletion.");
+	}
 
-	}
-	public function static close( ) {
-		shmop_close(self::$identifier);
-	}
+}
+function close( ) {
+	shmop_close($this->identifier);
+}
 }
