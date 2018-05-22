@@ -36,16 +36,16 @@ class NormalReportController extends BaseController
         if($code=="200" && $reason=="OK"){
           Log::error("Moviles en api:::".(string)$apiRta->getBody());
           //cantidad de octetos en la rta, es decir rta*8=xbits==es decir son los bytes
-         /* $length   = $apiRta->getHeader('Content-Length');
+         $length   = $apiRta->getHeader('Content-Length');
           Log::info("length::".$length[0]);
           $memvar = new MemVar( 100,420, $length[0] );
           $memvar->setValue( (string)$apiRta->getBody() );
           Log::info("puesto valor");
           $memvar->close();
           //Note: the 3rd and 4th should be entered as 0 if you are opening an existing memory segment. 
-          $memvar = new MemVar( 100,0,0 );
-          Log::info( "valor = ".$memvar->getValue());
-          $memvar->close();*/
+          //$memvar = new MemVar( 100,0,0 );
+          //Log::info( "valor = ".$memvar->getValue());
+          //$memvar->close();
         }else{
           Log::error("Bad Response :: code:".$code." reason::".$reason);
         }
