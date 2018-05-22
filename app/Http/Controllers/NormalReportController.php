@@ -14,6 +14,7 @@ use GuzzleHttp\Client;
 //Use Puerto;
 class NormalReportController extends BaseController
 {
+  private static $memvar=null;
   public function index(Request $request) {
     return "ok";
   }   
@@ -36,17 +37,18 @@ class NormalReportController extends BaseController
         if($code=="200" && $reason=="OK"){
           Log::error("Moviles en api:::".(string)$apiRta->getBody());
           //cantidad de octetos en la rta, es decir rta*8=xbits==es decir son los bytes
-         $length   = $apiRta->getHeader('Content-Length');
+          $length   = $apiRta->getHeader('Content-Length');
           Log::info("length::".$length[0]);
           $largo  = (int)$length[0];
-          $memvar = new MemVar( 0,420,$largo  );
-          $memvar->setValue( (string)$apiRta->getBody() );
+          self::$memvar->eliminar();
+          self::$memvar = new MemVar( 0,420,$largo  );
+          self::$memvar->setValue( (string)$apiRta->getBody() );
           Log::info("puesto valor");
-          $memvar->close();
+          self::$memvar->close();
           //Note: the 3rd and 4th should be entered as 0 if you are opening an existing memory segment. 
-          //$memvar = new MemVar( 100,0,0 );
+          //self::$memvar = new MemVar( 100,0,0 );
           //Log::info( "valor = ".$memvar->getValue());
-          //$memvar->close();
+          //self::$memvar->close();
         }else{
           Log::error("Bad Response :: code:".$code." reason::".$reason);
         }
@@ -82,8 +84,8 @@ class NormalReportController extends BaseController
   public function compruebaMovilMC($imei){
     //863835020075979
     //Note: the 3rd and 4th should be entered as 0 if you are opening an existing memory segment. 
-    $memvar       = new MemVar( 100,0,0 );
-    $jsonMoviles  = json_decode($memvar->getValue());
+    self::$memvar       = new MemVar( 100,0,0 );
+    $jsonMoviles  = json_decode(self::$memvar->getValue());
     var_dump($jsonMoviles);
     /*foreach ($jsonMoviles as $movil) {
       Log::info( "valor compruebaMovilMC = ".print_r($movil, true));
