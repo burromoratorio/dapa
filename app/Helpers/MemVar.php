@@ -26,13 +26,13 @@ function __construct( $_key,$_permission,$_size ) {
 	Log::info("SHM Block Size: " . self::$size . " has been created.");
 }
  
-function setValue( $_valor ) {
+function static setValue( $_valor ) {
 	// Escribir una cadena de prueba en la memoria compartida
 	$shm_bytes_written = shmop_write(self::$identifier, $_valor, 0);
 	// @shm_put_var( self::$identifier , $_keyvar  , $_valor  );
 }
  
-function getValue( ) {
+function static getValue( ) {
 	// Ahora vamos a leer la cadena de texto
 	$my_string = shmop_read(self::$identifier, 0, self::$size);
 	if (!$my_string) {
@@ -43,14 +43,14 @@ function getValue( ) {
 	//return @shm_get_var( self::$identifier , $_keyvar );
 }
  
-function eliminar( ) {
+function static eliminar( ) {
 	//Ahora vamos a eliminar y cerrar el segmento de memoria compartida
 	if (!shmop_delete(self::$identifier)) {
 	Log::info("couldn't mark shared memory block for deletion.");
 	}
 
 }
-function close( ) {
+function static close( ) {
 	shmop_close(self::$identifier);
 }
 }
