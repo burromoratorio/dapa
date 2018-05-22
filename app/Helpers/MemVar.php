@@ -86,6 +86,6 @@ final class MemVar
 
     }
     public function init(){
-    	Log::info("creando singleton.". $inst->author);
+    	Log::info("creando singleton.". $this->author);
     }
 }
