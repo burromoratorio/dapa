@@ -69,9 +69,9 @@ final class MemVar
         private $identifier = 0;
         private $key 		= "";
     	private $size  		= 0;
-       	private  static $inst= null;
-        if (self::$inst === null) {
-           self:: $inst = new MemVar();
+       	private $inst= null;
+        if ($inst === null) {
+           $inst = new MemVar();
         }
         Log::info("creando singleton");
         return $inst;
