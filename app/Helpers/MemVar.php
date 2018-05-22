@@ -16,7 +16,7 @@ function __construct( $_key,$_permission,$_size ) {
   	Log::info("kreando..".$this->key." tamanio:".$this->size);
   	//$this->identifier = shmop_open($this->key, "c", 0644,$this->size);
 
-  	$this->identifier = shmop_open($_key, "c", 0644, $this->size);
+  	$this->identifier = shmop_open($_key, "c", 0644, 100);
 	if (!$this->identifier) {
 	    Log::info("Couldn't create shared memory segment");
 	}
