@@ -14,7 +14,8 @@ use GuzzleHttp\Client;
 //Use Puerto;
 class NormalReportController extends BaseController
 {
-  private static $memvar=null;
+  static $memvar;
+  
   public function index(Request $request) {
     return "ok";
   }   
@@ -84,14 +85,14 @@ class NormalReportController extends BaseController
   public function compruebaMovilMC($imei){
     //863835020075979
     //Note: the 3rd and 4th should be entered as 0 if you are opening an existing memory segment. 
-    self::$memvar       = new MemVar( 100,0,0 );
-    $jsonMoviles  = json_decode(self::$memvar->getValue());
-    var_dump($jsonMoviles);
+    //self::$memvar       = new MemVar( 100,0,0 );
+    //$jsonMoviles  = json_decode(self::$memvar->getValue());
+    //var_dump($jsonMoviles);
     /*foreach ($jsonMoviles as $movil) {
       Log::info( "valor compruebaMovilMC = ".print_r($movil, true));
     }*/
     
-    $memvar->close();
+    //$memvar->close();
     return '1';
   }
   /*public static function dameMoviles(){
