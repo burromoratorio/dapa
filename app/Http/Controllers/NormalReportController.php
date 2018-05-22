@@ -29,7 +29,7 @@ class NormalReportController extends BaseController
       $jsonReq = $request->json()->all();
       //Log::error(print_r($jsonReq, true));
       if(isset($jsonReq["cadena"])){
-        $mcRta    = $this->compruebaMovilMC('863835020075979');
+       // $mcRta    = $this->compruebaMovilMC('863835020075979');
         $apiRta   = $this->obtenerMoviles();
         $code     = $apiRta->getStatusCode(); 
         $reason   = $apiRta->getReasonPhrase();
@@ -70,7 +70,6 @@ class NormalReportController extends BaseController
         ]);
   }
   protected function obtenerMoviles() {
-      //Se arrancan pruebas con guzzle
       Log::error("Buscando moviles en code.siacseguridad.com");
       // Create a client with a base URI
       $client = new Client(['base_uri' => 'http://code.siacseguridad.com:8080/api/']);
