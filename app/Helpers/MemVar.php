@@ -10,12 +10,14 @@ class MemVar {
 	static $key 		= "";
 
  
-	public function __construct( $_key,$_permission,$_size ) {
-	  	self::$key 		= $_key;
+	public function __construct( ) {
+	}
+	
+	public static inicializar( $_key,$_permission,$_size){
+		self::$key 		= $_key;
 	  	self::$size 	= $_size;
 	  	Log::info("kreando..".self::$key." tamanio:".self::$size);
 	}
-	
 	public private function crear(){
 		
 	  	//self::$identifier = shmop_open(self::$key, "c", 0644,self::$size);
