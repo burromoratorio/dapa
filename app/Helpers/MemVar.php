@@ -115,7 +115,7 @@ final class MemVar
 	}
 	public static function OpenToRead(){
 		Log::info("Abriendo solo para leer:". self::$shm_key."  size:".self::$size);
-		@$shid = shmop_open(0, "a", 0666, 0);
+		@$shid = shmop_open(self::$shm_key, "a", 0644, 0);
 		if (!empty($shid)) {
 	        Log::info("shared memory exists");
 		} else {
