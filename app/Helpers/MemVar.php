@@ -92,7 +92,7 @@ final class MemVar
     	self::$size = $s;
     	Log::info("Seteando valores. key:". self::$key."  size:".self::$size);
     	self::$identifier = shmop_open(self::$key, "c", 0644, self::$size);
-		if (self::$identifier) {
+		if ( !is_null(self::$identifier) ){
 		    return true;
 		}else{
 			Log::info("Couldn't create shared memory segment");
@@ -104,11 +104,11 @@ final class MemVar
 		return $shm_bytes_written;
 	}
 	public static function GetValue( ) {
-		$my_string = shmop_read(self::$identifier, 0, self::$size);
-		if (!$my_string) {
-		    Log::info("Couldn't read from shared memory block");
+		$my_string 	= "";
+		if ( !is_null(self::$identifier) ){
+			$my_string = shmop_read(self::$identifier, 0, self::$size);
+			Log::info("The data inside shared memory was: " . $my_string );
 		}
-		Log::info("The data inside shared memory was: " . $my_string );
 		return $my_string;
 	}
 }
