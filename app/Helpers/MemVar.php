@@ -90,6 +90,12 @@ final class MemVar
     public function init($k,$s){
     	self::$key 	= $k;
     	self::$size = $s;
-    	Log::info("creando singleton. key:". self::$key."  size:".self::$size);
-    }
+
+    	self::$identifier = shmop_open(self::$key, "c", 0644, self::$size);
+		if (!self::$identifier) {
+		    Log::info("Couldn't create shared memory segment");
+		}
+	    Log::info("Seteando valores. key:". self::$key."  size:".self::$size);
+	    
+	}
 }
