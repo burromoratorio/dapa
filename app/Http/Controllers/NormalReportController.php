@@ -42,7 +42,7 @@ class NormalReportController extends BaseController
           MemVar::Eliminar();
           $memvar = MemVar::Instance();
           if( $memvar->init(0,$largo) ){
-            $memvar->setValue( (string)$apiRta->getBody() );
+            //$memvar->setValue( (string)$apiRta->getBody() );
             MemVar::GetValue();
             MemVar::Eliminar();
           }else{
