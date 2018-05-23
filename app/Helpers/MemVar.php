@@ -103,7 +103,7 @@ final class MemVar
 		$shm_bytes_written = shmop_write(self::$identifier, $v, 0);
 		return $shm_bytes_written;
 	}
-	public function getValue( ) {
+	public static function GetValue( ) {
 		$my_string = shmop_read(self::$identifier, 0, self::$size);
 		if (!$my_string) {
 		    Log::info("Couldn't read from shared memory block");
