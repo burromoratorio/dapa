@@ -64,7 +64,7 @@ final class MemVar
      *
      * @return UserFactory
      */
-    private static $identifier = 0;
+    private static $identifier = null;
     private static $key  = '';
     private static $size = 0;
 
