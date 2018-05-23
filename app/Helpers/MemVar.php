@@ -92,11 +92,11 @@ final class MemVar
     	self::$size = $s;
     	Log::info("Seteando valores. key:". self::$key."  size:".self::$size);
     	self::$identifier = shmop_open(self::$key, "c", 0644, self::$size);
-		if (!self::$identifier) {
-		    Log::info("Couldn't create shared memory segment");
+		if (self::$identifier) {
 		    return true;
 		}else{
-			return false;
+			Log::info("Couldn't create shared memory segment");
+		    return false;
 		}
 	}
 	public function setValue( $v ) {
