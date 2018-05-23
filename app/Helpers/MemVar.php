@@ -67,7 +67,7 @@ final class MemVar
     private static $identifier = null;
     private static $key  = '';
     private static $size = 0;
-    private static $shm_key = ftok('/bin/ls', 't');
+    private static $shm_key = null;
 
     public static function Instance()
     {
@@ -91,6 +91,7 @@ final class MemVar
     public function init($k,$s){
     	self::$key 	= $k;
     	self::$size = $s;
+    	self::$shm_key = ftok('/bin/ls', 't');
     	Log::info("Seteando valores. key:". self::$shm_key."  size:".self::$size);
     	self::$identifier = shmop_open(self::$shm_key, "c", 0644, self::$size);
 		if ( !is_null(self::$identifier) ){
