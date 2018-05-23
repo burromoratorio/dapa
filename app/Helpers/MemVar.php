@@ -113,6 +113,10 @@ final class MemVar
 		}
 		return $my_string;
 	}
+	public static OpenToRead(){
+		Log::info("Abriendo solo para leer:". self::$shm_key."  size:".self::$size);
+    	self::$identifier = shmop_open(self::$shm_key, "c", 0, 0);
+	}
 	public static function Eliminar( ) {
 		Log::info("The identifier::::::::: " . self::$identifier );
 		if ( !is_null(self::$identifier) ){
