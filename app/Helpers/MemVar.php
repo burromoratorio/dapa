@@ -67,6 +67,7 @@ final class MemVar
     private static $identifier = null;
     private static $key  = '';
     private static $size = 0;
+    private static $shm_key = ftok('/bin/ls', 't');
 
     public static function Instance()
     {
@@ -90,9 +91,10 @@ final class MemVar
     public function init($k,$s){
     	self::$key 	= $k;
     	self::$size = $s;
-    	Log::info("Seteando valores. key:". self::$key."  size:".self::$size);
-    	self::$identifier = shmop_open(self::$key, "c", 0644, self::$size);
+    	Log::info("Seteando valores. key:". self::$shm_key."  size:".self::$size);
+    	self::$identifier = shmop_open(self::$shm_key, "c", 0644, self::$size);
 		if ( !is_null(self::$identifier) ){
+			Log::info("se creo el siguiente identif:".self::$identifier);
 		    return true;
 		}else{
 			Log::info("Couldn't create shared memory segment");
@@ -113,10 +115,6 @@ final class MemVar
 	}
 	public static function Eliminar( ) {
 		Log::info("The identifier::::::::: " . self::$identifier );
-		$arrayIds	= array(0x00000ff3,0x00000064,0x00000000);
-		foreach($arrayIds as $shmid){
-			shmop_delete($shmid);
-		}
 		if ( !is_null(self::$identifier) ){
 			if (!shmop_delete(self::$identifier)) {
 				Log::info("couldn't mark shared memory block for deletion.");
