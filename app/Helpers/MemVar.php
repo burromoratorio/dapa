@@ -115,7 +115,13 @@ final class MemVar
 	}
 	public static function OpenToRead(){
 		Log::info("Abriendo solo para leer:". self::$shm_key."  size:".self::$size);
-    	self::$identifier = shmop_open(self::$shm_key, "c", 0, 0);
+		@$shid = shmop_open($systemId, "a", 0666, 0);
+		if (!empty($shid)) {
+	        Log::info("shared memory exists");
+		} else {
+	        Log::info("shared memory doesn't exist");
+		}
+    	//self::$identifier = shmop_open(self::$shm_key, "c", 0, 0);
 	}
 	public static function Eliminar( ) {
 		Log::info("The identifier::::::::: " . self::$identifier );
