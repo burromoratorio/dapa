@@ -113,7 +113,7 @@ final class MemVar
 		}
 		return $my_string;
 	}
-	public static OpenToRead(){
+	public static function OpenToRead(){
 		Log::info("Abriendo solo para leer:". self::$shm_key."  size:".self::$size);
     	self::$identifier = shmop_open(self::$shm_key, "c", 0, 0);
 	}
