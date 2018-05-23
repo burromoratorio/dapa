@@ -50,7 +50,7 @@ class NormalReportController extends BaseController
             MemVar::Eliminar();
           }else{
 
-          }*/
+          }
           // new MemVar( 0,420,$largo  );
           //$memvar->setValue( (string)$apiRta->getBody() );
           Log::info("puesto valor");
