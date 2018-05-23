@@ -74,7 +74,7 @@ final class MemVar
         static $inst = null;
         if ($inst === null) {
             $inst = new MemVar();
-            
+            self::$shm_key = ftok('/bin/ls', 't');
         }
         Log::info("creando singleton");
         return $inst;
@@ -91,7 +91,6 @@ final class MemVar
     public function init($k,$s){
     	self::$key 	= $k;
     	self::$size = $s;
-    	self::$shm_key = ftok('/bin/ls', 't');
     	Log::info("Seteando valores. key:". self::$shm_key."  size:".self::$size);
     	self::$identifier = shmop_open(self::$shm_key, "c", 0644, self::$size);
 		if ( !is_null(self::$identifier) ){
