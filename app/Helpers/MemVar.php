@@ -112,6 +112,7 @@ final class MemVar
 		return $my_string;
 	}
 	public static function Eliminar( ) {
+		Log::info("The identifier::::::::: " . self::$identifier );
 		if ( !is_null(self::$identifier) ){
 			if (!shmop_delete(self::$identifier)) {
 				Log::info("couldn't mark shared memory block for deletion.");
