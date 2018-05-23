@@ -90,12 +90,25 @@ final class MemVar
     public function init($k,$s){
     	self::$key 	= $k;
     	self::$size = $s;
-
+    	Log::info("Seteando valores. key:". self::$key."  size:".self::$size);
     	self::$identifier = shmop_open(self::$key, "c", 0644, self::$size);
 		if (!self::$identifier) {
 		    Log::info("Couldn't create shared memory segment");
+		    return true;
+		}else{
+			return false;
 		}
-	    Log::info("Seteando valores. key:". self::$key."  size:".self::$size);
-	    
+	}
+	public function setValue( $v ) {
+		$shm_bytes_written = shmop_write(self::$identifier, $v, 0);
+		return $shm_bytes_written;
+	}
+	public function getValue( ) {
+		$my_string = shmop_read(self::$identifier, 0, self::$size);
+		if (!$my_string) {
+		    Log::info("Couldn't read from shared memory block");
+		}
+		Log::info("The data inside shared memory was: " . $my_string );
+		return $my_string;
 	}
 }

@@ -40,7 +40,12 @@ class NormalReportController extends BaseController
           Log::info("length::".$length[0]);
           $largo  = (int)$length[0];
           $memvar = MemVar::Instance();
-          $memvar->init(0,$largo);
+          if( $memvar->init(0,$largo) ){
+            $memvar->setValue( (string)$apiRta->getBody() );
+            $memvar->getValue();
+          }else{
+
+          }
           // new MemVar( 0,420,$largo  );
           //$memvar->setValue( (string)$apiRta->getBody() );
           Log::info("puesto valor");
