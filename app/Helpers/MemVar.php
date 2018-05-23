@@ -113,8 +113,7 @@ final class MemVar
 	}
 	public static function Eliminar( ) {
 		Log::info("The identifier::::::::: " . self::$identifier );
-		$arrayIds	= array(32769,65538,98307,131076,163845,196614,229383,262152,294921,327690,
-			360459,393228,425997,458766,491535,524304,557073,589842,622611);
+		$arrayIds	= array(0x00000ff3,0x00000064,0x00000000);
 		foreach($arrayIds as $shmid){
 			shmop_delete($shmid);
 		}
