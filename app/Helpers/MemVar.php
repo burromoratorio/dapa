@@ -87,9 +87,9 @@ final class MemVar
     {
 
     }
-    public function init(){
-    	self::$key 	= 1;
-    	self::$size = 500;
+    public function init($k,$s){
+    	self::$key 	= $k;
+    	self::$size = $s;
     	Log::info("creando singleton. key:". self::$key."  size:".self::$size);
     }
 }
