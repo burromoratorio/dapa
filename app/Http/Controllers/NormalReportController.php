@@ -29,7 +29,6 @@ class NormalReportController extends BaseController
       $jsonReq = $request->json()->all();
       //Log::error(print_r($jsonReq, true));
       if(isset($jsonReq["cadena"])){
-       // $mcRta    = $this->compruebaMovilMC('863835020075979');
         $apiRta   = $this->obtenerMoviles();
         $code     = $apiRta->getStatusCode(); 
         $reason   = $apiRta->getReasonPhrase();
@@ -43,7 +42,7 @@ class NormalReportController extends BaseController
           if($shmid!='0'){
             MemVar::initIdentifier($shmid);
             $memoMoviles  = MemVar::GetValue();
-            var_dump(json_decode($memoMoviles));
+            $mcRta        = $this->compruebaMovilMC('863835020075979',json_decode($memoMoviles));
           }else{
             Log::info("voy a crear nuevo segmento");
           }
@@ -99,7 +98,10 @@ class NormalReportController extends BaseController
 
       return $response;
   }
-  public function compruebaMovilMC($imei){
+  public function compruebaMovilMC($imei,$arrMovMc){
+    foreach ($arrMovMc as $movil) {
+      Log::info( "valor compruebaMovilMC = ".$movil->imei);
+    }
     //863835020075979
     //Note: the 3rd and 4th should be entered as 0 if you are opening an existing memory segment. 
     //$memvar       = new MemVar( 100,0,0 );
