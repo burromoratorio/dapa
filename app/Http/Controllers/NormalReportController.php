@@ -43,7 +43,7 @@ class NormalReportController extends BaseController
           if($shmid!='0'){
             MemVar::initIdentifier($shmid);
             $memoMoviles  = MemVar::GetValue();
-            var_dump($memoMoviles);
+            var_dump(json_decode($memoMoviles));
           }else{
             Log::info("voy a crear nuevo segmento");
           }
