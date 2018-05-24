@@ -39,7 +39,13 @@ class NormalReportController extends BaseController
          $length   = $apiRta->getHeader('Content-Length');
           Log::info("length::".$length[0]);
           $largo  = (int)$length[0];
-          MemVar::OpenToRead();
+          $shmid  = MemVar::OpenToRead();
+          if($shmid!='0'){
+            MemVar::initIdentifier($shmid);
+            MemVar::GetValue();
+          }else{
+            Log::info("voy a crear nuevo segmento");
+          }
           //MemVar::VaciaMemoria();
           //MemVar::GetValue();
           //MemVar::Eliminar();

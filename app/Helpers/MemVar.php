@@ -105,10 +105,14 @@ final class MemVar
 		$shm_bytes_written = shmop_write(self::$identifier, $v, 0);
 		return $shm_bytes_written;
 	}
+	public static function initIdentifier($shmid){
+		self::$identifier=$shmid;
+	}
 	public static function GetValue( ) {
 		$my_string 	= "";
 		if ( !is_null(self::$identifier) ){
-			$my_string = shmop_read(self::$identifier, 0, self::$size);
+			self::$size	= shmop_size(self::$identifier);
+			$my_string 	= shmop_read(self::$identifier, 0, self::$size);
 			Log::info("The data inside shared memory was: " . $my_string );
 		}
 		return $my_string;
@@ -119,8 +123,10 @@ final class MemVar
 		@$shid 			= shmop_open(self::$shm_key, "a", 0, 0);
 		if (!empty($shid)) {
 	        Log::info("shared memory exists");
+	        return $shmid;
 		} else {
 	        Log::info("shared memory doesn't exist");
+	        return '0';
 		}
     	//self::$identifier = shmop_open(self::$shm_key, "c", 0, 0);
 	}
