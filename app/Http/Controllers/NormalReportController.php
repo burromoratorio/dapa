@@ -100,7 +100,12 @@ class NormalReportController extends BaseController
   }
   public function compruebaMovilMC($imei,$arrMovMc){
     foreach ($arrMovMc as $movil) {
-      Log::info( "valor compruebaMovilMC = ".$movil->imei);
+      if($movil->imei==$imei){
+        Log::info( "valor ENCONTRADO compruebaMovilMC = ".$movil->imei."==".$imei);
+      }else{
+        Log::info( "NO ES = ".$movil->imei);
+      }
+      
     }
     //863835020075979
     //Note: the 3rd and 4th should be entered as 0 if you are opening an existing memory segment. 
