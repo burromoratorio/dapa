@@ -114,8 +114,9 @@ final class MemVar
 		return $my_string;
 	}
 	public static function OpenToRead(){
+		self::$shm_key 	= ftok('/bin/ls', 't');
 		Log::info("Abriendo solo para leer:". self::$shm_key."  size:".self::$size);
-		@$shid = shmop_open(self::$shm_key, "a", 0666, 0);
+		@$shid 			= shmop_open(self::$shm_key, "a", 0, 0);
 		if (!empty($shid)) {
 	        Log::info("shared memory exists");
 		} else {

@@ -40,10 +40,10 @@ class NormalReportController extends BaseController
           Log::info("length::".$length[0]);
           $largo  = (int)$length[0];
           MemVar::OpenToRead();
-          MemVar::VaciaMemoria();
+          //MemVar::VaciaMemoria();
           //MemVar::GetValue();
           //MemVar::Eliminar();
-          $memvar = MemVar::Instance();
+          /*$memvar = MemVar::Instance();
           if( $memvar->init(0,$largo) ){
             MemVar::OpenToRead();
             $memvar->setValue( (string)$apiRta->getBody() );
@@ -51,7 +51,7 @@ class NormalReportController extends BaseController
             //MemVar::Eliminar();
           }else{
 
-          }
+          }*/
           // new MemVar( 0,420,$largo  );
           //$memvar->setValue( (string)$apiRta->getBody() );
           Log::info("puesto valor");
