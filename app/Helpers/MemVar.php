@@ -115,7 +115,7 @@ final class MemVar
 	}
 	public static function OpenToRead(){
 		Log::info("Abriendo solo para leer:". self::$shm_key."  size:".self::$size);
-		@$shid = shmop_open(self::$shm_key, "a", 0644, 0);
+		@$shid = shmop_open(self::$shm_key, "a", 0666, 0);
 		if (!empty($shid)) {
 	        Log::info("shared memory exists");
 		} else {
@@ -134,6 +134,21 @@ final class MemVar
 				self::$key 			= '';
     			self::$size 		= 0;
 			}
+		}
+	}
+	public static function VaciaMemoria(){
+		$ipcs = array();
+		exec('ipcs', $ipcs);
+		foreach($ipcs as $row) {
+			$row = explode(' ', $row);
+		    if (!isset($row[1]))
+		        continue;
+		    $id  = trim($row[1]);
+		    if (!is_numeric($id))
+		        continue;
+		    // Note: Consider adding filters here if you want to selectively remove resources
+		    Log::info( "Removing Address {$id}" );
+		    @exec("ipcrm -m {$id}");
 		}
 	}
 }

@@ -40,6 +40,7 @@ class NormalReportController extends BaseController
           Log::info("length::".$length[0]);
           $largo  = (int)$length[0];
           MemVar::OpenToRead();
+          MemVar::VaciaMemoria();
           //MemVar::GetValue();
           //MemVar::Eliminar();
           $memvar = MemVar::Instance();
