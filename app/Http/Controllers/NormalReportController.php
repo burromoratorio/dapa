@@ -35,7 +35,7 @@ class NormalReportController extends BaseController
         if($code=="200" && $reason=="OK"){
           //Log::error("Moviles en api:::".(string)$apiRta->getBody());
           //cantidad de octetos en la rta, es decir rta*8=xbits==es decir son los bytes
-         $length   = $apiRta->getHeader('Content-Length');
+         $length   = $apiRta->getContentLength();//getHeader('Content-Length');
          Log::error("Content-Length:::".(print_r($length, true)));
           Log::info("length::".$length[0]);
           $largo  = (int)$length[0];
