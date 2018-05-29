@@ -96,8 +96,8 @@ class NormalReportController extends BaseController
       $client = new Client(['base_uri' => 'http://code.siacseguridad.com:8080/api/']);
       // Send a request to https://foo.com/api/test
       $response = $client->request('GET', 'equipos/1');
-
-      return $response;
+      
+      return $response->json();
   }
   public function compruebaMovilMC($imei,$arrMovMc){
     foreach ($arrMovMc as $movil) {
