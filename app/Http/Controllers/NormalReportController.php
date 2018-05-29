@@ -97,7 +97,7 @@ class NormalReportController extends BaseController
       // Send a request to https://foo.com/api/test
       $response = $client->request('GET', 'equipos/1');
       
-      return $response->json();
+      return $response;
   }
   public function compruebaMovilMC($imei,$arrMovMc){
     foreach ($arrMovMc as $movil) {
