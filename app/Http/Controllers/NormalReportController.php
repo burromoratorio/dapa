@@ -39,7 +39,7 @@ class NormalReportController extends BaseController
           Log::error("Content-Length:::".strlen($apiRta->getBody()));
            //$apiRta->getHeader('Content-Length');
           Log::info("length::".$length);
-          $largo  = (int)$length[0];
+          $largo  = (int)$length;
           $shmid  = MemVar::OpenToRead();
           if($shmid!='0'){
             MemVar::initIdentifier($shmid);
@@ -47,7 +47,10 @@ class NormalReportController extends BaseController
             $mcRta        = $this->compruebaMovilMC('352024025265533',json_decode($memoMoviles));
             if($mcRta=='0'){
               MemVar::VaciaMemoria();
+              $memvar = MemVar::Instance();
               MemVar::setValue($memoMoviles);
+              $memvar->init(0,$largo);
+              $memvar->setValue( $memoMoviles );
               //$memvar = MemVar::Instance()
             }else{
 
