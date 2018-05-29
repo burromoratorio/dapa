@@ -48,7 +48,6 @@ class NormalReportController extends BaseController
             if($mcRta=='0'){
               MemVar::VaciaMemoria();
               $memvar = MemVar::Instance();
-              MemVar::setValue($memoMoviles);
               $memvar->init(0,$largo);
               $memvar->setValue( $memoMoviles );
               //$memvar = MemVar::Instance()
@@ -57,6 +56,10 @@ class NormalReportController extends BaseController
             }
             
           }else{
+            MemVar::VaciaMemoria();
+            $memvar = MemVar::Instance();
+            $memvar->init(0,$largo);
+            $memvar->setValue( $memoMoviles );
             Log::info("voy a crear nuevo segmento");
           }
           //MemVar::VaciaMemoria();
