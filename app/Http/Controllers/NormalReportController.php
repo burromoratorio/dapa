@@ -44,7 +44,15 @@ class NormalReportController extends BaseController
           if($shmid!='0'){
             MemVar::initIdentifier($shmid);
             $memoMoviles  = MemVar::GetValue();
-            $mcRta        = $this->compruebaMovilMC('863835020075979',json_decode($memoMoviles));
+            $mcRta        = $this->compruebaMovilMC('352024025265533',json_decode($memoMoviles));
+            if($mcRta=='0'){
+              MemVar::VaciaMemoria();
+              MemVar::setValue($memoMoviles);
+              //$memvar = MemVar::Instance()
+            }else{
+
+            }
+            
           }else{
             Log::info("voy a crear nuevo segmento");
           }
@@ -101,10 +109,13 @@ class NormalReportController extends BaseController
       return $response;
   }
   public function compruebaMovilMC($imei,$arrMovMc){
+    $rta  = '0';
     foreach ($arrMovMc as $movil) {
       if($movil->imei==$imei){
+        $rta  = '1';
         Log::info( "valor ENCONTRADO compruebaMovilMC = ".$movil->imei."==".$imei);
       }else{
+        $rta  = '0';
         Log::info( "NO ES = ".$movil->imei);
       }
       
@@ -119,7 +130,7 @@ class NormalReportController extends BaseController
     }*/
     
     //$memvar->close();
-    return '1';
+    return $rta;
   }
   /*public static function dameMoviles(){
     Log::error("pidiendo moviles dameMoviles");
