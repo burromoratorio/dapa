@@ -117,6 +117,7 @@ class NormalReportController extends BaseController
   }
   public function compruebaMovilMC($imei,$arrMovMc){
     $rta  = '0';
+    Log::error(print_r($arrMovMc, true));
     foreach ($arrMovMc as $movil) {
       if($movil->imei==$imei){
         $rta  = '1';
