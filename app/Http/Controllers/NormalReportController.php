@@ -94,7 +94,7 @@ class NormalReportController extends BaseController
       // Create a client with a base URI
       $client = new Client(['base_uri' => 'http://code.siacseguridad.com:8080/api/']);
       // Send a request to https://foo.com/api/test
-      $response = $client->request('GET', 'moviles/cliente/1');
+      $response = $client->request('GET', 'equipos/1');
 
       return $response;
   }
