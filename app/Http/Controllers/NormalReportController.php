@@ -35,6 +35,7 @@ class NormalReportController extends BaseController
         if($code=="200" && $reason=="OK"){
           //Log::error("Moviles en api:::".(string)$apiRta->getBody());
           //cantidad de octetos en la rta, es decir rta*8=xbits==es decir son los bytes
+          $body     = $apiRta->getBody();
           $length   = strlen($apiRta->getBody());
           Log::error("Content-Length:::".strlen($apiRta->getBody()));
            //$apiRta->getHeader('Content-Length');
@@ -59,7 +60,7 @@ class NormalReportController extends BaseController
             MemVar::VaciaMemoria();
             $memvar = MemVar::Instance();
             $memvar->init(0,$largo);
-            $memvar->setValue( $memoMoviles );
+            $memvar->setValue( $body );
             Log::info("voy a crear nuevo segmento");
           }
           //MemVar::VaciaMemoria();
