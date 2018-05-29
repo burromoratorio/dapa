@@ -89,7 +89,7 @@ final class MemVar
 
     }
     public function init($k,$s){
-    	self::$key 	= $k;
+    	self::$shm_key = ftok('/bin/ls', 't');
     	self::$size = $s;
     	Log::info("Seteando valores. key:". self::$shm_key."  size:".self::$size);
     	self::$identifier = shmop_open(self::$shm_key, "c", 0644, self::$size);
