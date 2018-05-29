@@ -33,11 +33,10 @@ class NormalReportController extends BaseController
         $code     = $apiRta->getStatusCode(); 
         $reason   = $apiRta->getReasonPhrase();
         if($code=="200" && $reason=="OK"){
-          //Log::error("Moviles en api:::".(string)$apiRta->getBody());
+          Log::error("Moviles en api:::".(string)$apiRta->getBody());
           //cantidad de octetos en la rta, es decir rta*8=xbits==es decir son los bytes
-         $length   = $apiRta->getContentLength();//getHeader('Content-Length');
-         Log::error("Content-Length:::".(print_r($length, true)));
-          Log::info("length::".$length[0]);
+          $length   = Log::error("Content-Length:::".strlen($apiRta->getBody())); //$apiRta->getHeader('Content-Length');
+          Log::info("length::".$length);
           $largo  = (int)$length[0];
           $shmid  = MemVar::OpenToRead();
           if($shmid!='0'){
@@ -96,7 +95,7 @@ class NormalReportController extends BaseController
       $client = new Client(['base_uri' => 'http://code.siacseguridad.com:8080/api/']);
       // Send a request to https://foo.com/api/test
       $response = $client->request('GET', 'equipos/1');
-      
+
       return $response;
   }
   public function compruebaMovilMC($imei,$arrMovMc){
