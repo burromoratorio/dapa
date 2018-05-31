@@ -125,15 +125,12 @@ class NormalReportController extends BaseController
         if($movil->imei==$imei){
           $rta  = '1';
           Log::info( "valor ENCONTRADO compruebaMovilMC = ".$movil->imei."==".$imei);
-        }else{
-          $rta  = '0';
-          //Log::info( "NO ES = ".$movil->imei);
-        }
-        
+        }        
       }
     }else{
       $rta  = '0';
     }
+    return $rta;
     //863835020075979
     //Note: the 3rd and 4th should be entered as 0 if you are opening an existing memory segment. 
     //$memvar       = new MemVar( 100,0,0 );
@@ -144,7 +141,7 @@ class NormalReportController extends BaseController
     }*/
     
     //$memvar->close();
-    return $rta;
+    
   }
   /*public static function dameMoviles(){
     Log::error("pidiendo moviles dameMoviles");
