@@ -48,11 +48,11 @@ class NormalReportController extends BaseController
             $mcRta        = $this->compruebaMovilMC('352024025265533',json_decode($memoMoviles));
             if($mcRta=='0'){
               Log::info("El IMEI 352024025265533 no está en la memoria");
-              $mcRta        = $this->compruebaMovilMC('352024025265533',json_decode($apiRta->getBody()));
-              /*MemVar::VaciaMemoria();
+              //$mcRta        = $this->compruebaMovilMC('352024025265533',json_decode($apiRta->getBody()));
+              MemVar::VaciaMemoria();
               $memvar = MemVar::Instance();
               $memvar->init(0,$largo);
-              $memvar->setValue( $memoMoviles );*/
+              $memvar->setValue( $apiRta->getBody() );
             }else{
               Log::info("El IMEI 352024025265533 ESTA en la memoria");
             }
