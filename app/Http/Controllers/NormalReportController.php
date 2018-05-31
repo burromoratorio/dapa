@@ -35,33 +35,34 @@ class NormalReportController extends BaseController
         if($code=="200" && $reason=="OK"){
           //Log::error("Moviles en api:::".(string)$apiRta->getBody());
           //cantidad de octetos en la rta, es decir rta*8=xbits==es decir son los bytes
+          //$apiRta->getHeader('Content-Length');
           $body     = $apiRta->getBody();
           $length   = strlen($apiRta->getBody());
           Log::error("Content-Length:::".strlen($apiRta->getBody()));
-           //$apiRta->getHeader('Content-Length');
-          Log::info("length::".$length);
           $largo  = (int)$length;
           $shmid  = MemVar::OpenToRead();
           if($shmid!='0'){
+            Log::info("Existe el shmid->Verifico si el IMEI 352024025265533está dentro");
             MemVar::initIdentifier($shmid);
             $memoMoviles  = MemVar::GetValue();
             $mcRta        = $this->compruebaMovilMC('352024025265533',json_decode($memoMoviles));
             if($mcRta=='0'){
-              MemVar::VaciaMemoria();
+              Log::info("El IMEI 352024025265533 no está en la memoria");
+              /*MemVar::VaciaMemoria();
               $memvar = MemVar::Instance();
               $memvar->init(0,$largo);
-              $memvar->setValue( $memoMoviles );
-              //$memvar = MemVar::Instance()
+              $memvar->setValue( $memoMoviles );*/
             }else{
-
+              Log::info("El IMEI 352024025265533 ESTA en la memoria");
             }
             
           }else{
-            MemVar::VaciaMemoria();
+            Log::info("No existe el shmid->voy a crear nuevo segmento");
+            /*MemVar::VaciaMemoria();
             $memvar = MemVar::Instance();
             $memvar->init(0,$largo);
             $memvar->setValue( $body );
-            Log::info("voy a crear nuevo segmento");
+            */
           }
           //MemVar::VaciaMemoria();
           //MemVar::GetValue();
