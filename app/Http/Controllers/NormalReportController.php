@@ -31,7 +31,8 @@ class NormalReportController extends BaseController
       if(isset($jsonReq["cadena"])){
         //pruebas en obtencion de imei del json
         $arrCadena = app()->Puerto::changeString2array($jsonReq["cadena"]);
-        Log::info("se obtuvo este IMEI::".$arrCadena['IMEI']);
+        Log::error(print_r($jsonReq["cadena"], true));
+        Log::info("se obtuvo este IMEI::".print_r($arrCadena, true));
         $apiRta   = $this->obtenerMoviles();
         $code     = $apiRta->getStatusCode(); 
         $reason   = $apiRta->getReasonPhrase();
