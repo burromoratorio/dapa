@@ -32,44 +32,53 @@ class NormalReportController extends BaseController
         //pruebas en obtencion de imei del json
         $arrCadena = app()->Puerto::changeString2array($jsonReq["cadena"]);
         Log::info("se obtuvo este IMEI::".$arrCadena['IMEI']);
-        $apiRta   = $this->obtenerMoviles();
-        $code     = $apiRta->getStatusCode(); 
-        $reason   = $apiRta->getReasonPhrase();
-        if($code=="200" && $reason=="OK"){
-          $body     = $apiRta->getBody();
-          $length   = strlen($apiRta->getBody());
-          Log::error("Content-Length:::".strlen($apiRta->getBody()));
-          $largo  = (int)$length;
-          $shmid  = MemVar::OpenToRead();
-          if($shmid!='0'){
-            Log::info("Existe el shmid->Verifico si el IMEI 352024025265533está dentro");
-            MemVar::initIdentifier($shmid);
-            $memoMoviles  = MemVar::GetValue();
-            $mcRta        = $this->compruebaMovilMC($arrCadena['IMEI'],json_decode($memoMoviles));
-            if($mcRta=='0'){
-              Log::info("El IMEI ".$arrCadena['IMEI']." no está en la memoria");
-              //$mcRta        = $this->compruebaMovilMC('352024025265533',json_decode($apiRta->getBody()));
-              MemVar::VaciaMemoria();
-              $memvar = MemVar::Instance();
-              $memvar->init(0,$largo);
-              $memvar->setValue( $apiRta->getBody() );
-            }else{
-              Log::info("El IMEI ".$arrCadena['IMEI']." ESTA en la memoria");
-            }
-            
+        /*primero validaciones en MC*/
+        $shmid        = MemVar::OpenToRead();
+        $requestApi   = '0';
+        $mcRta        = '0';
+        if($shmid!='0'){
+          Log::info("Existe el shmid->Verifico si el IMEI ".$arrCadena['IMEI']." está dentro");
+          MemVar::initIdentifier($shmid);
+          $memoMoviles  = MemVar::GetValue();
+          $mcRta        = $this->compruebaMovilMC($arrCadena['IMEI'],json_decode($memoMoviles));
+          if($mcRta=='0'){
+            Log::info("El IMEI ".$arrCadena['IMEI']." no está en la memoria");
+            $requestApi   = '1';
           }else{
-            Log::info("No existe el shmid->voy a crear nuevo segmento");
-            /*MemVar::VaciaMemoria();
+            Log::info("El IMEI ".$arrCadena['IMEI']." ESTA en la memoria");
+          }
+        }else{
+          $requestApi   = '1';
+          Log::info("No existe el shmid->voy a crear nuevo segmento");
+        }
+        /*fin validaciones MC*/
+        /*cargo nuevos datos en MC API REQUEST y vuelvo a comprobar
+          si no está en la DDBB-->no sigo la ejecucion de esa cadena
+        */
+        $mcRta2        = '0';
+        if($requestApi   == '1'){
+          $apiRta   = $this->obtenerMoviles();
+          if($apiRta->getStatusCode()=="200" && $apiRta->getReasonPhrase()=="OK"){
+            $length   = strlen($apiRta->getBody());
+            $largo    = (int)$length;
+            Log::error("Content-Length:::".strlen($apiRta->getBody()));
+            MemVar::VaciaMemoria();
             $memvar = MemVar::Instance();
             $memvar->init(0,$largo);
-            $memvar->setValue( $body );
-            */
+            $memvar->setValue( $apiRta->getBody() );
+            $memoMoviles  = MemVar::GetValue();
+            $mcRta2        = $this->compruebaMovilMC($arrCadena['IMEI'],json_decode($memoMoviles));
+          }else{
+            Log::error("Bad Response :: code:".$code." reason::".$reason);
           }
-          
-        }else{
-          Log::error("Bad Response :: code:".$code." reason::".$reason);
         }
-        $rta  = $this->tratarReporte($jsonReq['cadena']);
+        /*Fin nuevaMC*/
+        if($mcRta2=='1'){
+          $rta  = $this->tratarReporte($jsonReq['cadena']);
+        }else{
+         Log::error("El IMEI:".$arrCadena['IMEI']." No esta en la DDBB-->desecho reporte");
+        }
+        
       }elseif($jsonReq["KEY"]=="NR"){
         Log::info("Ingresando por Puerto_lite");
         foreach($jsonReq["PA"] as $posicion){
