@@ -78,7 +78,7 @@ class PuertoController extends BaseController
     }
     public static function changeString2array($cadena){
         $campos    = array();
-        $arrCadena = explode(";",self::$cadena); 
+        $arrCadena = explode(";",$cadena); 
         foreach($arrCadena as $campo){
           $arrCampo = explode(",",$campo); 
           $key      = array_shift($arrCampo);
