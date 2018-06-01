@@ -36,6 +36,7 @@ class NormalReportController extends BaseController
         $shmid        = MemVar::OpenToRead();
         $requestApi   = '0';
         $mcRta        = '0';
+        $mcRta2       = '0';
         if($shmid!='0'){
           Log::info("Existe el shmid->Verifico si el IMEI ".$arrCadena['IMEI']." está dentro");
           MemVar::initIdentifier($shmid);
@@ -45,6 +46,7 @@ class NormalReportController extends BaseController
             Log::info("El IMEI ".$arrCadena['IMEI']." no está en la memoria");
             $requestApi   = '1';
           }else{
+            $mcRta2        = '1';
             Log::info("El IMEI ".$arrCadena['IMEI']." ESTA en la memoria");
           }
         }else{
@@ -55,7 +57,6 @@ class NormalReportController extends BaseController
         /*cargo nuevos datos en MC API REQUEST y vuelvo a comprobar
           si no está en la DDBB-->no sigo la ejecucion de esa cadena
         */
-        $mcRta2        = '0';
         if($requestApi   == '1'){
           $apiRta   = $this->obtenerMoviles();
           if($apiRta->getStatusCode()=="200" && $apiRta->getReasonPhrase()=="OK"){
