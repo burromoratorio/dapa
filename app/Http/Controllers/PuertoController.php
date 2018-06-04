@@ -10,7 +10,8 @@ use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\MovilController;
 use App\GprmcEntrada;
 use App\GprmcDesconexion;
-use App\GprmcAlarma;
+use App\Posiciones;
+
 
 class PuertoController extends BaseController
 {
@@ -198,7 +199,7 @@ class PuertoController extends BaseController
                 $odpField   = self::validateIndexCadena("ODP",$report);
                 $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0]);
                 
-                $posicion = GprmcEntrada::create([
+                $posicionGP = GprmcEntrada::create([
                     'imei'=>$report['IMEI'],'gprmc'=>'GPRMC,'.$report['GPRMC'],'pid'=>$pid,'sec_pid'=>$sec_pid,'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],
                     'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],'rumbo'=>$gprmcData[7],'io'=>'IO,'.$ioData['IO'],
                     'panico'=>$panico,'desenganche'=>'0','encendido'=>'0','corte'=>'0','dcx'=>'DCX,'.$dcxData['DCX'],
@@ -209,7 +210,15 @@ class PuertoController extends BaseController
                     'odp'=>'ODP,'.$odpField['ODP'],'mts_parciales'=>$odpField['ODP'],'ala'=>'ALA,'.$alaField['ALA'],'mcp'=>$mcpData['MCP'],
                     'cfg_principal'=>$mcpData[0],'cfg_auxiliar'=>$mcpData[1],
                     'per'=>$perField['PER'],'log'=>'cadena valida' ]);
-                $respuesta  = $posicion->pid;
+                $respuesta  = $posicionGP->pid;
+                //cmd_id=65/50 si es pos, cmd_id=49 si es evento o alarma
+                $posicion = Posiciones::create(['movil_id'=>'OBTENERLO','cmd_id'=>65,
+                                'tipo'=>0,'fecha'=>$fecha,'rumbo_id'=>$gprmcData[7],
+                                'latitud'=>$gprmcData[2],'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],
+                                'valida'=>1,'estado_u'=>,'estado_v'=>,'estado_w'=>,
+                                'km_recorridos'=>$kmtField['KMT'],
+                                'ltrs_consumidos'=>'KMT']);
+
             }else{
                 $respuesta  = "0";
             }
