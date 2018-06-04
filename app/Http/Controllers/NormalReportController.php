@@ -111,12 +111,15 @@ class NormalReportController extends BaseController
   }
   public function compruebaMovilMC($imei,$arrMovMc){
     $rta  = '0';
+    //uso el imei de seba 861075026533174
     //Log::error(print_r($arrMovMc, true));
     if($arrMovMc !="" && count($arrMovMc)>0){
       foreach ($arrMovMc as $movil) {
-        if($movil->imei==$imei){
+        //if($movil->imei==$imei){
+        if('861075026533174'==$imei){
           $rta  = '1';
           Log::info( "valor ENCONTRADO compruebaMovilMC = ".$movil->imei."==".$imei);
+          break;
         }        
       }
     }else{
