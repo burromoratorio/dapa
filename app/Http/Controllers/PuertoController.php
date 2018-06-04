@@ -212,12 +212,12 @@ class PuertoController extends BaseController
                     'per'=>$perField['PER'],'log'=>'cadena valida' ]);
                 $respuesta  = $posicionGP->pid;
                 //cmd_id=65/50 si es pos, cmd_id=49 si es evento o alarma
-                $posicion = Posiciones::create(['movil_id'=>'OBTENERLO','cmd_id'=>65,
+                /*$posicion = Posiciones::create(['movil_id'=>'OBTENERLO','cmd_id'=>65,
                                 'tipo'=>0,'fecha'=>$fecha,'rumbo_id'=>$gprmcData[7],
                                 'latitud'=>$gprmcData[2],'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],
                                 'valida'=>1,'estado_u'=>,'estado_v'=>,'estado_w'=>,
                                 'km_recorridos'=>$kmtField['KMT'],
-                                'ltrs_consumidos'=>'KMT']);
+                                'ltrs_consumidos'=>'KMT']);*/
 
             }else{
                 $respuesta  = "0";
