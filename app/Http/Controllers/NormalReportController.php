@@ -22,7 +22,9 @@ class NormalReportController extends BaseController
     desde Puerto_lite con ($jsonReq["KEY"]
   */  
   public function create(Request $request){
-    
+    Log::useDailyFiles(storage_path().'/logs/gprmc.log');
+    //Log::info(['Request'=>$request]);
+
     $method = $request->method();
     if ($request->isMethod('post')) {
 	    $rta="";
