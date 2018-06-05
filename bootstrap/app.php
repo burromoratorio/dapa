@@ -117,7 +117,7 @@ $app->configureMonologUsing(function (\Monolog\Logger $logger) {
     $maxFiles = env('APP_MAX_LOG_FILE');
     $filename = storage_path('logs/gprmc.log');
     $handler = new \Monolog\Handler\RotatingFileHandler($filename, $maxFiles);
-    $handler->setFilenameFormat('{date}-{filename}', 'Y-m-d');
+    $handler->setFilenameFormat('{filename}-{date}', 'Y-m-d');
     $formatter = new \Monolog\Formatter\LineFormatter(null, null, true, true);
     $handler->setFormatter($formatter);
     $logger->pushHandler($handler);
