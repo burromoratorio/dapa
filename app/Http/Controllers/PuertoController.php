@@ -28,7 +28,7 @@ class PuertoController extends BaseController
         self::$cadena=$paquete;
     }
     
-    public function analizeReport($paquete){
+    public function analizeReport($paquete,$movil_id){
         self::setCadena($paquete);
         $imei="";
         if(self::$cadena!=""){
@@ -37,7 +37,7 @@ class PuertoController extends BaseController
                 switch (self::positionOrDesconect($arrCampos)) {
                     case 'GPRMC':
                         Log::info("Reporte Normal GPRMC");
-                        $posicionID=self::storeGprmc($arrCampos);
+                        $posicionID=self::storeGprmc($arrCampos,$movil_id);
                         if($posicionID!='0'){
                            /* no guardo las alarmas en dbPrimaria
                            self::findAndStoreAlarm($arrCampos,$posicionID);*/
@@ -126,7 +126,7 @@ class PuertoController extends BaseController
     public static function validateIndexCadena($index,$arrCadena,$totalPieces=0){
         $directString = array("ALA","VBA","KMT","ODP","PER");
         $arrData = array();
-        //Log::info("indice a buscar:".$index);
+        Log::info("indice a buscar:".$index);
 
         if(isset($arrCadena[$index])){
           if(in_array($index, $directString)){
@@ -170,7 +170,7 @@ class PuertoController extends BaseController
     /* 
         funcion para almacenar un reporte de posicion
     */
-    public static function storeGprmc($report) {
+    public static function storeGprmc($report,$movil_id) {
         /*en db PRIMARIA agrego el pid
         y los caracteres GPRMC en el campo
         Ademas agrego los encabezados a cada campo
@@ -198,7 +198,7 @@ class PuertoController extends BaseController
                 $vbaField   = self::validateIndexCadena("VBA",$report);
                 $odpField   = self::validateIndexCadena("ODP",$report);
                 $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0]);
-                
+                Log::error($perField['PER']);
                 $posicionGP = GprmcEntrada::create([
                     'imei'=>$report['IMEI'],'gprmc'=>'GPRMC,'.$report['GPRMC'],'pid'=>$pid,'sec_pid'=>$sec_pid,'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],
                     'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],'rumbo'=>$gprmcData[7],'io'=>'IO,'.$ioData['IO'],
@@ -210,12 +210,14 @@ class PuertoController extends BaseController
                     'odp'=>'ODP,'.$odpField['ODP'],'mts_parciales'=>$odpField['ODP'],'ala'=>'ALA,'.$alaField['ALA'],'mcp'=>$mcpData['MCP'],
                     'cfg_principal'=>$mcpData[0],'cfg_auxiliar'=>$mcpData[1],
                     'per'=>$perField['PER'],'log'=>'cadena valida' ]);
-                $respuesta  = $posicionGP->pid;
+                $respuesta          = $posicionGP->pid;
+                $rumbo_id           = self::Rumbo2String( $gprmcData[7] );
+                //$ltrs_consumidos    = self::AnalPerifericos($perField['PER']);
                 //cmd_id=65/50 si es pos, cmd_id=49 si es evento o alarma
-                /*$posicion = Posiciones::create(['movil_id'=>'OBTENERLO','cmd_id'=>65,
-                                'tipo'=>0,'fecha'=>$fecha,'rumbo_id'=>$gprmcData[7],
+                /*$posicion = Posiciones::create(['movil_id'=>$movil_id,'cmd_id'=>65,
+                                'tipo'=>0,'fecha'=>$fecha,'rumbo_id'=>$rumbo_id,
                                 'latitud'=>$gprmcData[2],'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],
-                                'valida'=>1,'estado_u'=>,'estado_v'=>,'estado_w'=>,
+                                'valida'=>1,'estado_u'=>,'estado_v'=>,'estado_w'=>0,
                                 'km_recorridos'=>$kmtField['KMT'],
                                 'ltrs_consumidos'=>'KMT']);*/
 
@@ -258,7 +260,32 @@ class PuertoController extends BaseController
         ]);*/
         
     }
-   
-    
+    public static function Rumbo2String( $rumbo ){
+        $arrRumbo = array(1 =>'Norte',2=>'Noroeste',3=>'Oeste',4=>'Suroeste',5=>'Sur',6=>'Sureste',7=>'Este',8=>'Noreste');
+        if (($rumbo > 337.5 && $rumbo <= 22.5) || ($rumbo == 0)){
+            $intRumbo = 1;//North
+        }else if ($rumbo > 22.5 && $rumbo <= 67.5){
+            $intRumbo = 6;//NorthEast
+        }else if ($rumbo > 67.5 && $rumbo <= 112.5){
+            $intRumbo = 7;//East
+        }else if ($rumbo > 112.5 && $rumbo <= 157.5){
+            $intRumbo = 6;//SouthEast
+        }else if ($rumbo > 157.5 && $rumbo <= 202.5){
+            $intRumbo = 5;//South
+        }else if ($rumbo > 202.5 && $rumbo <= 247.5){
+            $intRumbo = 4;//SouthWest
+        }else if ($rumbo > 247.5 && $rumbo <= 292.5){
+            $intRumbo = 3;//West
+        }else if ($rumbo > 292.5 && $rumbo <= 337.5){
+            $intRumbo = 2;//NorthWest
+        }else{
+            $intRumbo = 1;
+        }
+        //return $arrRumbo[$intRumbo];
+        return $intRumbo;
+    }
+    public static function AnalPerifericos($cadena){
+
+    }
 
 }

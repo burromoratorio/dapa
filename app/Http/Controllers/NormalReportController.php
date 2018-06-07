@@ -71,14 +71,14 @@ class NormalReportController extends BaseController
             $memvar->init(0,$largo);
             $memvar->setValue( $apiRta->getBody() );
             $memoMoviles  = MemVar::GetValue();
-            $mcRta2        = $this->compruebaMovilMC($arrCadena['IMEI'],json_decode($memoMoviles));
+            $movil_id        = $this->compruebaMovilMC($arrCadena['IMEI'],json_decode($memoMoviles));
           }else{
             Log::error("Bad Response :: code:".$code." reason::".$reason);
           }
         }
         /*Fin nuevaMC*/
-        if($mcRta2=='1'){
-          $rta  = $this->tratarReporte($jsonReq['cadena']);
+        if($movil_id>0){
+          $rta  = $this->tratarReporte($jsonReq['cadena'],$movil_id);
         }else{
          Log::error("El IMEI:".$arrCadena['IMEI']." No esta en la DDBB-->desecho reporte");
         }
@@ -119,7 +119,7 @@ class NormalReportController extends BaseController
       foreach ($arrMovMc as $movil) {
         //if($movil->imei==$imei){
         if('861075026533174'==$imei){
-          $rta  = '1';
+          $rta  = $movil->movilOldId;
           Log::info( "valor ENCONTRADO compruebaMovilMC = ".$movil->imei."==".$imei);
           break;
         }        
@@ -137,11 +137,11 @@ class NormalReportController extends BaseController
         
         return json_encode($movileros);
     }*/
-  public function tratarReporte($cadena){
+  public function tratarReporte($cadena,$movil_id){
     $rta  = "";
     try{
       Log::error("cadena entrante en NormalReportController ::".$cadena);
-      $rta  = app()->Puerto->analizeReport($cadena) ;
+      $rta  = app()->Puerto->analizeReport($cadena,$movil_id) ;
     }catch(Exception $e){
       $rta  = "error";
       Log::error($e);
