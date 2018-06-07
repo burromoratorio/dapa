@@ -118,7 +118,7 @@ class NormalReportController extends BaseController
     if($arrMovMc !="" && count($arrMovMc)>0){
       foreach ($arrMovMc as $movil) {
         //if($movil->imei==$imei){
-        if('861075026533174'==$imei){
+        if('8610750265331745'==$imei){
           $rta  = $movil->movilOldId;
           Log::info( "valor ENCONTRADO compruebaMovilMC = ".$movil->imei."==".$imei);
           break;
