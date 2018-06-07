@@ -288,12 +288,11 @@ class PuertoController extends BaseController
         $arrPeriferico      = explode(',', $cadena);
         $valorPeriferico    = '';
         switch ($arrPeriferico[0]) {
-            case 'TMG':
+            case 'CAU':
                 $valorPeriferico    = $arrPeriferico[1];
                 $valorPeriferico    = intval(($valorPeriferico)*10);
-                //$valorPeriferico    = number_format($valorPeriferico, 2,'.');
-                break;
-            case 'CAU':
+                 break;
+            case 'TMG':
                 $valorPeriferico    = $arrPeriferico[1];
                 break;
             case 'IOM':
