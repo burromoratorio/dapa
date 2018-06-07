@@ -290,8 +290,8 @@ class PuertoController extends BaseController
         switch ($arrPeriferico[0]) {
             case 'TMG':
                 $valorPeriferico    = $arrPeriferico[1];
-                $valorPeriferico    = ($valorPeriferico*10);
-                $valorPeriferico    = number_format($valorPeriferico, 2);
+                $valorPeriferico    = (($valorPeriferico)*10);
+                $valorPeriferico    = number_format($valorPeriferico, 2,'.');
                 break;
             case 'CAU':
                 $valorPeriferico    = $arrPeriferico[1];
