@@ -75,6 +75,9 @@ class NormalReportController extends BaseController
           }else{
             Log::error("Bad Response :: code:".$code." reason::".$reason);
           }
+        }else{
+          $memoMoviles  = MemVar::GetValue();
+          $movil_id        = $this->compruebaMovilMC($arrCadena['IMEI'],json_decode($memoMoviles));
         }
         /*Fin nuevaMC*/
         if($movil_id>0){
