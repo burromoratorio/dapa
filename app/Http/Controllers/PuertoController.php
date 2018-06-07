@@ -211,13 +211,14 @@ class PuertoController extends BaseController
                 $respuesta          = $posicionGP->pid;
                 $rumbo_id           = self::Rumbo2String( $gprmcData[7] );
                 $ltrs_consumidos    = self::AnalPerifericos($perField['PER']);
+                Log::info("el anal devuelvio::".$ltrs_consumidos);
                 //cmd_id=65/50 si es pos, cmd_id=49 si es evento o alarma
                 /*$posicion = Posiciones::create(['movil_id'=>$movil_id,'cmd_id'=>65,
                                 'tipo'=>0,'fecha'=>$fecha,'rumbo_id'=>$rumbo_id,
                                 'latitud'=>$gprmcData[2],'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],
                                 'valida'=>1,'estado_u'=>,'estado_v'=>,'estado_w'=>0,
                                 'km_recorridos'=>$kmtField['KMT'],
-                                'ltrs_consumidos'=>'KMT']);*/
+                                'ltrs_consumidos'=>$ltrs_consumidos]);*/
 
             }else{
                 $respuesta  = "0";
@@ -284,7 +285,25 @@ class PuertoController extends BaseController
     }
     public static function AnalPerifericos($cadena){
         Log::error(print_r($cadena, true));
-        return 'TMG,120,25';
+        $arrPeriferico      = explode(',', $cadena);
+        $valorPeriferico    = '';
+        switch ($arrPeriferico[0]) {
+            case 'TMG':
+                $valorPeriferico    = $arrPeriferico[1];
+                $valorPeriferico    = ($valorPeriferico*10);
+                $valorPeriferico    = number_format($valorPeriferico, 2);
+                break;
+            case 'CAU':
+                $valorPeriferico    = $arrPeriferico[1];
+                break;
+            case 'IOM':
+                # code...
+                break;
+            default:
+                # code...
+                break;
+        }
+        return $valorPeriferico;
     }
 
 }
