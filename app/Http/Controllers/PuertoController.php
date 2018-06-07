@@ -127,7 +127,7 @@ class PuertoController extends BaseController
         $directString = array("ALA","VBA","KMT","ODP","PER");
         $arrData = array();
         Log::info("indice a buscar:".$index);
-
+        Log::error(print_r($arrCadena, true));
         if(isset($arrCadena[$index])){
           if(in_array($index, $directString)){
             $arrData[$index] = $arrCadena[$index];

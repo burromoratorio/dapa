@@ -31,6 +31,7 @@ class NormalReportController extends BaseController
       $jsonReq = $request->json()->all();
       //Log::error(print_r($jsonReq, true));
       if(isset($jsonReq["cadena"])){
+        Log::error($jsonReq["cadena"]);
         //pruebas en obtencion de imei del json -->el imei de sebas 861075026533174
         $arrCadena = app()->Puerto::changeString2array($jsonReq["cadena"]);
         $arrCadena['IMEI']  = '861075026533174';
