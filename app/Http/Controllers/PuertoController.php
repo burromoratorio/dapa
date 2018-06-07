@@ -126,8 +126,7 @@ class PuertoController extends BaseController
     public static function validateIndexCadena($index,$arrCadena,$totalPieces=0){
         $directString = array("ALA","VBA","KMT","ODP","PER");
         $arrData = array();
-        Log::info("indice a buscar:".$index);
-        Log::error(print_r($arrCadena, true));
+        //Log::info("indice a buscar:".$index);
         if(isset($arrCadena[$index])){
           if(in_array($index, $directString)){
             $arrData[$index] = $arrCadena[$index];
@@ -198,7 +197,6 @@ class PuertoController extends BaseController
                 $vbaField   = self::validateIndexCadena("VBA",$report);
                 $odpField   = self::validateIndexCadena("ODP",$report);
                 $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0]);
-                Log::error($perField['PER']);
                 $posicionGP = GprmcEntrada::create([
                     'imei'=>$report['IMEI'],'gprmc'=>'GPRMC,'.$report['GPRMC'],'pid'=>$pid,'sec_pid'=>$sec_pid,'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],
                     'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],'rumbo'=>$gprmcData[7],'io'=>'IO,'.$ioData['IO'],
@@ -212,7 +210,7 @@ class PuertoController extends BaseController
                     'per'=>$perField['PER'],'log'=>'cadena valida' ]);
                 $respuesta          = $posicionGP->pid;
                 $rumbo_id           = self::Rumbo2String( $gprmcData[7] );
-                //$ltrs_consumidos    = self::AnalPerifericos($perField['PER']);
+                $ltrs_consumidos    = self::AnalPerifericos($perField['PER']);
                 //cmd_id=65/50 si es pos, cmd_id=49 si es evento o alarma
                 /*$posicion = Posiciones::create(['movil_id'=>$movil_id,'cmd_id'=>65,
                                 'tipo'=>0,'fecha'=>$fecha,'rumbo_id'=>$rumbo_id,
@@ -285,7 +283,8 @@ class PuertoController extends BaseController
         return $intRumbo;
     }
     public static function AnalPerifericos($cadena){
-
+        Log::error(print_r($cadena, true));
+        return 'TMG,120,25';
     }
 
 }
