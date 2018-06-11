@@ -312,7 +312,7 @@ class PuertoController extends BaseController
         return $valorPeriferico;
     }
     public static function Gprmc2Data( $arrCadena ){
-        Log::error(print_r($gprmc, true));
+        Log::error(print_r($arrCadena, true));
         //$arrCadena  = explode( ',', $gprmc );
         //latitud
         $latitud    = self::ConvertirCoordenada( $arrCadena[self::OFFSET_LATITUD], $arrCadena[self::OFFSET_NS] );
