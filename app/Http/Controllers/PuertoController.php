@@ -11,7 +11,9 @@ use App\Http\Controllers\MovilController;
 use App\GprmcEntrada;
 use App\GprmcDesconexion;
 use App\Posiciones;
-
+/*Helpers*/
+use App\Helpers\MemVar;
+use GuzzleHttp\Client;
 
 class PuertoController extends BaseController
 {
@@ -24,6 +26,7 @@ class PuertoController extends BaseController
     const OFFSET_EW     = 5;
     const OFFSET_VELOCIDAD= 6;
     const OFFSET_RUMBO  = 7;
+    const $modoArr      = [0=>"RESET",1=>"NORMAL",2=>"CORTE",3=>"BLOQUEO DE INHIBICIÓN",4=>"ALARMA"];
     private function __clone() {} //Prevent any copy of this object
     private function __wakeup() {}
     public function __construct($moviles) { 
@@ -218,7 +221,8 @@ class PuertoController extends BaseController
                 $rumbo_id           = self::Rumbo2String( $gprmcData[7] );
                 $ltrs_consumidos    = self::AnalPerifericos($perField['PER']);
                 $arrInfoGprmc       = self::Gprmc2Data($gprmcData);
-                Log::error(print_r($movil_id, true));
+                $estado_v           = self::ModPrecencia($ioData['IO']);
+                //Log::error(print_r($movil_id, true));
                 //cmd_id=65/50 si es pos, cmd_id=49 si es evento o alarma
                 $posicion = Posiciones::create(['movil_id'=>intval($movil_id),'cmd_id'=>65,
                                 'tipo'=>0,'fecha'=>$fecha,'rumbo_id'=>$arrInfoGprmc['rumbo'],
@@ -345,6 +349,14 @@ class PuertoController extends BaseController
         
         }
     public static function ModPrecencia($arrPrescense){
-
+        $modo   = 1;
+        $memoMoviles    = MemVar::GetValue();
+        $movil_old      = $memoMoviles->where('equipo_id',6761);
+        Log::error(print_r($movil_old, true));
+        //json_decode($memoMoviles)
+        if($arrPrescense[2]=='O01' || $arrPrescense[3]=='O11'){
+            $modo   =   2;
+        }
+        return $modo;
     }
 }
