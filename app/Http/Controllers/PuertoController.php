@@ -221,8 +221,9 @@ class PuertoController extends BaseController
                 Log::error(print_r($arrInfoGprmc, true));
                 //cmd_id=65/50 si es pos, cmd_id=49 si es evento o alarma
                 $posicion = Posiciones::create(['movil_id'=>$movil_id,'cmd_id'=>65,
-                                'tipo'=>0,'fecha'=>$fecha,'rumbo_id'=>$arrInfoGprmc[3],
-                                'latitud'=>$arrInfoGprmc[0],'longitud'=>$arrInfoGprmc[1],'velocidad'=>$arrInfoGprmc[2],
+                                'tipo'=>0,'fecha'=>$fecha,'rumbo_id'=>$arrInfoGprmc['rumbo'],
+                                'latitud'=>$arrInfoGprmc['latitud'],'longitud'=>$arrInfoGprmc['longitud'],
+                                'velocidad'=>$arrInfoGprmc['velocidad'],
                                 'valida'=>1,'estado_u'=>4,'estado_v'=>145,'estado_w'=>0,
                                 'km_recorridos'=>$kmtField['KMT'],
                                 'ltrs_consumidos'=>$ltrs_consumidos]);
