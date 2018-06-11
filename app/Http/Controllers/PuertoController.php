@@ -18,6 +18,12 @@ class PuertoController extends BaseController
 
     private static $cadena;
     protected static $moviles_activos = null;
+    const OFFSET_LATITUD= 3;
+    const OFFSET_NS     = 4;
+    const OFFSET_LONGITUD= 5;
+    const OFFSET_EW     = 6;
+    const OFFSET_VELOCIDAD= 7;
+    const OFFSET_RUMBO  = 8;
     private function __clone() {} //Prevent any copy of this object
     private function __wakeup() {}
     public function __construct($moviles) { 
@@ -211,7 +217,7 @@ class PuertoController extends BaseController
                 $respuesta          = $posicionGP->pid;
                 $rumbo_id           = self::Rumbo2String( $gprmcData[7] );
                 $ltrs_consumidos    = self::AnalPerifericos($perField['PER']);
-                Log::info("el anal devuelvio::".$ltrs_consumidos);
+                $arrInfoGprmc       = self::Gprmc2Data($gprmcData);
                 //cmd_id=65/50 si es pos, cmd_id=49 si es evento o alarma
                 /*$posicion = Posiciones::create(['movil_id'=>$movil_id,'cmd_id'=>65,
                                 'tipo'=>0,'fecha'=>$fecha,'rumbo_id'=>$rumbo_id,
@@ -304,5 +310,39 @@ class PuertoController extends BaseController
         }
         return $valorPeriferico;
     }
-
-}
+    public static function Gprmc2Data( $gprmc ){
+        Log::error(print_r($gprmc, true));
+        $arrCadena  = explode( ',', $gprmc );
+        //latitud
+        $latitud    = self::ConvertirCoordenada( $arrCadena[self::OFFSET_LATITUD], $arrCadena[self::OFFSET_NS] );
+        //lingitud
+        $longitud   = self::ConvertirCoordenada( $arrCadena[self::OFFSET_LONGITUD], $arrCadena[self::OFFSET_EW] );
+        $velocidad  = $arrCadena[self::OFFSET_VELOCIDAD];
+        $rumbo      = $arrCadena[self::OFFSET_RUMBO];
+        return array(
+            'latitud'   => $latitud,
+            'longitud'  => $longitud,
+            'velocidad' => $velocidad,
+            'rumbo'     => self::Rumbo2String($rumbo)
+        );
+    }
+    public static function ConvertirCoordenada( $coord, $hemisphere ) {
+        if ($hemisphere == "N" || $hemisphere == "E") // North - East => Positivo
+        {
+            $signo = 1;
+        }else{
+            $signo = -1;
+        }
+        
+        $coord /= 100.0; // Quedan los grados como enteros
+        $grados = ((int)($coord)); // Resguarda los grados
+        $coord -= $grados; // Le quita los grados
+        $coord *= 100.0; // Lo lleva al formato inicial sin los grados
+        $coord /= 60; // Lo lleva a decimales de grado
+        $coord += $grados; // Le agrega los grados
+        $coord *= $signo; // Le pone el signo segun norte o sur
+        
+        return $coord;
+        
+        }
+    }
