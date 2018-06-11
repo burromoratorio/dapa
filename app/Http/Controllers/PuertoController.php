@@ -26,7 +26,7 @@ class PuertoController extends BaseController
     const OFFSET_EW     = 5;
     const OFFSET_VELOCIDAD= 6;
     const OFFSET_RUMBO  = 7;
-    const $modoArr      = [0=>"RESET",1=>"NORMAL",2=>"CORTE",3=>"BLOQUEO DE INHIBICIÓN",4=>"ALARMA"];
+    private static $modoArr      = [0=>"RESET",1=>"NORMAL",2=>"CORTE",3=>"BLOQUEO DE INHIBICIÓN",4=>"ALARMA"];
     private function __clone() {} //Prevent any copy of this object
     private function __wakeup() {}
     public function __construct($moviles) { 
