@@ -11,7 +11,7 @@ class Posiciones extends Model
     protected $connection = 'siac';
     protected $primaryKey = 'posicion_id';    
     protected $fillable = array('movil_id','cmd_id','tipo', 'fecha','rumbo_id', 'fecha', 'latitud','longitud',
-                            'velocidad','valida','estado_u','estavo_v','estado_w','km_recorridos','referencia',
+                            'velocidad','valida','estado_u','estado_v','estado_w','km_recorridos','referencia',
                             'ltrs_consumidos','ltrs_100','rpm','ancho_pasada');
 
     public function movil() {
