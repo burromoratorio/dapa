@@ -220,12 +220,12 @@ class PuertoController extends BaseController
                 $arrInfoGprmc       = self::Gprmc2Data($gprmcData);
                 Log::error(print_r($arrInfoGprmc, true));
                 //cmd_id=65/50 si es pos, cmd_id=49 si es evento o alarma
-                /*$posicion = Posiciones::create(['movil_id'=>$movil_id,'cmd_id'=>65,
-                                'tipo'=>0,'fecha'=>$fecha,'rumbo_id'=>$rumbo_id,
-                                'latitud'=>$gprmcData[2],'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],
-                                'valida'=>1,'estado_u'=>,'estado_v'=>,'estado_w'=>0,
+                $posicion = Posiciones::create(['movil_id'=>$movil_id,'cmd_id'=>65,
+                                'tipo'=>0,'fecha'=>$fecha,'rumbo_id'=>$arrInfoGprmc[3],
+                                'latitud'=>$arrInfoGprmc[0],'longitud'=>$arrInfoGprmc[1],'velocidad'=>$arrInfoGprmc[2],
+                                'valida'=>1,'estado_u'=>4,'estado_v'=>145,'estado_w'=>0,
                                 'km_recorridos'=>$kmtField['KMT'],
-                                'ltrs_consumidos'=>$ltrs_consumidos]);*/
+                                'ltrs_consumidos'=>$ltrs_consumidos]);
 
             }else{
                 $respuesta  = "0";
@@ -312,8 +312,6 @@ class PuertoController extends BaseController
         return $valorPeriferico;
     }
     public static function Gprmc2Data( $arrCadena ){
-        Log::error(print_r($arrCadena, true));
-        //$arrCadena  = explode( ',', $gprmc );
         //latitud
         $latitud    = self::ConvertirCoordenada( $arrCadena[self::OFFSET_LATITUD], $arrCadena[self::OFFSET_NS] );
         //lingitud
@@ -334,7 +332,6 @@ class PuertoController extends BaseController
         }else{
             $signo = -1;
         }
-        
         $coord /= 100.0; // Quedan los grados como enteros
         $grados = ((int)($coord)); // Resguarda los grados
         $coord -= $grados; // Le quita los grados
@@ -346,4 +343,7 @@ class PuertoController extends BaseController
         return $coord;
         
         }
+    public static function ModPrecencia($arrPrescense){
+
     }
+}
