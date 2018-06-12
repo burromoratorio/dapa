@@ -194,7 +194,6 @@ class PuertoController extends BaseController
             $gprmcVal   = self::validateGprmc($gprmcData);
             if($gprmcVal){
                 $ioData     = self::validateIndexCadena("IO",$report,2);
-                Log::error(print_r($ioData, true));
                 $panico     = str_replace("I0", "",$ioData[0] );
                 $dcxData    = self::validateIndexCadena("DCX",$report,2);
                 $preData    = self::validateIndexCadena("PRE",$report,2);
@@ -220,18 +219,18 @@ class PuertoController extends BaseController
                     'per'=>$perField['PER'],'log'=>'cadena valida' ]);
                 $respuesta          = $posicionGP->pid;
                 $rumbo_id           = self::Rumbo2String( $gprmcData[7] );
-                $ltrs_consumidos    = self::AnalPerifericos($perField['PER']);
+                $dataPerifericos    = self::AnalPerifericos($perField['PER']);
+                Log::error(print_r($dataPerifericos, true));
                 $arrInfoGprmc       = self::Gprmc2Data($gprmcData);
                 $estado_v           = self::ModPrecencia($ioData['IO']);
                 // Driver code
                 $memoMoviles    = MemVar::GetValue();
                 $memoMoviles    = json_decode($memoMoviles);
-                $encontrado         = self::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, 351687032250002);
-                if($encontrado== false) {
+                $encontrado     = self::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, 351687032250002);
+                if($encontrado== false){
                     Log::info("NOOOO Existeeeees");
                     $estado_u   = 0;
-                }
-                else {
+                }else{
                     Log::info("TIENE MOVIL_ID::".$encontrado->movilOldId);
                     $estado_u   = $encontrado->estado_u;
                 }
@@ -242,9 +241,9 @@ class PuertoController extends BaseController
                                 'tipo'=>0,'fecha'=>$fecha,'rumbo_id'=>$arrInfoGprmc['rumbo'],
                                 'latitud'=>$arrInfoGprmc['latitud'],'longitud'=>$arrInfoGprmc['longitud'],
                                 'velocidad'=>$arrInfoGprmc['velocidad'],
-                                'valida'=>1,'estado_u'=>$estado_u,'estado_v'=>145,'estado_w'=>0,
+                                'valida'=>1,'estado_u'=>$estado_u,'estado_v'=>$dataPerifericos['mod_presencia'],'estado_w'=>0,
                                 'km_recorridos'=>$kmtField['KMT'],
-                                'ltrs_consumidos'=>$ltrs_consumidos]);*/
+                                'ltrs_consumidos'=>$dataPerifericos['ltrs']]);*/
 
             }else{
                 $respuesta  = "0";
@@ -311,24 +310,28 @@ class PuertoController extends BaseController
     }
     public static function AnalPerifericos($cadena){
         Log::error(print_r($cadena, true));
-        $arrPeriferico      = explode(',', $cadena);
-        $valorPeriferico    = '';
+        $arrPeriferico     = explode(',', $cadena);
+        $valorPeriferico   = '';
+        $perifericos       = array("ltrs"=>0,"mod_presencia"=>1,"tmg"=>0); 
         switch ($arrPeriferico[0]) {
             case 'CAU':
                 $valorPeriferico    = $arrPeriferico[1];
                 $valorPeriferico    = intval(($valorPeriferico)*10);
+                $perifericos["ltrs"]= $valorPeriferico;
                  break;
             case 'TMG':
-                $valorPeriferico    = $arrPeriferico[1];
+                array_shift($arrPeriferico);
+                $valorPeriferico    = implode(',',$arrPeriferico);
+                $perifericos["tmg"] = $valorPeriferico;
                 break;
             case 'IOM':
-                # code...
+                $perifericos["mod_presencia"]= $arrPeriferico[3];
                 break;
             default:
                 # code...
                 break;
         }
-        return $valorPeriferico;
+        return $perifericos;
     }
     public static function Gprmc2Data( $arrCadena ){
         //latitud
