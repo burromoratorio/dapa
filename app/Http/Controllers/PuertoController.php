@@ -374,10 +374,10 @@ class PuertoController extends BaseController
             return true;
         elseif ($arr[$mid]->imei > $x) {
             // call binarySearch on [start, mid - 1]
-            return binarySearch($arr, $start, $mid - 1, $x);
+            return self::binarySearch($arr, $start, $mid - 1, $x);
         }else {
             // call binarySearch on [mid + 1, end]
-            return binarySearch($arr, $mid + 1, $end, $x);
+            return self::binarySearch($arr, $mid + 1, $end, $x);
         }
     }
  
