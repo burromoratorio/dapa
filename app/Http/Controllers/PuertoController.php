@@ -222,10 +222,10 @@ class PuertoController extends BaseController
                 $ltrs_consumidos    = self::AnalPerifericos($perField['PER']);
                 $arrInfoGprmc       = self::Gprmc2Data($gprmcData);
                 $estado_v           = self::ModPrecencia($ioData['IO']);
-                $encontrado         = self::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, 359231037704523);
                 // Driver code
                 $memoMoviles    = MemVar::GetValue();
                 $memoMoviles    = json_decode($memoMoviles);
+                $encontrado         = self::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, 359231037704523);
                 if($encontrado== false) {
                     Log::info("NOOOO Existeeeees");
                 }
