@@ -234,13 +234,13 @@ class PuertoController extends BaseController
                 
                 //Log::error(print_r($movil_id, true));
                 //cmd_id=65/50 si es pos, cmd_id=49 si es evento o alarma
-                $posicion = Posiciones::create(['movil_id'=>intval($movil_id),'cmd_id'=>65,
+                /*$posicion = Posiciones::create(['movil_id'=>intval($movil_id),'cmd_id'=>65,
                                 'tipo'=>0,'fecha'=>$fecha,'rumbo_id'=>$arrInfoGprmc['rumbo'],
                                 'latitud'=>$arrInfoGprmc['latitud'],'longitud'=>$arrInfoGprmc['longitud'],
                                 'velocidad'=>$arrInfoGprmc['velocidad'],
                                 'valida'=>1,'estado_u'=>4,'estado_v'=>145,'estado_w'=>0,
                                 'km_recorridos'=>$kmtField['KMT'],
-                                'ltrs_consumidos'=>$ltrs_consumidos]);
+                                'ltrs_consumidos'=>$ltrs_consumidos]);*/
 
             }else{
                 $respuesta  = "0";
@@ -367,6 +367,7 @@ class PuertoController extends BaseController
     }
     
     public static function binarySearch(Array $arr, $start, $end, $x){
+        Log::info("comparando::".$arr[$mid]->imei ."==". $x);
         if ($end < $start)
             return false;
         $mid = floor(($end + $start)/2);
