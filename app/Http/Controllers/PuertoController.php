@@ -222,6 +222,16 @@ class PuertoController extends BaseController
                 $ltrs_consumidos    = self::AnalPerifericos($perField['PER']);
                 $arrInfoGprmc       = self::Gprmc2Data($gprmcData);
                 $estado_v           = self::ModPrecencia($ioData['IO']);
+                // Driver code
+                $memoMoviles    = MemVar::GetValue();
+                $memoMoviles    = json_decode($memoMoviles);
+                if(self::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, 868326022683809) == true) {
+                    Log::info(" Existeeeees");
+                }
+                else {
+                    Log::info("NOOOO Existeeeees");
+                }
+                
                 //Log::error(print_r($movil_id, true));
                 //cmd_id=65/50 si es pos, cmd_id=49 si es evento o alarma
                 $posicion = Posiciones::create(['movil_id'=>intval($movil_id),'cmd_id'=>65,
@@ -350,13 +360,25 @@ class PuertoController extends BaseController
         }
     public static function ModPrecencia($arrPrescense){
         $modo   = 1;
-        $memoMoviles    = MemVar::GetValue();
-        $movil_old      = $memoMoviles->where('equipo_id',6761);
-        Log::error(print_r($movil_old, true));
-        //json_decode($memoMoviles)
         if($arrPrescense[2]=='O01' || $arrPrescense[3]=='O11'){
             $modo   =   2;
         }
         return $modo;
     }
+    
+    public static function binarySearch(Array $arr, $start, $end, $x){
+        if ($end < $start)
+            return false;
+        $mid = floor(($end + $start)/2);
+        if ($arr[$mid]->imei == $x) 
+            return true;
+        elseif ($arr[$mid]->imei > $x) {
+            // call binarySearch on [start, mid - 1]
+            return binarySearch($arr, $start, $mid - 1, $x);
+        }else {
+            // call binarySearch on [mid + 1, end]
+            return binarySearch($arr, $mid + 1, $end, $x);
+        }
+    }
+ 
 }
