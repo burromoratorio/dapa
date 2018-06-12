@@ -367,10 +367,10 @@ class PuertoController extends BaseController
     }
     
     public static function binarySearch(Array $arr, $start, $end, $x){
-        Log::info("comparando::".$arr[$mid]->imei ."==". $x);
         if ($end < $start)
             return false;
         $mid = floor(($end + $start)/2);
+        Log::info("comparando::".$arr[$mid]->imei ."==". $x);
         if ($arr[$mid]->imei == $x) 
             return true;
         elseif ($arr[$mid]->imei > $x) {
