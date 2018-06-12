@@ -194,6 +194,7 @@ class PuertoController extends BaseController
             $gprmcVal   = self::validateGprmc($gprmcData);
             if($gprmcVal){
                 $ioData     = self::validateIndexCadena("IO",$report,2);
+                Log::error(print_r($ioData, true));
                 $panico     = str_replace("I0", "",$ioData[0] );
                 $dcxData    = self::validateIndexCadena("DCX",$report,2);
                 $preData    = self::validateIndexCadena("PRE",$report,2);
@@ -228,9 +229,11 @@ class PuertoController extends BaseController
                 $encontrado         = self::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, 351687032250002);
                 if($encontrado== false) {
                     Log::info("NOOOO Existeeeees");
+                    $estado_u   = 0;
                 }
                 else {
                     Log::info("TIENE MOVIL_ID::".$encontrado->movilOldId);
+                    $estado_u   = $encontrado->estado_u;
                 }
                 
                 //Log::error(print_r($movil_id, true));
@@ -239,7 +242,7 @@ class PuertoController extends BaseController
                                 'tipo'=>0,'fecha'=>$fecha,'rumbo_id'=>$arrInfoGprmc['rumbo'],
                                 'latitud'=>$arrInfoGprmc['latitud'],'longitud'=>$arrInfoGprmc['longitud'],
                                 'velocidad'=>$arrInfoGprmc['velocidad'],
-                                'valida'=>1,'estado_u'=>4,'estado_v'=>145,'estado_w'=>0,
+                                'valida'=>1,'estado_u'=>$estado_u,'estado_v'=>145,'estado_w'=>0,
                                 'km_recorridos'=>$kmtField['KMT'],
                                 'ltrs_consumidos'=>$ltrs_consumidos]);*/
 
@@ -368,15 +371,14 @@ class PuertoController extends BaseController
     }
     
     public static function binarySearch(Array $arr, $start, $end, $x){
-        Log::info("inicio::".$start." fin::".$end);
         if ($end < $start)
             return false;
         $mid = floor(($end + $start)/2);
-        Log::info("comparando::".$arr[$mid]->imei ."==". $x);
+        //Log::info("comparando::".$arr[$mid]->imei ."==". $x);
         if ($arr[$mid]->imei == $x) 
             return $arr[$mid];
         elseif ($arr[$mid]->imei > $x) {
-            Log::info($arr[$mid]->imei .">". $x);
+            //Log::info($arr[$mid]->imei .">". $x);
             // call binarySearch on [start, mid - 1]
             return self::binarySearch($arr, $start, $mid - 1, $x);
         }else {
