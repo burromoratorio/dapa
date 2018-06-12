@@ -222,14 +222,15 @@ class PuertoController extends BaseController
                 $ltrs_consumidos    = self::AnalPerifericos($perField['PER']);
                 $arrInfoGprmc       = self::Gprmc2Data($gprmcData);
                 $estado_v           = self::ModPrecencia($ioData['IO']);
+                $encontrado         = self::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, 359231037704523);
                 // Driver code
                 $memoMoviles    = MemVar::GetValue();
                 $memoMoviles    = json_decode($memoMoviles);
-                if(self::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, 861075026533174) == true) {
-                    Log::info(" Existeeeees");
+                if($encontrado== false) {
+                    Log::info("NOOOO Existeeeees");
                 }
                 else {
-                    Log::info("NOOOO Existeeeees");
+                    Log::info("TIENE MOVIL_ID::".$encontrado->movilOldId);
                 }
                 
                 //Log::error(print_r($movil_id, true));
@@ -373,7 +374,7 @@ class PuertoController extends BaseController
         $mid = floor(($end + $start)/2);
         Log::info("comparando::".$arr[$mid]->imei ."==". $x);
         if ($arr[$mid]->imei == $x) 
-            return true;
+            return $arr[$mid];
         elseif ($arr[$mid]->imei > $x) {
             Log::info($arr[$mid]->imei .">". $x);
             // call binarySearch on [start, mid - 1]
