@@ -367,6 +367,7 @@ class PuertoController extends BaseController
     }
     
     public static function binarySearch(Array $arr, $start, $end, $x){
+        Log::info("inicio::".$start." fin::".$end);
         if ($end < $start)
             return false;
         $mid = floor(($end + $start)/2);
