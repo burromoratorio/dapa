@@ -116,11 +116,11 @@ class NormalReportController extends BaseController
   }
   public function compruebaMovilMC($imei,$arrMovMc){
     $rta  = '0';
-    //uso el imei de seba 861075026533174
-    $movil->IMEI= 861075026533174;
     //Log::error(print_r($arrMovMc, true));
     if($arrMovMc !="" && count($arrMovMc)>0){
       foreach ($arrMovMc as $movil) {
+        //uso el imei de seba 861075026533174
+        //$movil->IMEI= 861075026533174;
         if($movil->imei==$imei){
           $rta  = $movil->movilOldId;
           //devuelvo el movilid de la chata hilux por ahora
