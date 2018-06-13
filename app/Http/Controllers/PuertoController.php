@@ -217,16 +217,17 @@ class PuertoController extends BaseController
                     'odp'=>'ODP,'.$odpField['ODP'],'mts_parciales'=>$odpField['ODP'],'ala'=>'ALA,'.$alaField['ALA'],'mcp'=>$mcpData['MCP'],
                     'cfg_principal'=>$mcpData[0],'cfg_auxiliar'=>$mcpData[1],
                     'per'=>$perField['PER'],'log'=>'cadena valida' ]);
-                $respuesta          = $posicionGP->pid;
-                $rumbo_id           = self::Rumbo2String( $gprmcData[7] );
-                $dataPerifericos    = self::AnalPerifericos($perField['PER']);
+                $respuesta      = $posicionGP->pid;
+                $rumbo_id       = self::Rumbo2String( $gprmcData[7] );
+                $dataPerifericos= self::AnalPerifericos($perField['PER']);
                 Log::error(print_r($dataPerifericos, true));
-                $arrInfoGprmc       = self::Gprmc2Data($gprmcData);
-                $estado_v           = self::ModPrecencia($ioData['IO']);
+                $arrInfoGprmc   = self::Gprmc2Data($gprmcData);
+                $estado_v       = self::ModPrecencia($ioData['IO']);
                 // Driver code
                 $memoMoviles    = MemVar::GetValue();
                 $memoMoviles    = json_decode($memoMoviles);
-                $encontrado     = self::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, 351687032250002);
+                $report['IMEI'] = 351687032250002;
+                $encontrado     = self::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $report['IMEI']);
                 if($encontrado== false){
                     Log::info("NOOOO Existeeeees");
                     $estado_u   = 0;
