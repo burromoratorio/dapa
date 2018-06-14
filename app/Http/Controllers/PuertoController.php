@@ -224,7 +224,7 @@ class PuertoController extends BaseController
                 }else{
                    $info        = self::AnalPerifericos($perField['PER']); 
                 }
-                Log::error(print_r($dataPerifericos, true));
+                Log::error(print_r($info, true));
                 $arrInfoGprmc   = self::Gprmc2Data($gprmcData);
                 // Driver code
                 $memoMoviles    = MemVar::GetValue();
