@@ -207,32 +207,33 @@ class PuertoController extends BaseController
                 $odpField   = self::validateIndexCadena("ODP",$report);
                 $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0]);
                 $posicionGP = GprmcEntrada::create([
-                    'imei'=>$report['IMEI'],'gprmc'=>'GPRMC,'.$report['GPRMC'],'pid'=>$pid,'sec_pid'=>$sec_pid,'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],
-                    'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],'rumbo'=>$gprmcData[7],'io'=>'IO,'.$ioData['IO'],
-                    'panico'=>$panico,'desenganche'=>'0','encendido'=>'0','corte'=>'0','dcx'=>'DCX,'.$dcxData['DCX'],
-                    'senial'=>$dcxData[0],'tasa_error'=>$dcxData[1],'pre'=>'PRE,'.$preData['PRE'],'sim_activa'=>$preData[0],
-                    'sim_roaming'=>$preData[1],'vba'=>$vbaField['VBA'],'voltaje_bateria'=>$vbaField['VBA'],
-                    'fr'=>'FR,'.$frData['FR'],'frecuencia_reporte'=>$frData[0],'tipo_reporte'=>$frData[1],'lac'=>'LAC,'.$lacData['LAC'],
-                    'cod_area'=>$lacData[0],'id_celda'=>$lacData[1],'kmt'=>'KMT,'.$kmtField['KMT'],'km_totales'=>$kmtField['KMT'],
-                    'odp'=>'ODP,'.$odpField['ODP'],'mts_parciales'=>$odpField['ODP'],'ala'=>'ALA,'.$alaField['ALA'],'mcp'=>$mcpData['MCP'],
-                    'cfg_principal'=>$mcpData[0],'cfg_auxiliar'=>$mcpData[1],
-                    'per'=>$perField['PER'],'log'=>'cadena valida' ]);
+                    'imei'=>$report['IMEI'],'gprmc'=>'GPRMC,'.$report['GPRMC'],'pid'=>$pid,'sec_pid'=>$sec_pid,
+                    'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],
+                    'rumbo'=>$gprmcData[7],'io'=>'IO,'.$ioData['IO'],'panico'=>$panico,'desenganche'=>'0','encendido'=>'0',
+                    'corte'=>'0','dcx'=>'DCX,'.$dcxData['DCX'],'senial'=>$dcxData[0],'tasa_error'=>$dcxData[1],
+                    'pre'=>'PRE,'.$preData['PRE'],'sim_activa'=>$preData[0],'sim_roaming'=>$preData[1],'vba'=>$vbaField['VBA'],
+                    'voltaje_bateria'=>$vbaField['VBA'],'fr'=>'FR,'.$frData['FR'],'frecuencia_reporte'=>$frData[0],
+                    'tipo_reporte'=>$frData[1],'lac'=>'LAC,'.$lacData['LAC'],'cod_area'=>$lacData[0],'id_celda'=>$lacData[1],
+                    'kmt'=>'KMT,'.$kmtField['KMT'],'km_totales'=>$kmtField['KMT'],'odp'=>'ODP,'.$odpField['ODP'],
+                    'mts_parciales'=>$odpField['ODP'],'ala'=>'ALA,'.$alaField['ALA'],'mcp'=>$mcpData['MCP'],
+                    'cfg_principal'=>$mcpData[0],'cfg_auxiliar'=>$mcpData[1],'per'=>$perField['PER'],'log'=>'cadena valida' ]);
                 $respuesta      = $posicionGP->pid;
                 $rumbo_id       = self::Rumbo2String( $gprmcData[7] );
-                $dataPerifericos= self::AnalPerifericos($perField['PER']);
+                if($perField['PER']=='NULL'){
+                    $info       = self::ModPrecencia($ioData['IO']);
+                }else{
+                   $info        = self::AnalPerifericos($perField['PER']); 
+                }
                 Log::error(print_r($dataPerifericos, true));
                 $arrInfoGprmc   = self::Gprmc2Data($gprmcData);
-                $estado_v       = self::ModPrecencia($ioData['IO']);
                 // Driver code
                 $memoMoviles    = MemVar::GetValue();
                 $memoMoviles    = json_decode($memoMoviles);
                 $report['IMEI'] = 351687032250002;
                 $encontrado     = self::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $report['IMEI']);
                 if($encontrado== false){
-                    Log::info("NOOOO Existeeeees");
                     $estado_u   = 0;
                 }else{
-                    Log::info("TIENE MOVIL_ID::".$encontrado->movilOldId);
                     $estado_u   = $encontrado->estado_u;
                 }
                 
@@ -242,9 +243,9 @@ class PuertoController extends BaseController
                                 'tipo'=>0,'fecha'=>$fecha,'rumbo_id'=>$arrInfoGprmc['rumbo'],
                                 'latitud'=>$arrInfoGprmc['latitud'],'longitud'=>$arrInfoGprmc['longitud'],
                                 'velocidad'=>$arrInfoGprmc['velocidad'],
-                                'valida'=>1,'estado_u'=>$estado_u,'estado_v'=>$dataPerifericos['mod_presencia'],'estado_w'=>0,
+                                'valida'=>1,'estado_u'=>$estado_u,'estado_v'=>$info['mod_presencia'],'estado_w'=>0,
                                 'km_recorridos'=>$kmtField['KMT'],
-                                'ltrs_consumidos'=>$dataPerifericos['ltrs']]);*/
+                                'ltrs_consumidos'=>$info['ltrs']]);*/
 
             }else{
                 $respuesta  = "0";
@@ -310,10 +311,11 @@ class PuertoController extends BaseController
         return $intRumbo;
     }
     public static function AnalPerifericos($cadena){
-        Log::error(print_r($cadena, true));
+        //Log::error(print_r($cadena, true));
+        Log::info("ingresa por AnalPerifericos porque Per!=NULL");
         $arrPeriferico     = explode(',', $cadena);
         $valorPeriferico   = '';
-        $perifericos       = array("ltrs"=>0,"mod_presencia"=>1,"tmg"=>0); 
+        $perifericos       = array("ltrs"=>0,"mod_presencia"=>1,"tmg"=>0,"panico"=>0,"desenganche"=>0); 
         switch ($arrPeriferico[0]) {
             case 'CAU':
                 $valorPeriferico    = $arrPeriferico[1];
@@ -328,11 +330,27 @@ class PuertoController extends BaseController
             case 'IOM':
                 $perifericos["mod_presencia"]= $arrPeriferico[3];
                 break;
+            case 'BIO':
+            //falta ejemplo de sebas para armar cadena
+                $perifericos["mod_presencia"]= $arrPeriferico[3];
+                break;
             default:
                 # code...
                 break;
         }
         return $perifericos;
+    }
+    public static function ModPrecencia($arrPrescense){
+        Log::info("ingresa por modPresencia porque PER==NULL");
+        $modo   = 1;
+        $IOEstados       = array("ltrs"=>0,"mod_presencia"=>1,"tmg"=>0,"panico"=>0,"desenganche"=>0);
+        if($arrPrescense[2]=='O01' || $arrPrescense[2]=='O11'){
+            $IOEstados['modo']   =   2;
+        }
+        if($arrPrescense[1]=='I00'){
+            $IOEstados['panico']   =   1;
+        }
+        return $IOEstados;
     }
     public static function Gprmc2Data( $arrCadena ){
         //latitud
@@ -365,28 +383,18 @@ class PuertoController extends BaseController
         
         return $coord;
         
-        }
-    public static function ModPrecencia($arrPrescense){
-        $modo   = 1;
-        if($arrPrescense[2]=='O01' || $arrPrescense[3]=='O11'){
-            $modo   =   2;
-        }
-        return $modo;
     }
     
     public static function binarySearch(Array $arr, $start, $end, $x){
         if ($end < $start)
             return false;
         $mid = floor(($end + $start)/2);
-        //Log::info("comparando::".$arr[$mid]->imei ."==". $x);
         if ($arr[$mid]->imei == $x) 
             return $arr[$mid];
         elseif ($arr[$mid]->imei > $x) {
-            //Log::info($arr[$mid]->imei .">". $x);
             // call binarySearch on [start, mid - 1]
             return self::binarySearch($arr, $start, $mid - 1, $x);
         }else {
-            Log::info($arr[$mid]->imei ."<". $x);
             // call binarySearch on [mid + 1, end]
             return self::binarySearch($arr, $mid + 1, $end, $x);
         }
