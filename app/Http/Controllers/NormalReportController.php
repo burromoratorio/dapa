@@ -69,19 +69,19 @@ class NormalReportController extends BaseController
             $memvar = MemVar::Instance();
             $memvar->init(0,$largo);
             $memvar->setValue( $apiRta->getBody() );
-            $shmid        = MemVar::OpenToRead();
-            $movil_id     = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
+            $shmid  = MemVar::OpenToRead();
+            $movil  = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
           }else{
             Log::error("Bad Response :: code:".$code." reason::".$reason);
           }
         }else{
           //$memoMoviles  = MemVar::GetValue();
-          $shmid        = MemVar::OpenToRead();
-          $movil_id     = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
+          $shmid   = MemVar::OpenToRead();
+          $movil   = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
         }
         /*Fin nuevaMC*/
         if($movil!=false){
-          $rta  = $this->tratarReporte($jsonReq['cadena'],$movil);
+          $rta    = $this->tratarReporte($jsonReq['cadena'],$movil);
         }else{
          Log::error("El IMEI:".$arrCadena['IMEI']." No esta en la DDBB-->desecho reporte");
         }
