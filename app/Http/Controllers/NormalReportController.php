@@ -43,10 +43,8 @@ class NormalReportController extends BaseController
         $mcRta2       = '0';
         if($shmid!='0'){
           Log::info("Existe el shmid->Verifico si el IMEI ".$arrCadena['IMEI']." está dentro");
-          MemVar::initIdentifier($shmid);
-          $memoMoviles  = MemVar::GetValue();
-          $mcRta        = $this->compruebaMovilMC($arrCadena['IMEI'],json_decode($memoMoviles));
-          if($mcRta=='0'){
+          $mcRta        = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
+          if($mcRta==false){
             Log::info("El IMEI ".$arrCadena['IMEI']." no está en la memoria");
             $requestApi   = '1';
           }else{
@@ -71,18 +69,19 @@ class NormalReportController extends BaseController
             $memvar = MemVar::Instance();
             $memvar->init(0,$largo);
             $memvar->setValue( $apiRta->getBody() );
-            $memoMoviles  = MemVar::GetValue();
-            $movil_id        = $this->compruebaMovilMC($arrCadena['IMEI'],json_decode($memoMoviles));
+            $shmid        = MemVar::OpenToRead();
+            $movil_id     = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
           }else{
             Log::error("Bad Response :: code:".$code." reason::".$reason);
           }
         }else{
-          $memoMoviles  = MemVar::GetValue();
-          $movil_id        = $this->compruebaMovilMC($arrCadena['IMEI'],json_decode($memoMoviles));
+          //$memoMoviles  = MemVar::GetValue();
+          $shmid        = MemVar::OpenToRead();
+          $movil_id     = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
         }
         /*Fin nuevaMC*/
-        if($movil_id>0){
-          $rta  = $this->tratarReporte($jsonReq['cadena'],$movil_id);
+        if($movil!=false){
+          $rta  = $this->tratarReporte($jsonReq['cadena'],$movil);
         }else{
          Log::error("El IMEI:".$arrCadena['IMEI']." No esta en la DDBB-->desecho reporte");
         }
@@ -115,8 +114,15 @@ class NormalReportController extends BaseController
 
       return $response;
   }
-  public function compruebaMovilMC($imei,$arrMovMc){
-    $rta  = '0';
+  public function compruebaMovilMC($imei,$shmid){
+    //Movil Binary Search 
+    MemVar::initIdentifier($shmid);
+    $memoMoviles    = MemVar::GetValue();
+    $memoMoviles    = json_decode($memoMoviles);
+    $imei           = 351687032250002;
+    $encontrado     = app()->Puerto::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $imei);
+    return $encontrado;
+    /*$rta  = '0';
     //Log::error(print_r($arrMovMc, true));
     if($arrMovMc !="" && count($arrMovMc)>0){
       foreach ($arrMovMc as $movil) {
@@ -134,7 +140,7 @@ class NormalReportController extends BaseController
       $rta  = '0';
     }
     return $rta;
-    
+    */
   }
   /*public static function dameMoviles(){
     Log::error("pidiendo moviles dameMoviles");
@@ -143,11 +149,11 @@ class NormalReportController extends BaseController
         
         return json_encode($movileros);
     }*/
-  public function tratarReporte($cadena,$movil_id){
+  public function tratarReporte($cadena,$movil){
     $rta  = "";
     try{
       Log::error("cadena entrante en NormalReportController ::".$cadena);
-      $rta  = app()->Puerto->analizeReport($cadena,$movil_id) ;
+      $rta  = app()->Puerto->analizeReport($cadena,$movil) ;
     }catch(Exception $e){
       $rta  = "error";
       Log::error($e);

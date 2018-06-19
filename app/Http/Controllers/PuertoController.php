@@ -37,7 +37,7 @@ class PuertoController extends BaseController
         self::$cadena=$paquete;
     }
     
-    public function analizeReport($paquete,$movil_id){
+    public function analizeReport($paquete,$movil){
         self::setCadena($paquete);
         $imei="";
         if(self::$cadena!=""){
@@ -46,7 +46,7 @@ class PuertoController extends BaseController
                 switch (self::positionOrDesconect($arrCampos)) {
                     case 'GPRMC':
                         Log::info("Reporte Normal GPRMC");
-                        $posicionID=self::storeGprmc($arrCampos,$movil_id);
+                        $posicionID=self::storeGprmc($arrCampos,$movil);
                         if($posicionID!='0'){
                            /* no guardo las alarmas en dbPrimaria
                            self::findAndStoreAlarm($arrCampos,$posicionID);*/
@@ -178,7 +178,7 @@ class PuertoController extends BaseController
     /* 
         funcion para almacenar un reporte de posicion
     */
-    public static function storeGprmc($report,$movil_id) {
+    public static function storeGprmc($report,$movil) {
         /*en db PRIMARIA agrego el pid
         y los caracteres GPRMC en el campo
         Ademas agrego los encabezados a cada campo
@@ -189,16 +189,7 @@ class PuertoController extends BaseController
         $sec_pid    = rand(0,1000);
         $errorLog   = "";
         Log::info("Validando cadena a insertar...".$report['GPRMC']);
-        //Movil Binary Search 
-        $memoMoviles    = MemVar::GetValue();
-        $memoMoviles    = json_decode($memoMoviles);
-        $report['IMEI'] = 351687032250002;
-        $encontrado     = self::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $report['IMEI']);
-        if($encontrado== false){
-            $estado_u   = 0;
-        }else{
-            $estado_u   = $encontrado->estado_u;
-        }
+        //aca estaba la binary search 
         if($report['GPRMC']!=''){
             $gprmcData  = explode(",",$report['GPRMC']);
             $gprmcVal   = self::validateGprmc($gprmcData);
@@ -238,11 +229,11 @@ class PuertoController extends BaseController
                 $arrInfoGprmc   = self::Gprmc2Data($gprmcData);
                 //Log::error(print_r($movil_id, true));
                 //cmd_id=65/50 si es pos, cmd_id=49 si es evento o alarma
-                /*$posicion = Posiciones::create(['movil_id'=>intval($movil_id),'cmd_id'=>65,
+                /*$posicion = Posiciones::create(['movil_id'=>intval($movil->movilOldId),'cmd_id'=>65,
                                 'tipo'=>0,'fecha'=>$fecha,'rumbo_id'=>$arrInfoGprmc['rumbo'],
                                 'latitud'=>$arrInfoGprmc['latitud'],'longitud'=>$arrInfoGprmc['longitud'],
                                 'velocidad'=>$arrInfoGprmc['velocidad'],
-                                'valida'=>1,'estado_u'=>$estado_u,'estado_v'=>$info['mod_presencia'],'estado_w'=>0,
+                                'valida'=>1,'estado_u'=>$movil->estado_u,'estado_v'=>$info['mod_presencia'],'estado_w'=>0,
                                 'km_recorridos'=>$kmtField['KMT'],
                                 'ltrs_consumidos'=>$info['ltrs']]);*/
 
