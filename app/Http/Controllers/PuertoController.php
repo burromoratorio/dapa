@@ -189,6 +189,16 @@ class PuertoController extends BaseController
         $sec_pid    = rand(0,1000);
         $errorLog   = "";
         Log::info("Validando cadena a insertar...".$report['GPRMC']);
+        //Movil Binary Search 
+        $memoMoviles    = MemVar::GetValue();
+        $memoMoviles    = json_decode($memoMoviles);
+        $report['IMEI'] = 351687032250002;
+        $encontrado     = self::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $report['IMEI']);
+        if($encontrado== false){
+            $estado_u   = 0;
+        }else{
+            $estado_u   = $encontrado->estado_u;
+        }
         if($report['GPRMC']!=''){
             $gprmcData  = explode(",",$report['GPRMC']);
             $gprmcVal   = self::validateGprmc($gprmcData);
@@ -226,17 +236,6 @@ class PuertoController extends BaseController
                 }
                 Log::error(print_r($info, true));
                 $arrInfoGprmc   = self::Gprmc2Data($gprmcData);
-                // Driver code
-                $memoMoviles    = MemVar::GetValue();
-                $memoMoviles    = json_decode($memoMoviles);
-                $report['IMEI'] = 351687032250002;
-                $encontrado     = self::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $report['IMEI']);
-                if($encontrado== false){
-                    $estado_u   = 0;
-                }else{
-                    $estado_u   = $encontrado->estado_u;
-                }
-                
                 //Log::error(print_r($movil_id, true));
                 //cmd_id=65/50 si es pos, cmd_id=49 si es evento o alarma
                 /*$posicion = Posiciones::create(['movil_id'=>intval($movil_id),'cmd_id'=>65,
