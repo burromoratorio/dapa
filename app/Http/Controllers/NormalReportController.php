@@ -39,7 +39,7 @@ class NormalReportController extends BaseController
         //$arrCadena['IMEI']  = '861075026533174';
         Log::info("se obtuvo este IMEI::".$arrCadena['IMEI']);
         /*primero validaciones en MC*/
-        $shmid        = MemVar::OpenToRead('MOVILESMC');
+        $shmid        = MemVar::OpenToRead('moviles.dat');
         $requestApi   = '0';
         $mcRta        = '0';
         $mcRta2       = '0';
@@ -68,17 +68,17 @@ class NormalReportController extends BaseController
             $largo    = (int)$length;
             Log::error("Content-Length:::".strlen($apiRta->getBody()));
             MemVar::VaciaMemoria();
-            $memvar = MemVar::Instance('MOVILESMC');
+            $memvar = MemVar::Instance('moviles.dat');
             $memvar->init(0,$largo);
             $memvar->setValue( $apiRta->getBody() );
-            $shmid  = MemVar::OpenToRead('MOVILESMC');
+            $shmid  = MemVar::OpenToRead('moviles.dat');
             $movil  = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
           }else{
             Log::error("Bad Response :: code:".$code." reason::".$reason);
           }
         }else{
           //$memoMoviles  = MemVar::GetValue();
-          $shmid   = MemVar::OpenToRead('MOVILESMC');
+          $shmid   = MemVar::OpenToRead('moviles.dat');
           $movil   = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
         }
         /*Fin nuevaMC*/
