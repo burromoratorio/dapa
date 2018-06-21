@@ -69,7 +69,7 @@ class NormalReportController extends BaseController
             Log::error("Content-Length:::".strlen($apiRta->getBody()));
             MemVar::VaciaMemoria();
             $memvar = MemVar::Instance('moviles.dat');
-            $memvar->init(0,$largo);
+            $memvar->init('moviles.dat',$largo);
             $memvar->setValue( $apiRta->getBody() );
             $shmid  = MemVar::OpenToRead('moviles.dat');
             $movil  = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
