@@ -18,7 +18,7 @@ final class MemVar
     private static $key  = '';
     private static $size = 0;
     private static $shm_key = null;
-    const MCSTORAGE   = '/var/www/dapa/storage';
+    const MCSTORAGE   = '/var/www/dapa/storage/app';
   	
 
     public static function Instance($datArchive)
