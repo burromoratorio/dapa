@@ -18,9 +18,8 @@ final class MemVar
     private static $key  = '';
     private static $size = 0;
     private static $shm_key = null;
-    const MCSTORAGE   = '/var/www/dapa/storage/moviles.dat';
-  	const SENSORESMC  = '/var/www/dapa/storage/sensores.dat';
-
+    const MCSTORAGE   = '/var/www/dapa/storage';
+  	
 
     public static function Instance($datArchive)
     {
@@ -28,7 +27,7 @@ final class MemVar
         if ($inst === null) {
             $inst = new MemVar();
             //self::$shm_key = ftok('/bin/ls', 't');
-            self::$shm_key 	= ftok(self::MCSTORAGE.$datArchive, 't');
+            self::$shm_key 	= ftok(self::MCSTORAGE.'/'.$datArchive, 't');
         }
         Log::info("creando singleton");
         return $inst;
