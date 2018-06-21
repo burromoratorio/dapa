@@ -389,5 +389,13 @@ class PuertoController extends BaseController
             return self::binarySearch($arr, $mid + 1, $end, $x);
         }
     }
- 
+    protected function getSensores($imei) {
+      Log::error("obteniendo sensores");
+      // Create a client with a base URI
+      $client = new Client(['base_uri' => 'http://code.siacseguridad.com:8080/api/']);
+      // Send a request to https://foo.com/api/test
+      $response = $client->request('GET', 'sensores/1');
+
+      return $response;
+    }
 }

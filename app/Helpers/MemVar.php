@@ -18,13 +18,17 @@ final class MemVar
     private static $key  = '';
     private static $size = 0;
     private static $shm_key = null;
+    const MOVILESMC   = '/var/www/dapa/storage/moviles.dat';
+  	const SENSORESMC  = '/var/www/dapa/storage/sensores.dat';
 
-    public static function Instance()
+
+    public static function Instance($datArchive)
     {
         static $inst = null;
         if ($inst === null) {
             $inst = new MemVar();
-            self::$shm_key = ftok('/bin/ls', 't');
+            //self::$shm_key = ftok('/bin/ls', 't');
+            self::$shm_key 	= ftok($datArchive, 't');
         }
         Log::info("creando singleton");
         return $inst;
@@ -38,8 +42,9 @@ final class MemVar
     {
 
     }
-    public function init($k,$s){
-    	self::$shm_key 	= ftok('/bin/ls', 't');
+    public function init($datArchive,$s){
+    	//self::$shm_key 	= ftok('/bin/ls', 't');
+    	self::$shm_key 	= ftok($datArchive, 't');
     	self::$size 	= $s;
     	Log::info("Seteando valores. key:". self::$shm_key."  size:".self::$size);
     	self::$identifier = shmop_open(self::$shm_key, "c", 0644, self::$size);
@@ -67,8 +72,9 @@ final class MemVar
 		}
 		return $my_string;
 	}
-	public static function OpenToRead(){
-		self::$shm_key 	= ftok('/bin/ls', 't');
+	public static function OpenToRead($datArchive){
+		//self::$shm_key 	= ftok('/bin/ls', 't');
+		self::$shm_key 	= ftok($datArchive, 't');
 		Log::info("Abriendo solo para leer:". self::$shm_key."  size:".self::$size);
 		@$shmid 			= shmop_open(self::$shm_key, "a", 0, 0);
 		if (!empty($shmid)) {

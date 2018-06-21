@@ -14,6 +14,8 @@ use GuzzleHttp\Client;
 //Use Puerto;
 class NormalReportController extends BaseController
 {
+  
+
   public function index(Request $request) {
     return "ok";
   }   
@@ -37,7 +39,7 @@ class NormalReportController extends BaseController
         //$arrCadena['IMEI']  = '861075026533174';
         Log::info("se obtuvo este IMEI::".$arrCadena['IMEI']);
         /*primero validaciones en MC*/
-        $shmid        = MemVar::OpenToRead();
+        $shmid        = MemVar::OpenToRead(MOVILESMC);
         $requestApi   = '0';
         $mcRta        = '0';
         $mcRta2       = '0';
@@ -66,17 +68,17 @@ class NormalReportController extends BaseController
             $largo    = (int)$length;
             Log::error("Content-Length:::".strlen($apiRta->getBody()));
             MemVar::VaciaMemoria();
-            $memvar = MemVar::Instance();
+            $memvar = MemVar::Instance(MOVILESMC);
             $memvar->init(0,$largo);
             $memvar->setValue( $apiRta->getBody() );
-            $shmid  = MemVar::OpenToRead();
+            $shmid  = MemVar::OpenToRead(MOVILESMC);
             $movil  = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
           }else{
             Log::error("Bad Response :: code:".$code." reason::".$reason);
           }
         }else{
           //$memoMoviles  = MemVar::GetValue();
-          $shmid   = MemVar::OpenToRead();
+          $shmid   = MemVar::OpenToRead(MOVILESMC);
           $movil   = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
         }
         /*Fin nuevaMC*/
