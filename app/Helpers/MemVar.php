@@ -73,6 +73,7 @@ final class MemVar
 	}
 	public static function OpenToRead($datArchive){
 		//self::$shm_key 	= ftok('/bin/ls', 't');
+		Log::error("EL FTOKKKKK".self::MCSTORAGE.'/'.$datArchive);
 		self::$shm_key 	= ftok(self::MCSTORAGE.'/'.$datArchive, 't');
 		Log::info("Abriendo solo para leer:". self::$shm_key."  size:".self::$size);
 		@$shmid 			= shmop_open(self::$shm_key, "a", 0, 0);
