@@ -28,7 +28,7 @@ final class MemVar
         if ($inst === null) {
             $inst = new MemVar();
             //self::$shm_key = ftok('/bin/ls', 't');
-            self::$shm_key 	= ftok(MCSTORAGE.$datArchive, 't');
+            self::$shm_key 	= ftok(self::MCSTORAGE.$datArchive, 't');
         }
         Log::info("creando singleton");
         return $inst;
@@ -44,7 +44,7 @@ final class MemVar
     }
     public function init($datArchive,$s){
     	//self::$shm_key 	= ftok('/bin/ls', 't');
-    	self::$shm_key 	= ftok(MCSTORAGE.'/'.$datArchive, 't');
+    	self::$shm_key 	= ftok(self::MCSTORAGE.'/'.$datArchive, 't');
     	self::$size 	= $s;
     	Log::info("Seteando valores. key:". self::$shm_key."  size:".self::$size);
     	self::$identifier = shmop_open(self::$shm_key, "c", 0644, self::$size);
@@ -74,7 +74,7 @@ final class MemVar
 	}
 	public static function OpenToRead($datArchive){
 		//self::$shm_key 	= ftok('/bin/ls', 't');
-		self::$shm_key 	= ftok(MCSTORAGE.'/'.$datArchive, 't');
+		self::$shm_key 	= ftok(self::MCSTORAGE.'/'.$datArchive, 't');
 		Log::info("Abriendo solo para leer:". self::$shm_key."  size:".self::$size);
 		@$shmid 			= shmop_open(self::$shm_key, "a", 0, 0);
 		if (!empty($shmid)) {
