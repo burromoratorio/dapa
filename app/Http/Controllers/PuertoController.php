@@ -415,33 +415,26 @@ class PuertoController extends BaseController
         }
     }
     public static function getSensores($imei) {
-      Log::error("obteniendo sensores");
-      $estados  = [];
-      $sensores   = EstadosSensores::where('imei',$imei)->get()->last();
-      $estadosAll = EstadosSensores::all();
-      $imeisAll   = EstadosSensores::groupBy('imei')->pluck('imei');
-      //traigo todos los estados de todos los moviles
-      /*$client       = new Client(['base_uri' => 'http://code.siacseguridad.com:8080/api/']);
-      $rta1         = $client->request('GET', 'sensores/1');
-      $estadosAll   = $rta1->getBody();
-      $estadosAll   = json_decode($estadosAll);
-      Log::error(print_r($estadosAll, true));
-      //traigo solo los imeis
-      $rta2         = $client->request('GET', 'sensores/0');
-      $imeisAll     = $rta2->getBody();
-      $imeisAll   = json_decode($imeisAll);
-      Log::error("obteniendo imeis");
-      Log::error(print_r($imeisAll, true));*/
-      
-      foreach ($imeisAll as $imei) {
-        Log::error($imei);
-        $estadin    = $estadosAll->where('imei',$imei)->last();
-        array_push($estados, $estadosAll->where('imei',$imei)->last() );
-      }
-      foreach ($estados as $estado) {
-        Log::error($estado->imei."-".$estado->iom);
-        
-      }
-      //return $response;
+
+        Log::error("obteniendo sensores");
+        $estados  = [];
+        $sensores   = EstadosSensores::where('imei',$imei)->get()->last();
+        $estadosAll = EstadosSensores::all();
+        $imeisAll   = EstadosSensores::groupBy('imei')->pluck('imei');
+        foreach ($imeisAll as $imei) {
+            array_push($estados, $estadosAll->where('imei',$imei)->last() );
+        }
+        $shmid        = MemVar::OpenToRead('sensores.dat');
+        if($shmid!='0'){
+            $memvar = MemVar::Instance('sensores.dat');
+            $memvar->init('sensores.dat',$largo);
+            $memvar->setValue( $estados );
+            $shmid  = MemVar::OpenToRead('sensores.dat');
+            MemVar::initIdentifier($shmid);
+            $memoEstados    = MemVar::GetValue();
+            $memoEstados    = json_decode($memoEstados);
+            Log::error(print_r($memoEstados, true));
+        }
+        //return $response;
     }
 }
