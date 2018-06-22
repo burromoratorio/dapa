@@ -425,7 +425,7 @@ class PuertoController extends BaseController
             array_push($estados, $estadosAll->where('imei',$imei)->last() );
         }
         $shmid        = MemVar::OpenToRead('sensores.dat');
-        if($shmid!='0'){
+        if($shmid=='0'){
             $memvar = MemVar::Instance('sensores.dat');
             $memvar->init('sensores.dat',$largo);
             $memvar->setValue( $estados );
