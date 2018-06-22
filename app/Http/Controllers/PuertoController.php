@@ -11,6 +11,7 @@ use App\Http\Controllers\MovilController;
 use App\GprmcEntrada;
 use App\GprmcDesconexion;
 use App\Posiciones;
+Use App\EstadosSensores;
 /*Helpers*/
 use App\Helpers\MemVar;
 use GuzzleHttp\Client;
@@ -416,8 +417,11 @@ class PuertoController extends BaseController
     public static function getSensores($imei) {
       Log::error("obteniendo sensores");
       $estados  = [];
+      $sensores   = EstadosSensores::where('imei',$imei)->get()->last();
+      $estadosAll = EstadosSensores::all();
+      $imeisAll   = EstadosSensores::groupBy('imei')->pluck('imei');
       //traigo todos los estados de todos los moviles
-      $client       = new Client(['base_uri' => 'http://code.siacseguridad.com:8080/api/']);
+      /*$client       = new Client(['base_uri' => 'http://code.siacseguridad.com:8080/api/']);
       $rta1         = $client->request('GET', 'sensores/1');
       $estadosAll   = $rta1->getBody();
       $estadosAll   = json_decode($estadosAll);
@@ -427,7 +431,7 @@ class PuertoController extends BaseController
       $imeisAll     = $rta2->getBody();
       $imeisAll   = json_decode($imeisAll);
       Log::error("obteniendo imeis");
-      Log::error(print_r($imeisAll, true));
+      Log::error(print_r($imeisAll, true));*/
       
       foreach ($imeisAll as $imei) {
         Log::error($imei);
