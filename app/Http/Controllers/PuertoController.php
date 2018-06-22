@@ -438,7 +438,10 @@ class PuertoController extends BaseController
         $estadin    = $estadosAll->where('imei',$imei)->last();
         array_push($estados, $estadosAll->where('imei',$imei)->last() );
       }
-      Log::error(print_r($estados, true));
+      foreach ($estados as $estado) {
+        Log::error($estado->imei."-".$estado->iom);
+        
+      }
       //return $response;
     }
 }
