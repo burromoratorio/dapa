@@ -424,7 +424,7 @@ class PuertoController extends BaseController
       $imeisAll = $client->request('GET', 'sensores/0');
       Log::error("obteniendo imeis");
       foreach ($imeisAll as $imei) {
-        Log::error($imei));
+        Log::error($imei);
         $estadin    = $estadosAll->where('imei',$imei)->last();
         array_push($estados, $estadosAll->where('imei',$imei)->last() );
       }
