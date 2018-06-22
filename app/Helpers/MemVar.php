@@ -28,6 +28,8 @@ final class MemVar
             $inst = new MemVar();
             //self::$shm_key = ftok('/bin/ls', 't');
             self::$shm_key 	= ftok(self::MCSTORAGE.'/'.$datArchive, 't');
+        }else{
+        	Log::error("es singleton, cuantas instancias queres!");
         }
         Log::info("creando singleton");
         return $inst;
