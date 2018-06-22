@@ -418,13 +418,15 @@ class PuertoController extends BaseController
       $estados  = [];
       //traigo todos los estados de todos los moviles
       $client = new Client(['base_uri' => 'http://code.siacseguridad.com:8080/api/']);
-      $estadosAll = $client->request('GET', 'sensores/1');
+      $rta1 = $client->request('GET', 'sensores/1');
+      $estadosAll   = $rta1->getBody();
+      Log::error($estadosAll);
       //traigo solo los imeis
-      $imeisAll     = $client->request('GET', 'sensores/0');
+      $rta2     = $client->request('GET', 'sensores/0');
+      $imeisAll = $imeisAll->getBody();
       Log::error("obteniendo imeis");
-      $estadosAll   = $estadosAll->getBody();
-      Log::error(print_r($estadosAll, true));
-      $imeisAll     = $imeisAll->getBody();
+      
+      
       foreach ($imeisAll as $imei) {
         Log::error($imei);
         $estadin    = $estadosAll->where('imei',$imei)->last();
