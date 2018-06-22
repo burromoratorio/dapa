@@ -190,6 +190,30 @@ class PuertoController extends BaseController
         $errorLog   = "";
         Log::info("Validando cadena a insertar...".$report['GPRMC']);
         //aca estaba la binary search 
+        /*cargo nuevos datos en MC API REQUEST y vuelvo a comprobar
+          si no está en la DDBB-->no sigo la ejecucion de esa cadena
+        
+        if($requestApi   == '1'){
+          $apiRta   = $this->obtenerMoviles();
+          if($apiRta->getStatusCode()=="200" && $apiRta->getReasonPhrase()=="OK"){
+            $length   = strlen($apiRta->getBody());
+            $largo    = (int)$length;
+            Log::error("Content-Length:::".strlen($apiRta->getBody()));
+            MemVar::VaciaMemoria();
+            $memvar = MemVar::Instance('moviles.dat');
+            $memvar->init('moviles.dat',$largo);
+            $memvar->setValue( $apiRta->getBody() );
+            $shmid  = MemVar::OpenToRead('moviles.dat');
+            $movil  = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
+          }else{
+            Log::error("Bad Response :: code:".$code." reason::".$reason);
+          }
+        }else{
+          $shmid   = MemVar::OpenToRead('moviles.dat');
+          $movil   = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
+        }*/
+        /*Fin nuevaMC*/
+        self::getSensores(0);
         if($report['GPRMC']!=''){
             $gprmcData  = explode(",",$report['GPRMC']);
             $gprmcVal   = self::validateGprmc($gprmcData);
@@ -389,13 +413,19 @@ class PuertoController extends BaseController
             return self::binarySearch($arr, $mid + 1, $end, $x);
         }
     }
-    protected function getSensores($imei) {
+    public static function getSensores($imei) {
       Log::error("obteniendo sensores");
-      // Create a client with a base URI
+      $estados  = [];
+      //traigo todos los estados de todos los moviles
       $client = new Client(['base_uri' => 'http://code.siacseguridad.com:8080/api/']);
-      // Send a request to https://foo.com/api/test
-      $response = $client->request('GET', 'sensores/1');
-
-      return $response;
+      $estadosAll = $client->request('GET', 'sensores/1');
+      //traigo solo los imeis
+      $imeisAll = $client->request('GET', 'sensores/0');
+      Log::error("obteniendo imeis");
+      foreach ($imeisAll as $imei) {
+          array_push($estados, $estadosAll->where('imei',$imei)->last() );
+      }
+      Log::error(print_r($estados, true));
+      //return $response;
     }
 }
