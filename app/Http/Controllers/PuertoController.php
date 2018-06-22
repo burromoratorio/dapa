@@ -420,10 +420,12 @@ class PuertoController extends BaseController
       $client       = new Client(['base_uri' => 'http://code.siacseguridad.com:8080/api/']);
       $rta1         = $client->request('GET', 'sensores/1');
       $estadosAll   = $rta1->getBody();
+      $estadosAll   = json_decode(print_r($estadosAll, true));
       Log::error($estadosAll);
       //traigo solo los imeis
       $rta2         = $client->request('GET', 'sensores/0');
       $imeisAll     = $rta2->getBody();
+      $imeisAll   = json_decode(print_r($imeisAll, true));
       Log::error("obteniendo imeis");
       Log::error($imeisAll);
       
