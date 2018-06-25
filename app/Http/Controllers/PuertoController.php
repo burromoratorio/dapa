@@ -214,7 +214,7 @@ class PuertoController extends BaseController
           $movil   = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
         }*/
         /*Fin nuevaMC*/
-        self::getSensores(0);
+        $sensorEstado   = self::getSensores(351687030222110);
         if($report['GPRMC']!=''){
             $gprmcData  = explode(",",$report['GPRMC']);
             $gprmcVal   = self::validateGprmc($gprmcData);
@@ -418,14 +418,14 @@ class PuertoController extends BaseController
 
         Log::error("obteniendo sensores");
         $estados  = [];
-        $sensores   = EstadosSensores::where('imei',$imei)->get()->last();
-        $estadosAll = EstadosSensores::all();
-        $imeisAll   = EstadosSensores::groupBy('imei')->pluck('imei');
-        foreach ($imeisAll as $imei) {
-            array_push($estados, $estadosAll->where('imei',$imei)->last() );
-        }
         $shmid        = MemVar::OpenToRead('sensores.dat');
         if($shmid=='0'){
+            $sensores   = EstadosSensores::where('imei',$imei)->get()->last();
+            $estadosAll = EstadosSensores::all();
+            $imeisAll   = EstadosSensores::groupBy('imei')->pluck('imei');
+            foreach ($imeisAll as $imei) {
+                array_push($estados, $estadosAll->where('imei',$imei)->last() );
+            }
             $memvar = MemVar::Instance('sensores.dat');
             $enstring   = json_encode($estados);
             $largo      = (int)strlen($enstring);
@@ -436,7 +436,14 @@ class PuertoController extends BaseController
             $memoEstados    = MemVar::GetValue();
             $memoEstados    = json_decode($memoEstados);
             Log::error(print_r($memoEstados, true));
+        }else{
+            MemVar::initIdentifier($shmid);
+            $memoEstados    = MemVar::GetValue();
+            $memoEstados    = json_decode($memoEstados);
+            Log::error(print_r($memoEstados, true));
         }
+        
+        
         //return $response;
     }
 }
