@@ -420,27 +420,37 @@ class PuertoController extends BaseController
         $estados  = [];
         $shmid        = MemVar::OpenToRead('sensores.dat');
         if($shmid=='0'){
-            $sensores   = EstadosSensores::where('imei',$imei)->get()->last();
+            //En caso de querer seleccionar solo uno de la ddbb 
+            //$sensores   = EstadosSensores::where('imei',$imei)->get()->last();
+            //ordenar por movil_id el array antes de cargar la memoria
             $estadosAll = EstadosSensores::all();
             $imeisAll   = EstadosSensores::groupBy('imei')->pluck('imei');
             foreach ($imeisAll as $imei) {
                 array_push($estados, $estadosAll->where('imei',$imei)->last() );
             }
-            Log::error(print_r($estados, true));
-            $memvar = MemVar::Instance('sensores.dat');
+            $memvar     = MemVar::Instance('sensores.dat');
             $enstring   = json_encode($estados);
             $largo      = (int)strlen($enstring);
             $memvar->init('sensores.dat',$largo);
             $memvar->setValue( $enstring );
-            $shmid  = MemVar::OpenToRead('sensores.dat');
+            $shmid      = MemVar::OpenToRead('sensores.dat');
             MemVar::initIdentifier($shmid);
-            $memoEstados    = MemVar::GetValue();
-            $memoEstados    = json_decode($memoEstados);
-            Log::error(print_r($memoEstados, true));
+            $memoEstados= MemVar::GetValue();
+            $memoEstados= json_decode($memoEstados);
+            //Log::error(print_r($memoEstados, true));
         }else{
             MemVar::initIdentifier($shmid);
             $memoEstados    = MemVar::GetValue();
             $memoEstados    = json_decode($memoEstados);
+            //reemplazar por busquedad binaria
+            foreach($memoEstados as $estado ){
+                if($estado->imei==$imei){
+                    Log::info("se encontro el siguiente estado:".$estado->iom." para el imei:".$estado->imei);
+                }else{
+                    Log::info("no encontro el imei en estados de memoria");
+                }
+
+            }
             Log::info(print_r($memoEstados, true));
         }
         
