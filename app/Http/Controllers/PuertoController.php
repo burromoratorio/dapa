@@ -427,6 +427,8 @@ class PuertoController extends BaseController
         $shmid        = MemVar::OpenToRead('sensores.dat');
         if($shmid=='0'){
             $memvar = MemVar::Instance('sensores.dat');
+            $enstring   = json_encode($estados);
+            $largo      = (int)($enstring);
             $memvar->init('sensores.dat',$largo);
             $memvar->setValue( $estados );
             $shmid  = MemVar::OpenToRead('sensores.dat');
