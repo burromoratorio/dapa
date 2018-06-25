@@ -438,7 +438,8 @@ class PuertoController extends BaseController
             MemVar::initIdentifier($shmid);
             $memoEstados= MemVar::GetValue();
             $memoEstados= json_decode($memoEstados);
-            Log::error(print_r($memoEstados, true));
+            //Log::error(print_r($memoEstados, true));
+            Log::info("crea una vez sensores");
         }else{
             MemVar::initIdentifier($shmid);
             $memoEstados    = MemVar::GetValue();
@@ -452,6 +453,7 @@ class PuertoController extends BaseController
                 }
 
             }
+            Log::info("usa sensores");
             Log::info(print_r($memoEstados, true));
         }
         
