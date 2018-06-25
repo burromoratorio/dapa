@@ -415,7 +415,7 @@ class PuertoController extends BaseController
         }
     }
     public static function getSensores($imei) {
-        MemVar::VaciaMemoria();
+        //MemVar::VaciaMemoria();
         Log::error("obteniendo sensores");
         $estados  = [];
         $shmid    = MemVar::OpenToRead('sensores.dat');
@@ -428,7 +428,7 @@ class PuertoController extends BaseController
             foreach ($imeisAll as $movilid=>$imei) {
                 array_push($estados, $estadosAll->where('imei',$imei)->last() );
             }
-            Log::error(print_r($estados, true));
+            //Log::error(print_r($estados, true));
             $memvar     = MemVar::Instance('sensores.dat');
             $enstring   = json_encode($estados);
             $largo      = (int)strlen($enstring);
