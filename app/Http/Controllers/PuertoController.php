@@ -425,10 +425,10 @@ class PuertoController extends BaseController
             //ordenar por movil_id el array antes de cargar la memoria
             $estadosAll = EstadosSensores::orderBy('movil_id')->get();
             $imeisAll   = EstadosSensores::groupBy('imei','movil_id')->pluck('imei','movil_id');
-            Log::error(print_r($imeisAll, true));
-            foreach ($imeisAll as $imei) {
+            foreach ($imeisAll as $movilid=>$imei) {
                 array_push($estados, $estadosAll->where('imei',$imei)->last() );
             }
+            Log::error(print_r($estados, true));
             $memvar     = MemVar::Instance('sensores.dat');
             $enstring   = json_encode($estados);
             $largo      = (int)strlen($enstring);
