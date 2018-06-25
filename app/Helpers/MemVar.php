@@ -69,7 +69,7 @@ final class MemVar
 		if ( !is_null(self::$identifier) ){
 			self::$size	= shmop_size(self::$identifier);
 			$my_string 	= shmop_read(self::$identifier, 0, self::$size);
-			Log::info("The data inside shared memory was: " . $my_string );
+			//Log::info("The data inside shared memory was: " . $my_string );
 		}else{
 			Log::info("el identidier es null");
 		}
