@@ -215,6 +215,7 @@ class PuertoController extends BaseController
         }*/
         /*Fin nuevaMC*/
         $sensorEstado   = self::getSensores(351687030222110);
+        Log::info(print_r($sensorEstado, true));
         if($report['GPRMC']!=''){
             $gprmcData  = explode(",",$report['GPRMC']);
             $gprmcVal   = self::validateGprmc($gprmcData);
@@ -432,7 +433,9 @@ class PuertoController extends BaseController
         genero un nuevo elemento y lo cargo en el array y en la ddbb
         elimino el elemento anterior del array, limpio y vuelvo a cargar la memoria
         */
-        foreach($memoEstados as $estado ){
+        $encontrado     = self::binarySearch($memoEstados, 0, count($memoEstados) - 1, $imei);
+        return $encontrado;
+        /*foreach($memoEstados as $estado ){
             if($estado->imei==$imei){
                 Log::info("se encontro el siguiente estado:".$estado->iom." para el imei:".$estado->imei);
             }else{
@@ -441,7 +444,7 @@ class PuertoController extends BaseController
 
         }
         Log::info("usa sensores");
-        Log::info(print_r($memoEstados, true));
+        Log::info(print_r($memoEstados, true));*/
         //return $response;
     }
     public static function startupSensores(){
