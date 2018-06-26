@@ -247,15 +247,17 @@ class PuertoController extends BaseController
                 $rumbo_id       = self::Rumbo2String( $gprmcData[7] );
                 if($perField['PER']=='NULL'){
                     $info       = self::ModPrecencia($ioData['IO']);
+                    Log::error("El info IO:".$info['mod_presencia']);
                 }else{
-                   $info        = self::AnalPerifericos($perField['PER']); 
+                    $info        = self::AnalPerifericos($perField['PER']); 
+                    Log::error("El info IOM:".$info['mod_presencia']);
                 }
                 $sensorEstado   = self::getSensores(351687030222110);
                 if($sensorEstado){
                     $estadoArrayIom = str_split($sensorEstado->iom);
                     $estadoIngreso  = str_split($info['mod_presencia']);
                     Log::info("El sensor IOM:".$sensorEstado->iom);
-                    Log::error("El dato de IOM del la cadena:".$info['mod_presencia']);
+                    
                 }
                 
                 $arrInfoGprmc   = self::Gprmc2Data($gprmcData);
