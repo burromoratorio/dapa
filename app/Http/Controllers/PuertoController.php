@@ -214,8 +214,7 @@ class PuertoController extends BaseController
           $movil   = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
         }*/
         /*Fin nuevaMC*/
-        $sensorEstado   = self::getSensores(351687030222110);
-        Log::info(print_r($sensorEstado, true));
+
         if($report['GPRMC']!=''){
             $gprmcData  = explode(",",$report['GPRMC']);
             $gprmcVal   = self::validateGprmc($gprmcData);
@@ -251,7 +250,14 @@ class PuertoController extends BaseController
                 }else{
                    $info        = self::AnalPerifericos($perField['PER']); 
                 }
-                Log::error(print_r($info, true));
+                $sensorEstado   = self::getSensores(351687030222110);
+                if($sensorEstado){
+                    $estadoArrayIom = str_split($sensorEstado->iom);
+                    $estadoIngreso  = str_split($info['mod_presencia']);
+                    Log::info("El sensor IOM:".$sensorEstado->iom);
+                    Log::error("El dato de IOM del la cadena:".$info['mod_presencia']);
+                }
+                
                 $arrInfoGprmc   = self::Gprmc2Data($gprmcData);
                 //Log::error(print_r($movil_id, true));
                 //cmd_id=65/50 si es pos, cmd_id=49 si es evento o alarma
