@@ -417,28 +417,10 @@ class PuertoController extends BaseController
     public static function getSensores($imei) {
         //MemVar::VaciaMemoria();
         Log::error("obteniendo sensores");
-        $estados  = [];
         $shmid    = MemVar::OpenToRead('sensores.dat');
         if($shmid=='0'){
-            //En caso de querer seleccionar solo uno de la ddbb 
-            //$sensores   = EstadosSensores::where('imei',$imei)->get()->last();
-            //ordenar por movil_id el array antes de cargar la memoria
-            $estadosAll = EstadosSensores::orderBy('movil_id')->get();
-            $imeisAll   = EstadosSensores::groupBy('imei','movil_id')->pluck('imei','movil_id');
-            foreach ($imeisAll as $movilid=>$imei) {
-                array_push($estados, $estadosAll->where('imei',$imei)->last() );
-            }
-            //Log::error(print_r($estados, true));
-            $memvar     = MemVar::Instance('sensores.dat');
-            $enstring   = json_encode($estados);
-            $largo      = (int)strlen($enstring);
-            $memvar->init('sensores.dat',$largo);
-            $memvar->setValue( $enstring );
-            $shmid      = MemVar::OpenToRead('sensores.dat');
-            MemVar::initIdentifier($shmid);
-            $memoEstados= MemVar::GetValue();
-            $memoEstados= json_decode($memoEstados);
-            //Log::error(print_r($memoEstados, true));
+            $memoEstados    = self::startupSensores();
+            Log::error(print_r($memoEstados, true));
             Log::info("crea una vez sensores");
         }else{
             MemVar::initIdentifier($shmid);
@@ -456,8 +438,28 @@ class PuertoController extends BaseController
             Log::info("usa sensores");
             Log::info(print_r($memoEstados, true));
         }
-        
-        
         //return $response;
+    }
+    public static function startupSensores(){
+        //En caso de querer seleccionar solo uno de la ddbb 
+        //$sensores   = EstadosSensores::where('imei',$imei)->get()->last();
+        //ordenar por movil_id el array antes de cargar la memoria
+        $estados  = [];
+        $estadosAll = EstadosSensores::orderBy('movil_id')->get();
+        $imeisAll   = EstadosSensores::groupBy('imei','movil_id')->pluck('imei','movil_id');
+        foreach ($imeisAll as $movilid=>$imei) {
+            array_push($estados, $estadosAll->where('imei',$imei)->last() );
+        }
+        //Log::error(print_r($estados, true));
+        $memvar     = MemVar::Instance('sensores.dat');
+        $enstring   = json_encode($estados);
+        $largo      = (int)strlen($enstring);
+        $memvar->init('sensores.dat',$largo);
+        $memvar->setValue( $enstring );
+        //$shmid      = MemVar::OpenToRead('sensores.dat');
+        //MemVar::initIdentifier($shmid);
+        //$memoEstados= MemVar::GetValue();
+        $memoEstados= json_decode($enstring);
+        return $memoEstados;
     }
 }
