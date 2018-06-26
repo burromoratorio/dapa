@@ -415,7 +415,7 @@ class PuertoController extends BaseController
         }
     }
     public static function getSensores($imei) {
-       MemVar::VaciaMemoria();
+       //MemVar::VaciaMemoria();
         Log::error("obteniendo sensores");
         $shmid    = MemVar::OpenToRead('sensores.dat');
         if($shmid=='0'){
