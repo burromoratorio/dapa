@@ -364,10 +364,9 @@ class PuertoController extends BaseController
     }
     public static function ModPrecencia($arrPrescense){
         Log::info("ingresa por modPresencia porque PER==NULL");
-        $modo   = 1;
         $IOEstados       = array("ltrs"=>0,"mod_presencia"=>1,"tmg"=>0,"panico"=>0,"desenganche"=>0);
         if($arrPrescense[2]=='O01' || $arrPrescense[2]=='O11'){
-            $IOEstados['modo']   =   2;
+            $IOEstados['mod_presencia']   =   2;
         }
         if($arrPrescense[1]=='I00'){
             $IOEstados['panico']   =   1;
