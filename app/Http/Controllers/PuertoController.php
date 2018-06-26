@@ -415,29 +415,33 @@ class PuertoController extends BaseController
         }
     }
     public static function getSensores($imei) {
-        MemVar::VaciaMemoria();
+       // MemVar::VaciaMemoria();
         Log::error("obteniendo sensores");
         $shmid    = MemVar::OpenToRead('sensores.dat');
         if($shmid=='0'){
             $memoEstados    = self::startupSensores();
-            Log::error(print_r($memoEstados, true));
-            Log::info("crea una vez sensores");
+            //Log::error(print_r($memoEstados, true));
+            //Log::info("crea una vez sensores");
         }else{
             MemVar::initIdentifier($shmid);
             $memoEstados    = MemVar::GetValue();
             $memoEstados    = json_decode($memoEstados);
-            //reemplazar por busquedad binaria
-            foreach($memoEstados as $estado ){
-                if($estado->imei==$imei){
-                    Log::info("se encontro el siguiente estado:".$estado->iom." para el imei:".$estado->imei);
-                }else{
-                    Log::info("no encontro el imei en estados de memoria");
-                }
-
-            }
-            Log::info("usa sensores");
-            Log::info(print_r($memoEstados, true));
         }
+        //reemplazar por busquedad binaria por movil_id( orden del array )
+        /*si encuentro el movil veo el sensor, si difiere al enviado por parametro
+        genero un nuevo elemento y lo cargo en el array y en la ddbb
+        elimino el elemento anterior del array, limpio y vuelvo a cargar la memoria
+        */
+        foreach($memoEstados as $estado ){
+            if($estado->imei==$imei){
+                Log::info("se encontro el siguiente estado:".$estado->iom." para el imei:".$estado->imei);
+            }else{
+                Log::info("no encontro el imei en estados de memoria");
+            }
+
+        }
+        Log::info("usa sensores");
+        Log::info(print_r($memoEstados, true));
         //return $response;
     }
     public static function startupSensores(){
@@ -456,10 +460,11 @@ class PuertoController extends BaseController
         $largo      = (int)strlen($enstring);
         $memvar->init('sensores.dat',$largo);
         $memvar->setValue( $enstring );
+        $memoEstados= json_decode($enstring);
+        return $memoEstados;
+    
         //$shmid      = MemVar::OpenToRead('sensores.dat');
         //MemVar::initIdentifier($shmid);
         //$memoEstados= MemVar::GetValue();
-        $memoEstados= json_decode($enstring);
-        return $memoEstados;
     }
 }
