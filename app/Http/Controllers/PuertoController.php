@@ -415,7 +415,7 @@ class PuertoController extends BaseController
         }
     }
     public static function getSensores($imei) {
-       // MemVar::VaciaMemoria();
+       MemVar::VaciaMemoria();
         Log::error("obteniendo sensores");
         $shmid    = MemVar::OpenToRead('sensores.dat');
         if($shmid=='0'){
@@ -449,8 +449,8 @@ class PuertoController extends BaseController
         //$sensores   = EstadosSensores::where('imei',$imei)->get()->last();
         //ordenar por movil_id el array antes de cargar la memoria
         $estados  = [];
-        $estadosAll = EstadosSensores::orderBy('movil_id')->get();
-        $imeisAll   = EstadosSensores::groupBy('imei','movil_id')->pluck('imei','movil_id');
+        $estadosAll = EstadosSensores::orderBy('imei')->get();
+        $imeisAll   = EstadosSensores::groupBy('imei')->pluck('imei');
         foreach ($imeisAll as $movilid=>$imei) {
             array_push($estados, $estadosAll->where('imei',$imei)->last() );
         }

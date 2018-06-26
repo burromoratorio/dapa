@@ -47,7 +47,7 @@ final class MemVar
     	//self::$shm_key 	= ftok('/bin/ls', 't');
     	self::$shm_key 	= ftok(self::MCSTORAGE.'/'.$datArchive, 't');
     	self::$size 	= $s;
-    	Log::info("Seteando valores. key:". self::$shm_key."  size:".self::$size);
+    	//Log::info("Seteando valores. key:". self::$shm_key."  size:".self::$size);
     	self::$identifier = shmop_open(self::$shm_key, "c", 0644, self::$size);
 		if ( !is_null(self::$identifier) ){
 			Log::info("se creo el siguiente identif:".self::$identifier);
@@ -59,8 +59,10 @@ final class MemVar
 	}
 	public function setValue( $v ) {
 		$shm_bytes_written = shmop_write(self::$identifier, $v, 0);
+		shmop_close(self::$identifier);
 		return $shm_bytes_written;
 	}
+
 	public static function initIdentifier($shmid){
 		self::$identifier=$shmid;
 	}
@@ -77,9 +79,9 @@ final class MemVar
 	}
 	public static function OpenToRead($datArchive){
 		//self::$shm_key 	= ftok('/bin/ls', 't');
-		Log::error("EL FTOKKKKK".self::MCSTORAGE.'/'.$datArchive);
+		//Log::error("EL FTOKKKKK".self::MCSTORAGE.'/'.$datArchive);
 		self::$shm_key 	= ftok(self::MCSTORAGE.'/'.$datArchive, 't');
-		Log::info("Abriendo solo para leer:". self::$shm_key."  size:".self::$size);
+		//Log::info("Abriendo solo para leer:". self::$shm_key."  size:".self::$size);
 		@$shmid 			= shmop_open(self::$shm_key, "a", 0, 0);
 		if (!empty($shmid)) {
 	        Log::info("shared memory exists");
@@ -91,7 +93,7 @@ final class MemVar
     	//self::$identifier = shmop_open(self::$shm_key, "c", 0, 0);
 	}
 	public static function Eliminar( ) {
-		Log::info("The identifier::::::::: " . self::$identifier );
+		//Log::info("The identifier::::::::: " . self::$identifier );
 		if ( !is_null(self::$identifier) ){
 			if (!shmop_delete(self::$identifier)) {
 				Log::info("couldn't mark shared memory block for deletion.");
