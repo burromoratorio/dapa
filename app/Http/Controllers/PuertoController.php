@@ -353,6 +353,7 @@ class PuertoController extends BaseController
                 break;
             case 'IOM':
                 $perifericos["mod_presencia"]= $arrPeriferico[3];
+                Log::info("aca esta asignando la mierda esta::".$perifericos["mod_presencia"]."--".$arrPeriferico[3]);
                 break;
             case 'BIO':
             //falta ejemplo de sebas para armar cadena
