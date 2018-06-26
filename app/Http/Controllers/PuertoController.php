@@ -247,18 +247,20 @@ class PuertoController extends BaseController
                 $rumbo_id       = self::Rumbo2String( $gprmcData[7] );
                 if($perField['PER']=='NULL'){
                     $info       = self::ModPrecencia($ioData['IO']);
-                    Log::error("El info IO:".$info['mod_presencia']);
+                    Log::error("El info:".$info['mod_presencia']);
                 }else{
                     $info        = self::AnalPerifericos($perField['PER']); 
                     Log::error("El info IOM:".$info['mod_presencia']);
+                    $sensorEstado   = self::getSensores(351687030222110);
+                    if($sensorEstado){
+                        $arrPeriferico  = explode(',',$perField['PER']);
+                        $estadoArrayIom = str_split($sensorEstado->iom);
+                        $estadoIngreso  = str_split($arrPeriferico[1]);
+                        Log::info("El sensor IOM:".$sensorEstado->iom."..estado del Periferico:".$arrPeriferico[1]);
+                        
+                    }
                 }
-                $sensorEstado   = self::getSensores(351687030222110);
-                if($sensorEstado){
-                    $estadoArrayIom = str_split($sensorEstado->iom);
-                    $estadoIngreso  = str_split($info['mod_presencia']);
-                    Log::info("El sensor IOM:".$sensorEstado->iom);
-                    
-                }
+                
                 
                 $arrInfoGprmc   = self::Gprmc2Data($gprmcData);
                 //Log::error(print_r($movil_id, true));
@@ -353,7 +355,6 @@ class PuertoController extends BaseController
                 break;
             case 'IOM':
                 $perifericos["mod_presencia"]= $arrPeriferico[3];
-                Log::info("aca esta asignando la mierda esta::".$perifericos["mod_presencia"]."--".$arrPeriferico[3]);
                 break;
             case 'BIO':
             //falta ejemplo de sebas para armar cadena
