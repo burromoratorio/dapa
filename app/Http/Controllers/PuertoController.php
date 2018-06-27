@@ -254,8 +254,14 @@ class PuertoController extends BaseController
                     $sensorEstado   = self::getSensores(351687030222110);
                     if($sensorEstado){
                         $arrPeriferico  = explode(',',$perField['PER']);
-                        $estadoArrayIom = str_split($sensorEstado->iom);
-                        $estadoIngreso  = str_split($arrPeriferico[1]);
+                        $arrayMCIom     = str_split($sensorEstado->iom);
+                        $arrayGPRMCIom  = str_split($arrPeriferico[1]);
+                        if($arrayMCIom[3]!=$arrayGPRMCIom[3]){//desenganche
+                            Log::info("informo cambio de estado en desenganche:".$arrayMCIom[3]."->".$arrayGPRMCIom[3]);
+                        }
+                        if($arrayMCIom[5]!=$arrayGPRMCIom[5]){//compuerta
+                            Log::info("informo cambio de estado en desenganche:".$arrayMCIom[5]."->".$arrayGPRMCIom[5]);
+                        }
                         Log::info("El sensor IOM:".$sensorEstado->iom."..estado del Periferico:".$arrPeriferico[1]);
                         
                     }
