@@ -245,7 +245,11 @@ class PuertoController extends BaseController
                         
                     }
                 }*/
-
+                if($perField['PER']=='NULL'){
+                    $info       = self::ModPrecencia($ioData['IO']);
+                }else{
+                    $info        = self::AnalPerifericos($perField['PER']); 
+                }
                 $arrInfoGprmc   = self::Gprmc2Data($gprmcData);
                 //Log::error(print_r($movil_id, true));
                 //cmd_id=65/50 si es pos, cmd_id=49 si es evento o alarma
