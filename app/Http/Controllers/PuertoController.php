@@ -8,9 +8,12 @@ use Storage;
 use DB;
 use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\MovilController;
+/*DDBB Primitiva*/
 use App\GprmcEntrada;
 use App\GprmcDesconexion;
+/*DDBB Principal*/
 use App\Posiciones;
+use App\Alarmas;
 Use App\EstadosSensores;
 /*Helpers*/
 use App\Helpers\MemVar;
@@ -190,31 +193,6 @@ class PuertoController extends BaseController
         $sec_pid    = rand(0,1000);
         $errorLog   = "";
         Log::info("Validando cadena a insertar...".$report['GPRMC']);
-        //aca estaba la binary search 
-        /*cargo nuevos datos en MC API REQUEST y vuelvo a comprobar
-          si no está en la DDBB-->no sigo la ejecucion de esa cadena
-        
-        if($requestApi   == '1'){
-          $apiRta   = $this->obtenerMoviles();
-          if($apiRta->getStatusCode()=="200" && $apiRta->getReasonPhrase()=="OK"){
-            $length   = strlen($apiRta->getBody());
-            $largo    = (int)$length;
-            Log::error("Content-Length:::".strlen($apiRta->getBody()));
-            MemVar::VaciaMemoria();
-            $memvar = MemVar::Instance('moviles.dat');
-            $memvar->init('moviles.dat',$largo);
-            $memvar->setValue( $apiRta->getBody() );
-            $shmid  = MemVar::OpenToRead('moviles.dat');
-            $movil  = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
-          }else{
-            Log::error("Bad Response :: code:".$code." reason::".$reason);
-          }
-        }else{
-          $shmid   = MemVar::OpenToRead('moviles.dat');
-          $movil   = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
-        }*/
-        /*Fin nuevaMC*/
-
         if($report['GPRMC']!=''){
             $gprmcData  = explode(",",$report['GPRMC']);
             $gprmcVal   = self::validateGprmc($gprmcData);
@@ -245,6 +223,7 @@ class PuertoController extends BaseController
                     'cfg_principal'=>$mcpData[0],'cfg_auxiliar'=>$mcpData[1],'per'=>$perField['PER'],'log'=>'cadena valida' ]);
                 $respuesta      = $posicionGP->pid;
                 $rumbo_id       = self::Rumbo2String( $gprmcData[7] );
+                /*Cambios de estados FUNCIONA descomentar cuando se use
                 if($perField['PER']=='NULL'){
                     $info       = self::ModPrecencia($ioData['IO']);
                     Log::error("El info:".$info['mod_presencia']);
@@ -265,19 +244,19 @@ class PuertoController extends BaseController
                         Log::info("El sensor IOM:".$sensorEstado->iom."..estado del Periferico:".$arrPeriferico[1]);
                         
                     }
-                }
-                
-                
+                }*/
+
                 $arrInfoGprmc   = self::Gprmc2Data($gprmcData);
                 //Log::error(print_r($movil_id, true));
                 //cmd_id=65/50 si es pos, cmd_id=49 si es evento o alarma
-                /*$posicion = Posiciones::create(['movil_id'=>intval($movil->movilOldId),'cmd_id'=>65,
+                $posicion = Posiciones::create(['movil_id'=>intval($movil->movilOldId),'cmd_id'=>65,
                                 'tipo'=>0,'fecha'=>$fecha,'rumbo_id'=>$arrInfoGprmc['rumbo'],
                                 'latitud'=>$arrInfoGprmc['latitud'],'longitud'=>$arrInfoGprmc['longitud'],
                                 'velocidad'=>$arrInfoGprmc['velocidad'],
                                 'valida'=>1,'estado_u'=>$movil->estado_u,'estado_v'=>$info['mod_presencia'],'estado_w'=>0,
                                 'km_recorridos'=>$kmtField['KMT'],
-                                'ltrs_consumidos'=>$info['ltrs']]);*/
+                                'ltrs_consumidos'=>$info['ltrs']]);
+                $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion->posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>7,'fecha_alarma'=>$fecha,'falsa'=>0]);
 
             }else{
                 $respuesta  = "0";
