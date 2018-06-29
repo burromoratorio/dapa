@@ -121,7 +121,7 @@ class NormalReportController extends BaseController
     MemVar::initIdentifier($shmid);
     $memoMoviles    = MemVar::GetValue();
     $memoMoviles    = json_decode($memoMoviles);
-    $imei           = 351687032250002;
+    //$imei           = 351687032250002;
     $encontrado     = app()->Puerto::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $imei);
     return $encontrado;
     /*$rta  = '0';
