@@ -24,19 +24,14 @@ class NormalReportController extends BaseController
     desde Puerto_lite con ($jsonReq["KEY"]
   */  
   public function create(Request $request){
-    //Log::useDailyFiles(storage_path().'/logs/gprmc.log');
-    //Log::info(['Request'=>$request]);
-
     $method = $request->method();
     if ($request->isMethod('post')) {
 	    $rta="";
       $jsonReq = $request->json()->all();
       //Log::error(print_r($jsonReq, true));
       if(isset($jsonReq["cadena"])){
-        //pruebas en obtencion de imei del json -->el imei de sebas 861075026533174
+        //pruebas en obtencion de imei del json -->el imei de sebas $arrCadena['IMEI']  = '861075026533174';
         $arrCadena = app()->Puerto::changeString2array($jsonReq["cadena"]);
-        //imei de sebas
-        //$arrCadena['IMEI']  = '861075026533174';
         Log::info("se obtuvo este IMEI::".$arrCadena['IMEI']);
         /*primero validaciones en MC*/
         $shmid        = MemVar::OpenToRead('moviles.dat');
@@ -121,36 +116,10 @@ class NormalReportController extends BaseController
     MemVar::initIdentifier($shmid);
     $memoMoviles    = MemVar::GetValue();
     $memoMoviles    = json_decode($memoMoviles);
-    //$imei           = 351687032250002;
     $encontrado     = app()->Puerto::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $imei);
     return $encontrado;
-    /*$rta  = '0';
-    //Log::error(print_r($arrMovMc, true));
-    if($arrMovMc !="" && count($arrMovMc)>0){
-      foreach ($arrMovMc as $movil) {
-        //uso el imei de seba 861075026533174
-        //$movil->IMEI= 861075026533174;
-        if($movil->imei==$imei){
-          $rta  = $movil->movilOldId;
-          //devuelvo el movilid de la chata hilux por ahora
-          $rta  = 10903;
-          Log::info( "valor ENCONTRADO compruebaMovilMC = ".$movil->imei."==".$imei);
-          break;
-        }        
-      }
-    }else{
-      $rta  = '0';
-    }
-    return $rta;
-    */
+    
   }
-  /*public static function dameMoviles(){
-    Log::error("pidiendo moviles dameMoviles");
-        $movileros  = array( array('IMEI' =>'863835020075979' ,'alias'=>'sba000','cmd'=>'AT+GETGP?\r\n' ), 
-                            array('IMEI' =>'863835020075978' ,'alias'=>'sba001','cmd'=>'AT+GETGP?\r\n' ) );
-        
-        return json_encode($movileros);
-    }*/
   public function tratarReporte($cadena,$movil){
     $rta  = "";
     try{

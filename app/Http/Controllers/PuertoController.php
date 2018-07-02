@@ -52,8 +52,7 @@ class PuertoController extends BaseController
                         Log::info("Reporte Normal GPRMC");
                         $posicionID=self::storeGprmc($arrCampos,$movil);
                         if($posicionID!='0'){
-                           /* no guardo las alarmas en dbPrimaria
-                           self::findAndStoreAlarm($arrCampos,$posicionID);*/
+                           /*no guardo las alarmas en dbPrimaria self::findAndStoreAlarm($arrCampos,$posicionID);*/
                             $imei="OK";
                         }else{
                             Log::error("Cadena GPRMC vacia");
@@ -76,18 +75,8 @@ class PuertoController extends BaseController
             }else{
                 Log::info("imei invalido:".$arrCampos['IMEI']);
             }
-            /*
-            *****Por ahora no uso el listado de moviles********
-            if(count(self::$moviles_activos)>0){
-               foreach (self::$moviles_activos as $movil) {
-                  Log::info("moviles activos::".$movil->alias);
-                }
-                Log::info("total de moviles:".count(self::$moviles_activos));
-            }else{
-                Log::info("no values");
-            }*/
+            
         }
-        //Log::info("respuesta en analize report de PTController:".$imei);
         return $imei;
     }
     public static function changeString2array($cadena){
@@ -148,10 +137,8 @@ class PuertoController extends BaseController
             $arrData = explode(",",$arrCadena[$index]); 
             $arrData[$index] = $arrCadena[$index];
           }  
-          //Log::info("el indice:".$index. "se encontro en la cadena:");
         }else{
             //si el indice a buscar no viene en la cadena entonces preparo el array con null
-            //Log::info("el indice:".$index. "se encontro NOOOO en la cadena:");
             for($i=0;$i<$totalPieces;$i++){
             $arrData[$i]="NULL";
             }
@@ -183,11 +170,8 @@ class PuertoController extends BaseController
         funcion para almacenar un reporte de posicion
     */
     public static function storeGprmc($report,$movil) {
-        /*en db PRIMARIA agrego el pid
-        y los caracteres GPRMC en el campo
-        Ademas agrego los encabezados a cada campo
-        ej: ALA,NSD..FR,60,0 =>>ALA y FR
-        */
+        /*en db PRIMARIA agrego el pid y los caracteres GPRMC en el campo
+        Ademas agrego los encabezados a cada campo ej: ALA,NSD..FR,60,0 =>>ALA y FR */
         $respuesta  = "0";
         $pid        = getmypid();
         $sec_pid    = rand(0,1000);
@@ -426,29 +410,15 @@ class PuertoController extends BaseController
             $memoEstados    = MemVar::GetValue();
             $memoEstados    = json_decode($memoEstados);
         }
-        //reemplazar por busquedad binaria por movil_id( orden del array )
         /*si encuentro el movil veo el sensor, si difiere al enviado por parametro
         genero un nuevo elemento y lo cargo en el array y en la ddbb
         elimino el elemento anterior del array, limpio y vuelvo a cargar la memoria
         */
         $encontrado     = self::binarySearch($memoEstados, 0, count($memoEstados) - 1, $imei);
         return $encontrado;
-        /*foreach($memoEstados as $estado ){
-            if($estado->imei==$imei){
-                Log::info("se encontro el siguiente estado:".$estado->iom." para el imei:".$estado->imei);
-            }else{
-                Log::info("no encontro el imei en estados de memoria");
-            }
-
-        }
-        Log::info("usa sensores");
-        Log::info(print_r($memoEstados, true));*/
-        //return $response;
+        
     }
     public static function startupSensores(){
-        //En caso de querer seleccionar solo uno de la ddbb 
-        //$sensores   = EstadosSensores::where('imei',$imei)->get()->last();
-        //ordenar por movil_id el array antes de cargar la memoria
         $estados  = [];
         $estadosAll = EstadosSensores::orderBy('imei')->get();
         $imeisAll   = EstadosSensores::groupBy('imei')->pluck('imei');
@@ -464,8 +434,5 @@ class PuertoController extends BaseController
         $memoEstados= json_decode($enstring);
         return $memoEstados;
     
-        //$shmid      = MemVar::OpenToRead('sensores.dat');
-        //MemVar::initIdentifier($shmid);
-        //$memoEstados= MemVar::GetValue();
     }
 }

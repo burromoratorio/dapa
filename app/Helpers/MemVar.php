@@ -26,7 +26,6 @@ final class MemVar
         static $inst = null;
         if ($inst === null) {
             $inst = new MemVar();
-            //self::$shm_key = ftok('/bin/ls', 't');
             self::$shm_key 	= ftok(self::MCSTORAGE.'/'.$datArchive, 't');
         }else{
         	Log::error("es singleton, cuantas instancias queres!");
@@ -44,7 +43,6 @@ final class MemVar
 
     }
     public function init($datArchive,$s){
-    	//self::$shm_key 	= ftok('/bin/ls', 't');
     	self::$shm_key 	= ftok(self::MCSTORAGE.'/'.$datArchive, 't');
     	self::$size 	= $s;
     	//Log::info("Seteando valores. key:". self::$shm_key."  size:".self::$size);
@@ -78,8 +76,6 @@ final class MemVar
 		return $my_string;
 	}
 	public static function OpenToRead($datArchive){
-		//self::$shm_key 	= ftok('/bin/ls', 't');
-		//Log::error("EL FTOKKKKK".self::MCSTORAGE.'/'.$datArchive);
 		self::$shm_key 	= ftok(self::MCSTORAGE.'/'.$datArchive, 't');
 		//Log::info("Abriendo solo para leer:". self::$shm_key."  size:".self::$size);
 		@$shmid 			= shmop_open(self::$shm_key, "a", 0, 0);
@@ -90,10 +86,8 @@ final class MemVar
 	        Log::info("shared memory doesn't exist");
 	        return '0';
 		}
-    	//self::$identifier = shmop_open(self::$shm_key, "c", 0, 0);
-	}
+    }
 	public static function Eliminar( ) {
-		//Log::info("The identifier::::::::: " . self::$identifier );
 		if ( !is_null(self::$identifier) ){
 			if (!shmop_delete(self::$identifier)) {
 				Log::info("couldn't mark shared memory block for deletion.");
