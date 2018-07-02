@@ -32,21 +32,23 @@ class NormalReportController extends BaseController
       if(isset($jsonReq["cadena"])){
         //pruebas en obtencion de imei del json -->el imei de sebas $arrCadena['IMEI']  = '861075026533174';
         $arrCadena = app()->Puerto::changeString2array($jsonReq["cadena"]);
-        Log::info("se obtuvo este IMEI::".$arrCadena['IMEI']);
+        Log::info("Procesando IMEI::".$arrCadena['IMEI']);
         /*primero validaciones en MC*/
         $shmid        = MemVar::OpenToRead('moviles.dat');
         $requestApi   = '0';
         $mcRta        = '0';
         $mcRta2       = '0';
+        $movil        = false;
         if($shmid!='0'){
-          Log::info("Existe el shmid->Verifico si el IMEI ".$arrCadena['IMEI']." está dentro");
+          Log::info("Verificando validez IMEI ".$arrCadena['IMEI']);
           $mcRta        = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
           if($mcRta==false){
             Log::info("El IMEI ".$arrCadena['IMEI']." no está en la memoria");
-            $requestApi   = '1';
+            $requestApi= '1';
           }else{
-            $mcRta2        = '1';
-            Log::info("El IMEI ".$arrCadena['IMEI']." ESTA en la memoria");
+            $mcRta2    = '1';
+            $movil     = $mcRta;
+            Log::info("Procesando:".$arrCadena['IMEI']."- Movil_id:".$movil->movil_id."-MovilOld_id:".$movil->movilOldId);
           }
         }else{
           $requestApi   = '1';
@@ -71,11 +73,11 @@ class NormalReportController extends BaseController
           }else{
             Log::error("Bad Response :: code:".$code." reason::".$reason);
           }
-        }else{
+        }/*else{
           //$memoMoviles  = MemVar::GetValue();
           $shmid   = MemVar::OpenToRead('moviles.dat');
           $movil   = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
-        }
+        }*/
         /*Fin nuevaMC*/
         if($movil!=false){
           $rta    = $this->tratarReporte($jsonReq['cadena'],$movil);

@@ -80,10 +80,8 @@ final class MemVar
 		//Log::info("Abriendo solo para leer:". self::$shm_key."  size:".self::$size);
 		@$shmid 			= shmop_open(self::$shm_key, "a", 0, 0);
 		if (!empty($shmid)) {
-	        Log::info("shared memory exists");
 	        return $shmid;
 		} else {
-	        Log::info("shared memory doesn't exist");
 	        return '0';
 		}
     }
