@@ -35,7 +35,7 @@ class PuertoController extends BaseController
     private function __wakeup() {}
     public function __construct($moviles) { 
         self::$moviles_activos=$moviles;   
-        Log::info("new de puertoController");     
+        
     } 
     private static function setCadena($paquete){
         self::$cadena=$paquete;
@@ -49,7 +49,7 @@ class PuertoController extends BaseController
             if(self::validateImei($arrCampos['IMEI'])){
                 switch (self::positionOrDesconect($arrCampos)) {
                     case 'GPRMC':
-                        Log::info("Reporte Normal GPRMC");
+                        Log::info("Normal GPRMC");
                         $posicionID=self::storeGprmc($arrCampos,$movil);
                         if($posicionID!='0'){
                            /*no guardo las alarmas en dbPrimaria self::findAndStoreAlarm($arrCampos,$posicionID);*/
@@ -178,7 +178,7 @@ class PuertoController extends BaseController
         $pid        = getmypid();
         $sec_pid    = rand(0,1000);
         $errorLog   = "";
-        Log::info("Validando cadena a insertar...".$report['GPRMC']);
+        Log::info("Validando GPRMC...".$report['GPRMC']);
         if($report['GPRMC']!=''){
             $gprmcData  = explode(",",$report['GPRMC']);
             $gprmcVal   = self::validateGprmc($gprmcData);
