@@ -32,7 +32,6 @@ class NormalReportController extends BaseController
       if(isset($jsonReq["cadena"])){
         //pruebas en obtencion de imei del json -->el imei de sebas $arrCadena['IMEI']  = '861075026533174';
         $arrCadena = app()->Puerto::changeString2array($jsonReq["cadena"]);
-        Log::info("Procesando IMEI::".$arrCadena['IMEI']);
         /*primero validaciones en MC*/
         $shmid        = MemVar::OpenToRead('moviles.dat');
         $requestApi   = '0';
@@ -125,13 +124,12 @@ class NormalReportController extends BaseController
   public function tratarReporte($cadena,$movil){
     $rta  = "";
     try{
-      Log::error("cadena entrante en NormalReportController ::".$cadena);
+      Log::error("MOVIL=>".$movil->movilOldId."-Cadena=>".$cadena);
       $rta  = app()->Puerto->analizeReport($cadena,$movil) ;
     }catch(Exception $e){
       $rta  = "error";
       Log::error($e);
     }
-    Log::info("rta en tratar reporte de NRController:".$rta);
     return $rta;
   } 
 }
