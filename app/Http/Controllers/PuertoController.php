@@ -231,7 +231,6 @@ class PuertoController extends BaseController
                         
                     }
                 }*/
-                Log::error(print_r($alaField, true));  
                 if($perField['PER']=='NULL'){
                     $info       = self::ModPrecencia($ioData['IO']);
                 }else{
@@ -247,7 +246,10 @@ class PuertoController extends BaseController
                                 'valida'=>1,'estado_u'=>$movil->estado_u,'estado_v'=>$info['mod_presencia'],'estado_w'=>0,
                                 'km_recorridos'=>$kmtField['KMT'],
                                 'ltrs_consumidos'=>$info['ltrs']]);
-                $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion->posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>7,'fecha_alarma'=>$fecha,'falsa'=>0]);
+                if($alaField["ALA"]=="V"){
+                    $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion->posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>7,'fecha_alarma'=>$fecha,'falsa'=>0]);
+                }
+                
 
             }else{
                 $respuesta  = "0";
