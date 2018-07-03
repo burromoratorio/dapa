@@ -119,9 +119,17 @@ class PuertoController extends BaseController
 */
             Log::info($memoPos);
         }else{
+            $posicionesMC   = [];
             MemVar::initIdentifier($shmidPos);
             $memoPos    = MemVar::GetValue();
-            Log::info($memoPos);
+            $posArr     = json_encode($memoPos);
+            foreach ($posArr as $key => $value) {
+                array_push($posicionesMC, $value);
+            }
+            $posicion   = ["imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad];
+            array_push($posicionesMC, $posicion);
+            Log::error(print_r($posicionesMC, true));
+            //Log::info($posicionesMC);
             Log::error("sha existe el segmento de memoria");
         }
         
