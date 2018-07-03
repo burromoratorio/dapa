@@ -109,7 +109,7 @@ class PuertoController extends BaseController
             //$memoEstados= json_decode($enstring);
             $shmid      = MemVar::OpenToRead('posiciones.dat');
             $memoPos    = MemVar::GetValue();
-            Log::info(_$memoPos);
+            Log::info($memoPos);
         }else{
             Log::error("Bad Response :: code:".$code." reason::".$reason);
         }
