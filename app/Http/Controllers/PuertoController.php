@@ -119,7 +119,7 @@ class PuertoController extends BaseController
 */
             Log::info($memoPos);
         }else{
-            Log::error("Bad Response :: code:".$code." reason::".$reason);
+            Log::error("sha existe el segmento de memoria");
         }
         
     }
