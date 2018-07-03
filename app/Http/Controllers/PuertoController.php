@@ -70,12 +70,9 @@ class PuertoController extends BaseController
                         # code...
                         break;
                 }
-                
-                
             }else{
                 Log::info("imei invalido:".$arrCampos['IMEI']);
             }
-            
         }
         return $imei;
     }
@@ -90,13 +87,33 @@ class PuertoController extends BaseController
         }
         return $campos;
     }
-    public static function validateGprmc($gprmc){
+    public static function validateGprmc($gprmc,$shmidPos){
          if(count($gprmc)<12){
             Log::error("GPRMC - Numero de parametros incorrecto:".implode(',',$gprmc) );
             return false;    
         }else{
             return true;
         }
+    }
+    public static function validezReporte($imei,$fecha,$velocidad){
+        $shmidPos       = MemVar::OpenToRead('posiciones.dat');
+        $posicionesMC   = [];
+        if($shmidPos == '0'){
+            $posicion   = ["imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad];
+            array_push($posicionesMC, $posicion)
+            $memvar     = MemVar::Instance('posiciones.dat');
+            $enstring   = json_encode($posicionesMC);
+            $largo      = (int)strlen($enstring);
+            $memvar->init('posiciones.dat',$largo);
+            $memvar->setValue( $enstring );
+            //$memoEstados= json_decode($enstring);
+            $shmid      = MemVar::OpenToRead('posiciones.dat');
+            $memoPos    = MemVar::GetValue();
+            Log::info(_$memoPos);
+        }else{
+            Log::error("Bad Response :: code:".$code." reason::".$reason);
+        }
+        
     }
     /*maximo 15 caracteres numericos*/
     public static function validateImei($imei){
@@ -181,7 +198,7 @@ class PuertoController extends BaseController
         Log::info("Validando GPRMC...".$report['GPRMC']);
         if($report['GPRMC']!=''){
             $gprmcData  = explode(",",$report['GPRMC']);
-            $gprmcVal   = self::validateGprmc($gprmcData);
+            $gprmcVal   = self::validateGprmc($gprmcData,$shmidPos);
             if($gprmcVal){
                 $ioData     = self::validateIndexCadena("IO",$report,2);
                 $panico     = str_replace("I0", "",$ioData[0] );
@@ -196,6 +213,7 @@ class PuertoController extends BaseController
                 $vbaField   = self::validateIndexCadena("VBA",$report);
                 $odpField   = self::validateIndexCadena("ODP",$report);
                 $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0]);
+                $validezReporte = self::validezReporte($report['IMEI'],$fecha,$gprmcData[6]);
                 $posicionGP = GprmcEntrada::create([
                     'imei'=>$report['IMEI'],'gprmc'=>'GPRMC,'.$report['GPRMC'],'pid'=>$pid,'sec_pid'=>$sec_pid,
                     'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],
