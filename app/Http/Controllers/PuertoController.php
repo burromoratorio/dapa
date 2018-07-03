@@ -100,7 +100,7 @@ class PuertoController extends BaseController
         $posicionesMC   = [];
         if($shmidPos == '0'){
             $posicion   = ["imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad];
-            array_push($posicionesMC, $posicion)
+            array_push($posicionesMC, $posicion);
             $memvar     = MemVar::Instance('posiciones.dat');
             $enstring   = json_encode($posicionesMC);
             $largo      = (int)strlen($enstring);
