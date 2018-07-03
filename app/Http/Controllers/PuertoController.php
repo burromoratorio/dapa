@@ -119,6 +119,9 @@ class PuertoController extends BaseController
 */
             Log::info($memoPos);
         }else{
+            MemVar::initIdentifier($shmidPos);
+            $memoPos    = MemVar::GetValue();
+            Log::info($memoPos);
             Log::error("sha existe el segmento de memoria");
         }
         
