@@ -104,11 +104,19 @@ class PuertoController extends BaseController
             $memvar     = MemVar::Instance('posiciones.dat');
             $enstring   = json_encode($posicionesMC);
             $largo      = (int)strlen($enstring);
+            Log::info("Largo:::".$largo);
             $memvar->init('posiciones.dat',$largo);
             $memvar->setValue( $enstring );
-            //$memoEstados= json_decode($enstring);
             $shmid      = MemVar::OpenToRead('posiciones.dat');
+            MemVar::initIdentifier($shmid);
             $memoPos    = MemVar::GetValue();
+            //$memoEstados= json_decode($enstring);
+            /*$memvar = MemVar::Instance('moviles.dat');
+            $memvar->init('moviles.dat',$largo);
+            $memvar->setValue( $apiRta->getBody() );
+            $shmid  = MemVar::OpenToRead('moviles.dat');
+
+*/
             Log::info($memoPos);
         }else{
             Log::error("Bad Response :: code:".$code." reason::".$reason);
