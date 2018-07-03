@@ -122,6 +122,7 @@ class PuertoController extends BaseController
             $posicionesMC   = [];
             MemVar::initIdentifier($shmidPos);
             $memoPos    = MemVar::GetValue();
+            Log::info($memoPos);
             $posArr     = json_encode($memoPos);
             foreach ($posArr as $key => $value) {
                 array_push($posicionesMC, $value);
