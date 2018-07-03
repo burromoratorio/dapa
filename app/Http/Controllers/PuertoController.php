@@ -87,7 +87,7 @@ class PuertoController extends BaseController
         }
         return $campos;
     }
-    public static function validateGprmc($gprmc,$shmidPos){
+    public static function validateGprmc($gprmc){
          if(count($gprmc)<12){
             Log::error("GPRMC - Numero de parametros incorrecto:".implode(',',$gprmc) );
             return false;    
@@ -198,7 +198,7 @@ class PuertoController extends BaseController
         Log::info("Validando GPRMC...".$report['GPRMC']);
         if($report['GPRMC']!=''){
             $gprmcData  = explode(",",$report['GPRMC']);
-            $gprmcVal   = self::validateGprmc($gprmcData,$shmidPos);
+            $gprmcVal   = self::validateGprmc($gprmcData);
             if($gprmcVal){
                 $ioData     = self::validateIndexCadena("IO",$report,2);
                 $panico     = str_replace("I0", "",$ioData[0] );
