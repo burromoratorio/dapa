@@ -128,6 +128,7 @@ class PuertoController extends BaseController
                 array_push($posicionesMC, $value);
             }
             $posicion   = ["imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad];
+            $posicion   = ["imei"=>351687030222078,"fecha"=>'2018-07-03 05:35:57',"velocidad"=>80]
             array_push($posicionesMC, $posicion);
             $encontrado     = self::binarySearch($posicionesMC, 0, count($posicionesMC) - 1, 351687030222052);
             Log::error(print_r($encontrado, true));
