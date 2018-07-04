@@ -233,7 +233,7 @@ class PuertoController extends BaseController
                 $vbaField   = self::validateIndexCadena("VBA",$report);
                 $odpField   = self::validateIndexCadena("ODP",$report);
                 $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0]);
-                //$validezReporte = self::validezReporte($report['IMEI'],$fecha,$gprmcData[6]);
+                $validezReporte = self::validezReporte($report['IMEI'],$fecha,$gprmcData[6]);
                 $posicionGP = GprmcEntrada::create([
                     'imei'=>$report['IMEI'],'gprmc'=>'GPRMC,'.$report['GPRMC'],'pid'=>$pid,'sec_pid'=>$sec_pid,
                     'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],
@@ -284,7 +284,6 @@ class PuertoController extends BaseController
                                 'valida'=>1,'estado_u'=>$movil->estado_u,'estado_v'=>$info['mod_presencia'],'estado_w'=>0,
                                 'km_recorridos'=>$kmtField['KMT'],
                                 'ltrs_consumidos'=>$info['ltrs']]);
-                Log::error(print_r($posicion, true));
                 if($alaField["ALA"]=="V"){
                     $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion->posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>7,'fecha_alarma'=>$fecha,'falsa'=>0]);
                 }
