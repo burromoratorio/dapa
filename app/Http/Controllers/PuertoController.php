@@ -233,7 +233,7 @@ class PuertoController extends BaseController
                 $vbaField   = self::validateIndexCadena("VBA",$report);
                 $odpField   = self::validateIndexCadena("ODP",$report);
                 $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0]);
-                $validezReporte = self::validezReporte($report['IMEI'],$fecha,$gprmcData[6]);
+                //$validezReporte = self::validezReporte($report['IMEI'],$fecha,$gprmcData[6]);
                 $posicionGP = GprmcEntrada::create([
                     'imei'=>$report['IMEI'],'gprmc'=>'GPRMC,'.$report['GPRMC'],'pid'=>$pid,'sec_pid'=>$sec_pid,
                     'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],
