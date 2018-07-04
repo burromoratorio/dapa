@@ -131,7 +131,8 @@ class PuertoController extends BaseController
             $posicion2   = ["imei"=>351687030222078,"fecha"=>'2018-07-03 05:35:57',"velocidad"=>80];
             array_push($posicionesMC, $posicion);
             array_push($posicionesMC, $posicion2);
-            $encontrado     = self::binarySearch($posicionesMC, 0, count($posicionesMC) - 1, 351687030222052);
+            $MCPOS    = json_decode($posicionesMC);
+            $encontrado     = self::binarySearch($MCPOS, 0, count($MCPOS) - 1, 351687030222052);
             Log::error(print_r($encontrado, true));
             //Log::info($posicionesMC);
             Log::error("sha existe el segmento de memoria");
