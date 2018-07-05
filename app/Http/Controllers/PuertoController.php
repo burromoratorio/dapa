@@ -129,7 +129,8 @@ class PuertoController extends BaseController
             //Log::info(print_r($posicionesMC, true));
             $index  = 0;
             foreach ($posArr as $key => $value) {
-                array_push($posicionesMC, $value); 
+                //array_push($posicionesMC, $value); 
+                Log::info(print_r($value, true));
                 //si es un reporte siguiente para el movil---
                 Log::info($value->imei."==".$imei." velocAnterior:".$value->velocidad." velocActual:".$velocidad." FR:".$frArr[0]);
                 if($value->imei==$imei && $fecha > $value->fecha){
@@ -155,12 +156,12 @@ class PuertoController extends BaseController
                 //array_push($posicionesMC, $value);
             }
             Log::info(print_r($posicionesMC, true));
-            $memvar     = MemVar::Instance('posiciones.dat');
+            /*$memvar     = MemVar::Instance('posiciones.dat');
             $enstring   = json_encode($posicionesMC);
             $largo      = (int)strlen($enstring);
             Log::info("Largo:::".$largo);
             $memvar->init('posiciones.dat',$largo);
-            $memvar->setValue( $enstring );
+            $memvar->setValue( $enstring );*/
             
             Log::error("sha existe el segmento de memoria");
         }
