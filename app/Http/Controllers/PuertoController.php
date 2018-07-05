@@ -98,6 +98,7 @@ class PuertoController extends BaseController
     public static function validezReporte($imei,$fecha,$velocidad,$fr){
         $shmidPos       = MemVar::OpenToRead('posiciones.dat');
         $posicionesMC   = [];
+        $frArr          = explode($fr,',');
         if($shmidPos == '0'){
             $posicion   = ["imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad];
             array_push($posicionesMC, $posicion);
@@ -119,21 +120,33 @@ class PuertoController extends BaseController
 */
             Log::info($memoPos);
         }else{
-            $posicionesMC   = [];
+            $posicionesMC= [];
             MemVar::initIdentifier($shmidPos);
             $memoPos    = MemVar::GetValue();
-            Log::info("lalalala--".$memoPos);
+            Log::info("Posiciones en MC--".$memoPos);
             $posArr     = json_decode($memoPos);
-            Log::error(print_r($fr, true));
+            //Log::info(print_r($posicionesMC, true));
             foreach ($posArr as $key => $value) {
-                if($value->imei==$imei && $value->velocidad<5 && $velocidad>8 && $fr ){
-
+                //si es un reporte siguiente para el movil---
+                if($value->imei==$imei && $fecha>$value->fecha){
+                    Log::info("fecha anteior:".$value->fecha."fecha reporte:".$fecha);
+                    //evaluo si paso de detenido a movimiento
+                    if( $value->velocidad<5 && $velocidad>8 && $fr[0]<120 ){
+                        Log::info("movil paso de detenido a movimiento");
+                    }
+                    //movil pasó de movimiento a detenido
+                    if( $velocidad>8 && $value->velocidad<5 && $fr[0]>120 ){
+                        Log::info("movil paso de movimiento a detenido");
+                    }
+                }else{
+                    Log::info("fecha de reporte anterior al guardado en memoria...no lo evaluo");
                 }
+                
                 array_push($posicionesMC, $value);
             }
             $posicion   = ["imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad];
             //$posicion2   = ["imei"=>351687030222078,"fecha"=>'2018-07-03 05:35:57',"velocidad"=>80];
-            array_push($posicionesMC, $posicion);
+            //array_push($posicionesMC, $posicion);
             
             //Log::info($posicionesMC);
             Log::error("sha existe el segmento de memoria");
