@@ -135,7 +135,7 @@ class PuertoController extends BaseController
                         Log::info("movil paso de detenido a movimiento");
                     }
                     //movil pasó de movimiento a detenido
-                    if( $velocidad>8 && $value->velocidad<5 && $fr[0]>120 ){
+                    if( $value->velocidad>8 && $velocidad<5 &&  && $fr[0]>120 ){
                         Log::info("movil paso de movimiento a detenido");
                     }
                 }else{
