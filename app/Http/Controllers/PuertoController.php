@@ -98,7 +98,7 @@ class PuertoController extends BaseController
     public static function validezReporte($imei,$fecha,$velocidad,$fr){
         $shmidPos       = MemVar::OpenToRead('posiciones.dat');
         $posicionesMC   = [];
-        $frArr          = explode($fr,',');
+        $frArr          = explode(',',$fr); 
         Log::info(print_r($frArr, true));
         if($shmidPos == '0'){
             $posicion   = ["imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad];
