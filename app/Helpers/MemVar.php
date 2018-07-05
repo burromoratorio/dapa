@@ -91,7 +91,7 @@ final class MemVar
 	        return '0';
 		}
     }
-	public static function Eliminar( $archivo ) {
+	public static function Eliminar( $datArchive ) {
 		self::$shm_key 	= ftok(self::MCSTORAGE.'/'.$datArchive, 't');
 		shmop_delete($self::$shm_key);
 		
