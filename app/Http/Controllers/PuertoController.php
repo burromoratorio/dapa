@@ -157,11 +157,7 @@ class PuertoController extends BaseController
             Log::info("esto queda::::::".$enstring);
             $largo      = (int)strlen($enstring);
             Log::info("Largo:::".$largo);
-
-
-            $shmid      = MemVar::OpenToRead('posiciones.dat');
-            MemVar::initIdentifier($shmid);
-            MemVar::Cargar($enstring);
+            MemVar::Cargar($enstring,'posiciones.dat',$largo);
 
             /*$memvar     = MemVar::Instance('posiciones.dat');
             $enstring   = json_encode($posicionesMC);

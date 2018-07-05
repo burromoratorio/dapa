@@ -60,8 +60,10 @@ final class MemVar
 		shmop_close(self::$identifier);
 		return $shm_bytes_written;
 	}
-	public static function Cargar($value){
-		$shm_bytes_written = shmop_write(self::$identifier, $value, 0);
+	public static function Cargar($value,$datArchive,$size){
+		self::$shm_key 		= ftok(self::MCSTORAGE.'/'.$datArchive, 't');
+		self::$identifier 	= shmop_open(self::$shm_key, "c", 0644, $size);
+		$shm_bytes_written 	= shmop_write(self::$identifier, $value, 0);
 		shmop_close(self::$identifier);
 		return $shm_bytes_written;
 	}
