@@ -125,10 +125,11 @@ class PuertoController extends BaseController
             $memoPos    = MemVar::GetValue();
             Log::info("Posiciones en MC--".$memoPos);
             $posArr     = json_decode($memoPos);
-            $posicionesMC   = $posArr;
+            //$posicionesMC   = $posArr;
             //Log::info(print_r($posicionesMC, true));
             $index  = 0;
             foreach ($posArr as $key => $value) {
+                array_push($posicionesMC, $value); 
                 //si es un reporte siguiente para el movil---
                 Log::info($value->imei."==".$imei." velocAnterior:".$value->velocidad." velocActual:".$velocidad." FR:".$frArr[0]);
                 if($value->imei==$imei && $fecha > $value->fecha){
@@ -147,7 +148,7 @@ class PuertoController extends BaseController
                 }else{
                     //ver que pasa si la fecha no da en el if
                     Log::info("fecha de reporte anterior al guardado en memoria...no lo evaluo");
-                    $posicion   = {"imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad};
+                    $posicion   = ["imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad];
                     array_push($posicionesMC, $posicion);                    
                 }
                 
@@ -155,7 +156,6 @@ class PuertoController extends BaseController
             }
             Log::info(print_r($posicionesMC, true));
             $memvar     = MemVar::Instance('posiciones.dat');
-            $posicionesMC   = json_decode($posicionesMC);
             $enstring   = json_encode($posicionesMC);
             $largo      = (int)strlen($enstring);
             Log::info("Largo:::".$largo);
