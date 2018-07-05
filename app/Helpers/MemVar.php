@@ -91,17 +91,10 @@ final class MemVar
 	        return '0';
 		}
     }
-	public static function Eliminar( ) {
-		if ( !is_null(self::$identifier) ){
-			if (!shmop_delete(self::$identifier)) {
-				Log::info("couldn't mark shared memory block for deletion.");
-			}else{
-				Log::info("MC eliminada ....limpiando variables.");
-				self::$identifier 	= null;
-				self::$key 			= '';
-    			self::$size 		= 0;
-			}
-		}
+	public static function Eliminar( $archivo ) {
+		self::$shm_key 	= ftok(self::MCSTORAGE.'/'.$datArchive, 't');
+		shmop_delete($self::$shm_key);
+		
 	}
 	public static function VaciaMemoria(){
 		$ipcs = array();

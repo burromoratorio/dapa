@@ -153,6 +153,7 @@ class PuertoController extends BaseController
                 //array_push($posicionesMC, $value);
             }
             Log::info(print_r($posicionesMC, true));
+            MemVar::Eliminar( 'posiciones.dat' );
             $memvar     = MemVar::Instance('posiciones.dat');
             $enstring   = json_encode($posicionesMC);
             $largo      = (int)strlen($enstring);
