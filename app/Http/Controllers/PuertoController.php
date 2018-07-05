@@ -125,11 +125,12 @@ class PuertoController extends BaseController
             $memoPos    = MemVar::GetValue();
             Log::info("Posiciones en MC--".$memoPos);
             $posArr     = json_decode($memoPos);
+            $posicionesMC   = $posArr;
             //Log::info(print_r($posicionesMC, true));
             $index  = 0;
             foreach ($posArr as $key => $value) {
                 //si es un reporte siguiente para el movil---
-                if($value->imei==$imei && $fecha>$value->fecha){
+                if($value->imei==$imei && $fecha > $value->fecha){
                     Log::info("fecha anteior:".$value->fecha."fecha reporte:".$fecha);
                     Log::info("los datos, velocAnterior:".$value->velocidad." velocActual:".$velocidad." FR:".$frArr[0]);
                     //evaluo si paso de detenido a movimiento
