@@ -101,6 +101,7 @@ class PuertoController extends BaseController
         $frArr          = explode(',',$fr); 
         Log::info(print_r($frArr, true));
         if($shmidPos == '0'){
+            Log::info("entrando donde no existe memoria--debe entrar solo una vez");
             $posicion   = ["imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad];
             array_push($posicionesMC, $posicion);
             $memvar     = MemVar::Instance('posiciones.dat');
@@ -112,13 +113,6 @@ class PuertoController extends BaseController
             $shmid      = MemVar::OpenToRead('posiciones.dat');
             MemVar::initIdentifier($shmid);
             $memoPos    = MemVar::GetValue();
-            //$memoEstados= json_decode($enstring);
-            /*$memvar = MemVar::Instance('moviles.dat');
-            $memvar->init('moviles.dat',$largo);
-            $memvar->setValue( $apiRta->getBody() );
-            $shmid  = MemVar::OpenToRead('moviles.dat');
-
-*/
             Log::info($memoPos);
         }else{
             MemVar::initIdentifier($shmidPos);
@@ -127,8 +121,6 @@ class PuertoController extends BaseController
             $posArr     = json_decode($memoPos);
             $index  = 0;
             foreach ($posArr as $key => $value) {
-                $posicion   = ["imei"=>$value->imei,"fecha"=>$value->fecha,"velocidad"=>$value->velocidad];
-                array_push($posicionesMC, $posicion);                    
                 //si es un reporte siguiente para el movil---
                 if($value->imei==$imei && $fecha > $value->fecha){
                     Log::info("fecha anteior:".$value->fecha."fecha reporte:".$fecha);
@@ -136,14 +128,19 @@ class PuertoController extends BaseController
                     //evaluo si paso de detenido a movimiento
                     if( $value->velocidad<5 && $velocidad>8 && $frArr[0]<=120 ){
                         Log::info("movil paso de detenido a movimiento");
+                        $index  = $key;
+                        break;
                     }
                     //movil pasó de movimiento a detenido
                     if( $value->velocidad>8 && $velocidad<5 && $frArr[0]>120 ){
                         Log::info("movil paso de movimiento a detenido");
                         $index  = $key;
-                       // break;
+                        break;
                     }
-                }else{
+                    //con alguno de ess if voy a eliminar la posicion y agregar una nueva
+                    /*$posicion   = ["imei"=>$value->imei,"fecha"=>$value->fecha,"velocidad"=>$value->velocidad];
+                    array_push($posicionesMC, $posicion);   */
+                }elseif($value->imei!=$imei){
                     //ver que pasa si la fecha no da en el if
                     Log::info("fecha de reporte anterior al guardado en memoria...no lo evaluo");
                     $posicion   = ["imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad];
@@ -152,6 +149,8 @@ class PuertoController extends BaseController
                 
                 //array_push($posicionesMC, $value);
             }
+            //si encontre y complio con algun if-->elimino el registro
+            unset($posicionesMC[$index]);
             Log::info(print_r($posicionesMC, true));
             MemVar::Eliminar( 'posiciones.dat' );
             $memvar     = MemVar::Instance('posiciones.dat');
