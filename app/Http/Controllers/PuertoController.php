@@ -150,10 +150,10 @@ class PuertoController extends BaseController
                 
                 //array_push($posicionesMC, $value);
             }
+            $memvar     = MemVar::Instance('posiciones.dat');
             $enstring   = json_encode($posicionesMC);
             $largo      = (int)strlen($enstring);
             Log::info("Largo:::".$largo);
-            $memvar     = MemVar::Instance('posiciones.dat');
             $memvar->init('posiciones.dat',$largo);
             $memvar->setValue( $enstring );
             //$posicion   = ["imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad];
