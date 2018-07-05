@@ -95,7 +95,7 @@ class PuertoController extends BaseController
             return true;
         }
     }
-    public static function validezReporte($imei,$fecha,$velocidad){
+    public static function validezReporte($imei,$fecha,$velocidad,$fr){
         $shmidPos       = MemVar::OpenToRead('posiciones.dat');
         $posicionesMC   = [];
         if($shmidPos == '0'){
@@ -124,16 +124,17 @@ class PuertoController extends BaseController
             $memoPos    = MemVar::GetValue();
             Log::info("lalalala--".$memoPos);
             $posArr     = json_decode($memoPos);
+            Log::error(print_r($fr, true));
             foreach ($posArr as $key => $value) {
+                if($value->imei==$imei && $value->velocidad<5 && $velocidad>8 && $fr ){
+
+                }
                 array_push($posicionesMC, $value);
             }
             $posicion   = ["imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad];
-            $posicion2   = ["imei"=>351687030222078,"fecha"=>'2018-07-03 05:35:57',"velocidad"=>80];
+            //$posicion2   = ["imei"=>351687030222078,"fecha"=>'2018-07-03 05:35:57',"velocidad"=>80];
             array_push($posicionesMC, $posicion);
-            array_push($posicionesMC, $posicion2);
-            $MCPOS    = json_encode($posicionesMC);
-            $encontrado     = self::binarySearch($MCPOS, 0, count($MCPOS) - 1, 351687030222052);
-            Log::error(print_r($encontrado, true));
+            
             //Log::info($posicionesMC);
             Log::error("sha existe el segmento de memoria");
         }
@@ -237,7 +238,7 @@ class PuertoController extends BaseController
                 $vbaField   = self::validateIndexCadena("VBA",$report);
                 $odpField   = self::validateIndexCadena("ODP",$report);
                 $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0]);
-                $validezReporte = self::validezReporte($report['IMEI'],$fecha,$gprmcData[6]);
+                $validezReporte = self::validezReporte($report['IMEI'],$fecha,$gprmcData[6],$frData['FR']);
                 $posicionGP = GprmcEntrada::create([
                     'imei'=>$report['IMEI'],'gprmc'=>'GPRMC,'.$report['GPRMC'],'pid'=>$pid,'sec_pid'=>$sec_pid,
                     'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],
