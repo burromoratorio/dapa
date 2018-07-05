@@ -99,6 +99,7 @@ class PuertoController extends BaseController
         $shmidPos       = MemVar::OpenToRead('posiciones.dat');
         $posicionesMC   = [];
         $frArr          = explode($fr,',');
+        Log::info(print_r($frArr, true));
         if($shmidPos == '0'){
             $posicion   = ["imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad];
             array_push($posicionesMC, $posicion);
