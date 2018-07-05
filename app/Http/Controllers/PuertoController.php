@@ -147,7 +147,7 @@ class PuertoController extends BaseController
                 }else{
                     //ver que pasa si la fecha no da en el if
                     Log::info("fecha de reporte anterior al guardado en memoria...no lo evaluo");
-                    $posicion   = ["imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad];
+                    $posicion   = {"imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad};
                     array_push($posicionesMC, $posicion);                    
                 }
                 
