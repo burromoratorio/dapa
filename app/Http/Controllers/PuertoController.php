@@ -153,12 +153,13 @@ class PuertoController extends BaseController
             unset($posicionesMC[$index]);
             Log::info(print_r($posicionesMC, true));
             MemVar::Eliminar( 'posiciones.dat' );
-            $memvar     = MemVar::Instance('posiciones.dat');
+            /*$memvar     = MemVar::Instance('posiciones.dat');
             $enstring   = json_encode($posicionesMC);
             $largo      = (int)strlen($enstring);
             Log::info("Largo:::".$largo);
             $memvar->init('posiciones.dat',$largo);
             $memvar->setValue( $enstring );
+            */
             Log::error("sha existe el segmento de memoria");
         }
         
