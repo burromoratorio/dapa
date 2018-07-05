@@ -121,7 +121,6 @@ class PuertoController extends BaseController
 */
             Log::info($memoPos);
         }else{
-            $posicionesMC= [];
             MemVar::initIdentifier($shmidPos);
             $memoPos    = MemVar::GetValue();
             Log::info("Posiciones en MC--".$memoPos);
@@ -145,18 +144,19 @@ class PuertoController extends BaseController
                     }
                 }else{
                     Log::info("fecha de reporte anterior al guardado en memoria...no lo evaluo");
-                    array_push($posicionesMC, $value);
+                    $posicionesMC[] = $value;
                 }
                 
                 //array_push($posicionesMC, $value);
             }
-            /*$memvar     = MemVar::Instance('posiciones.dat');
+            Log::info(print_r($posicionesMC, true));
+            $memvar     = MemVar::Instance('posiciones.dat');
             $enstring   = json_encode($posicionesMC);
             $largo      = (int)strlen($enstring);
             Log::info("Largo:::".$largo);
             $memvar->init('posiciones.dat',$largo);
             $memvar->setValue( $enstring );
-            */
+            
             Log::error("sha existe el segmento de memoria");
         }
         
