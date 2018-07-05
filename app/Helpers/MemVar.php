@@ -60,7 +60,11 @@ final class MemVar
 		shmop_close(self::$identifier);
 		return $shm_bytes_written;
 	}
-
+	public static function Cargar($value){
+		$shm_bytes_written = shmop_write(self::$identifier, $value, 0);
+		shmop_close(self::$identifier);
+		return $shm_bytes_written;
+	}
 	public static function initIdentifier($shmid){
 		self::$identifier=$shmid;
 	}
