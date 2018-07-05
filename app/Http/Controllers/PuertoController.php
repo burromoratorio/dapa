@@ -131,13 +131,13 @@ class PuertoController extends BaseController
                 //si es un reporte siguiente para el movil---
                 if($value->imei==$imei && $fecha>$value->fecha){
                     Log::info("fecha anteior:".$value->fecha."fecha reporte:".$fecha);
-                    Log::info("los datos, velocAnterior:".$value->velocidad." velocActual:".$velocidad."FR:".$fr[0]);
+                    Log::info("los datos, velocAnterior:".$value->velocidad." velocActual:".$velocidad."FR:".$frArr[0]);
                     //evaluo si paso de detenido a movimiento
-                    if( $value->velocidad<5 && $velocidad>8 && $fr[0]<=120 ){
+                    if( $value->velocidad<5 && $velocidad>8 && $frArr[0]<=120 ){
                         Log::info("movil paso de detenido a movimiento");
                     }
                     //movil pasó de movimiento a detenido
-                    if( $value->velocidad>8 && $velocidad<5 && $fr[0]>120 ){
+                    if( $value->velocidad>8 && $velocidad<5 && $frArr[0]>120 ){
                         Log::info("movil paso de movimiento a detenido");
                     }
                 }else{
