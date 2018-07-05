@@ -127,11 +127,12 @@ class PuertoController extends BaseController
             Log::info("Posiciones en MC--".$memoPos);
             $posArr     = json_decode($memoPos);
             //Log::info(print_r($posicionesMC, true));
+            $index  = 0;
             foreach ($posArr as $key => $value) {
                 //si es un reporte siguiente para el movil---
                 if($value->imei==$imei && $fecha>$value->fecha){
                     Log::info("fecha anteior:".$value->fecha."fecha reporte:".$fecha);
-                    Log::info("los datos, velocAnterior:".$value->velocidad." velocActual:".$velocidad."FR:".$frArr[0]);
+                    Log::info("los datos, velocAnterior:".$value->velocidad." velocActual:".$velocidad." FR:".$frArr[0]);
                     //evaluo si paso de detenido a movimiento
                     if( $value->velocidad<5 && $velocidad>8 && $frArr[0]<=120 ){
                         Log::info("movil paso de detenido a movimiento");
@@ -139,14 +140,22 @@ class PuertoController extends BaseController
                     //movil pasó de movimiento a detenido
                     if( $value->velocidad>8 && $velocidad<5 && $frArr[0]>120 ){
                         Log::info("movil paso de movimiento a detenido");
+                        $index  = $key;
+                       // break;
                     }
                 }else{
                     Log::info("fecha de reporte anterior al guardado en memoria...no lo evaluo");
+                    array_push($posicionesMC, $value);
                 }
                 
-                array_push($posicionesMC, $value);
+                //array_push($posicionesMC, $value);
             }
-            $posicion   = ["imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad];
+            $enstring   = json_encode($posicionesMC);
+            $largo      = (int)strlen($enstring);
+            Log::info("Largo:::".$largo);
+            $memvar->init('posiciones.dat',$largo);
+            $memvar->setValue( $enstring );
+            //$posicion   = ["imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad];
             //$posicion2   = ["imei"=>351687030222078,"fecha"=>'2018-07-03 05:35:57',"velocidad"=>80];
             //array_push($posicionesMC, $posicion);
             
