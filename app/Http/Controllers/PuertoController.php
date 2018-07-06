@@ -129,38 +129,29 @@ class PuertoController extends BaseController
                     if( $value->velocidad<5 && $velocidad>8 && $frArr[0]<=120 ){
                         Log::info("movil paso de detenido a movimiento");
                         $index  = $key;
-                        break;
                     }
                     //movil pasó de movimiento a detenido
                     if( $value->velocidad>8 && $velocidad<5 && $frArr[0]>120 ){
                         Log::info("movil paso de movimiento a detenido");
                         $index  = $key;
-                        break;
                     }
-                    //con alguno de ess if voy a eliminar la posicion y agregar una nueva
-                    /*$posicion   = ["imei"=>$value->imei,"fecha"=>$value->fecha,"velocidad"=>$value->velocidad];
-                    array_push($posicionesMC, $posicion);   */
-                }elseif($value->imei!=$imei){
-                    //ver que pasa si la fecha no da en el if
-                    Log::info("fecha de reporte anterior al guardado en memoria...no lo evaluo");
-                    $posicion   = ["imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad];
+                }
+                if($index==0){
+                    $posicion           = ["imei"=>$value->imei,"fecha"=>$value->fecha,"velocidad"=>$value->velocidad];
+                    $posicionesMC[$key] = $posicion;
+                }else{
+                    $posicion           = ["imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad];
                     array_push($posicionesMC, $posicion);                    
                 }
-                
-                //array_push($posicionesMC, $value);
             }
-            //si encontre y complio con algun if-->elimino el registro
-            unset($posicionesMC[$index]);
             Log::info(print_r($posicionesMC, true));
             MemVar::Eliminar( 'posiciones.dat' );
-            /*$memvar     = MemVar::Instance('posiciones.dat');
+            $memvar     = MemVar::Instance('posiciones.dat');
             $enstring   = json_encode($posicionesMC);
             $largo      = (int)strlen($enstring);
             Log::info("Largo:::".$largo);
             $memvar->init('posiciones.dat',$largo);
             $memvar->setValue( $enstring );
-            */
-            Log::error("sha existe el segmento de memoria");
         }
         
     }
