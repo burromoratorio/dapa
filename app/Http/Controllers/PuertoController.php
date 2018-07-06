@@ -122,6 +122,7 @@ class PuertoController extends BaseController
             $index  = 0;
             foreach ($posArr as $key => $value) {
                 //si es un reporte siguiente para el movil---
+                Log::info($value->imei." Vs ".$imei);
                 if($value->imei==$imei && $fecha > $value->fecha){
                     Log::info("fecha anteior:".$value->fecha."fecha reporte:".$fecha);
                     Log::info("los datos, velocAnterior:".$value->velocidad." velocActual:".$velocidad." FR:".$frArr[0]);
@@ -145,6 +146,9 @@ class PuertoController extends BaseController
                     $posicion           = ["imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad];
                     array_push($posicionesMC, $posicion);                    
                 }
+            }
+            if($index==0){
+                Log::info("si al finalizar no encontro el imei....");
             }
             Log::info(print_r($posicionesMC, true));
             MemVar::Eliminar( 'posiciones.dat' );
