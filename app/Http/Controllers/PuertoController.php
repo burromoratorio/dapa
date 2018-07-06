@@ -119,7 +119,7 @@ class PuertoController extends BaseController
             $memoPos    = MemVar::GetValue();
             Log::info("Posiciones en MC--".$memoPos);
             $posArr     = json_decode($memoPos);
-            $index      = 0;
+            $index      = "-1";
             $encontrado = 0;
             foreach ($posArr as $key => $value) {
                 //si es un reporte siguiente para el movil---
@@ -139,12 +139,12 @@ class PuertoController extends BaseController
                     }
                     $encontrado = 1;
                 }
-                if($index==0){//si no cambio de estado y se econtraba en MC...
-                    Log::info("entro por index=0");
+                if($index=="-1"){//si no cambio de estado y se econtraba en MC...
+                    Log::info("entro por index=-1");
                     $posicion           = ["imei"=>$value->imei,"fecha"=>$value->fecha,"velocidad"=>$value->velocidad];
                     $posicionesMC[$key] = $posicion;
                 }else{
-                    Log::info("entro por index>0::".$index);
+                    Log::info("entro por index>-1::".$index);
                     $posicion           = ["imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad];
                     array_push($posicionesMC, $posicion);                    
                 }
