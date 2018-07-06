@@ -119,11 +119,12 @@ class PuertoController extends BaseController
             $memoPos    = MemVar::GetValue();
             Log::info("Posiciones en MC--".$memoPos);
             $posArr     = json_decode($memoPos);
-            $index  = 0;
+            $index      = 0;
+            $encontrado = 0;
             foreach ($posArr as $key => $value) {
                 //si es un reporte siguiente para el movil---
                 Log::info($value->imei." Vs ".$imei);
-                if($value->imei==$imei && $fecha > $value->fecha){
+                if($value->imei==$imei ){
                     Log::info("fecha anteior:".$value->fecha."fecha reporte:".$fecha);
                     Log::info("los datos, velocAnterior:".$value->velocidad." velocActual:".$velocidad." FR:".$frArr[0]);
                     //evaluo si paso de detenido a movimiento
@@ -136,8 +137,9 @@ class PuertoController extends BaseController
                         Log::info("movil paso de movimiento a detenido");
                         $index  = $key;
                     }
+                    $encontrado = 1;
                 }
-                if($index==0){
+                if($index==0){//si no cambio de estado y se econtraba en MC...
                     Log::info("entro por index=0");
                     $posicion           = ["imei"=>$value->imei,"fecha"=>$value->fecha,"velocidad"=>$value->velocidad];
                     $posicionesMC[$key] = $posicion;
@@ -147,8 +149,9 @@ class PuertoController extends BaseController
                     array_push($posicionesMC, $posicion);                    
                 }
             }
-            if($index==0){
-                Log::info("si al finalizar no encontro el imei....");
+            if($encontrado==0){
+                $posicion           = ["imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad];
+                array_push($posicionesMC, $posicion);           
             }
             Log::info(print_r($posicionesMC, true));
             MemVar::Eliminar( 'posiciones.dat' );
