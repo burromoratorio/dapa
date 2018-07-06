@@ -137,9 +137,11 @@ class PuertoController extends BaseController
                     }
                 }
                 if($index==0){
+                    Log::info("entro por index=0");
                     $posicion           = ["imei"=>$value->imei,"fecha"=>$value->fecha,"velocidad"=>$value->velocidad];
                     $posicionesMC[$key] = $posicion;
                 }else{
+                    Log::info("entro por index>0::".$index);
                     $posicion           = ["imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad];
                     array_push($posicionesMC, $posicion);                    
                 }
