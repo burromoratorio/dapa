@@ -146,7 +146,8 @@ class PuertoController extends BaseController
                 }else{
                     Log::info("entro por index>-1::".$index);
                     $posicion           = ["imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad];
-                    array_push($posicionesMC, $posicion);                    
+                    array_push($posicionesMC, $posicion);  
+                    $index      = "-1";                  
                 }
             }
             if($encontrado==0){
