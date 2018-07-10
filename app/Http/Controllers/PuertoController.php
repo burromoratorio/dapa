@@ -102,7 +102,7 @@ class PuertoController extends BaseController
         Log::info(print_r($frArr, true));
         if($shmidPos == '0'){
             Log::info("entrando donde no existe memoria--debe entrar solo una vez");
-            $posicion   = [$imei=>$fecha.",".$velocidad];
+            $posicion   = [$imei=>$fecha."|".$velocidad];
             array_push($posicionesMC, $posicion);
             Log::error(print_r($posicionesMC, true));
             $memvar     = MemVar::Instance('posiciones.dat');
@@ -123,6 +123,26 @@ class PuertoController extends BaseController
             Log::error(print_r($posArr, true));
             $index      = "-1";
             $encontrado = 0;
+            if(isset($posArr[$imei])){//el movil tiene datos en el array de posiciones
+                $internalInfo   = $posArr[$imei];
+                $arrInternalInfo= explode("|", $internalInfo);
+                Log::info("los datos, velocAnterior:".$arrInternalInfo[1]." velocActual:".$velocidad." FR:".$frArr[0]);
+                //evaluo si paso de detenido a movimiento
+                if( $arrInternalInfo[1]<5 && $velocidad>8 && $frArr[0]<=120 ){
+                    Log::info("movil paso de detenido a movimiento");
+                    $posArr[$imei]  = $fecha."|".$velocidad;
+                }
+                //movil pasó de movimiento a detenido
+                if( $arrInternalInfo[1]>8 && $velocidad<5 && $frArr[0]>120 ){
+                    Log::info("movil paso de movimiento a detenido");
+                    $posArr[$imei]  = $fecha."|".$velocidad;
+                    
+                }
+            }else{//el movil no tiene datos de posiciones->almaceno la info
+                Log::info("el movil no tiene datos de posiciones-->almaceno");
+                $posicion   = [$imei=>$fecha."|".$velocidad];
+                array_push($posArr, $posicion);
+            }
            /* foreach ($posArr as $key => $value) {
                 //si es un reporte siguiente para el movil---
                 Log::info($value->imei." Vs ".$imei);
