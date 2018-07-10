@@ -106,7 +106,7 @@ class PuertoController extends BaseController
             array_push($posicionesMC, $posicion);
             Log::error(print_r($posicionesMC, true));
             $memvar     = MemVar::Instance('posiciones.dat');
-            $enstring   = json_encode($posicionesMC);
+            $enstring   = implode(";", $posicionesMC);// json_encode($posicionesMC);
             $largo      = (int)strlen($enstring);
             Log::info("Largo:::".$largo);
             $memvar->init('posiciones.dat',$largo);
@@ -119,7 +119,7 @@ class PuertoController extends BaseController
             MemVar::initIdentifier($shmidPos);
             $memoPos    = MemVar::GetValue();
             Log::info("Posiciones en MC--".$memoPos);
-            $posArr     = json_decode($memoPos);
+            $posArr     = explode(";",$memoPos);//json_decode($memoPos);
             Log::error(print_r($posArr, true));
             $index      = "-1";
             $encontrado = 0;
