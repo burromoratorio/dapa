@@ -102,7 +102,7 @@ class PuertoController extends BaseController
         Log::info(print_r($frArr, true));
         if($shmidPos == '0'){
             Log::info("entrando donde no existe memoria--debe entrar solo una vez");
-            $posicionesMC[$imei]=$fecha."|".$velocidad];
+            $posicionesMC[$imei]=$fecha."|".$velocidad;
             Log::error(print_r($posicionesMC, true));
             $memvar     = MemVar::Instance('posiciones.dat');
             $enstring   = json_encode($posicionesMC);//implode(";", $posicionesMC);// 
