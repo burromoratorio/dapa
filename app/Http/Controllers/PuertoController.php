@@ -102,7 +102,7 @@ class PuertoController extends BaseController
         Log::info(print_r($frArr, true));
         if($shmidPos == '0'){
             Log::info("entrando donde no existe memoria--debe entrar solo una vez");
-            $posicionesMC["351687030222052"]=$fecha."|".$velocidad;
+            $posicionesMC[$imei]=$fecha."|".$velocidad;
             Log::error(print_r($posicionesMC, true));
             $memvar     = MemVar::Instance('posiciones.dat');
             $enstring   = json_encode($posicionesMC);//implode(";", $posicionesMC);// 
@@ -129,19 +129,29 @@ class PuertoController extends BaseController
                 //evaluo si paso de detenido a movimiento
                 if( $arrInternalInfo[1]<5 && $velocidad>8 && $frArr[0]<=120 ){
                     Log::info("movil paso de detenido a movimiento");
-                    $posArr[$imei]  = $fecha."|".$velocidad;
+                    $posArr->$imei  = $fecha."|".$velocidad;
                 }
                 //movil pasó de movimiento a detenido
                 if( $arrInternalInfo[1]>8 && $velocidad<5 && $frArr[0]>120 ){
                     Log::info("movil paso de movimiento a detenido");
-                    $posArr[$imei]  = $fecha."|".$velocidad;
+                    $posArr->$imei  = $fecha."|".$velocidad;
                     
                 }
+                $posicionesMC   = $posArr;
             }else{//el movil no tiene datos de posiciones->almaceno la info
                 Log::info("el movil no tiene datos de posiciones-->almaceno");
                 $posArr->$imei   = $fecha."|".$velocidad;
-               
+               $posicionesMC   = $posArr;
             }
+
+            Log::info(print_r($posicionesMC, true));
+            MemVar::Eliminar( 'posiciones.dat' );
+            $memvar     = MemVar::Instance('posiciones.dat');
+            $enstring   = json_encode($posArr);
+            $largo      = (int)strlen($enstring);
+            Log::info("Largo:::".$largo);
+            $memvar->init('posiciones.dat',$largo);
+            $memvar->setValue( $enstring );
            /* foreach ($posArr as $key => $value) {
                 //si es un reporte siguiente para el movil---
                 Log::info($value->imei." Vs ".$imei);
