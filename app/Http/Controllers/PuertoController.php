@@ -122,7 +122,7 @@ class PuertoController extends BaseController
             Log::error(print_r($posArr, true));
             $index      = "-1";
             $encontrado = 0;
-            if($posArr->$imei){//el movil tiene datos en el array de posiciones
+            if(!$posArr->$imei){//el movil tiene datos en el array de posiciones
                 $internalInfo   = $posArr->$imei;
                 $arrInternalInfo= explode("|", $internalInfo);
                 Log::info("los datos, velocAnterior:".$arrInternalInfo[1]." velocActual:".$velocidad." FR:".$frArr[0]);
