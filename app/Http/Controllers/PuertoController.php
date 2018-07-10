@@ -139,7 +139,7 @@ class PuertoController extends BaseController
                 }
             }else{//el movil no tiene datos de posiciones->almaceno la info
                 Log::info("el movil no tiene datos de posiciones-->almaceno");
-                $posArr[$imei]   = $fecha."|".$velocidad;
+                $posArr->$imei   = $fecha."|".$velocidad;
                
             }
            /* foreach ($posArr as $key => $value) {
