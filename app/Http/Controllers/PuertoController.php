@@ -102,8 +102,9 @@ class PuertoController extends BaseController
         Log::info(print_r($frArr, true));
         if($shmidPos == '0'){
             Log::info("entrando donde no existe memoria--debe entrar solo una vez");
-            $posicion   = ["imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad];
+            $posicion   = [$imei=>$fecha.",".$velocidad];
             array_push($posicionesMC, $posicion);
+            Log::error(print_r($posicionesMC, true));
             $memvar     = MemVar::Instance('posiciones.dat');
             $enstring   = json_encode($posicionesMC);
             $largo      = (int)strlen($enstring);
@@ -119,9 +120,10 @@ class PuertoController extends BaseController
             $memoPos    = MemVar::GetValue();
             Log::info("Posiciones en MC--".$memoPos);
             $posArr     = json_decode($memoPos);
+            Log::error(print_r($posArr, true));
             $index      = "-1";
             $encontrado = 0;
-            foreach ($posArr as $key => $value) {
+           /* foreach ($posArr as $key => $value) {
                 //si es un reporte siguiente para el movil---
                 Log::info($value->imei." Vs ".$imei);
                 if($value->imei==$imei ){
@@ -161,7 +163,7 @@ class PuertoController extends BaseController
             $largo      = (int)strlen($enstring);
             Log::info("Largo:::".$largo);
             $memvar->init('posiciones.dat',$largo);
-            $memvar->setValue( $enstring );
+            $memvar->setValue( $enstring );*/
         }
         
     }
