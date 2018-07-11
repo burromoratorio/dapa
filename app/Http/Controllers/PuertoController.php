@@ -100,23 +100,19 @@ class PuertoController extends BaseController
         $posicionesMC   = [];
         $frArr          = explode(',',$fr); 
         if($shmidPos == '0'){
-            Log::info("entrando donde no existe memoria--debe entrar solo una vez");
+            Log::info("creando segmento de memoria posicionesMC");
             $posicionesMC[$imei]=$fecha."|".$velocidad;
-            Log::error(print_r($posicionesMC, true));
             $memvar     = MemVar::Instance('posiciones.dat');
-            $enstring   = json_encode($posicionesMC);//implode(";", $posicionesMC);// 
+            $enstring   = json_encode($posicionesMC);
             $largo      = (int)strlen($enstring);
-            Log::info("Largo:::".$largo);
             $memvar->init('posiciones.dat',$largo);
             $memvar->setValue( $enstring );
             $shmid      = MemVar::OpenToRead('posiciones.dat');
             MemVar::initIdentifier($shmid);
             $memoPos    = MemVar::GetValue();
-            Log::info($memoPos);
         }else{
             MemVar::initIdentifier($shmidPos);
             $memoPos    = MemVar::GetValue();
-            Log::info("Posiciones en MC--".$memoPos);
             $posArr     = json_decode($memoPos);//Log::error(print_r($posArr, true));
             $index      = "-1";
             $encontrado = 0;
@@ -125,18 +121,19 @@ class PuertoController extends BaseController
                 $arrInternalInfo= explode("|", $internalInfo);
                 Log::info("los datos, velocAnterior:".$arrInternalInfo[1]." velocActual:".$velocidad." FR:".$frArr[0]);
                 //evaluo si paso de detenido a movimiento
-                if( $arrInternalInfo[1]<5 && $velocidad>8 && $frArr[0]<=120 ){
-                    Log::info("movil:".$posArr->$imei." paso de detenido a movimiento");
+               /* if( $arrInternalInfo[1]<5 && $velocidad>8 && $frArr[0]<=120 ){
+                    Log::info("movil:".$imei." paso de detenido a movimiento");
                     $posArr->$imei  = $fecha."|".$velocidad;
-                }
+                }*/
+                $posArr->$imei  =( $arrInternalInfo[1]<5 && $velocidad>8 && $frArr[0]<=120 )?$fecha."|".$velocidad;
                 //movil pasó de movimiento a detenido
                 if( $arrInternalInfo[1]>8 && $velocidad<5 && $frArr[0]>120 ){
-                    Log::info("movil:".$posArr->$imei." paso de movimiento a detenido");
+                    Log::info("movil:".$imei." paso de movimiento a detenido");
                     $posArr->$imei  = $fecha."|".$velocidad;
                 }
                 $posicionesMC   = $posArr;
             }else{//el movil no tiene datos de posiciones->almaceno la info
-                Log::info("el movil:".$posArr->$imei." no tiene datos de posiciones-->almaceno");
+                Log::info("el movil:".$imei." no tiene datos de posiciones-->almaceno");
                 $posArr->$imei   = $fecha."|".$velocidad;
                 $posicionesMC   = $posArr;
             }
