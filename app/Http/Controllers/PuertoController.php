@@ -289,8 +289,6 @@ class PuertoController extends BaseController
                 if($alaField["ALA"]=="V"){
                     $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion->posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>7,'fecha_alarma'=>$fecha,'falsa'=>0]);
                 }
-                
-
             }else{
                 $respuesta  = "0";
             }
@@ -448,8 +446,6 @@ class PuertoController extends BaseController
         $shmid    = MemVar::OpenToRead('sensores.dat');
         if($shmid=='0'){
             $memoEstados    = self::startupSensores();
-            //Log::error(print_r($memoEstados, true));
-            //Log::info("crea una vez sensores");
         }else{
             MemVar::initIdentifier($shmid);
             $memoEstados    = MemVar::GetValue();

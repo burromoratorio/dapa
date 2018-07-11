@@ -72,11 +72,7 @@ class NormalReportController extends BaseController
           }else{
             Log::error("Bad Response :: code:".$code." reason::".$reason);
           }
-        }/*else{
-          //$memoMoviles  = MemVar::GetValue();
-          $shmid   = MemVar::OpenToRead('moviles.dat');
-          $movil   = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
-        }*/
+        }
         /*Fin nuevaMC*/
         if($movil!=false){
           $rta    = $this->tratarReporte($jsonReq['cadena'],$movil);
