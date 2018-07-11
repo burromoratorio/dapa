@@ -102,11 +102,7 @@ class PuertoController extends BaseController
         if($shmidPos == '0'){
             Log::info("creando segmento de memoria posicionesMC");
             $posicionesMC[$imei]=$fecha."|".$velocidad;
-            $memvar     = MemVar::Instance('posiciones.dat');
-            $enstring   = json_encode($posicionesMC);
-            $largo      = (int)strlen($enstring);
-            $memvar->init('posiciones.dat',$largo);
-            $memvar->setValue( $enstring );
+            self::CargarMemoria('posiciones.dat',$posicionesMC);
             $shmid      = MemVar::OpenToRead('posiciones.dat');
             MemVar::initIdentifier($shmid);
             $memoPos    = MemVar::GetValue();
@@ -121,8 +117,10 @@ class PuertoController extends BaseController
                 $arrInternalInfo= explode("|", $internalInfo);
                 Log::info("los datos, velocAnterior:".$arrInternalInfo[1]." velocActual:".$velocidad." FR:".$frArr[0]);
                 //evaluo si paso de detenido a movimiento
-               if( $arrInternalInfo[1]<5 && $velocidad>8 && $frArr[0]<=120 ) $posArr->$imei  = $fecha."|".$velocidad;
-                
+                if( $arrInternalInfo[1]<5 && $velocidad>8 && $frArr[0]<=120 ){
+                    Log::info("movil:".$imei." paso de detenido a movimiento");
+                    $posArr->$imei  = $fecha."|".$velocidad;
+                }
                 //movil pasó de movimiento a detenido
                 if( $arrInternalInfo[1]>8 && $velocidad<5 && $frArr[0]>120 ){
                     Log::info("movil:".$imei." paso de movimiento a detenido");
@@ -135,12 +133,7 @@ class PuertoController extends BaseController
                 $posicionesMC   = $posArr;
             }
             MemVar::Eliminar( 'posiciones.dat' );
-            $memvar     = MemVar::Instance('posiciones.dat');
-            $enstring   = json_encode($posArr);
-            $largo      = (int)strlen($enstring);
-            Log::info("Largo:::".$largo);
-            $memvar->init('posiciones.dat',$largo);
-            $memvar->setValue( $enstring );
+            self::CargarMemoria('posiciones.dat',$posArr);
         }
         
     }
@@ -486,5 +479,12 @@ class PuertoController extends BaseController
         $memoEstados= json_decode($enstring);
         return $memoEstados;
     
+    }
+    public static function CargarMemoria($archivo,$dataArray){
+        $memvar     = MemVar::Instance($archivo);
+        $enstring   = json_encode($dataArray);
+        $largo      = (int)strlen($enstring);
+        $memvar->init($archivo,$largo);
+        $memvar->setValue( $enstring );
     }
 }
