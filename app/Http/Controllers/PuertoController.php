@@ -125,7 +125,7 @@ class PuertoController extends BaseController
                     Log::info("movil:".$imei." paso de detenido a movimiento");
                     $posArr->$imei  = $fecha."|".$velocidad;
                 }*/
-                $posArr->$imei  =( $arrInternalInfo[1]<5 && $velocidad>8 && $frArr[0]<=120 )?$fecha."|".$velocidad;
+                $posArr->$imei  =( $arrInternalInfo[1]<5 && $velocidad>8 && $frArr[0]<=120 )?$fecha."|".$velocidad:;
                 //movil pasó de movimiento a detenido
                 if( $arrInternalInfo[1]>8 && $velocidad<5 && $frArr[0]>120 ){
                     Log::info("movil:".$imei." paso de movimiento a detenido");
