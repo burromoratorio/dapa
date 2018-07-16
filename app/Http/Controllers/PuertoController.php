@@ -158,6 +158,7 @@ class PuertoController extends BaseController
     }
     public static function ddmmyy2yyyymmdd($fecha,$hora){
         $formatFecha = date("Y-m-d h:i:s", mktime(substr($hora, 0,2), substr($hora, 2,2), substr($hora, 4,2), substr($fecha, 2,2), substr($fecha, 0,2), substr($fecha, -2,2)));
+        Log::info("Sin -3:".$formatFecha);
         $nuevafecha = strtotime ( '-3 hours' , strtotime ( $formatFecha ) ) ;
         $nuevafecha = date ( 'Y-m-d h:i:s' , $nuevafecha );
         Log::info("Fecha LLEGA:".$fecha);
