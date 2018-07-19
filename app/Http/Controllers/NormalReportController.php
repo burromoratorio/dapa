@@ -47,7 +47,7 @@ class NormalReportController extends BaseController
           }else{
             $mcRta2    = '1';
             $movil     = $mcRta;
-            Log::info("Procesando:".$arrCadena['IMEI']."- Movil_id:".$movil->movil_id."-MovilOld_id:".$movil->movilOldId);
+            Log::info("::::::::Procesando:".$arrCadena['IMEI']."- Movil_id:".$movil->movil_id."-MovilOld_id:".$movil->movilOldId."::::::::");
           }
         }else{
           $requestApi   = '1';
