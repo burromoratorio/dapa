@@ -49,7 +49,7 @@ class PuertoController extends BaseController
             if(self::validateImei($arrCampos['IMEI'])){
                 switch (self::positionOrDesconect($arrCampos)) {
                     case 'GPRMC':
-                        Log::info("Normal GPRMC");
+                        //Log::info("Normal GPRMC");
                         $posicionID=self::storeGprmc($arrCampos,$movil);
                         if($posicionID!='0'){
                            /*no guardo las alarmas en dbPrimaria self::findAndStoreAlarm($arrCampos,$posicionID);*/
@@ -100,7 +100,7 @@ class PuertoController extends BaseController
         $posicionesMC   = [];
         $frArr          = explode(',',$fr); 
         if($shmidPos == '0'){
-            Log::info("creando segmento de memoria posicionesMC");
+            //Log::info("creando segmento de memoria posicionesMC");
             $posicionesMC[$imei]=$fecha."|".$velocidad;
             self::CargarMemoria('posiciones.dat',$posicionesMC);
             $shmid      = MemVar::OpenToRead('posiciones.dat');
@@ -115,7 +115,7 @@ class PuertoController extends BaseController
             if(property_exists($posArr, $imei)){//el movil tiene datos en el array de posiciones
                 $internalInfo   = $posArr->$imei;
                 $arrInternalInfo= explode("|", $internalInfo);
-                Log::info("los datos, velocAnterior:".$arrInternalInfo[1]." velocActual:".$velocidad." FR:".$frArr[0]);
+                //Log::info("los datos, velocAnterior:".$arrInternalInfo[1]." velocActual:".$velocidad." FR:".$frArr[0]);
                 //evaluo si paso de detenido a movimiento
                 if( $arrInternalInfo[1]<5 && $velocidad>8 && $frArr[0]<=120 ){
                     Log::info("movil:".$imei." paso de detenido a movimiento");
@@ -128,7 +128,7 @@ class PuertoController extends BaseController
                 }
                 $posicionesMC   = $posArr;
             }else{//el movil no tiene datos de posiciones->almaceno la info
-                Log::info("el movil:".$imei." no tiene datos de posiciones-->almaceno");
+                //Log::info("el movil:".$imei." no tiene datos de posiciones-->almaceno");
                 $posArr->$imei   = $fecha."|".$velocidad;
                 $posicionesMC   = $posArr;
             }
@@ -217,7 +217,7 @@ class PuertoController extends BaseController
         $pid        = getmypid();
         $sec_pid    = rand(0,1000);
         $errorLog   = "";
-        Log::info("Validando GPRMC...".$report['GPRMC']);
+        //Log::info("Validando GPRMC...".$report['GPRMC']);
         if($report['GPRMC']!=''){
             $gprmcData  = explode(",",$report['GPRMC']);
             $gprmcVal   = self::validateGprmc($gprmcData);
@@ -383,7 +383,7 @@ class PuertoController extends BaseController
         return $perifericos;
     }
     public static function ModPrecencia($arrPrescense){
-        Log::info("ingresa por modPresencia porque PER==NULL");
+        //Log::info("ingresa por modPresencia porque PER==NULL");
         $IOEstados       = array("ltrs"=>0,"mod_presencia"=>1,"tmg"=>0,"panico"=>0,"desenganche"=>0);
         if($arrPrescense[2]=='O01' || $arrPrescense[2]=='O11'){
             $IOEstados['mod_presencia']   =   2;
@@ -442,7 +442,7 @@ class PuertoController extends BaseController
     }
     public static function getSensores($imei) {
        //MemVar::VaciaMemoria();
-        Log::error("obteniendo sensores");
+        //Log::error("obteniendo sensores");
         $shmid    = MemVar::OpenToRead('sensores.dat');
         if($shmid=='0'){
             $memoEstados    = self::startupSensores();

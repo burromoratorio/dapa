@@ -27,10 +27,10 @@ final class MemVar
         if ($inst === null) {
             $inst = new MemVar();
             self::$shm_key 	= ftok(self::MCSTORAGE.'/'.$datArchive, 't');
-        }else{
-        	Log::error("es singleton, cuantas instancias queres!");
-        }
-        Log::info("creando singleton");
+        }//else{
+        	//Log::error("es singleton, cuantas instancias queres!");
+        //}
+        //Log::info("creando singleton");
         return $inst;
     }
 
@@ -45,13 +45,13 @@ final class MemVar
     public function init($datArchive,$s){
     	self::$shm_key 	= ftok(self::MCSTORAGE.'/'.$datArchive, 't');
     	self::$size 	= $s;
-    	Log::info("Seteando valores. key:". self::$shm_key."  size:".self::$size);
+    	//Log::info("Seteando valores. key:". self::$shm_key."  size:".self::$size);
     	self::$identifier = shmop_open(self::$shm_key, "c", 0644, self::$size);
 		if ( !is_null(self::$identifier) ){
-			Log::info("se creo el siguiente identif:".self::$identifier);
+			//Log::info("se creo el siguiente identif:".self::$identifier);
 		    return true;
 		}else{
-			Log::info("Couldn't create shared memory segment");
+			//Log::info("Couldn't create shared memory segment");
 		    return false;
 		}
 	}
@@ -76,9 +76,9 @@ final class MemVar
 			self::$size	= shmop_size(self::$identifier);
 			$my_string 	= shmop_read(self::$identifier, 0, self::$size);
 			//Log::info("The data inside shared memory was: " . $my_string );
-		}else{
+		}/*else{
 			Log::info("el identidier es null");
-		}
+		}*/
 		return $my_string;
 	}
 	public static function OpenToRead($datArchive){

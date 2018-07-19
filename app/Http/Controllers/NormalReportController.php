@@ -62,7 +62,7 @@ class NormalReportController extends BaseController
           if($apiRta->getStatusCode()=="200" && $apiRta->getReasonPhrase()=="OK"){
             $length   = strlen($apiRta->getBody());
             $largo    = (int)$length;
-            Log::error("Content-Length:::".strlen($apiRta->getBody()));
+            //Log::error("Content-Length:::".strlen($apiRta->getBody()));
             MemVar::VaciaMemoria();
             $memvar = MemVar::Instance('moviles.dat');
             $memvar->init('moviles.dat',$largo);
