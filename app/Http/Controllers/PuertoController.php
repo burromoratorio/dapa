@@ -15,6 +15,7 @@ use App\GprmcDesconexion;
 use App\Posiciones;
 use App\Alarmas;
 Use App\EstadosSensores;
+Use App\Movil;
 /*Helpers*/
 use App\Helpers\MemVar;
 use GuzzleHttp\Client;
@@ -279,15 +280,27 @@ class PuertoController extends BaseController
                 $arrInfoGprmc   = self::Gprmc2Data($gprmcData);
                 //Log::error(print_r($movil_id, true));
                 //cmd_id=65/50 si es pos, cmd_id=49 si es evento o alarma
-                $posicion = Posiciones::create(['movil_id'=>intval($movil->movilOldId),'cmd_id'=>65,
-                                'tipo'=>0,'fecha'=>$fecha,'rumbo_id'=>$arrInfoGprmc['rumbo'],
-                                'latitud'=>$arrInfoGprmc['latitud'],'longitud'=>$arrInfoGprmc['longitud'],
-                                'velocidad'=>$arrInfoGprmc['velocidad'],
-                                'valida'=>1,'estado_u'=>$movil->estado_u,'estado_v'=>$info['mod_presencia'],'estado_w'=>0,
-                                'km_recorridos'=>$kmtField['KMT'],
-                                'ltrs_consumidos'=>$info['ltrs']]);
-                if($alaField["ALA"]=="V"){
-                    $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion->posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>7,'fecha_alarma'=>$fecha,'falsa'=>0]);
+                DB::beginTransaction();
+                try {
+                    $posicion = Posiciones::create(['movil_id'=>intval($movil->movilOldId),'cmd_id'=>65,
+                                    'tipo'=>0,'fecha'=>$fecha,'rumbo_id'=>$arrInfoGprmc['rumbo'],
+                                    'latitud'=>$arrInfoGprmc['latitud'],'longitud'=>$arrInfoGprmc['longitud'],
+                                    'velocidad'=>$arrInfoGprmc['velocidad'],
+                                    'valida'=>1,'estado_u'=>$movil->estado_u,'estado_v'=>$info['mod_presencia'],'estado_w'=>0,
+                                    'km_recorridos'=>$kmtField['KMT'],
+                                    'ltrs_consumidos'=>$info['ltrs']]);
+                    $posicion->save();
+                    DB::commit();
+                    if($alaField["ALA"]=="V"){
+                        $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion->posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>7,'fecha_alarma'=>$fecha,'falsa'=>0]);
+                    }
+                    //inserto alarma de panico!!
+                    self::tratarAlarmasIO($ioData,$report['IMEI'],$posicion->posicion_id,
+                                intval($movil->movilOldId),intval($movil->movil_id),$fecha);
+                    
+                }catch (\Exception $ex) {
+                    DB::rollBack();
+                    Log::error("Error al procesar posicion en puerto controller");
                 }
             }else{
                 $respuesta  = "0";
@@ -296,6 +309,46 @@ class PuertoController extends BaseController
             $respuesta  = "0";
         }
         return $respuesta;
+    }
+    public static function tratarAlarmasIO($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha){
+        if($ioData[0]=='I00'){//ingreso de alarma de panico bit en 0
+            $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,'tipo_alarma_id'=>1,'fecha_alarma'=>$fecha,'falsa'=>0]);
+        }
+        /*cambios de estado IO alarmas de bateria*/
+        $sensorEstado   = self::getSensores($imei);
+        if($sensorEstado){
+            $arrPeriferico  = $ioData[1];
+            $io     = str_replace("I", "",$ioData[1] );
+            /*Log::info("POSICION ID::".$posicion_id);
+            Log::info("dato del sensor en ddbb:".$sensorEstado->io." Dato de posicion IO:".$io);*/
+            if($io!=$sensorEstado->io){
+                if($io=='10'){ 
+                    Log::info("Movil: ".$movil_id." - funcionando con bateria auxiliar");
+                    $tipo_alarma_id=50;
+                    $estado_movil_id=13;
+                }
+                if($io=='11'){ 
+                    Log::info("Movil: ".$movil_id." - funcionando con alimentacion principal");
+                    $tipo_alarma_id=49;
+                    $estado_movil_id=14;
+                }
+                DB::beginTransaction();
+                try {
+                    Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,
+                                    'tipo_alarma_id'=>$tipo_alarma_id,'fecha_alarma'=>$fecha,'falsa'=>0]);
+                    Movil::where('movil_id', '=', $movil_id)->update(array('estado_movil_id' => $estado_movil_id));
+
+                    EstadosSensores::where('imei', '=', $imei)->update(array('io' => $io));
+                    DB::commit();
+                    self::startupSensores();
+                }catch (\Exception $ex) {
+                    DB::rollBack();
+                    Log::error("Error al tratar alarmas IO");
+                }
+            }
+        }
+        /*cambios de bateria*/
+        //Log::info(print_r($sensorEstado,true));
     }
     public static function findAndStoreAlarm($report,$posicionID){
         $alaField   = self::validateIndexCadena("ALA",$report);
@@ -391,6 +444,9 @@ class PuertoController extends BaseController
         if($arrPrescense[1]=='I00'){
             $IOEstados['panico']   =   1;
         }
+        if($arrPrescense[1]=='I10'){
+            $IOEstados['bat']   =   1;
+        }
         return $IOEstados;
     }
     public static function Gprmc2Data( $arrCadena ){
@@ -456,11 +512,20 @@ class PuertoController extends BaseController
         genero un nuevo elemento y lo cargo en el array y en la ddbb
         elimino el elemento anterior del array, limpio y vuelvo a cargar la memoria
         */
+        //ver si aca puedo buscar asi $memoEstados[$imei]
         $encontrado     = self::binarySearch($memoEstados, 0, count($memoEstados) - 1, $imei);
         return $encontrado;
         
     }
     public static function startupSensores(){
+       // MemVar::VaciaMemoria();
+        $shmidPos       = MemVar::OpenToRead('sensores.dat');
+        if($shmidPos == '0'){
+            Log::info("no hay segmento de memoria");  
+        }else{
+            MemVar::initIdentifier($shmidPos);
+            MemVar::Eliminar( 'sensores.dat' );
+        }
         $estados  = [];
         $estadosAll = EstadosSensores::orderBy('imei')->get();
         $imeisAll   = EstadosSensores::groupBy('imei')->pluck('imei');
