@@ -323,8 +323,7 @@ class PuertoController extends BaseController
             $tipo_alarma_id=50;
             $estado_movil_id=13;
         }
-        if($io=='11'){ 
-            Log::info("Movil: ".$imei." - funcionando con alimentacion principal");
+        if($io=='11'){//alimentacion ppal 
             $tipo_alarma_id=49;
             $estado_movil_id=14;
         }
