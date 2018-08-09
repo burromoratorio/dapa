@@ -319,38 +319,28 @@ class PuertoController extends BaseController
         $io             = str_replace("I", "",$ioData[1] );
         $sensorEstado   = self::getSensores($imei);
         if($io=='10'){ 
-            Log::info("Movil: ".$movil_id." - funcionando con bateria auxiliar");
+            Log::info("Movil: ".$imei." - funcionando con bateria auxiliar");
             $tipo_alarma_id=50;
             $estado_movil_id=13;
         }
         if($io=='11'){ 
-            Log::info("Movil: ".$movil_id." - funcionando con alimentacion principal");
+            Log::info("Movil: ".$imei." - funcionando con alimentacion principal");
             $tipo_alarma_id=49;
             $estado_movil_id=14;
         }
         if($sensorEstado){
-            /*Log::info("POSICION ID::".$posicion_id);
-            Log::info("dato del sensor en ddbb:".$sensorEstado->io." Dato de posicion IO:".$io);*/
-            if($io!=$sensorEstado->io){
-                
+            if($io!=$sensorEstado->io){ //evaluo cambio de bits de sensor IO
                 DB::beginTransaction();
                 try {
-                    //Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,
-                    //                'tipo_alarma_id'=>$tipo_alarma_id,'fecha_alarma'=>$fecha,'falsa'=>0]);
-                    //Movil::where('movil_id', '=', $movil_id)->update(array('estado_movil_id' => $estado_movil_id));
                     self::persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id);
                     EstadosSensores::where('imei', '=', $imei)->update(array('io' => $io));
                     DB::commit();
-                    //self::startupSensores();
                 }catch (\Exception $ex) {
                     DB::rollBack();
                     Log::error("Error al tratar alarmas IO");
                 }
             }
-        }else{
-            //no se encontró el imei en la tabla de sensores, llenarla 
-            Log::info("no se encontró el imei en la tabla de sensores, llenarla ");
-            Log::error($perField);
+        }else{    //no se encontró el imei en la tabla de sensores,inserto e informo alarmas 
             if($perField!='NULL'){
                 $arrIOM     = explode(',',$perField);
                 $perField   = ($arrIOM[0]=='IOM')?$arrIOM[1]:'NULL';
@@ -359,17 +349,11 @@ class PuertoController extends BaseController
             try {
                 EstadosSensores::create(['imei'=>$imei,'movil_id'=>$movil_id,'iom'=>$perField,'io'=>$io]);
                 self::persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id);
-
-                //Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,
-                //                'tipo_alarma_id'=>$tipo_alarma_id,'fecha_alarma'=>$fecha,'falsa'=>0]);
-                //Movil::where('movil_id', '=', $movil_id)->update(array('estado_movil_id' => $estado_movil_id));
                 DB::commit();
-                //self::startupSensores();
             }catch (\Exception $ex) {
                 DB::rollBack();
                 Log::error("Error al tratar alarmas IO");
             }
-
         }
         /*cambios de bateria*/
         //Log::info(print_r($sensorEstado,true));
@@ -380,7 +364,6 @@ class PuertoController extends BaseController
             Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,
                             'tipo_alarma_id'=>$tipo_alarma_id,'fecha_alarma'=>$fecha,'falsa'=>0]);
             Movil::where('movil_id', '=', $movil_id)->update(array('estado_movil_id' => $estado_movil_id));
-
             DB::commit();
             self::startupSensores();
         }catch (\Exception $ex) {
