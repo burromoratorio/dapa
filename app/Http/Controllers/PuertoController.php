@@ -332,8 +332,8 @@ class PuertoController extends BaseController
             if($io!=$sensorEstado->io){ //evaluo cambio de bits de sensor IO
                 DB::beginTransaction();
                 try {
-                    self::persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id);
                     EstadosSensores::where('imei', '=', $imei)->update(array('io' => $io));
+                    self::persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id);
                     DB::commit();
                 }catch (\Exception $ex) {
                     DB::rollBack();
