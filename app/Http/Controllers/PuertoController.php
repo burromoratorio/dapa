@@ -295,12 +295,12 @@ class PuertoController extends BaseController
                         $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion->posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>7,'fecha_alarma'=>$fecha,'falsa'=>0]);
                     }
                     //inserto alarma de panico!!
-                    self::tratarAlarmasIO($ioData,$report['IMEI'],$posicion->posicion_id,
+                    self::tratarAlarmasIO($ioData,$perField['PER'],$report['IMEI'],$posicion->posicion_id,
                                 intval($movil->movilOldId),intval($movil->movil_id),$fecha);
                     
                 }catch (\Exception $ex) {
                     DB::rollBack();
-                    Log::error("Error al procesar posicion en puerto controller");
+                    Log::error("Error al procesar posicion en puerto controller".$ex);
                 }
             }else{
                 $respuesta  = "0";
@@ -310,45 +310,83 @@ class PuertoController extends BaseController
         }
         return $respuesta;
     }
-    public static function tratarAlarmasIO($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha){
+    public static function tratarAlarmasIO($ioData,$perField,$imei,$posicion_id,$movilOldId,$movil_id,$fecha){
         if($ioData[0]=='I00'){//ingreso de alarma de panico bit en 0
             $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,'tipo_alarma_id'=>1,'fecha_alarma'=>$fecha,'falsa'=>0]);
         }
         /*cambios de estado IO alarmas de bateria*/
+        $arrPeriferico  = $ioData[1];
+        $io             = str_replace("I", "",$ioData[1] );
         $sensorEstado   = self::getSensores($imei);
+        if($io=='10'){ 
+            Log::info("Movil: ".$movil_id." - funcionando con bateria auxiliar");
+            $tipo_alarma_id=50;
+            $estado_movil_id=13;
+        }
+        if($io=='11'){ 
+            Log::info("Movil: ".$movil_id." - funcionando con alimentacion principal");
+            $tipo_alarma_id=49;
+            $estado_movil_id=14;
+        }
         if($sensorEstado){
-            $arrPeriferico  = $ioData[1];
-            $io     = str_replace("I", "",$ioData[1] );
             /*Log::info("POSICION ID::".$posicion_id);
             Log::info("dato del sensor en ddbb:".$sensorEstado->io." Dato de posicion IO:".$io);*/
             if($io!=$sensorEstado->io){
-                if($io=='10'){ 
-                    Log::info("Movil: ".$movil_id." - funcionando con bateria auxiliar");
-                    $tipo_alarma_id=50;
-                    $estado_movil_id=13;
-                }
-                if($io=='11'){ 
-                    Log::info("Movil: ".$movil_id." - funcionando con alimentacion principal");
-                    $tipo_alarma_id=49;
-                    $estado_movil_id=14;
-                }
+                
                 DB::beginTransaction();
                 try {
-                    Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,
-                                    'tipo_alarma_id'=>$tipo_alarma_id,'fecha_alarma'=>$fecha,'falsa'=>0]);
-                    Movil::where('movil_id', '=', $movil_id)->update(array('estado_movil_id' => $estado_movil_id));
-
+                    //Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,
+                    //                'tipo_alarma_id'=>$tipo_alarma_id,'fecha_alarma'=>$fecha,'falsa'=>0]);
+                    //Movil::where('movil_id', '=', $movil_id)->update(array('estado_movil_id' => $estado_movil_id));
+                    self::persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id);
                     EstadosSensores::where('imei', '=', $imei)->update(array('io' => $io));
                     DB::commit();
-                    self::startupSensores();
+                    //self::startupSensores();
                 }catch (\Exception $ex) {
                     DB::rollBack();
                     Log::error("Error al tratar alarmas IO");
                 }
             }
+        }else{
+            //no se encontró el imei en la tabla de sensores, llenarla 
+            Log::info("no se encontró el imei en la tabla de sensores, llenarla ");
+            Log::error($perField);
+            if($perField!='NULL'){
+                $arrIOM     = explode(',',$perField);
+                $perField   = ($arrIOM[0]=='IOM')?$arrIOM[1]:'NULL';
+            }
+            DB::beginTransaction();
+            try {
+                EstadosSensores::create(['imei'=>$imei,'movil_id'=>$movil_id,'iom'=>$perField,'io'=>$io]);
+                self::persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id);
+
+                //Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,
+                //                'tipo_alarma_id'=>$tipo_alarma_id,'fecha_alarma'=>$fecha,'falsa'=>0]);
+                //Movil::where('movil_id', '=', $movil_id)->update(array('estado_movil_id' => $estado_movil_id));
+                DB::commit();
+                //self::startupSensores();
+            }catch (\Exception $ex) {
+                DB::rollBack();
+                Log::error("Error al tratar alarmas IO");
+            }
+
         }
         /*cambios de bateria*/
         //Log::info(print_r($sensorEstado,true));
+    }
+    public static function persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id){
+        DB::beginTransaction();
+        try {
+            Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,
+                            'tipo_alarma_id'=>$tipo_alarma_id,'fecha_alarma'=>$fecha,'falsa'=>0]);
+            Movil::where('movil_id', '=', $movil_id)->update(array('estado_movil_id' => $estado_movil_id));
+
+            DB::commit();
+            self::startupSensores();
+        }catch (\Exception $ex) {
+            DB::rollBack();
+            Log::error("Error al tratar alarmas IO persistSensor");
+        }
     }
     public static function findAndStoreAlarm($report,$posicionID){
         $alaField   = self::validateIndexCadena("ALA",$report);
