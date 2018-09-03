@@ -22,7 +22,7 @@ class KeepAliveController extends BaseController
       if(isset($jsonReq["cadena"])){
         $rta  = $this->tratarReporte($jsonReq['cadena']);
         return $rta;
-       }elseif($jsonReq["KEY"]=="KA"){
+      }elseif($jsonReq["KEY"]=="KA"){
           //por ahora devuelvo este de ejemplo
           $rta  ="AT+GETGP?\r\n";
         
