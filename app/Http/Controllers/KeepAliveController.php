@@ -32,7 +32,7 @@ class KeepAliveController extends BaseController
             Log::info("mensajecomando:::".$mensaje->comando);
             $comando="AT".$mensaje->comando.'='.$mensaje->auxiliar."?\r\n";
           }else{
-            $comando="AT+".$this->decodificarComando($mensaje,$movil)."?\r\n";
+            $comando="AT".$this->decodificarComando($mensaje,$movil)."?\r\n";
           }
         }else{
           $comando  ="AT+OK\r\n"; 
@@ -143,18 +143,18 @@ class KeepAliveController extends BaseController
       Log::info("entra por 20");
         switch ($auxParams[1]) {
           case '6':
-            $cadenaComando = "FR=0,".self::EN_MOVIMIENTO.",".$auxParams[2];
+            $cadenaComando = "+FR=0,".self::EN_MOVIMIENTO.",".$auxParams[2];
             break;
           case '7':
-            $cadenaComando = "FR=0,".self::EN_DETENIDO.",".$auxParams[2];
+            $cadenaComando = "+FR=0,".self::EN_DETENIDO.",".$auxParams[2];
             break;
             case '20':
             //seteo tiempo de reporte en veloc max ALV=t,v
-            $cadenaComando = "ALV=".$movil->velocidad_max.",".$auxParams[2];
+            $cadenaComando = "+ALV=".$movil->velocidad_max.",".$auxParams[2];
             break;
             case '23':
             //seteo velocidad max max ALV=t,v
-            $cadenaComando = "ALV=".$auxParams[2].",".intval($movil->frec_rep_exceso_vel*60);
+            $cadenaComando = "+ALV=".$auxParams[2].",".intval($movil->frec_rep_exceso_vel*60);
             break;
           default:
             # code...
@@ -164,11 +164,11 @@ class KeepAliveController extends BaseController
       case 22://modo corte(aux=1,2->0,1) y modo normal(aux=1,1->0,0)
         Log::info("entra por 22 y auxParams:".$auxParams[1]);
         $valor  = ($auxParams[1]=="2")?"1":"0";
-        $cadenaComando = "OUTS=0,".$valor;
+        $cadenaComando = "+OUTS=0,".$valor;
         break;
       case 100://reset
       Log::info("entra por 100");
-        $cadenaComando = "RES=".$auxParams[0];
+        $cadenaComando = "+RES=".$auxParams[0];
         break;
       default:
       Log::info("entra por default");
