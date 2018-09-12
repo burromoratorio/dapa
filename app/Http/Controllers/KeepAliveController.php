@@ -29,9 +29,9 @@ class KeepAliveController extends BaseController
         $mensaje  = $this->obtenerComandoPendiente($movil->equipo_id); 
         if($mensaje){
           if($mensaje->comando!=''&& !is_null($mensaje->comando)){
-            $comando="AT".$mensaje->comando.'='.$mensaje->auxiliar;
+            $comando="AT".$mensaje->comando.'='.$mensaje->auxiliar."?\r\n";
           }else{
-              $comando  = $this->decodificarComando($mensaje,$movil);
+            $comando  = "AT".$this->decodificarComando($mensaje,$movil)."?\r\n";
           }
         }else{
           $comando  ="AT+GETGP?\r\n"; 
@@ -121,9 +121,12 @@ class KeepAliveController extends BaseController
     $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)
                                 ->where('rsp_id','=',1)->orderBy('prioridad','DESC')
                                 ->get()->first(); 
-    $mensaje->rsp_id      = 2;
-    $mensaje->fecha_final = date("Y-m-d H:i:s");
-    $mensaje->save();
+    if($mensaje){
+      $mensaje->rsp_id      = 2;
+      $mensaje->fecha_final = date("Y-m-d H:i:s");
+      $mensaje->save();
+    }
+    
     return $mensaje;
   }
   public function decodificarComando($mensaje,$movil){
@@ -168,7 +171,7 @@ class KeepAliveController extends BaseController
         break;
       default:
       Log::info("entra por default");
-        $cadenaComando  = "+GETGP?";
+        $cadenaComando  = "+GETGP";
         break;
     }
     Log::info("cadenaComando:".$cadenaComando);
