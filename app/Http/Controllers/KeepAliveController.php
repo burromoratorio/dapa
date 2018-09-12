@@ -35,7 +35,7 @@ class KeepAliveController extends BaseController
             $comando  = "AT".$this->decodificarComando($mensaje,$movil)."?\r\n";
           }
         }else{
-          $comando  ="ok\r\n"; 
+          $comando  ="AT+OK\r\n"; 
         }
         Log::info("comandeando:".$comando);
        }elseif($jsonReq["KEY"]=="KA"){
