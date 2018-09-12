@@ -23,7 +23,7 @@ class CommandController extends BaseController
   const CONFIGURAR_FRECUENCIAS=20;
   const CAMBIO_MODO_PRESENCIA_GPRS=22;
   const RESET_GPRMC=100;
-  static $comandoDefinitions = array("+GETGP"=>17,"+FR"=>20,"+AVL"=>20,"+RES"=>100,"+OUTS"=>22);
+  static $comandoDefinitions = array("+GETGP"=>17,"+FR"=>20,"+ALV"=>20,"+RES"=>100,"+OUTS"=>22);
   public function index(Request $request) {
     //return "ok";
   }      //
