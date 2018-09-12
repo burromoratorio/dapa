@@ -154,6 +154,7 @@ class KeepAliveController extends BaseController
             break;
             case '23':
             //seteo velocidad max max ALV=t,v
+            Log::error(print_r($movil, true));
             $cadenaComando = "+ALV=".$auxParams[2].",".intval($movil->frec_rep_exceso_vel*60);
             break;
           default:
