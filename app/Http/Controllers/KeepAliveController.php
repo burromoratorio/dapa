@@ -30,9 +30,9 @@ class KeepAliveController extends BaseController
         if($mensaje){
           if($mensaje->comando!='' && !is_null($mensaje->comando)){
             Log::info("mensajecomando:::".$mensaje->comando);
-            $comando="AT".$mensaje->comando.'='.$mensaje->auxiliar."?\r\n";
+            $comando="AT".$mensaje->comando.'='.$mensaje->auxiliar."\r\n";
           }else{
-            $comando="AT".$this->decodificarComando($mensaje,$movil)."?\r\n";
+            $comando="AT".$this->decodificarComando($mensaje,$movil)."\r\n";
           }
         }else{
           $comando  ="AT+OK\r\n"; 
@@ -137,7 +137,7 @@ class KeepAliveController extends BaseController
     switch ($mensaje->cmd_id) {
       case 17:
       Log::info("entra por 17");
-        $cadenaComando  = "+GETGP";
+        $cadenaComando  = "+GETGP?";
         break;
       case 20://frecuencias y velocidades
       Log::info("entra por 20");
@@ -172,7 +172,7 @@ class KeepAliveController extends BaseController
         break;
       default:
       Log::info("entra por default");
-        $cadenaComando  = "+GETGP";
+        $cadenaComando  = "+GETGP?";
         break;
     }
     Log::info("cadenaComando:".$cadenaComando);
