@@ -32,7 +32,7 @@ class KeepAliveController extends BaseController
             Log::info("mensajecomando:::".$mensaje->comando);
             $comando="AT".$mensaje->comando.'='.$mensaje->auxiliar."?\r\n";
           }else{
-            $comando  = "AT".$this->decodificarComando($mensaje,$movil)."?\r\n";
+            $comando="AT+".$this->decodificarComando($mensaje,$movil)."?\r\n";
           }
         }else{
           $comando  ="AT+OK\r\n"; 

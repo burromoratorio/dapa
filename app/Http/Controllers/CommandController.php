@@ -158,10 +158,11 @@ class CommandController extends BaseController
                                 ->get()->first(); 
         if(!is_null($mensaje)){
           $mensaje->rsp_id      = 3;
+          $mensaje->comando     = $arrCmdRta[0];
           $mensaje->respuesta   = $comandoRta;
           $mensaje->fecha_final = date("Y-m-d H:i:s");
           $mensaje->save();
-          return "Update OK";
+          return "AT+OK\r\n";
         }else{
           Log::info("No existe comando pendiente");
         }
