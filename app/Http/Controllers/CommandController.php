@@ -151,6 +151,7 @@ class CommandController extends BaseController
         Log::info('recibido en dapa, IMEI:'.$imei.' rta:'.$comandoRta.' estado:'.$estado.' se obtuvo:'.$arrCmdRta[0]." de CMD_ID:".self::$comandoDefinitions[$arrCmdRta[0]]);
         $movil    = HelpMen::movilesMemoria($imei);
         $equipo_id= $movil->equipo_id;
+        Log::info("respuesta a comando, equipo_id:".$equipo_id);
         $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)
                                 ->where('rsp_id','=',2)
                                 ->where('cmd_id','=',self::$comandoDefinitions[$arrCmdRta[0]])
