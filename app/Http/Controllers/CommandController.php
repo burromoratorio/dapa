@@ -163,6 +163,7 @@ class CommandController extends BaseController
           $mensaje->respuesta   = $comandoRta;
           $mensaje->fecha_final = date("Y-m-d H:i:s");
           $mensaje->save();
+          Log::info("actualizacion correcta devuelvo:AT+OK\r\n");
           return "AT+OK\r\n";
         }else{
           Log::info("No existe comando pendiente");
