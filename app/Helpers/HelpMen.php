@@ -36,7 +36,6 @@ class HelpMen
       return $response;
   	}
   	public static function movilesMemoria($imei){
-	    Log::error(print_r($imei, true));
 	    $requestApi   = '0';
 	    $mcRta        = '0';
 	    $mcRta2       = '0';
