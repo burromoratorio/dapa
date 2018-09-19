@@ -70,7 +70,6 @@ class KeepAliveController extends BaseController
       $mensaje->fecha_final = date("Y-m-d H:i:s");
       $mensaje->save();
     }
-    
     return $mensaje;
   }
   public function decodificarComando($mensaje,$movil){
@@ -79,7 +78,6 @@ class KeepAliveController extends BaseController
     $auxParams  = explode(",",$mensaje->auxiliar);
     switch ($mensaje->cmd_id) {
       case 17:
-      Log::info("entra por 17");
         $cadenaComando  = "+GETGP?";
         break;
       case 20://frecuencias y velocidades
@@ -105,16 +103,13 @@ class KeepAliveController extends BaseController
         }
         break;
       case 22://modo corte(aux=1,2->0,1) y modo normal(aux=1,1->0,0)
-        Log::info("entra por 22 y auxParams:".$auxParams[1]);
         $valor  = ($auxParams[1]=="2")?"1":"0";
         $cadenaComando = "+OUTS=0,".$valor;
         break;
       case 100://reset
-      Log::info("entra por 100");
         $cadenaComando = "+RES=".$auxParams[0];
         break;
       default:
-      Log::info("entra por default");
         $cadenaComando  = "+GETGP?";
         break;
     }
