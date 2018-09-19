@@ -147,11 +147,11 @@ class CommandController extends BaseController
         $comandoRta = $request->input('rta');
         $estado     = $request->input('estado_comando_id');
         $arrCmdRta  = explode(":",$comandoRta);
-        //$comandoDefinitions
-        Log::info('recibido en dapa, IMEI:'.$imei.' rta:'.$comandoRta.' estado:'.$estado.' se obtuvo:'.$arrCmdRta[0]." de CMD_ID:".self::$comandoDefinitions[$arrCmdRta[0]]);
+        ///Log::info('recibido en dapa, IMEI:'.$imei.' rta:'.$comandoRta.' estado:'.$estado.' se obtuvo:'.$arrCmdRta[0]." de CMD_ID:".self::$comandoDefinitions[$arrCmdRta[0]]);
         $movil    = HelpMen::movilesMemoria($imei);
         $equipo_id= $movil->equipo_id;
-        Log::info("respuesta a comando, equipo_id:".$equipo_id);
+        //Log::info("respuesta a comando, equipo_id:".$equipo_id);
+        Log::info('Respuesta Equipo:'.$equipo_id.' rta:'.$comandoRta.' de CMD_ID:'.self::$comandoDefinitions[$arrCmdRta[0]]);
         $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)
                                 ->where('rsp_id','=',2)
                                 ->where('cmd_id','=',self::$comandoDefinitions[$arrCmdRta[0]])

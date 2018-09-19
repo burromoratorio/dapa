@@ -30,7 +30,6 @@ class KeepAliveController extends BaseController
         $mensaje  = $this->obtenerComandoPendiente($movil->equipo_id); 
         if($mensaje){
           if($mensaje->comando!='' && !is_null($mensaje->comando)){
-            Log::info("mensajecomando:::".$mensaje->comando);
             $comando="AT".$mensaje->comando.'='.$mensaje->auxiliar."\r\n";
           }else{
             $comando="AT".$this->decodificarComando($mensaje,$movil)."\r\n";
@@ -38,7 +37,7 @@ class KeepAliveController extends BaseController
         }else{
           $comando  ="AT+OK\r\n"; 
         }
-        Log::info("comandeando:".$comando);
+        Log::info("KeepAlive equipo:".$movil->equipo_id." - Comando:".$comando);
        }elseif($jsonReq["KEY"]=="KA"){
         //por ahora devuelvo este de ejemplo
         $comando  ="AT+GETGP?\r\n";
@@ -119,7 +118,6 @@ class KeepAliveController extends BaseController
         $cadenaComando  = "+GETGP?";
         break;
     }
-    Log::info("cadenaComando:".$cadenaComando);
     return $cadenaComando;
   }
 }
