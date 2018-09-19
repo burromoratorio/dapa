@@ -10,6 +10,7 @@ use DB;
 use App\ColaMensajes;
 /*Helpers*/
 use App\Helpers\MemVar;
+use App\Helpers\HelpMen;
 use GuzzleHttp\Client;
 class KeepAliveController extends BaseController
 {
@@ -24,7 +25,7 @@ class KeepAliveController extends BaseController
     if ($request->isMethod('post')) {
       $jsonReq      = $request->json()->all();
       if(isset($jsonReq["cadena"])){
-        $movil    = $this->movilesMemoria($jsonReq["cadena"]);
+        $movil    = HelpMen::movilesMemoria($jsonReq["cadena"]);
         //$rta      = $movil->equipo_id;
         $mensaje  = $this->obtenerComandoPendiente($movil->equipo_id); 
         if($mensaje){
@@ -59,7 +60,7 @@ class KeepAliveController extends BaseController
     }
     return $rta;
   } 
-  public function compruebaMovilMC($imei,$shmid){
+ /* public function compruebaMovilMC($imei,$shmid){
     //Movil Binary Search 
     MemVar::initIdentifier($shmid);
     $memoMoviles    = MemVar::GetValue();
@@ -116,7 +117,7 @@ class KeepAliveController extends BaseController
         }
     }
   return $movil;
-  }
+  }*/
   public function obtenerComandoPendiente($equipo_id){
     $mensaje  = false;
     $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)

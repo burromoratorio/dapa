@@ -206,6 +206,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'MemVar' => App\Helpers\MemVar::class,
+        'HelpMen' => App\Helpers\HelpMen::class,
 
     ],
 
