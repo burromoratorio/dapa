@@ -12,6 +12,7 @@ use DB;
 use App\ColaMensajes;
 /*Helpers*/
 use App\Helpers\MemVar;
+use App\Helpers\HelpMen;
 use GuzzleHttp\Client;
 
 class CommandController extends BaseController
@@ -69,8 +70,7 @@ class CommandController extends BaseController
     $connection->close();
       
   }
-  public function listen()
-    {
+  public function listen(){
         $connection = new AMQPStreamConnection('192.168.0.228', 5672, 'siacadmin', 'siac2010');
         $channel = $connection->channel();
         
@@ -149,7 +149,7 @@ class CommandController extends BaseController
         $arrCmdRta  = explode(":",$comandoRta);
         //$comandoDefinitions
         Log::info('recibido en dapa, IMEI:'.$imei.' rta:'.$comandoRta.' estado:'.$estado.' se obtuvo:'.$arrCmdRta[0]." de CMD_ID:".self::$comandoDefinitions[$arrCmdRta[0]]);
-        $movil    = $this->movilesMemoria($imei);
+        $movil    = HelpMen::movilesMemoria($imei);
         $equipo_id= $movil->equipo_id;
         $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)
                                 ->where('rsp_id','=',2)
@@ -166,10 +166,8 @@ class CommandController extends BaseController
         }else{
           Log::info("No existe comando pendiente");
         }
-        
-        
     }
-    public function compruebaMovilMC($imei,$shmid){
+    /*public function compruebaMovilMC($imei,$shmid){
     //Movil Binary Search 
     MemVar::initIdentifier($shmid);
     $memoMoviles    = MemVar::GetValue();
@@ -226,6 +224,6 @@ class CommandController extends BaseController
         }
     }
   return $movil;
-  }
+  }*/
    
 }
