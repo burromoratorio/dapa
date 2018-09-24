@@ -112,14 +112,14 @@ class PuertoController extends BaseController
             MemVar::initIdentifier($shmidPos);
             $memoPos    = MemVar::GetValue();
             $posArr     = json_decode($memoPos);
-            Log::error(print_r($posArr, true));
+            //Log::error(print_r($posArr, true));
             $index      = "-1";
             $encontrado = 0;
             if(!is_null($posArr)){
-                if(property_exists($posArr, $imei)){Log::info("el movil:".$imei." tiene datos en el array de posiciones");
+                if(property_exists($posArr, $imei)){//Log::info("el movil:".$imei." tiene datos en el array de posiciones");
                     $internalInfo   = $posArr->$imei;
                     $arrInternalInfo= explode("|", $internalInfo);
-                    Log::info("los datos, velocAnterior:".$arrInternalInfo[1]." velocActual:".$velocidad." FR:".$frArr[0]);
+                    //Log::info("los datos, velocAnterior:".$arrInternalInfo[1]." velocActual:".$velocidad." FR:".$frArr[0]);
                     //evaluo si paso de detenido a movimiento
                     if( $arrInternalInfo[1]<=5 && $velocidad>8 && $frArr[0]<=120 ){
                         Log::info("movil:".$imei." paso de detenido a movimiento");
