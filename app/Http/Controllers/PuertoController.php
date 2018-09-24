@@ -111,26 +111,26 @@ class PuertoController extends BaseController
             Log::error(print_r($shmidPos, true));
             MemVar::initIdentifier($shmidPos);
             $memoPos    = MemVar::GetValue();
-            $posArr     = json_decode($memoPos);
-            Log::error(print_r($memoPos, true));
-            $index      = "-1";
-            $encontrado = 0;
-            if(!is_null($posArr)){
+            if(!is_null($memoPos)){
+                $posArr     = json_decode($memoPos);
+                Log::error(print_r($memoPos, true));
+                $index      = "-1";
+                $encontrado = 0;
                 if(property_exists($posArr, $imei)){//el movil tiene datos en el array de posiciones
-                $internalInfo   = $posArr->$imei;
-                $arrInternalInfo= explode("|", $internalInfo);
-                //Log::info("los datos, velocAnterior:".$arrInternalInfo[1]." velocActual:".$velocidad." FR:".$frArr[0]);
-                //evaluo si paso de detenido a movimiento
-                if( $arrInternalInfo[1]<5 && $velocidad>8 && $frArr[0]<=120 ){
-                    Log::info("movil:".$imei." paso de detenido a movimiento");
-                    $posArr->$imei  = $fecha."|".$velocidad;
-                }
-                //movil pasó de movimiento a detenido
-                if( $arrInternalInfo[1]>8 && $velocidad<5 && $frArr[0]>120 ){
-                    Log::info("movil:".$imei." paso de movimiento a detenido");
-                    $posArr->$imei  = $fecha."|".$velocidad;
-                }
-                $posicionesMC   = $posArr;
+                    $internalInfo   = $posArr->$imei;
+                    $arrInternalInfo= explode("|", $internalInfo);
+                    //Log::info("los datos, velocAnterior:".$arrInternalInfo[1]." velocActual:".$velocidad." FR:".$frArr[0]);
+                    //evaluo si paso de detenido a movimiento
+                    if( $arrInternalInfo[1]<5 && $velocidad>8 && $frArr[0]<=120 ){
+                        Log::info("movil:".$imei." paso de detenido a movimiento");
+                        $posArr->$imei  = $fecha."|".$velocidad;
+                    }
+                    //movil pasó de movimiento a detenido
+                    if( $arrInternalInfo[1]>8 && $velocidad<5 && $frArr[0]>120 ){
+                        Log::info("movil:".$imei." paso de movimiento a detenido");
+                        $posArr->$imei  = $fecha."|".$velocidad;
+                    }
+                    $posicionesMC   = $posArr;
                 }else{//el movil no tiene datos de posiciones->almaceno la info
                     //Log::info("el movil:".$imei." no tiene datos de posiciones-->almaceno");
                     $posArr->$imei   = $fecha."|".$velocidad;
@@ -141,7 +141,7 @@ class PuertoController extends BaseController
             }
             
             MemVar::Eliminar( 'posiciones.dat' );
-            self::CargarMemoria('posiciones.dat',$posArr);
+            self::CargarMemoria('posiciones.dat',$posicionesMC);
         }
         
     }
