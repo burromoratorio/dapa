@@ -111,11 +111,11 @@ class PuertoController extends BaseController
             Log::error(print_r($shmidPos, true));
             MemVar::initIdentifier($shmidPos);
             $memoPos    = MemVar::GetValue();
-            if(!is_null($memoPos)){
-                $posArr     = json_decode($memoPos);
-                Log::error(print_r($memoPos, true));
-                $index      = "-1";
-                $encontrado = 0;
+            $posArr     = json_decode($memoPos);
+            Log::error(print_r($memoPos, true));
+            $index      = "-1";
+            $encontrado = 0;
+            if(!is_null($posArr)){
                 if(property_exists($posArr, $imei)){//el movil tiene datos en el array de posiciones
                     $internalInfo   = $posArr->$imei;
                     $arrInternalInfo= explode("|", $internalInfo);
@@ -137,7 +137,8 @@ class PuertoController extends BaseController
                     $posicionesMC   = $posArr;
                 }
             }else{
-                Log::info("le pije del mone");
+                $posicionesMC[$imei]=$fecha."|".$velocidad;
+                Log::info("le pije del mone::".$imei." fecha:".$fecha."- velocidad:".$velocidad);
             }
             
             MemVar::Eliminar( 'posiciones.dat' );
