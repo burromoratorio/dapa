@@ -111,7 +111,8 @@ class PuertoController extends BaseController
             Log::error(print_r($shmidPos, true));
             MemVar::initIdentifier($shmidPos);
             $memoPos    = MemVar::GetValue();
-            $posArr     = json_decode($memoPos);//Log::error(print_r($posArr, true));
+            $posArr     = json_decode($memoPos);
+            Log::error(print_r($memoPos, true));
             $index      = "-1";
             $encontrado = 0;
             if(!is_null($posArr)){
