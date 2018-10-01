@@ -28,7 +28,7 @@ class KeepAliveController extends BaseController
         $movil    = HelpMen::movilesMemoria($jsonReq["cadena"]);
         //$rta      = $movil->equipo_id;
         $mensaje  = $this->obtenerComandoPendiente($movil->equipo_id); 
-        Log::("la concha de la lora puta");
+        Log::error("la concha de la lora puta");
         if($mensaje){
           if($mensaje->comando!='' && !is_null($mensaje->comando)){
            Log::info("mensaje->comando:".$mensaje->comando." mensaje->auxiliar:".$mensaje->auxiliar);
