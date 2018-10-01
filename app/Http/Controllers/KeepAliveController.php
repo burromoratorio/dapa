@@ -95,6 +95,7 @@ class KeepAliveController extends BaseController
             case '20':
             //seteo tiempo de reporte en veloc max ALV=t,v
             $valorSet   = ($auxParams[2]=='' || is_null($auxParams[2]))?'?':"=".$movil->velocidad_max.",".$auxParams[2];
+            Log::info("valorset en:::".$valorset." el auxiliar:::".$mensaje->auxiliar);
             $cadenaComando = "+ALV".$valorSet;
             break;
             case '23':
