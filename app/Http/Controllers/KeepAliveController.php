@@ -26,11 +26,9 @@ class KeepAliveController extends BaseController
       $jsonReq      = $request->json()->all();
       if(isset($jsonReq["cadena"])){
         $movil    = HelpMen::movilesMemoria($jsonReq["cadena"]);
-        //$rta      = $movil->equipo_id;
         $mensaje  = $this->obtenerComandoPendiente($movil->equipo_id); 
-        Log::error("la concha de la lora puta");
         if($mensaje){
-          if($mensaje->comando!='' && !is_null($mensaje->comando)){
+          if($mensaje->comando!="" && !is_null($mensaje->comando)){
           // Log::error(print_r($mensaje, true));
             $valorSet   = (isset($mensaje->auxiliar) && !is_null($mensaje->auxiliar) && $mensaje->auxiliar!='')?'='.$mensaje->auxiliar:"?";
             $comando="AT".$mensaje->comando.$valorSet."\r\n";
@@ -84,7 +82,6 @@ class KeepAliveController extends BaseController
         $cadenaComando  = "+GETGP?";
         break;
       case 20://frecuencias y velocidades
-      Log::info("entra por 20");
         if(isset($auxParams[1])){
           switch ($auxParams[1]) {
             case '6':
@@ -111,7 +108,7 @@ class KeepAliveController extends BaseController
               break;
           }
         }else{
-          $cadenaComando = "+FR?";
+          $cadenaComando = "+FR?0,0";
         }
         
         break;
