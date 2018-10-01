@@ -31,11 +31,10 @@ class KeepAliveController extends BaseController
         Log::error("la concha de la lora puta");
         if($mensaje){
           if($mensaje->comando!='' && !is_null($mensaje->comando)){
-           Log::info("mensaje->comando:".$mensaje->comando." mensaje->auxiliar:".$mensaje->auxiliar);
+           Log::error(print_r($mensaje, true));
             $valorSet   = (isset($mensaje->auxiliar) && !is_null($mensaje->auxiliar) && $mensaje->auxiliar!='')?'='.$mensaje->auxiliar:"?";
             $comando="AT".$mensaje->comando.$valorSet."\r\n";
           }else{
-        Log::info("mensaje->comando:".$mensaje->comando." mensaje->auxiliar:".$mensaje->auxiliar);
             $comando="AT".$this->decodificarComando($mensaje,$movil)."\r\n";
           }
         }else{
