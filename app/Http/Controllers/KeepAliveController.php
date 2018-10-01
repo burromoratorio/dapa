@@ -30,7 +30,8 @@ class KeepAliveController extends BaseController
         $mensaje  = $this->obtenerComandoPendiente($movil->equipo_id); 
         if($mensaje){
           if($mensaje->comando!='' && !is_null($mensaje->comando)){
-            $comando="AT".$mensaje->comando.'='.$mensaje->auxiliar."\r\n";
+            $valorSet   = (isset($mensaje->auxiliar) && !is_null($mensaje->auxiliar) && $mensaje->auxiliar!='')?'='.$mensaje->auxiliar:"?";
+            $comando="AT".$mensaje->comando.$valorSet."\r\n";
           }else{
             $comando="AT".$this->decodificarComando($mensaje,$movil)."\r\n";
           }
@@ -73,7 +74,7 @@ class KeepAliveController extends BaseController
     return $mensaje;
   }
   public function decodificarComando($mensaje,$movil){
-    
+    //si el aux viene vacio....es una consulta mandar solo el ?
     //falta guardar en memoria el estado de velocidad max del equipo y tiempo de veloc max
     $auxParams  = explode(",",$mensaje->auxiliar);
     switch ($mensaje->cmd_id) {
@@ -84,18 +85,22 @@ class KeepAliveController extends BaseController
       Log::info("entra por 20");
         switch ($auxParams[1]) {
           case '6':
-            $cadenaComando = "+FR=0,".self::EN_MOVIMIENTO.",".$auxParams[2];
+            $valorSet   = ($auxParams[2]=='' || is_null($auxParams[2]))?'?':"=0,".self::EN_MOVIMIENTO.",".$auxParams[2];
+            $cadenaComando = "+FR".$valorSet;
             break;
           case '7':
-            $cadenaComando = "+FR=0,".self::EN_DETENIDO.",".$auxParams[2];
+            $valorSet   = ($auxParams[2]=='' || is_null($auxParams[2]))?'?':"=0,".self::EN_DETENIDO.",".$auxParams[2];
+            $cadenaComando = "+FR".$valorSet;
             break;
             case '20':
             //seteo tiempo de reporte en veloc max ALV=t,v
-            $cadenaComando = "+ALV=".$movil->velocidad_max.",".$auxParams[2];
+            $valorSet   = ($auxParams[2]=='' || is_null($auxParams[2]))?'?':"=".$movil->velocidad_max.",".$auxParams[2];
+            $cadenaComando = "+ALV".$valorSet;
             break;
             case '23':
             //seteo velocidad max max ALV=t,v
-            $cadenaComando = "+ALV=".$auxParams[2].",".intval($movil->frec_rep_exceso_vel*60);
+            $valorSet   = ($auxParams[2]=='' || is_null($auxParams[2]))?'?':"=".$auxParams[2].",".intval($movil->frec_rep_exceso_vel*60);
+            $cadenaComando = "+ALV".$valorSet;
             break;
           default:
             # code...
@@ -103,8 +108,13 @@ class KeepAliveController extends BaseController
         }
         break;
       case 22://modo corte(aux=1,2->0,1) y modo normal(aux=1,1->0,0)
-        $valor  = ($auxParams[1]=="2")?"1":"0";
-        $cadenaComando = "+OUTS=0,".$valor;
+        if(isset($auxParams[1]) && !is_null($auxParams[1]) && $auxParams[1]!=''){
+          $valor      = ($auxParams[1]=="2")?"1":"0";
+          $valorSet   = "=0,".$valor;
+        }else{
+          $valorSet   = '?';
+        }
+        $cadenaComando = "+OUTS".$valorSet;
         break;
       case 100://reset
         $cadenaComando = "+RES=".$auxParams[0];
