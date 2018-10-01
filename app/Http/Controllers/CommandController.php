@@ -24,7 +24,8 @@ class CommandController extends BaseController
   const CONFIGURAR_FRECUENCIAS=20;
   const CAMBIO_MODO_PRESENCIA_GPRS=22;
   const RESET_GPRMC=100;
-  static $comandoDefinitions = array("+GETGP"=>17,"+FR"=>20,"+ALV"=>20,"+RES"=>100,"+OUTS"=>22,"+VER"=>00);
+  static $comandoDefinitions  = array("+GETGP"=>17,"+FR"=>20,"+ALV"=>20,"+RES"=>100,"+OUTS"=>22,"+VER"=>00);
+  static $comandoGenerico     = array("+GEN"=>666); 
   public function index(Request $request) {
     //return "ok";
   }      //
@@ -151,10 +152,11 @@ class CommandController extends BaseController
         $movil    = HelpMen::movilesMemoria($imei);
         $equipo_id= $movil->equipo_id;
         //Log::info("respuesta a comando, equipo_id:".$equipo_id);
-        Log::info('Respuesta Equipo:'.$equipo_id.' rta:'.$comandoRta.' de CMD_ID:'.self::$comandoDefinitions[$arrCmdRta[0]]);
+        $commandoId = (isset(self::$comandoDefinitions[$arrCmdRta[0]]))?self::$comandoDefinitions[$arrCmdRta[0]]:self::$comandoGenerico["+GEN"];
+        Log::info('Respuesta Equipo:'.$equipo_id.' rta:'.$comandoRta.' de CMD_ID:'.$commandoId);
         $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)
                                 ->where('rsp_id','=',2)
-                                ->where('cmd_id','=',self::$comandoDefinitions[$arrCmdRta[0]])
+                                ->where('cmd_id','=',$commandoId)
                                 ->orderBy('prioridad','DESC')
                                 ->get()->first(); 
         if(!is_null($mensaje)){
