@@ -30,6 +30,7 @@ class KeepAliveController extends BaseController
         $mensaje  = $this->obtenerComandoPendiente($movil->equipo_id); 
         if($mensaje){
           if($mensaje->comando!='' && !is_null($mensaje->comando)){
+            Log::info("mensaje->comando:".$mensaje->comando." mensaje->auxiliar:".$mensaje->auxiliar);
             $valorSet   = (isset($mensaje->auxiliar) && !is_null($mensaje->auxiliar) && $mensaje->auxiliar!='')?'='.$mensaje->auxiliar:"?";
             $comando="AT".$mensaje->comando.$valorSet."\r\n";
           }else{
