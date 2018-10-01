@@ -316,6 +316,11 @@ class PuertoController extends BaseController
         }else{
             $respuesta  = "0";
         }
+        try{
+            DB::disconnect();
+        }catch(\Exception $e){
+            
+        }
         return $respuesta;
     }
     public static function tratarAlarmasIO($ioData,$perField,$imei,$posicion_id,$movilOldId,$movil_id,$fecha){
