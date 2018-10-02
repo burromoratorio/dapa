@@ -30,7 +30,7 @@ class KeepAliveController extends BaseController
         if($mensaje){
           if($mensaje->comando!="" && !is_null($mensaje->comando)){
           // Log::error(print_r($mensaje, true));
-            $valorSet   = (isset($mensaje->auxiliar) && !is_null($mensaje->auxiliar) && $mensaje->auxiliar!='')?'='.$mensaje->auxiliar:"?";
+            $valorSet   = (isset($mensaje->auxiliar) && !is_null($mensaje->auxiliar) && $mensaje->auxiliar!="")?'='.$mensaje->auxiliar:"?";
             $comando="AT".$mensaje->comando.$valorSet."\r\n";
           }else{
             $comando="AT".$this->decodificarComando($mensaje,$movil)."\r\n";
