@@ -153,7 +153,7 @@ class CommandController extends BaseController
         $equipo_id= $movil->equipo_id;
         //Log::info("respuesta a comando, equipo_id:".$equipo_id);
         $commandoId = (isset(self::$comandoDefinitions[$arrCmdRta[0]]))?self::$comandoDefinitions[$arrCmdRta[0]]:self::$comandoGenerico["+GEN"];
-        Log::info('Respuesta Equipo:'.$equipo_id.' rta:'.$comandoRta.' de CMD_ID:'.$commandoId);
+        Log::info('Respuesta IMEI:'.$imei.' - Equipo:'.$equipo_id.' rta:'.$comandoRta.' de CMD_ID:'.$commandoId);
         $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)
                                 ->where('rsp_id','=',2)
                                 ->where('cmd_id','=',$commandoId)

@@ -38,7 +38,7 @@ class KeepAliveController extends BaseController
         }else{
           $comando  ="AT+OK\r\n"; 
         }
-        Log::info("KeepAlive equipo:".$movil->equipo_id." - Comando:".$comando);
+        Log::info("KeepAlive IMEI:".$movil->imei." - equipo:".$movil->equipo_id." - Comando:".$comando);
        }elseif($jsonReq["KEY"]=="KA"){
         //por ahora devuelvo este de ejemplo
         $comando  ="AT+GETGP?\r\n";
