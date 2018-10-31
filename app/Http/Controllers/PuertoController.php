@@ -308,7 +308,8 @@ class PuertoController extends BaseController
                     
                 }catch (\Exception $ex) {
                     DB::rollBack();
-                    Log::error("Error al procesar posicion en puerto controller".$ex);
+                    $errorSolo  = explode("Stack trace", $ex)
+                    Log::error("Error al procesar posicion en puerto controller".$errorSolo);
                 }
             }else{
                 $respuesta  = "0";
