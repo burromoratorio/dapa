@@ -41,7 +41,7 @@ class KeepAliveController extends BaseController
           }
           Log::info("KeepAlive IMEI:".$movil->imei." - equipo:".$movil->equipo_id." - Comando:".$comando);
         }else{
-          Log::("El IMEI:".$jsonReq["cadena"]. "no Existe en la DDBB, se desecha el reporte");
+          Log::error("El IMEI:".$jsonReq["cadena"]. "no Existe en la DDBB, se desecha el reporte");
         }
         
        }elseif($jsonReq["KEY"]=="KA"){
