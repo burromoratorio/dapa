@@ -26,19 +26,24 @@ class KeepAliveController extends BaseController
       $jsonReq      = $request->json()->all();
       if(isset($jsonReq["cadena"])){
         $movil    = HelpMen::movilesMemoria($jsonReq["cadena"]);
-        $mensaje  = $this->obtenerComandoPendiente($movil->equipo_id); 
-        if($mensaje){
-          if($mensaje->comando!="" && !is_null($mensaje->comando)){
-          // Log::error(print_r($mensaje, true));
-            $valorSet   = (isset($mensaje->auxiliar) && !is_null($mensaje->auxiliar) && $mensaje->auxiliar!="")?'='.$mensaje->auxiliar:"?";
-            $comando="AT".$mensaje->comando.$valorSet."\r\n";
+        if($movil){
+          $mensaje  = $this->obtenerComandoPendiente($movil->equipo_id); 
+          if($mensaje){
+            if($mensaje->comando!="" && !is_null($mensaje->comando)){
+            // Log::error(print_r($mensaje, true));
+              $valorSet   = (isset($mensaje->auxiliar) && !is_null($mensaje->auxiliar) && $mensaje->auxiliar!="")?'='.$mensaje->auxiliar:"?";
+              $comando="AT".$mensaje->comando.$valorSet."\r\n";
+            }else{
+              $comando="AT".$this->decodificarComando($mensaje,$movil)."\r\n";
+            }
           }else{
-            $comando="AT".$this->decodificarComando($mensaje,$movil)."\r\n";
+            $comando  ="AT+OK\r\n"; 
           }
+          Log::info("KeepAlive IMEI:".$movil->imei." - equipo:".$movil->equipo_id." - Comando:".$comando);
         }else{
-          $comando  ="AT+OK\r\n"; 
+          Log::("El IMEI:".$jsonReq["cadena"]. "no Existe en la DDBB, se desecha el reporte");
         }
-        Log::info("KeepAlive IMEI:".$movil->imei." - equipo:".$movil->equipo_id." - Comando:".$comando);
+        
        }elseif($jsonReq["KEY"]=="KA"){
         //por ahora devuelvo este de ejemplo
         $comando  ="AT+GETGP?\r\n";
