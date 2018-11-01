@@ -25,6 +25,7 @@ class HelpMen
 	    $memoMoviles    = MemVar::GetValue();
 	    $memoMoviles    = json_decode($memoMoviles);
 	    $encontrado     = app()->Puerto::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $imei);
+	    Log::error(print_r($encontrado, true));
     	return $encontrado;
     } 
   	public static function obtenerMoviles() {
