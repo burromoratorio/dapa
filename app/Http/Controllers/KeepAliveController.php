@@ -97,16 +97,21 @@ class KeepAliveController extends BaseController
               $valorSet   = ($auxParams[2]=='' || is_null($auxParams[2]))?'?':"=0,".self::EN_DETENIDO.",".$auxParams[2];
               $cadenaComando = "+FR".$valorSet;
               break;
-              case '20':
+            case '20':
               //seteo tiempo de reporte en veloc max ALV=t,v
               $valorSet   = ($auxParams[2]=='' || is_null($auxParams[2]))?'?':"=".$movil->velocidad_max.",".$auxParams[2];
               Log::info("valorset en:::".$valorset." el auxiliar:::".$mensaje->auxiliar);
               $cadenaComando = "+ALV".$valorSet;
               break;
-              case '23':
+            case '23':
               //seteo velocidad max max ALV=t,v
               $valorSet   = ($auxParams[2]=='' || is_null($auxParams[2]))?'?':"=".$auxParams[2].",".intval($movil->frec_rep_exceso_vel*60);
               $cadenaComando = "+ALV".$valorSet;
+              break;
+            case '2':
+            //caso especial donde se consulta frecuencias
+              $valorSet   = "?2,".$auxParams[2];
+              $cadenaComando = "+FR".$valorSet;
               break;
             default:
               # code...
