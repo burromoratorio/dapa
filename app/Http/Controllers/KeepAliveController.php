@@ -35,7 +35,7 @@ class KeepAliveController extends BaseController
                  $auxParams = explode(",",$mensaje->auxiliar);
                  $valorSet  = (isset($auxParams[1])&&$auxParams[1]=='2')?"?2,".$auxParams[2]:'='.$mensaje->auxiliar;
               }else{
-                $valorset="?";
+                $valorSet="?";
               }
               //$valorSet   = (isset($mensaje->auxiliar) && !is_null($mensaje->auxiliar) && $mensaje->auxiliar!="")?'='.$mensaje->auxiliar:"?";
              
