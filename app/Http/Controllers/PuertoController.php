@@ -298,7 +298,23 @@ class PuertoController extends BaseController
                                     'km_recorridos'=>$kmtField['KMT'],
                                     'ltrs_consumidos'=>$info['ltrs']]);
                     $posicion->save();
+                    
+                    /*update movil record*/
+                    $movilModel = new Movil;
+                    $movilModel->setConnection('siac');
+                    $updateMovil= Movil::where('movil_id','=',intval($movil->movilOldId))
+                                    ->update(['latitud'=>$arrInfoGprmc['latitud'],'longitud'=>$arrInfoGprmc['longitud'],
+                                            'rumbo_id'=>$arrInfoGprmc['rumbo'],'estado'=>$movil->estado_u]);
                     DB::commit();
+                    /*if(DB::connection()->getDatabaseName()=='moviles'){
+                        config()->set('database.default', 'siac');
+                        $posModel   = new Posiciones;
+                        $posModel->setConnection('siac');
+                        
+                    }
+                    config()->set('database.default', 'moviles');*/
+                    /*fin update movil*/
+                    
                     if($alaField["ALA"]=="V"){
                         $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion->posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>7,'fecha_alarma'=>$fecha,'falsa'=>0]);
                     }
