@@ -306,7 +306,7 @@ class PuertoController extends BaseController
                         $movilModel->setConnection('siac');
                         $updateMovil= $movilModel->where('movil_id','=',intval($movil->movilOldId))
                                     ->update(['latitud'=>$arrInfoGprmc['latitud'],'longitud'=>$arrInfoGprmc['longitud'],
-                                            'rumbo_id'=>$arrInfoGprmc['rumbo'],'estado'=>2,'fecha_ult_posicion'=>$fecha]);
+                                            'rumbo_id'=>$arrInfoGprmc['rumbo'],'estado'=>$info['mod_presencia'],'fecha_ult_posicion'=>$fecha]);
                                     Log::info("seteando datos de movil");
                     }
                     DB::commit();
