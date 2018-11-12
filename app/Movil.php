@@ -12,9 +12,6 @@ class Movil extends Model
     public $timestamps = false;
     protected $connection = 'moviles';
 
-    public function setConnection($conDb){
-        $this->connection=$conDb;
-    }
     public function posiciones() {
         return $this->hasMany('App\Posiciones');
     }
