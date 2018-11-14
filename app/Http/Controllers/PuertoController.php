@@ -309,6 +309,7 @@ class PuertoController extends BaseController
                                    
                     }
                     DB::commit();
+                    config()->set('database.default', 'moviles');
                     /*fin update movil*/
                     
                     if($alaField["ALA"]=="V"){
