@@ -362,7 +362,7 @@ class PuertoController extends BaseController
                     DB::commit();
                 }catch (\Exception $ex) {
                     DB::rollBack();
-                    Log::error("Error al tratar alarmas IO");
+                    Log::error("Error al tratar alarmas IO..".$ex);
                 }
             }
         }else{    //no se encontró el imei en la tabla de sensores,inserto e informo alarmas 
