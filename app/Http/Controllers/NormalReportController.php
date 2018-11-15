@@ -10,6 +10,7 @@ use DB;
 /*Helpers*/
 use App\Helpers\MemVar;
 use GuzzleHttp\Client;
+use App\Helpers\HelpMen;
 //use App\Http\Controllers\PuertoController;
 //Use Puerto;
 class NormalReportController extends BaseController
@@ -40,6 +41,7 @@ class NormalReportController extends BaseController
         $movil        = false;
         if($shmid!='0'){
           Log::info("Verificando validez IMEI ".$arrCadena['IMEI']);
+          //HelpMen::report("pedodemono","Verificando validez IMEI ".$arrCadena['IMEI']);
           $mcRta        = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
           if($mcRta==false){
             Log::info("El IMEI ".$arrCadena['IMEI']." no está en la memoria");
