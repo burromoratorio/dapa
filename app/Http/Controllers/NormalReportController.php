@@ -41,7 +41,6 @@ class NormalReportController extends BaseController
         $movil        = false;
         if($shmid!='0'){
           Log::info("Verificando validez IMEI ".$arrCadena['IMEI']);
-          //HelpMen::report("pedodemono","Verificando validez IMEI ".$arrCadena['IMEI']);
           $mcRta        = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
           if($mcRta==false){
             Log::info("El IMEI ".$arrCadena['IMEI']." no está en la memoria");
@@ -50,6 +49,7 @@ class NormalReportController extends BaseController
             $mcRta2    = '1';
             $movil     = $mcRta;
             Log::info("::::::::Procesando:".$arrCadena['IMEI']."- Movil_id:".$movil->movil_id."-MovilOld_id:".$movil->movilOldId."::::::::");
+            HelpMen::report($movil->equipo_id,"Verificando validez IMEI ".$arrCadena['IMEI']);
           }
         }else{
           $requestApi   = '1';

@@ -75,13 +75,33 @@ class KeepAliveController extends BaseController
  
   public function obtenerComandoPendiente($equipo_id){
     $mensaje  = false;
-    $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)
+    //1-obtener comandos con 3 intentos y ponerlos en estado rsp_id=6->sin respuesta
+    DB::beginTransaction();
+    try {
+      $mensajeSinRta= ColaMensajes::where('modem_id', '=',$equipo_id)
+                                  ->where('rsp_id','=',2)->where('intentos','=',3)
+                                  ->update(['rsp_id'=>5]);
+      //2-obtengo ultimo comando pendiente
+      $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)
                                 ->where('rsp_id','=',1)->orderBy('prioridad','DESC')
                                 ->get()->first(); 
-    if($mensaje){
-      $mensaje->rsp_id      = 2;
-      $mensaje->fecha_final = date("Y-m-d H:i:s");
-      $mensaje->save();
+      if($mensaje){
+        $mensaje->rsp_id      = 2;
+        $mensaje->fecha_final = date("Y-m-d H:i:s");
+        $mensaje->intentos   += 1;
+        $mensaje->save();
+      }
+      $tr_id  = ($mensaje)?$mensaje->tr_id:1;
+      //3-los comandos en rsp_id=2 e intentos <3 ->los seteo en pendiente rsp_id=1 y les sumo 1 al intentos, excepto al obtenido para rta
+      $mensajeUP  = ColaMensajes::where('modem_id', '=',$equipo_id)
+                                ->where('rsp_id','=',2)->where('intentos','<',3)->where('tr_id','<>',$tr_id)
+                                ->increment('intentos', 1, ['rsp_id'=>1]);
+      DB::commit();
+
+    }catch (\Exception $ex) {
+      DB::rollBack();
+      $errorSolo  = explode("Stack trace", $ex);
+      Log::error("Error al procesar el KA ".$errorSolo[0]);
     }
     return $mensaje;
   }

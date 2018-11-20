@@ -75,7 +75,7 @@ class HelpMen
 	  return $movil;
   }
   	public static function report($archivo,$logdata) {
-	    file_put_contents(storage_path('logs/'.$archivo.'.log'), (string) $logdata, FILE_APPEND);
+	    file_put_contents(storage_path('logs/equipo_'.$archivo.'_'.date('Y-m-d').'.log'), (string) $logdata, FILE_APPEND);
 	    return;
 	}
 }
