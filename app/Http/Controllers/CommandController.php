@@ -158,7 +158,10 @@ class CommandController extends BaseController
           Log::error("IMEI:".$imei.":::Comandos Concatenados:::");
           DB::beginTransaction();
           try {
-            $mensajeUP  = ColaMensajes::where('modem_id', '=',$equipo_id)
+            $mensajeSinRta= ColaMensajes::where('modem_id', '=',$equipo_id)
+                                  ->where('rsp_id','=',2)->where('intentos','=',3)
+                                  ->update(['rsp_id'=>5]);
+            $mensajeUP    = ColaMensajes::where('modem_id', '=',$equipo_id)
                                     ->where('rsp_id','=',2)->where('intentos','<',3)
                                     ->increment('intentos', 1, ['rsp_id'=>1]);
             DB::commit();
