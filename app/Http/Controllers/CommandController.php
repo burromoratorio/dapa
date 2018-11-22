@@ -200,15 +200,19 @@ class CommandController extends BaseController
         }
     }
     public function tratarOUTS($equipo_id,$valor){
+      $OUTPendiente = null;
       $OUTPendiente = $this->OUTPendiente($equipo_id);
-      if($OUTPendiente->auxiliar=='0,1' && $valor=='10'){//activar modo corte
+      if(!is_null($OUTPendiente)){
+        if($OUTPendiente->auxiliar=='0,1' && $valor=='10'){//activar modo corte
         Log::info("modo corte activado equipo:".$equipo_id);
         $OUTPendiente->tipo_posicion  = 70;
+        }
+        if($OUTPendiente->auxiliar=='0,0' && $valor=='00'){//activar modo corte
+          Log::info("modo corte desactivado equipo:".$equipo_id);
+          $OUTPendiente->tipo_posicion  = 70;
+        }
       }
-      if($OUTPendiente->auxiliar=='0,0' && $valor=='00'){//activar modo corte
-        Log::info("modo corte desactivado equipo:".$equipo_id);
-        $OUTPendiente->tipo_posicion  = 70;
-      }
+      
       return $OUTPendiente;
     }
     public function OUTPendiente($equipo_id){
