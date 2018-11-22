@@ -155,7 +155,7 @@ class CommandController extends BaseController
         if($contador>1){
           //significa que vienen varios comandos concatenados tengo que limpiarlos
           //3-los comandos en rsp_id=2 e intentos <3 ->los seteo en pendiente rsp_id=1 y les sumo 1 al intentos, excepto al obtenido para rta
-          Log::error("IMEI:".$imei.":::Comandos Concatenados:::");
+          Log::error("IMEI:".$imei.":::Comandos Concatenados:::".$comandoRta);
           DB::beginTransaction();
           try {
             $mensajeSinRta= ColaMensajes::where('modem_id', '=',$equipo_id)
