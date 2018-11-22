@@ -147,6 +147,7 @@ class CommandController extends BaseController
     public function update(Request $request, $imei) {
         $comandoRta = $request->input('rta');
         $estado     = $request->input('estado_comando_id');
+        $estadotipo_posicion = 66;
         ///Log::info('recibido en dapa, IMEI:'.$imei.' rta:'.$comandoRta.' estado:'.$estado.' se obtuvo:'.$arrCmdRta[0]." de CMD_ID:".self::$comandoDefinitions[$arrCmdRta[0]]);
         $movil    = HelpMen::movilesMemoria($imei);
         $equipo_id= $movil->equipo_id;
@@ -162,7 +163,7 @@ class CommandController extends BaseController
                                   ->where('rsp_id','=',2)->where('intentos','=',3)
                                   ->update(['rsp_id'=>5]);
             $mensajeUP    = ColaMensajes::where('modem_id', '=',$equipo_id)
-                                    ->where('rsp_id','=',2)->where('intentos','<',3)
+                                    ->where('rsp_id','=',2)->where('intentos','<',3)->where('cmd_id','<>',22)
                                     ->increment('intentos', 1, ['rsp_id'=>1]);
             DB::commit();
           }catch (\Exception $ex) {
@@ -174,12 +175,17 @@ class CommandController extends BaseController
         }else{
           $arrCmdRta  = explode(":",$comandoRta);
           $commandoId = (isset(self::$comandoDefinitions[$arrCmdRta[0]]))?self::$comandoDefinitions[$arrCmdRta[0]]:self::$comandoGenerico["+GEN"];
-          Log::info('Respuesta IMEI:'.$imei.' - Equipo:'.$equipo_id.' rta:'.$comandoRta.' de CMD_ID:'.$commandoId);
-          $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)
+          if($commandoId==22 || $arrCmdRta[0]='+OUTS'){
+            $mensaje  = $this->tratarOUTS($equipo_id,$arrCmdRta[1]);
+          }else{
+            $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)
                                   ->where('rsp_id','=',2)
-                                  ->where('cmd_id','=',$commandoId)
+                                  ->where('cmd_id','=',$commandoId)->where('cmd_id','<>',22)
                                   ->orderBy('prioridad','DESC')
                                   ->get()->first(); 
+          }
+          Log::info('Respuesta IMEI:'.$imei.' - Equipo:'.$equipo_id.' rta:'.$comandoRta.' de CMD_ID:'.$commandoId);
+          
           if(!is_null($mensaje)){
             $mensaje->rsp_id      = 3;
             $mensaje->comando     = $arrCmdRta[0];
@@ -193,5 +199,25 @@ class CommandController extends BaseController
           }
         }
     }
-   
+    public function tratarOUTS($equipo_id,$valor){
+      $OUTPendiente = $this->OUTPendiente($equipo_id);
+      if($OUTPendiente->aux=='0,1' && $valor=='10'){//activar modo corte
+        Log::info("modo corte activado equipo:".$equipo_id);
+        $OUTPendiente->tipo_posicion  = 70;
+      }
+      if($OUTPendiente->aux=='0,0' && $valor=='00'){//activar modo corte
+        Log::info("modo corte desactivado equipo:".$equipo_id);
+        $OUTPendiente->tipo_posicion  = 70;
+      }
+      return $OUTPendiente;
+    }
+    public function OUTPendiente($equipo_id){
+      $outMs    = null;
+      $outMs    = ColaMensajes::where('modem_id', '=',$equipo_id)
+                                  ->where('rsp_id','=',2)->where('cmd_id','=',22)
+                                  ->where('tipo_posicion','=',69)
+                                  ->orderBy('prioridad','DESC')
+                                  ->get()->first(); 
+      return $outMs;
+    }
 }

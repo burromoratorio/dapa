@@ -75,26 +75,39 @@ class KeepAliveController extends BaseController
  
  public function obtenerComandoPendiente($equipo_id){
     $mensaje  = false;
+    /*primero ver si hay un OUTS pendiente con tipo_posicion!=69 i !=70 =>, mando el outs y lo pongo en 69
+    sino, mando cualquier otro que sea distinto de OUTS tipo_comando_id=22,
+    para esto busco el comando con OUTPendiente, devuelvo $mensaje y sigo el tratamiento
+    todas las actualizaciones de comandos de abajo deben excluir al tipo_comando_id=22
+    */
     //1-obtener comandos con 3 intentos y ponerlos en estado rsp_id=6->sin respuesta
+    $outmsj = $this->OUTPendiente($equipo_id);
     DB::beginTransaction();
     try {
       $mensajeSinRta= ColaMensajes::where('modem_id', '=',$equipo_id)
-                                  ->where('rsp_id','=',2)->where('intentos','=',3)
+                                  ->where('rsp_id','=',2)->where('intentos','=',3)->where('cmd_id','<>',22)
                                   ->update(['rsp_id'=>5]);
       //2-obtengo ultimo comando pendiente
-      $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)
+      if(is_null($outmsj)){
+        $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)->where('cmd_id','<>',22)
                                 ->where('rsp_id','=',1)->orderBy('prioridad','DESC')
                                 ->get()->first(); 
+      }else{
+        $mensaje=$outmsj;
+      }
+      
       if($mensaje){
-        $mensaje->rsp_id      = 2;
-        $mensaje->fecha_final = date("Y-m-d H:i:s");
-        $mensaje->intentos   += 1;
+        $mensaje->rsp_id        = 2;
+        $mensaje->tipo_posicion = 69;
+        $mensaje->fecha_final   = date("Y-m-d H:i:s");
+        $mensaje->intentos      += 1;
         $mensaje->save();
       }
       $tr_id  = ($mensaje)?$mensaje->tr_id:1;
       //3-los comandos en rsp_id=2 e intentos <3 ->los seteo en pendiente rsp_id=1 y les sumo 1 al intentos, excepto al obtenido para rta
       $mensajeUP  = ColaMensajes::where('modem_id', '=',$equipo_id)
-                                ->where('rsp_id','=',2)->where('intentos','<',3)->where('tr_id','<>',$tr_id)
+                                ->where('rsp_id','=',2)->where('intentos','<',3)->where('cmd_id','<>',22)
+                                ->where('tr_id','<>',$tr_id)
                                 ->increment('intentos', 1, ['rsp_id'=>1]);
       DB::commit();
 
@@ -104,6 +117,15 @@ class KeepAliveController extends BaseController
       Log::error("Error al procesar el KA ".$errorSolo[0]);
     }
     return $mensaje;
+  }
+  public function OUTPendiente($equipo_id){
+    $outMs    = null;
+    $outMs  = ColaMensajes::where('modem_id', '=',$equipo_id)
+                                ->where('rsp_id','=',1)->where('cmd_id','=',22)
+                                ->where('tipo_posicion','<>',69)->where('tipo_posicion','<>',70)
+                                ->orderBy('prioridad','DESC')
+                                ->get()->first(); 
+    return $outMs;
   }
   public function decodificarComando($mensaje,$movil){
     //si el aux viene vacio....es una consulta mandar solo el ?
