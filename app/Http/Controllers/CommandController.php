@@ -147,28 +147,47 @@ class CommandController extends BaseController
     public function update(Request $request, $imei) {
         $comandoRta = $request->input('rta');
         $estado     = $request->input('estado_comando_id');
-        $arrCmdRta  = explode(":",$comandoRta);
         ///Log::info('recibido en dapa, IMEI:'.$imei.' rta:'.$comandoRta.' estado:'.$estado.' se obtuvo:'.$arrCmdRta[0]." de CMD_ID:".self::$comandoDefinitions[$arrCmdRta[0]]);
         $movil    = HelpMen::movilesMemoria($imei);
         $equipo_id= $movil->equipo_id;
-        //Log::info("respuesta a comando, equipo_id:".$equipo_id);
-        $commandoId = (isset(self::$comandoDefinitions[$arrCmdRta[0]]))?self::$comandoDefinitions[$arrCmdRta[0]]:self::$comandoGenerico["+GEN"];
-        Log::info('Respuesta IMEI:'.$imei.' - Equipo:'.$equipo_id.' rta:'.$comandoRta.' de CMD_ID:'.$commandoId);
-        $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)
-                                ->where('rsp_id','=',2)
-                                ->where('cmd_id','=',$commandoId)
-                                ->orderBy('prioridad','DESC')
-                                ->get()->first(); 
-        if(!is_null($mensaje)){
-          $mensaje->rsp_id      = 3;
-          $mensaje->comando     = $arrCmdRta[0];
-          $mensaje->respuesta   = $comandoRta;
-          $mensaje->fecha_final = date("Y-m-d H:i:s");
-          $mensaje->save();
-          Log::info("actualizacion correcta devuelvo:AT+OK\r\n");
+        //voy a contar las ocurrencias de un determinado caracter en este caso el signi + 
+        $contador   = mb_substr_count($comandoRta, "+");
+        if($contador>1){
+          //significa que vienen varios comandos concatenados tengo que limpiarlos
+          //3-los comandos en rsp_id=2 e intentos <3 ->los seteo en pendiente rsp_id=1 y les sumo 1 al intentos, excepto al obtenido para rta
+          Log::error("IMEI:".$imei.":::Comandos Concatenados:::");
+          DB::beginTransaction();
+          try {
+            $mensajeUP  = ColaMensajes::where('modem_id', '=',$equipo_id)
+                                    ->where('rsp_id','=',2)->where('intentos','<',3)
+                                    ->increment('intentos', 1, ['rsp_id'=>1]);
+            DB::commit();
+          }catch (\Exception $ex) {
+            DB::rollBack();
+            $errorSolo  = explode("Stack trace", $ex);
+            Log::error("Error al procesar update de comandos ".$errorSolo[0]);
+          }
           return "AT+OK\r\n";
         }else{
-          Log::info("No existe comando pendiente");
+          $arrCmdRta  = explode(":",$comandoRta);
+          $commandoId = (isset(self::$comandoDefinitions[$arrCmdRta[0]]))?self::$comandoDefinitions[$arrCmdRta[0]]:self::$comandoGenerico["+GEN"];
+          Log::info('Respuesta IMEI:'.$imei.' - Equipo:'.$equipo_id.' rta:'.$comandoRta.' de CMD_ID:'.$commandoId);
+          $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)
+                                  ->where('rsp_id','=',2)
+                                  ->where('cmd_id','=',$commandoId)
+                                  ->orderBy('prioridad','DESC')
+                                  ->get()->first(); 
+          if(!is_null($mensaje)){
+            $mensaje->rsp_id      = 3;
+            $mensaje->comando     = $arrCmdRta[0];
+            $mensaje->respuesta   = $comandoRta;
+            $mensaje->fecha_final = date("Y-m-d H:i:s");
+            $mensaje->save();
+            Log::info("actualizacion correcta devuelvo:AT+OK\r\n");
+            return "AT+OK\r\n";
+          }else{
+            Log::info("No existe comando pendiente");
+          }
         }
     }
    
