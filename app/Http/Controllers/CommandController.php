@@ -175,7 +175,7 @@ class CommandController extends BaseController
         }else{
           $arrCmdRta  = explode(":",$comandoRta);
           $commandoId = (isset(self::$comandoDefinitions[$arrCmdRta[0]]))?self::$comandoDefinitions[$arrCmdRta[0]]:self::$comandoGenerico["+GEN"];
-          if($commandoId==22 || $arrCmdRta[0]='+OUTS'){
+          if($commandoId==22 || $arrCmdRta[0]=='+OUTS'){
             $mensaje  = $this->tratarOUTS($equipo_id,$arrCmdRta[1]);
           }else{
             $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)
