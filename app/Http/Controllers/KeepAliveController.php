@@ -80,13 +80,15 @@ class KeepAliveController extends BaseController
     para esto busco el comando con OUTPendiente, devuelvo $mensaje y sigo el tratamiento
     todas las actualizaciones de comandos de abajo deben excluir al tipo_comando_id=22
     */
+    /*Identificar si el equipo está en test, si es asi ejecutar los comandos en orden de prioridades
+    sino, resolver el OUT con mas alta prioridad*/
     //1-obtener comandos con 3 intentos y ponerlos en estado rsp_id=6->sin respuesta
     $outmsj = $this->OUTPendiente($equipo_id);
     DB::beginTransaction();
     try {
-      $mensajeSinRta= ColaMensajes::where('modem_id', '=',$equipo_id)
+      /*$mensajeSinRta= ColaMensajes::where('modem_id', '=',$equipo_id)
                                   ->where('rsp_id','=',2)->where('intentos','=',3)->where('cmd_id','<>',22)
-                                  ->update(['rsp_id'=>5]);
+                                  ->update(['rsp_id'=>5]);*/
       //2-obtengo ultimo comando pendiente
       if(is_null($outmsj)){
         $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)->where('cmd_id','<>',22)
