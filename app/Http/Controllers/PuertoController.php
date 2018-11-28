@@ -362,7 +362,6 @@ class PuertoController extends BaseController
         if($io=='11'){//alimentacion ppal 
             $tipo_alarma_id=49;
             $estado_movil_id=14;
-            $estadoMovilidad=$estado_movil_id;
         }
         if($sensorEstado){
             if($io!=$sensorEstado->io){ //evaluo cambio de bits de sensor IO
