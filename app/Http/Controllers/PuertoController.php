@@ -226,6 +226,7 @@ class PuertoController extends BaseController
         $pid        = getmypid();
         $sec_pid    = rand(0,1000);
         $errorLog   = "";
+        $estadoMovilidad    = 7;//estado normal
         //Log::info("Validando GPRMC...".$report['GPRMC']);
         if($report['GPRMC']!=''){
             $gprmcData  = explode(",",$report['GPRMC']);
@@ -298,6 +299,21 @@ class PuertoController extends BaseController
                                     'km_recorridos'=>$kmtField['KMT'],
                                     'ltrs_consumidos'=>$info['ltrs']]);
                     $posicion->save();
+                    
+                    if($alaField["ALA"]=="V"){
+                        $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion->posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>7,'fecha_alarma'=>$fecha,'falsa'=>0]);
+                        $estadoMovilidad    = 11;
+                    }
+                    //inserto alarma de panico!!
+                    $estadoMovilidad = self::tratarAlarmasIO($ioData,$perField['PER'],$report['IMEI'],$posicion->posicion_id,
+                                intval($movil->movilOldId),intval($movil->movil_id),$fecha,$estadoMovilidad);
+                    if( $estadoMovilidad==7 ){
+                        if($arrInfoGprmc['velocidad']>12){
+                            $estadoMovilidad=($movil->estado_u==0)?3:4;//movimiento vacio estado_u=0, otro..movimiento cargado
+                        }else{
+                            $estadoMovilidad=($movil->estado_u==0)?1:2;//detenido vacio estado_u=0, otro..detenido cargado2
+                        }
+                    }
                     /*update movil record*/
                     if(DB::connection()->getDatabaseName()=='moviles'){
                         config()->set('database.default', 'siac');
@@ -305,20 +321,12 @@ class PuertoController extends BaseController
                         $movilModel->setConnection('siac');
                         $updateMovil= $movilModel->where('movil_id','=',intval($movil->movilOldId))
                                     ->update(['latitud'=>$arrInfoGprmc['latitud'],'longitud'=>$arrInfoGprmc['longitud'],
-                                            'rumbo_id'=>$arrInfoGprmc['rumbo'],'estado'=>$info['mod_presencia'],'fecha_ult_posicion'=>$fecha]);
+                                            'rumbo_id'=>$arrInfoGprmc['rumbo'],'estado'=>$estadoMovilidad,'fecha_ult_posicion'=>$fecha]);
                                    
                     }
                     DB::commit();
                     config()->set('database.default', 'moviles');
                     /*fin update movil*/
-                    
-                    if($alaField["ALA"]=="V"){
-                        $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion->posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>7,'fecha_alarma'=>$fecha,'falsa'=>0]);
-                    }
-                    //inserto alarma de panico!!
-                    self::tratarAlarmasIO($ioData,$perField['PER'],$report['IMEI'],$posicion->posicion_id,
-                                intval($movil->movilOldId),intval($movil->movil_id),$fecha);
-                    
                 }catch (\Exception $ex) {
                     DB::rollBack();
                     $errorSolo  = explode("Stack trace", $ex);
@@ -337,7 +345,7 @@ class PuertoController extends BaseController
         }
         return $respuesta;
     }
-    public static function tratarAlarmasIO($ioData,$perField,$imei,$posicion_id,$movilOldId,$movil_id,$fecha){
+    public static function tratarAlarmasIO($ioData,$perField,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$estadoMovilidad){
         if($ioData[0]=='I00'){//ingreso de alarma de panico bit en 0
             $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,'tipo_alarma_id'=>1,'fecha_alarma'=>$fecha,'falsa'=>0]);
         }
@@ -349,10 +357,12 @@ class PuertoController extends BaseController
             Log::info("Movil: ".$imei." - funcionando con bateria auxiliar");
             $tipo_alarma_id=50;
             $estado_movil_id=13;
+            $estadoMovilidad=$estado_movil_id;
         }
         if($io=='11'){//alimentacion ppal 
             $tipo_alarma_id=49;
             $estado_movil_id=14;
+            $estadoMovilidad=$estado_movil_id;
         }
         if($sensorEstado){
             if($io!=$sensorEstado->io){ //evaluo cambio de bits de sensor IO
@@ -381,6 +391,7 @@ class PuertoController extends BaseController
                 Log::error("Error al tratar alarmas IO");
             }
         }
+        return $estadoMovilidad;
         /*cambios de bateria*/
         //Log::info(print_r($sensorEstado,true));
     }
@@ -482,6 +493,11 @@ class PuertoController extends BaseController
         }
         return $perifericos;
     }
+    /*0 = RESET
+    1 = NORMAL
+    2 = CORTE
+    3 = BLOQUEO DE INHIBICIÓN
+    4 = ALARMA*/
     public static function ModPrecencia($arrPrescense){
         //Log::info("ingresa por modPresencia porque PER==NULL");
         $IOEstados       = array("ltrs"=>0,"mod_presencia"=>1,"tmg"=>0,"panico"=>0,"desenganche"=>0);
