@@ -100,18 +100,6 @@ class KeepAliveController extends BaseController
     }
     DB::beginTransaction();
     try {
-      /*$mensajeSinRta= ColaMensajes::where('modem_id', '=',$equipo_id)
-                                  ->where('rsp_id','=',2)->where('intentos','=',3)->where('cmd_id','<>',22)
-                                  ->update(['rsp_id'=>5]);*/
-      //2-obtengo ultimo comando pendiente
-     /* if(is_null($outmsj)){
-        $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)->where('cmd_id','<>',22)
-                                ->where('rsp_id','=',1)->orderBy('prioridad','DESC')
-                                ->get()->first(); 
-      }else{
-        $mensaje=$outmsj;
-      }*/
-      
       if($mensaje){
         $mensaje->rsp_id        = 2;
         $mensaje->tipo_posicion = 69;
