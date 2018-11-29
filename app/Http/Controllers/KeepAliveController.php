@@ -84,7 +84,7 @@ class KeepAliveController extends BaseController
     sino, resolver el OUT con mas alta prioridad*/
     //1-obtener comandos con 3 intentos y ponerlos en estado rsp_id=6->sin respuesta
     $esEnTest = $this->isMovilInTest($equipo_id);
-    if(is_null($esEnTest)){ //si no está en test doy prioridad a los OUTS
+    if( is_null($esEnTest) || count($esEnTest)>0 ){ //si no está en test doy prioridad a los OUTS
       $outmsj = $this->OUTPendiente($equipo_id);
       if(is_null($outmsj)){
         $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)->where('cmd_id','<>',22)
@@ -94,7 +94,6 @@ class KeepAliveController extends BaseController
         $mensaje=$outmsj;
       }
     }else{//si está en test ejecuto uno a uno por prioridad
-      Log::error(print_r($esEnTest, true));
       Log::info("Ejecutando Test Equipo::".$equipo_id." Comandos en test:".count($esEnTest));
       $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)->where('rsp_id','=',1)
                                 ->orderBy('prioridad','DESC')->get()->first(); 
