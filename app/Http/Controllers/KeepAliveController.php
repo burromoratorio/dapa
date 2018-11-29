@@ -94,7 +94,8 @@ class KeepAliveController extends BaseController
         $mensaje=$outmsj;
       }
     }else{//si está en test ejecuto uno a uno por prioridad
-      Log::info("Ejecutando Test Equipo::".$equipo_id." Comandos en test:".$esEnTest[0]->comandos);
+      Log::error(print_r($esEnTest, true));
+      //Log::info("Ejecutando Test Equipo::".$equipo_id." Comandos en test:".$esEnTest[0]->comandos);
       $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)->where('rsp_id','=',1)
                                 ->orderBy('prioridad','DESC')->get()->first(); 
     }
