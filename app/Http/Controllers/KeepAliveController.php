@@ -122,7 +122,7 @@ class KeepAliveController extends BaseController
       $tr_id  = ($mensaje)?$mensaje->tr_id:1;
       //3-los comandos en rsp_id=2 e intentos <3 ->los seteo en pendiente rsp_id=1 y les sumo 1 al intentos, excepto al obtenido para rta
       $mensajeUP  = ColaMensajes::where('modem_id', '=',$equipo_id)
-                                ->where('rsp_id','=',2)->where('intentos','<',3)->where('cmd_id','<>',22)
+                                ->where('rsp_id','=',2)->where('intentos','<',5)->where('cmd_id','<>',22)
                                 ->where('tr_id','<>',$tr_id)
                                 ->increment('intentos', 1, ['rsp_id'=>1]);
       DB::commit();

@@ -160,10 +160,10 @@ class CommandController extends BaseController
           DB::beginTransaction();
           try {
             $mensajeSinRta= ColaMensajes::where('modem_id', '=',$equipo_id)
-                                  ->where('rsp_id','=',2)->where('intentos','=',3)
+                                  ->where('rsp_id','=',2)->where('intentos','=',5)
                                   ->update(['rsp_id'=>5]);
             $mensajeUP    = ColaMensajes::where('modem_id', '=',$equipo_id)
-                                    ->where('rsp_id','=',2)->where('intentos','<',3)->where('cmd_id','<>',22)
+                                    ->where('rsp_id','=',2)->where('intentos','<',5)->where('cmd_id','<>',22)
                                     ->increment('intentos', 1, ['rsp_id'=>1]);
             DB::commit();
           }catch (\Exception $ex) {
