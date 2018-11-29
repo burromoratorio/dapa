@@ -83,13 +83,10 @@ class KeepAliveController extends BaseController
     /*Identificar si el equipo está en test, si es asi ejecutar los comandos en orden de prioridades
     sino, resolver el OUT con mas alta prioridad*/
     //1-obtener comandos con 3 intentos y ponerlos en estado rsp_id=6->sin respuesta
-    $outmsj = $this->OUTPendiente($equipo_id);
-    DB::beginTransaction();
-    try {
-      /*$mensajeSinRta= ColaMensajes::where('modem_id', '=',$equipo_id)
-                                  ->where('rsp_id','=',2)->where('intentos','=',3)->where('cmd_id','<>',22)
-                                  ->update(['rsp_id'=>5]);*/
-      //2-obtengo ultimo comando pendiente
+    $esEnTest = $this->isMovilInTest($equipo_id);
+    if(is_null($esEnTest)){ //si no está en test doy prioridad a los OUTS
+      Log::info("Ejecutando Test Equipo::".$equipo_id.$esEnTest[0]->comandos);
+      $outmsj = $this->OUTPendiente($equipo_id);
       if(is_null($outmsj)){
         $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)->where('cmd_id','<>',22)
                                 ->where('rsp_id','=',1)->orderBy('prioridad','DESC')
@@ -97,6 +94,23 @@ class KeepAliveController extends BaseController
       }else{
         $mensaje=$outmsj;
       }
+    }else{//si está en test ejecuto uno a uno por prioridad
+      $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)->where('rsp_id','=',1)
+                                ->orderBy('prioridad','DESC')->get()->first(); 
+    }
+    DB::beginTransaction();
+    try {
+      /*$mensajeSinRta= ColaMensajes::where('modem_id', '=',$equipo_id)
+                                  ->where('rsp_id','=',2)->where('intentos','=',3)->where('cmd_id','<>',22)
+                                  ->update(['rsp_id'=>5]);*/
+      //2-obtengo ultimo comando pendiente
+     /* if(is_null($outmsj)){
+        $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)->where('cmd_id','<>',22)
+                                ->where('rsp_id','=',1)->orderBy('prioridad','DESC')
+                                ->get()->first(); 
+      }else{
+        $mensaje=$outmsj;
+      }*/
       
       if($mensaje){
         $mensaje->rsp_id        = 2;
@@ -128,6 +142,19 @@ class KeepAliveController extends BaseController
                                 ->orderBy('prioridad','DESC')
                                 ->get()->first(); 
     return $outMs;
+  }
+  public function isMovilInTest($equipo_id){
+    $movilTest = 0;
+    if(DB::connection()->getDatabaseName()=='moviles'){
+      config()->set('database.default', 'siac');
+      $movilTest = DB::table('TEST_COMANDO')
+                       ->select(DB::raw('count(*) as comandos'))
+                       ->where('fin', '=', 0)->where('modem_id', '=',$equipo_id)
+                       ->groupBy('modem_id')
+                       ->get();
+    }
+    config()->set('database.default', 'moviles');
+    return $movilTest;
   }
   public function decodificarComando($mensaje,$movil){
     //si el aux viene vacio....es una consulta mandar solo el ?
