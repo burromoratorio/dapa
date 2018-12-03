@@ -363,6 +363,7 @@ class PuertoController extends BaseController
             $tipo_alarma_id=49;
             $estado_movil_id=14;
         }
+        Log::info("ESTADO SENSORES ALARMA BAT:::posicion::".$io." Memoria::".$sensorEstado->io);
         if($sensorEstado){
             if($io!=$sensorEstado->io){ //evaluo cambio de bits de sensor IO
                 DB::beginTransaction();
