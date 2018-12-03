@@ -74,7 +74,8 @@ class KeepAliveController extends BaseController
   } 
  
  public function obtenerComandoPendiente($equipo_id){
-    $mensaje  = false;
+    $mensaje            = false;
+    $flagEnviarComando  = 0;
     /*primero ver si hay un OUTS pendiente con tipo_posicion!=69 i !=70 =>, mando el outs y lo pongo en 69
     sino, mando cualquier otro que sea distinto de OUTS tipo_comando_id=22,
     para esto busco el comando con OUTPendiente, devuelvo $mensaje y sigo el tratamiento
@@ -82,49 +83,58 @@ class KeepAliveController extends BaseController
     */
     /*Identificar si el equipo está en test, si es asi ejecutar los comandos en orden de prioridades
     sino, resolver el OUT con mas alta prioridad*/
-    //1-obtener comandos con 3 intentos y ponerlos en estado rsp_id=6->sin respuesta
-    $esEnTest = $this->isMovilInTest($equipo_id);
-    if( is_null($esEnTest) || count($esEnTest)==0 ){ //si no está en test doy prioridad a los OUTS
-      $outmsj = $this->OUTPendiente($equipo_id);
-      if(is_null($outmsj)){
-        $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)->where('cmd_id','<>',22)
-                                ->where('rsp_id','=',1)->orderBy('prioridad','DESC')
-                                ->get()->first(); 
-      }else{
-        $mensaje=$outmsj;
+    ///ver si hay comando pendiente///
+    $mensajePendiente            = ColaMensajes::where('modem_id', '=',$equipo_id)->where('rsp_id','=',1)
+                                  ->orderBy('prioridad','DESC')->get()->first(); 
+    if($mensajePendiente){
+      //1-obtener comandos con 3 intentos y ponerlos en estado rsp_id=6->sin respuesta
+      $esEnTest = $this->isMovilInTest($equipo_id);
+      if( is_null($esEnTest) || count($esEnTest)==0 ){ //si no está en test doy prioridad a los OUTS
+        $flagEnviarComando  = 1;
+        $outmsj             = $this->OUTPendiente($equipo_id);
+        $mensaje            = (is_null($outmsj))?$mensajePendiente:$outmsj;
+      }else{//si está en test ejecuto uno a uno por prioridad
+        Log::info("Ejecutando Test Equipo::".$equipo_id." Comandos en test:".count($esEnTest));
+        $comandoAEnviar15   = $this->kaReportFrecuency($equipo_id,15);
+        if($comandoAEnviar15){
+          $mensaje          = $comandoAEnviar15;
+        }else{
+          $comandoAEnviar60 = $this->kaReportFrecuency($equipo_id,60);
+          $mensaje          = ($comandoAEnviar60)?$mensajePendiente:null;
+        }
       }
-    }else{//si está en test ejecuto uno a uno por prioridad
-      Log::info("Ejecutando Test Equipo::".$equipo_id." Comandos en test:".count($esEnTest));
-      $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)->where('rsp_id','=',1)
-                                ->orderBy('prioridad','DESC')->get()->first(); 
-    }
-    DB::beginTransaction();
-    try {
-      if($mensaje){
-        $mensaje->rsp_id        = 2;
-        $mensaje->tipo_posicion = 69;
-        $mensaje->fecha_final   = date("Y-m-d H:i:s");
-        $mensaje->intentos      += 1;
-        $mensaje->save();
-      }
-      $tr_id  = ($mensaje)?$mensaje->tr_id:1;
-      //3-los comandos en rsp_id=2 e intentos <3 ->los seteo en pendiente rsp_id=1 y les sumo 1 al intentos, excepto al obtenido para rta
-      $mensajeUP  = ColaMensajes::where('modem_id', '=',$equipo_id)
-                                ->where('rsp_id','=',2)->where('intentos','<',5)->where('cmd_id','<>',22)
-                                ->where('tr_id','<>',$tr_id)
-                                ->increment('intentos', 1, ['rsp_id'=>1]);
-      DB::commit();
+      DB::beginTransaction();
+      try {
+        if($mensaje){
+          $mensaje->rsp_id        = 2;
+          $mensaje->tipo_posicion = 69;
+          $mensaje->fecha_final   = date("Y-m-d H:i:s");
+          $mensaje->intentos      += 1;
+          $mensaje->save();
+        }
+        $tr_id  = ($mensaje)?$mensaje->tr_id:1;
+        //3-los comandos en rsp_id=2 e intentos <3 ->los seteo en pendiente rsp_id=1 y les sumo 1 al intentos, excepto al obtenido para rta
+        $mensajeUP  = ColaMensajes::where('modem_id', '=',$equipo_id)
+                                  ->where('rsp_id','=',2)->where('intentos','<',5)->where('cmd_id','<>',22)
+                                  ->where('tr_id','<>',$tr_id)
+                                  ->increment('intentos', 1, ['rsp_id'=>1]);
+        DB::commit();
 
-    }catch (\Exception $ex) {
-      DB::rollBack();
-      $errorSolo  = explode("Stack trace", $ex);
-      Log::error("Error al procesar el KA ".$errorSolo[0]);
+      }catch (\Exception $ex) {
+        DB::rollBack();
+        $errorSolo  = explode("Stack trace", $ex);
+        Log::error("Error al procesar el KA ".$errorSolo[0]);
+      }
+    }else{
+      Log::error("NO hay comandos Pendientes");
+      $mensaje=false;
     }
+    
     return $mensaje;
   }
   public function OUTPendiente($equipo_id){
     $outMs    = null;
-    $outMs  = ColaMensajes::where('modem_id', '=',$equipo_id)
+    $outMs    = ColaMensajes::where('modem_id', '=',$equipo_id)
                                 ->where('rsp_id','=',1)->where('cmd_id','=',22)
                                 ->where('tipo_posicion','<>',69)->where('tipo_posicion','<>',70)
                                 ->orderBy('prioridad','DESC')
@@ -143,6 +153,17 @@ class KeepAliveController extends BaseController
     }
     config()->set('database.default', 'moviles');
     return $movilTest;
+  }
+  public function kaReportFrecuency($equipo_id,$aux){
+    $kaNormal    = null;
+    $kaNormal    = ColaMensajes::where('modem_id', '=',$equipo_id)
+                                ->where('rsp_id','<>',3)->where('rsp_id','<>',5)->where('comando','=','+KA')
+                                ->where('auxiliar','=',$aux)
+                                ->orderBy('prioridad','DESC')
+                                ->get()->first(); 
+
+    
+    return $kaNormal;
   }
   public function decodificarComando($mensaje,$movil){
     //si el aux viene vacio....es una consulta mandar solo el ?
