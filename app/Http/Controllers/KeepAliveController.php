@@ -126,7 +126,6 @@ class KeepAliveController extends BaseController
         Log::error("Error al procesar el KA ".$errorSolo[0]);
       }
     }else{
-      Log::error("NO hay comandos Pendientes");
       $mensaje=false;
     }
     
