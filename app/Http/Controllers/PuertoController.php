@@ -372,6 +372,7 @@ class PuertoController extends BaseController
                 DB::beginTransaction();
                 try {
                     EstadosSensores::where('imei', '=', $imei)->update(array('io' => "culo"));
+                    EstadosSensores::create(['imei'=>$imei,'movil_id'=>$movil_id,'iom'=>$perField,'io'=>'cajeta']);
                     self::persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id);
                     DB::commit();
                 }catch (\Exception $ex) {
