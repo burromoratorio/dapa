@@ -372,7 +372,7 @@ class PuertoController extends BaseController
                 DB::beginTransaction();
                 try {
                     $estado     = EstadosSensores::where('imei', '=', $imei)->get()->first();
-                    $estado->io = 666;
+                    $estado->io = "pedo";
                     $estado->save();
                     Log::error(print_r($estado, true));
                     DB::commit();
