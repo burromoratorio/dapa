@@ -352,8 +352,9 @@ class PuertoController extends BaseController
         /*cambios de estado IO alarmas de bateria*/
         $arrPeriferico  = $ioData[1];
         $io             = str_replace("I", "",$ioData[1] );
-        $sensorEstado   = self::getSensores($ioData);
-         Log::error(print_r($movil_id, true));
+        $sensorEstado   = self::getSensores($imei);
+        
+         Log::error(print_r($ioData, true));
         if($io=='10'){ 
             Log::info("Movil: ".$imei." - funcionando con bateria auxiliar");
             $tipo_alarma_id=50;
