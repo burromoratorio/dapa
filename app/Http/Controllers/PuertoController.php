@@ -371,13 +371,9 @@ class PuertoController extends BaseController
                 Log::error("ESTADO SENSORES ALARMA BAT:::posicion::".$io." Memoria::".$sensorEstado->io." MOVIL::.".$imei);
                 DB::beginTransaction();
                 try {
-                    $estado     = EstadosSensores::where('imei', '=', $imei)->get()->first();
-                    $estado->io = "pedo";
-                    $estado->save();
-                    Log::error(print_r($estado, true));
-                    DB::commit();
+                    EstadosSensores::where('imei', '=', $imei)->update(array('io' => "culo"));
                     self::persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id);
-                    
+                    DB::commit();
                 }catch (\Exception $ex) {
                     DB::rollBack();
                     Log::error("Error al tratar alarmas IO..".$ex);
