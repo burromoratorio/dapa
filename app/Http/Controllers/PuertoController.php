@@ -354,7 +354,7 @@ class PuertoController extends BaseController
         $io             = str_replace("I", "",$ioData[1] );
         $sensorEstado   = self::getSensores($imei);
 
-         Log::error(print_r($ioData, true));
+        // Log::error(print_r($ioData, true));
         if($io=='10'){ 
             Log::info("Movil: ".$imei." - funcionando con bateria auxiliar");
             $tipo_alarma_id=50;
