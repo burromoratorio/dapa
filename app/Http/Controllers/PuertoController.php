@@ -375,8 +375,9 @@ class PuertoController extends BaseController
                     Log::error(print_r($estado, true));
                     $estado->io = 666;
                     $estado->save();
-                    self::persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id);
                     DB::commit();
+                    self::persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id);
+                    
                 }catch (\Exception $ex) {
                     DB::rollBack();
                     Log::error("Error al tratar alarmas IO..".$ex);
