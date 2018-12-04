@@ -372,7 +372,10 @@ class PuertoController extends BaseController
                 DB::beginTransaction();
                 try {
                     //EstadosSensores::where('imei', $imei)->update(['io' => '11111']);
-                    DB::table('estados_sensores')->where('imei', $imei)->update(['io' => '11111']);
+                    EstadosSensores::where('imei', $imei)->delete();
+                    EstadosSensores::create(['imei'=>$imei,'movil_id'=>$movil_id,'iom'=>$perField,'io'=>$io]);
+                    //probar borrandolo y creandolo de nuevo
+                    //DB::table('estados_sensores')->where('imei', $imei)->update(['io' => '11111']);
                     DB::commit();
                     self::persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id);
                 }catch (\Exception $ex) {
