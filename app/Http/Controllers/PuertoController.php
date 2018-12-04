@@ -299,7 +299,7 @@ class PuertoController extends BaseController
                                     'km_recorridos'=>$kmtField['KMT'],
                                     'ltrs_consumidos'=>$info['ltrs']]);
                     $posicion->save();
-                    
+                    EstadosSensores::create(['imei'=>$imei,'movil_id'=>$movil_id,'iom'=>$perField,'io'=>'13234']);
                     if($alaField["ALA"]=="V"){
                         $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion->posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>7,'fecha_alarma'=>$fecha,'falsa'=>0]);
                         $estadoMovilidad    = 11;
@@ -345,7 +345,7 @@ class PuertoController extends BaseController
         }
         return $respuesta;
     }
-    public static function tratarAlarmasIO($ioData,$perField,$imei,$posicion_id,$movilOldId,$movil_id,$fecha){
+    public static function tratarAlarmasIO($ioData,$perField,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$estadoMovilidad){
         if($ioData[0]=='I00'){//ingreso de alarma de panico bit en 0
             $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,'tipo_alarma_id'=>1,'fecha_alarma'=>$fecha,'falsa'=>0]);
         }
@@ -353,22 +353,31 @@ class PuertoController extends BaseController
         $arrPeriferico  = $ioData[1];
         $io             = str_replace("I", "",$ioData[1] );
         $sensorEstado   = self::getSensores($imei);
+
+        // Log::error(print_r($ioData, true));
         if($io=='10'){ 
             Log::info("Movil: ".$imei." - funcionando con bateria auxiliar");
             $tipo_alarma_id=50;
             $estado_movil_id=13;
+            $estadoMovilidad=$estado_movil_id;
         }
         if($io=='11'){//alimentacion ppal 
             $tipo_alarma_id=49;
             $estado_movil_id=14;
         }
+
         if($sensorEstado){
             if($io!=$sensorEstado->io){ //evaluo cambio de bits de sensor IO
                 DB::beginTransaction();
                 try {
-                    EstadosSensores::where('imei', '=', $imei)->update(array('io' => $io));
-                    self::persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id);
+                    EstadosSensores::where('imei', $imei)->update(['io' => '11111']);
+                   // EstadosSensores::where('imei', $imei)->delete();
+                   // EstadosSensores::create(['imei'=>$imei,'movil_id'=>$movil_id,'iom'=>$perField,'io'=>$io]);
+                    //probar borrandolo y creandolo de nuevo
+                    //DB::table('estados_sensores')->where('imei', $imei)->update(['io' => '11111']);
                     DB::commit();
+                    self::persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id);
+                    Log::error("ESTADO SENSORES ALARMA BAT:::posicion::".$io." Memoria::".$sensorEstado->io." MOVIL::.".$imei);
                 }catch (\Exception $ex) {
                     DB::rollBack();
                     Log::error("Error al tratar alarmas IO..".$ex);
@@ -389,6 +398,7 @@ class PuertoController extends BaseController
                 Log::error("Error al tratar alarmas IO");
             }
         }
+        return $estadoMovilidad;
         /*cambios de bateria*/
         //Log::info(print_r($sensorEstado,true));
     }
