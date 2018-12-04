@@ -300,7 +300,7 @@ class PuertoController extends BaseController
                                     'ltrs_consumidos'=>$info['ltrs']]);
                     $posicion->save();
 
-                    $estadosensor   = EstadosSensores::create(['imei'=>867060034566170,'movil_id'=>24954,'iom'=>1,'io'=>'13234']);
+                    $estadosensor   = EstadosSensores::create(['imei'=>867060034566170,'movil_id'=>24954,'io'=>'13234']);
                     $estadosensor->save();
 
                     if($alaField["ALA"]=="V"){
