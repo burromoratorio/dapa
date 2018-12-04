@@ -299,7 +299,8 @@ class PuertoController extends BaseController
                                     'km_recorridos'=>$kmtField['KMT'],
                                     'ltrs_consumidos'=>$info['ltrs']]);
                     $posicion->save();
-                    EstadosSensores::create(['imei'=>$report['IMEI'],'movil_id'=>intval($movil->movil_id),'iom'=>$perField['PER'],'io'=>'13234']);
+                    $estadosensor   = EstadosSensores::create(['imei'=>$report['IMEI'],'movil_id'=>intval($movil->movil_id),'iom'=>$perField['PER'],'io'=>'13234']);
+                    $estadosensor->save();
                     if($alaField["ALA"]=="V"){
                         $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion->posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>7,'fecha_alarma'=>$fecha,'falsa'=>0]);
                         $estadoMovilidad    = 11;
