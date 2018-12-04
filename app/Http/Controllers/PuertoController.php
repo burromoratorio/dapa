@@ -299,7 +299,7 @@ class PuertoController extends BaseController
                                     'km_recorridos'=>$kmtField['KMT'],
                                     'ltrs_consumidos'=>$info['ltrs']]);
                     $posicion->save();
-
+                    config()->set('database.default', 'moviles');
                     $estadosensor   = EstadosSensores::create(['imei'=>867060034566170,'movil_id'=>24954,'io'=>'13234']);
                     $estadosensor->save();
 
