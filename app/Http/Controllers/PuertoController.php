@@ -299,10 +299,6 @@ class PuertoController extends BaseController
                                     'km_recorridos'=>$kmtField['KMT'],
                                     'ltrs_consumidos'=>$info['ltrs']]);
                     $posicion->save();
-                    config()->set('database.default', 'moviles');
-                    $estadosensor   = EstadosSensores::create(['imei'=>867060034566170,'movil_id'=>24954,'io'=>'13234']);
-                    $estadosensor->save();
-
                     if($alaField["ALA"]=="V"){
                         $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion->posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>7,'fecha_alarma'=>$fecha,'falsa'=>0]);
                         $estadoMovilidad    = 11;
@@ -379,7 +375,7 @@ class PuertoController extends BaseController
                     //probar borrandolo y creandolo de nuevo
                     //DB::table('estados_sensores')->where('imei', $imei)->update(['io' => '11111']);
                     DB::commit();
-                    self::persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id);
+                    //self::persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id);
                     Log::error("ESTADO SENSORES ALARMA BAT:::posicion::".$io." Memoria::".$sensorEstado->io." MOVIL::.".$imei);
                 }catch (\Exception $ex) {
                     DB::rollBack();
@@ -394,7 +390,7 @@ class PuertoController extends BaseController
             DB::beginTransaction();
             try {
                 EstadosSensores::create(['imei'=>$imei,'movil_id'=>$movil_id,'iom'=>$perField,'io'=>$io]);
-                self::persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id);
+                //self::persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id);
                 DB::commit();
             }catch (\Exception $ex) {
                 DB::rollBack();
