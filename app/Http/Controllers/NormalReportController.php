@@ -122,7 +122,7 @@ class NormalReportController extends BaseController
   public function tratarReporte($cadena,$movil){
     $rta  = "";
     try{
-      Log::error("Equipo=>".$movil->equipo_id." MOVIL=>".$movil->movilOldId."-Cadena=>".$cadena);
+      Log::info("Equipo=>".$movil->equipo_id." MOVIL=>".$movil->movilOldId."-Cadena=>".$cadena);
       $rta  = app()->Puerto->analizeReport($cadena,$movil) ;
     }catch(Exception $e){
       $rta  = "error";
