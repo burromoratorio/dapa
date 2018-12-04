@@ -368,18 +368,18 @@ class PuertoController extends BaseController
 
         if($sensorEstado){
             if($io!=$sensorEstado->io){ //evaluo cambio de bits de sensor IO
-                Log::error("ESTADO SENSORES ALARMA BAT:::posicion::".$io." Memoria::".$sensorEstado->io." MOVIL::.".$imei);
                 DB::beginTransaction();
                 try {
                     //EstadosSensores::where('imei', $imei)->update(['io' => '11111']);
-                    EstadosSensores::where('imei', $imei)->delete();
-                    EstadosSensores::create(['imei'=>$imei,'movil_id'=>$movil_id,'iom'=>$perField,'io'=>$io]);
+                   // EstadosSensores::where('imei', $imei)->delete();
+                   // EstadosSensores::create(['imei'=>$imei,'movil_id'=>$movil_id,'iom'=>$perField,'io'=>$io]);
                     //probar borrandolo y creandolo de nuevo
                     //DB::table('estados_sensores')->where('imei', $imei)->update(['io' => '11111']);
-                    DB::commit();
+                   // DB::commit();
                     self::persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id);
+                    Log::error("ESTADO SENSORES ALARMA BAT:::posicion::".$io." Memoria::".$sensorEstado->io." MOVIL::.".$imei);
                 }catch (\Exception $ex) {
-                   // DB::rollBack();
+                    DB::rollBack();
                     Log::error("Error al tratar alarmas IO..".$ex);
                 }
             }
@@ -403,6 +403,9 @@ class PuertoController extends BaseController
         //Log::info(print_r($sensorEstado,true));
     }
     public static function persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id){
+        EstadosSensores::where('imei', $imei)->update(['io' => '11111']);
+        //EstadosSensores::where('imei', $imei)->delete();
+        //EstadosSensores::create(['imei'=>$imei,'movil_id'=>$movil_id,'io'=>'211111']);
         DB::beginTransaction();
         try {
             Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,
