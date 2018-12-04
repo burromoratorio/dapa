@@ -400,9 +400,12 @@ class PuertoController extends BaseController
     public static function persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id){
         DB::beginTransaction();
         try {
-            Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,
+            if($tipo_alarma_id!=49){//solo si es cualquier alarma distinta de alimentacion ppal
+                Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,
                             'tipo_alarma_id'=>$tipo_alarma_id,'fecha_alarma'=>$fecha,'falsa'=>0]);
-            Movil::where('movil_id', '=', $movil_id)->update(array('estado_movil_id' => $estado_movil_id));
+                Movil::where('movil_id', '=', $movil_id)->update(array('estado_movil_id' => $estado_movil_id));
+            }
+            
             DB::commit();
             self::startupSensores();
         }catch (\Exception $ex) {
