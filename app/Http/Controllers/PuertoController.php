@@ -373,11 +373,10 @@ class PuertoController extends BaseController
                 try {
                     //EstadosSensores::where('imei', $imei)->update(['io' => '11111']);
                     DB::table('estados_sensores')->where('imei', $imei)->update(['io' => '11111']);
-
                     DB::commit();
                     self::persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id);
                 }catch (\Exception $ex) {
-                    DB::rollBack();
+                   // DB::rollBack();
                     Log::error("Error al tratar alarmas IO..".$ex);
                 }
             }
