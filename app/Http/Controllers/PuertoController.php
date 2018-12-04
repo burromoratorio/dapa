@@ -403,7 +403,10 @@ class PuertoController extends BaseController
         //Log::info(print_r($sensorEstado,true));
     }
     public static function persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id){
-        EstadosSensores::where('imei', $imei)->update(['io' => '11111']);
+        $estado     = EstadosSensores::where('imei', $imei)->get()->first();//->update(['io' => '11111']);
+        $estado->io='111111';
+        $estado->save();
+        Log::error(print_r($estado, true));
         //EstadosSensores::where('imei', $imei)->delete();
         //EstadosSensores::create(['imei'=>$imei,'movil_id'=>$movil_id,'io'=>'211111']);
         DB::beginTransaction();
