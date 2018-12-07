@@ -191,7 +191,6 @@ class CommandController extends BaseController
             $mensaje->comando     = $arrCmdRta[0];
             $mensaje->respuesta   = $comandoRta;
             $mensaje->fecha_final = date("Y-m-d H:i:s");
-            Log::info("Fecha final:".$mensaje->fecha_final);
             $mensaje->save();
             Log::info("actualizacion correcta devuelvo:AT+OK\r\n");
             return "AT+OK\r\n";
