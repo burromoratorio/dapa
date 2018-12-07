@@ -109,6 +109,7 @@ class KeepAliveController extends BaseController
           $mensaje->rsp_id        = 2;
           $mensaje->tipo_posicion = 69;
           $mensaje->fecha_final   = date("Y-m-d H:i:s");
+          Log::info("Fecha final:".$mensaje->fecha_final);
           $mensaje->intentos      += 1;
           $mensaje->save();
         }
