@@ -130,4 +130,8 @@ class NormalReportController extends BaseController
     }
     return $rta;
   } 
+  public static function VaciaMemoria(){
+       MemVar::VaciaMemoria();
+       return "ok";
+  }
 }

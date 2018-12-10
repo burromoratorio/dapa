@@ -618,8 +618,5 @@ class PuertoController extends BaseController
         $memvar->init($archivo,$largo);
         $memvar->setValue( $enstring );
     }
-    public static function VaciaMemoria(){
-       MemVar::VaciaMemoria();
-       return "ok";
-    }
+    
 }
