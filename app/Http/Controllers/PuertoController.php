@@ -353,10 +353,18 @@ class PuertoController extends BaseController
             Log::info(print_r($ioData,true));
             Log::error("esto llega de panico:::::".$ioData[0]);
         }
-        Log::info(print_r($sensorEstado,true));
-        if($ioData[0]=='I00'){//ingreso de alarma de panico bit en 0
+        if($ioData[0]=="I00"){//ingreso de alarma de panico bit en 0
             Log::error("Panico presionado Equipo:".$imei." - Movil:".$movilOldId);
-            $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,'tipo_alarma_id'=>1,'fecha_alarma'=>$fecha,'falsa'=>0]);
+            DB::beginTransaction();
+            try {
+                $alarmaPanico   = Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,'tipo_alarma_id'=>1,'fecha_alarma'=>$fecha,'falsa'=>0]);
+                $alarmaPanico->save();
+                DB::commit();
+                }catch (\Exception $ex) {
+                    DB::rollBack();
+                    Log::error("Error al tratar alarmas IO..".$ex);
+            }
+
         }
         /*cambios de estado IO alarmas de bateria*/
         $arrPeriferico  = $ioData[1];
