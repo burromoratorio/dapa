@@ -349,10 +349,6 @@ class PuertoController extends BaseController
     }
     public static function tratarAlarmasIO($ioData,$perField,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$estadoMovilidad){
         //si no tiene posicion_id y es una alarma de panico , informar mail?¡
-        if($imei=='867060034551792'){
-            Log::info(print_r($ioData,true));
-            Log::error("esto llega de panico:::::".$ioData[0]);
-        }
         if($ioData[0]=="I00"){//ingreso de alarma de panico bit en 0
             Log::error("Panico presionado Equipo:".$imei." - Movil:".$movilOldId);
             DB::beginTransaction();
