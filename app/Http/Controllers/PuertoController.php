@@ -349,6 +349,11 @@ class PuertoController extends BaseController
     }
     public static function tratarAlarmasIO($ioData,$perField,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$estadoMovilidad){
         //si no tiene posicion_id y es una alarma de panico , informar mail?¡
+        if($imei=='867060034551792'){
+            Log::info(print_r($ioData,true));
+            Log::error("esto llega de panico:::::".$ioData[0]);
+        }
+        Log::info(print_r($sensorEstado,true));
         if($ioData[0]=='I00'){//ingreso de alarma de panico bit en 0
             Log::error("Panico presionado Equipo:".$imei." - Movil:".$movilOldId);
             $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,'tipo_alarma_id'=>1,'fecha_alarma'=>$fecha,'falsa'=>0]);
@@ -618,5 +623,5 @@ class PuertoController extends BaseController
         $memvar->init($archivo,$largo);
         $memvar->setValue( $enstring );
     }
-    
+
 }
