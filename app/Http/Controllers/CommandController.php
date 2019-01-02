@@ -147,29 +147,81 @@ class CommandController extends BaseController
     public function update(Request $request, $imei) {
         $comandoRta = $request->input('rta');
         $estado     = $request->input('estado_comando_id');
-        $arrCmdRta  = explode(":",$comandoRta);
+        $estadotipo_posicion = 66;
         ///Log::info('recibido en dapa, IMEI:'.$imei.' rta:'.$comandoRta.' estado:'.$estado.' se obtuvo:'.$arrCmdRta[0]." de CMD_ID:".self::$comandoDefinitions[$arrCmdRta[0]]);
         $movil    = HelpMen::movilesMemoria($imei);
         $equipo_id= $movil->equipo_id;
-        //Log::info("respuesta a comando, equipo_id:".$equipo_id);
-        $commandoId = (isset(self::$comandoDefinitions[$arrCmdRta[0]]))?self::$comandoDefinitions[$arrCmdRta[0]]:self::$comandoGenerico["+GEN"];
-        Log::info('Respuesta IMEI:'.$imei.' - Equipo:'.$equipo_id.' rta:'.$comandoRta.' de CMD_ID:'.$commandoId);
-        $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)
-                                ->where('rsp_id','=',2)
-                                ->where('cmd_id','=',$commandoId)
-                                ->orderBy('prioridad','DESC')
-                                ->get()->first(); 
-        if(!is_null($mensaje)){
-          $mensaje->rsp_id      = 3;
-          $mensaje->comando     = $arrCmdRta[0];
-          $mensaje->respuesta   = $comandoRta;
-          $mensaje->fecha_final = date("Y-m-d H:i:s");
-          $mensaje->save();
-          Log::info("actualizacion correcta devuelvo:AT+OK\r\n");
+        //voy a contar las ocurrencias de un determinado caracter en este caso el signi + 
+        $contador   = mb_substr_count($comandoRta, "+");
+        if($contador>1){
+          //significa que vienen varios comandos concatenados tengo que limpiarlos
+          //3-los comandos en rsp_id=2 e intentos <3 ->los seteo en pendiente rsp_id=1 y les sumo 1 al intentos, excepto al obtenido para rta
+          Log::error("IMEI:".$imei.":::Comandos Concatenados:::".$comandoRta);
+          DB::beginTransaction();
+          try {
+            $mensajeSinRta= ColaMensajes::where('modem_id', '=',$equipo_id)
+                                  ->where('rsp_id','=',2)->where('intentos','=',5)
+                                  ->update(['rsp_id'=>5]);
+            $mensajeUP    = ColaMensajes::where('modem_id', '=',$equipo_id)
+                                    ->where('rsp_id','=',2)->where('intentos','<',5)->where('cmd_id','<>',22)
+                                    ->increment('intentos', 1, ['rsp_id'=>1]);
+            DB::commit();
+          }catch (\Exception $ex) {
+            DB::rollBack();
+            $errorSolo  = explode("Stack trace", $ex);
+            Log::error("Error al procesar update de comandos ".$errorSolo[0]);
+          }
           return "AT+OK\r\n";
         }else{
-          Log::info("No existe comando pendiente");
+          $arrCmdRta  = explode(":",$comandoRta);
+          $commandoId = (isset(self::$comandoDefinitions[$arrCmdRta[0]]))?self::$comandoDefinitions[$arrCmdRta[0]]:self::$comandoGenerico["+GEN"];
+          if($commandoId==22 || $arrCmdRta[0]=='+OUTS'){
+            $mensaje  = $this->tratarOUTS($equipo_id,$arrCmdRta[1]);
+          }else{
+            $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)
+                                  ->where('rsp_id','=',2)
+                                  ->where('cmd_id','=',$commandoId)->where('cmd_id','<>',22)
+                                  ->orderBy('prioridad','DESC')
+                                  ->get()->first(); 
+          }
+          Log::info('Respuesta IMEI:'.$imei.' - Equipo:'.$equipo_id.' rta:'.$comandoRta.' de CMD_ID:'.$commandoId);
+          
+          if(!is_null($mensaje)){
+            $mensaje->rsp_id      = 3;
+            $mensaje->comando     = $arrCmdRta[0];
+            $mensaje->respuesta   = $comandoRta;
+            $mensaje->fecha_final = date("Y-m-d H:i:s");
+            $mensaje->save();
+            Log::info("actualizacion correcta devuelvo:AT+OK\r\n");
+            return "AT+OK\r\n";
+          }else{
+            Log::info("No existe comando pendiente");
+          }
         }
     }
-   
+    public function tratarOUTS($equipo_id,$valor){
+      $OUTPendiente = null;
+      $OUTPendiente = $this->OUTPendiente($equipo_id);
+      if(!is_null($OUTPendiente)){
+        if($OUTPendiente->auxiliar=='0,1' && $valor=='10'){//activar modo corte
+        Log::info("modo corte activado equipo:".$equipo_id);
+        $OUTPendiente->tipo_posicion  = 70;
+        }
+        if($OUTPendiente->auxiliar=='0,0' && $valor=='00'){//activar modo corte
+          Log::info("modo corte desactivado equipo:".$equipo_id);
+          $OUTPendiente->tipo_posicion  = 70;
+        }
+      }
+      
+      return $OUTPendiente;
+    }
+    public function OUTPendiente($equipo_id){
+      $outMs    = null;
+      $outMs    = ColaMensajes::where('modem_id', '=',$equipo_id)
+                                  ->where('rsp_id','=',2)->where('cmd_id','=',22)
+                                  ->where('tipo_posicion','=',69)
+                                  ->orderBy('prioridad','DESC')
+                                  ->get()->first(); 
+      return $outMs;
+    }
 }
