@@ -96,7 +96,7 @@ class PuertoController extends BaseController
             return true;
         }
     }
-    public static function validezReporte($imei,$fecha,$velocidad,$fr){
+    public static function validezReporte($imei,$fecha,$velocidad,$fr,$movil){
         $shmidPos       = MemVar::OpenToRead('posiciones.dat');
         $posicionesMC   = [];
         $frArr          = explode(',',$fr); 
@@ -123,22 +123,26 @@ class PuertoController extends BaseController
                     //evaluo si paso de detenido a movimiento
                     if( $arrInternalInfo[1]<=5 && $velocidad>8 && $frArr[0]<=120 ){
                         Log::info("movil:".$imei." paso de detenido a movimiento");
+                        $logcadena ="movil:".$imei." - equipo:".$movil->equipo_id." - paso de detenido a movimiento";
+                        HelpMen::report($movil->equipo_id,$logcadena);
                         $posArr->$imei  = $fecha."|".$velocidad;
                     }
                     //movil pasó de movimiento a detenido
                     if( $arrInternalInfo[1]>=8 && $velocidad<5 && $frArr[0]>120 ){
-                        Log::info("movil:".$imei." paso de movimiento a detenido");
+                        $logcadena ="movil:".$imei." - equipo:".$movil->equipo_id." - paso de movimiento a detenido";
+                        HelpMen::report($movil->equipo_id,$logcadena);
                         $posArr->$imei  = $fecha."|".$velocidad;
                     }
                     $posicionesMC   = $posArr;
                 }else{//el movil no tiene datos de posiciones->almaceno la info
-                    Log::info("el movil:".$imei." no tiene datos de posiciones-->almaceno");
+                    $logcadena ="movil:".$imei." - equipo:".$movil->equipo_id." - no tiene datos de posiciones-->almaceno";
+                    HelpMen::report($movil->equipo_id,$logcadena);
                     $posArr->$imei   = $fecha."|".$velocidad;
                     $posicionesMC   = $posArr;
                 }
             }else{
                 $posicionesMC[$imei]=$fecha."|".$velocidad;
-                Log::info("le pije del mone::".$imei." fecha:".$fecha."- velocidad:".$velocidad);
+                //Log::info("le pije del mone::".$imei." fecha:".$fecha."- velocidad:".$velocidad);
             }
             
             MemVar::Eliminar( 'posiciones.dat' );
@@ -151,7 +155,7 @@ class PuertoController extends BaseController
         if(preg_match("/^[0-9]{15,15}$/", $imei)) {
             return true;
         }else{
-            Log::info("IMEI invalido:".$imei);
+            Log::error("IMEI invalido:".$imei);
             return false;
         } 
     }
@@ -245,7 +249,7 @@ class PuertoController extends BaseController
                 $vbaField   = self::validateIndexCadena("VBA",$report);
                 $odpField   = self::validateIndexCadena("ODP",$report);
                 $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0]);
-                $validezReporte = self::validezReporte($report['IMEI'],$fecha,$gprmcData[6],$frData['FR']);
+                $validezReporte = self::validezReporte($report['IMEI'],$fecha,$gprmcData[6],$frData['FR'],$movil);
                 $posicionGP = GprmcEntrada::create([
                     'imei'=>$report['IMEI'],'gprmc'=>'GPRMC,'.$report['GPRMC'],'pid'=>$pid,'sec_pid'=>$sec_pid,
                     'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],
@@ -307,7 +311,7 @@ class PuertoController extends BaseController
                     DB::commit();
                     //inserto alarma de panico!!
                     $estadoMovilidad = self::tratarAlarmasIO($ioData,$perField['PER'],$report['IMEI'],$posicion->posicion_id,
-                                intval($movil->movilOldId),intval($movil->movil_id),$fecha,$estadoMovilidad);
+                                        $movil,$fecha,$estadoMovilidad);
 
                     if( $estadoMovilidad==7 ){
                         if($arrInfoGprmc['velocidad']>12){
@@ -332,7 +336,8 @@ class PuertoController extends BaseController
                 }catch (\Exception $ex) {
                     DB::rollBack();
                     $errorSolo  = explode("Stack trace", $ex);
-                    Log::error("Error al procesar posicion en puerto controller".$errorSolo[0]);
+                    $logcadena = "Error al procesar posicion en puerto controller".$errorSolo[0];
+                    HelpMen::report($movil->equipo_id,$logcadena);
                 }
             }else{
                 $respuesta  = "0";
@@ -347,10 +352,13 @@ class PuertoController extends BaseController
         }
         return $respuesta;
     }
-    public static function tratarAlarmasIO($ioData,$perField,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$estadoMovilidad){
+    public static function tratarAlarmasIO($ioData,$perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
+        $movilOldId = intval($movil->movilOldId);
+        $movil_id   = intval($movil->movil_id);
         //si no tiene posicion_id y es una alarma de panico , informar mail?¡
         if($ioData[0]=="I00"){//ingreso de alarma de panico bit en 0
-            Log::error("Panico presionado Equipo:".$imei." - Movil:".$movilOldId);
+            $logcadena = "Panico presionado Equipo:".$imei." - Movil:".$movilOldId;
+            HelpMen::report($movil->equipo_id,$logcadena);
             DB::beginTransaction();
             try {
                 $alarmaPanico   = Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,'tipo_alarma_id'=>1,'fecha_alarma'=>$fecha,'falsa'=>0]);
@@ -358,16 +366,17 @@ class PuertoController extends BaseController
                 DB::commit();
                 }catch (\Exception $ex) {
                     DB::rollBack();
-                    Log::error("Error al tratar alarmas IO..".$ex);
-            }
-
+                    $logcadena = "Error al tratar alarmas IO..".$ex;
+                    HelpMen::report($movil->equipo_id,$logcadena);
+                }
         }
         /*cambios de estado IO alarmas de bateria*/
         $arrPeriferico  = $ioData[1];
         $io             = str_replace("I", "",$ioData[1] );
         $sensorEstado   = self::getSensores($imei);
         if($io=='10'){ 
-            Log::info("Movil: ".$imei." - funcionando con bateria auxiliar");
+            $logcadena = "Movil: ".$imei." - Equipo: ".$movil->equipo_id." - funcionando con bateria auxiliar";
+            HelpMen::report($movil->equipo_id,$logcadena);
             $tipo_alarma_id=50;
             $estado_movil_id=13;
             $estadoMovilidad=$estado_movil_id;
@@ -381,11 +390,12 @@ class PuertoController extends BaseController
                DB::beginTransaction();
                 try {
                     EstadosSensores::where('imei', '=', $imei)->update(array('io' => $io));
-                    self::persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id);
+                    self::persistSensor($ioData,$imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id);
                     DB::commit();
                 }catch (\Exception $ex) {
                     DB::rollBack();
-                    Log::error("Error al tratar alarmas IO..".$ex);
+                    $logcadena = "Error al tratar alarmas IO..".$ex;
+                    HelpMen::report($movil->equipo_id,$logcadena);
                 }
             }
         }else{    //no se encontró el imei en la tabla de sensores,inserto e informo alarmas 
@@ -396,18 +406,21 @@ class PuertoController extends BaseController
             DB::beginTransaction();
             try {
                 EstadosSensores::create(['imei'=>$imei,'movil_id'=>$movil_id,'iom'=>$perField,'io'=>$io]);
-                self::persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id);
+                self::persistSensor($ioData,$imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id);
                 DB::commit();
             }catch (\Exception $ex) {
                 DB::rollBack();
-                Log::error("Error al tratar alarmas IO");
+                $logcadena = "Error al tratar alarmas IO..".$ex;
+                HelpMen::report($movil->equipo_id,$logcadena);
             }
         }
         return $estadoMovilidad;
         /*cambios de bateria*/
         //Log::info(print_r($sensorEstado,true));
     }
-    public static function persistSensor($ioData,$imei,$posicion_id,$movilOldId,$movil_id,$fecha,$tipo_alarma_id,$estado_movil_id){
+    public static function persistSensor($ioData,$imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id){
+        $movilOldId = intval($movil->movilOldId);
+        $movil_id   = intval($movil->movil_id);
         DB::beginTransaction();
         try {
             if($tipo_alarma_id!=49){//solo si es cualquier alarma distinta de alimentacion ppal
@@ -420,7 +433,8 @@ class PuertoController extends BaseController
             self::startupSensores();
         }catch (\Exception $ex) {
             DB::rollBack();
-            Log::error("Error al tratar alarmas IO persistSensor");
+            $logcadena = "Error al tratar alarmas IO persistSensor";
+            HelpMen::report($movil->equipo_id,$logcadena);
         }
     }
     public static function findAndStoreAlarm($report,$posicionID){

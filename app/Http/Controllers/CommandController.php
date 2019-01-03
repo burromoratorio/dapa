@@ -38,7 +38,7 @@ class CommandController extends BaseController
         try{
           //app()->Puerto->analizeReport($jsonReq['cadena']) ;
           //$response ="AT+GETGP?";//"$9\r\nAT+GETGP?\r\n";
-          Log::error("cadena entrante en CommansController ::".$jsonReq['cadena']);
+          Log::info("cadena entrante en CommansController ::".$jsonReq['cadena']);
         }catch(Exception $e){
           Log::error($e);
         }
@@ -156,7 +156,8 @@ class CommandController extends BaseController
         if($contador>1){
           //significa que vienen varios comandos concatenados tengo que limpiarlos
           //3-los comandos en rsp_id=2 e intentos <3 ->los seteo en pendiente rsp_id=1 y les sumo 1 al intentos, excepto al obtenido para rta
-          Log::error("IMEI:".$imei.":::Comandos Concatenados:::".$comandoRta);
+          $logcadena ="IMEI:".$imei.":::Comandos Concatenados:::".$comandoRta;
+          HelpMen::report($equipo_id,$logcadena);
           DB::beginTransaction();
           try {
             $mensajeSinRta= ColaMensajes::where('modem_id', '=',$equipo_id)
@@ -169,7 +170,8 @@ class CommandController extends BaseController
           }catch (\Exception $ex) {
             DB::rollBack();
             $errorSolo  = explode("Stack trace", $ex);
-            Log::error("Error al procesar update de comandos ".$errorSolo[0]);
+            $logcadena ="Error al procesar update de comandos ".$errorSolo[0];
+            HelpMen::report($equipo_id,$logcadena);
           }
           return "AT+OK\r\n";
         }else{
@@ -184,18 +186,20 @@ class CommandController extends BaseController
                                   ->orderBy('prioridad','DESC')
                                   ->get()->first(); 
           }
-          Log::info('Respuesta IMEI:'.$imei.' - Equipo:'.$equipo_id.' rta:'.$comandoRta.' de CMD_ID:'.$commandoId);
-          
+          $logcadena = "Respuesta IMEI:".$imei." - Equipo:".$equipo_id." rta:".$comandoRta." de CMD_ID:".$commandoId;
+          HelpMen::report($equipo_id,$logcadena);
           if(!is_null($mensaje)){
             $mensaje->rsp_id      = 3;
             $mensaje->comando     = $arrCmdRta[0];
             $mensaje->respuesta   = $comandoRta;
             $mensaje->fecha_final = date("Y-m-d H:i:s");
             $mensaje->save();
-            Log::info("actualizacion correcta devuelvo:AT+OK\r\n");
+            $logcadena = "actualizacion correcta devuelvo:AT+OK\r\n";
+            HelpMen::report($equipo_id,$logcadena);
             return "AT+OK\r\n";
           }else{
-            Log::info("No existe comando pendiente");
+            $logcadena = "No existe comando pendiente";
+            HelpMen::report($equipo_id,$logcadena);
           }
         }
     }
@@ -204,11 +208,13 @@ class CommandController extends BaseController
       $OUTPendiente = $this->OUTPendiente($equipo_id);
       if(!is_null($OUTPendiente)){
         if($OUTPendiente->auxiliar=='0,1' && $valor=='10'){//activar modo corte
-        Log::info("modo corte activado equipo:".$equipo_id);
-        $OUTPendiente->tipo_posicion  = 70;
+          $logcadena = "modo corte activado equipo:".$equipo_id;
+          HelpMen::report($equipo_id,$logcadena);
+          $OUTPendiente->tipo_posicion  = 70;
         }
         if($OUTPendiente->auxiliar=='0,0' && $valor=='00'){//activar modo corte
-          Log::info("modo corte desactivado equipo:".$equipo_id);
+          $logcadena = "modo corte desactivado equipo:".$equipo_id;
+          HelpMen::report($equipo_id,$logcadena);
           $OUTPendiente->tipo_posicion  = 70;
         }
       }
