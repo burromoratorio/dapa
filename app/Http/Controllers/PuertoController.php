@@ -123,19 +123,19 @@ class PuertoController extends BaseController
                     //evaluo si paso de detenido a movimiento
                     if( $arrInternalInfo[1]<=5 && $velocidad>8 && $frArr[0]<=120 ){
                         Log::info("movil:".$imei." paso de detenido a movimiento");
-                        $logcadena ="movil:".$imei." - equipo:".$movil->equipo_id." - paso de detenido a movimiento";
+                        $logcadena ="movil:".$imei." - equipo:".$movil->equipo_id." - paso de detenido a movimiento \r\n";
                         HelpMen::report($movil->equipo_id,$logcadena);
                         $posArr->$imei  = $fecha."|".$velocidad;
                     }
                     //movil pasó de movimiento a detenido
                     if( $arrInternalInfo[1]>=8 && $velocidad<5 && $frArr[0]>120 ){
-                        $logcadena ="movil:".$imei." - equipo:".$movil->equipo_id." - paso de movimiento a detenido";
+                        $logcadena ="movil:".$imei." - equipo:".$movil->equipo_id." - paso de movimiento a detenido \r\n";
                         HelpMen::report($movil->equipo_id,$logcadena);
                         $posArr->$imei  = $fecha."|".$velocidad;
                     }
                     $posicionesMC   = $posArr;
                 }else{//el movil no tiene datos de posiciones->almaceno la info
-                    $logcadena ="movil:".$imei." - equipo:".$movil->equipo_id." - no tiene datos de posiciones-->almaceno";
+                    $logcadena ="movil:".$imei." - equipo:".$movil->equipo_id." - no tiene datos de posiciones-->almaceno \r\n";
                     HelpMen::report($movil->equipo_id,$logcadena);
                     $posArr->$imei   = $fecha."|".$velocidad;
                     $posicionesMC   = $posArr;
@@ -336,7 +336,7 @@ class PuertoController extends BaseController
                 }catch (\Exception $ex) {
                     DB::rollBack();
                     $errorSolo  = explode("Stack trace", $ex);
-                    $logcadena = "Error al procesar posicion en puerto controller".$errorSolo[0];
+                    $logcadena = "Error al procesar posicion en puerto controller".$errorSolo[0]."\r\n";
                     HelpMen::report($movil->equipo_id,$logcadena);
                 }
             }else{
@@ -357,7 +357,7 @@ class PuertoController extends BaseController
         $movil_id   = intval($movil->movil_id);
         //si no tiene posicion_id y es una alarma de panico , informar mail?¡
         if($ioData[0]=="I00"){//ingreso de alarma de panico bit en 0
-            $logcadena = "Panico presionado Equipo:".$imei." - Movil:".$movilOldId;
+            $logcadena = "Panico presionado Equipo:".$imei." - Movil:".$movilOldId."\r\n";
             HelpMen::report($movil->equipo_id,$logcadena);
             DB::beginTransaction();
             try {
@@ -375,7 +375,7 @@ class PuertoController extends BaseController
         $io             = str_replace("I", "",$ioData[1] );
         $sensorEstado   = self::getSensores($imei);
         if($io=='10'){ 
-            $logcadena = "Movil: ".$imei." - Equipo: ".$movil->equipo_id." - funcionando con bateria auxiliar";
+            $logcadena = "Movil: ".$imei." - Equipo: ".$movil->equipo_id." - funcionando con bateria auxiliar\r\n";
             HelpMen::report($movil->equipo_id,$logcadena);
             $tipo_alarma_id=50;
             $estado_movil_id=13;
@@ -394,7 +394,7 @@ class PuertoController extends BaseController
                     DB::commit();
                 }catch (\Exception $ex) {
                     DB::rollBack();
-                    $logcadena = "Error al tratar alarmas IO..".$ex;
+                    $logcadena = "Error al tratar alarmas IO..".$ex."\r\n";
                     HelpMen::report($movil->equipo_id,$logcadena);
                 }
             }
@@ -410,7 +410,7 @@ class PuertoController extends BaseController
                 DB::commit();
             }catch (\Exception $ex) {
                 DB::rollBack();
-                $logcadena = "Error al tratar alarmas IO..".$ex;
+                $logcadena = "Error al tratar alarmas IO..".$ex."\r\n";
                 HelpMen::report($movil->equipo_id,$logcadena);
             }
         }
@@ -433,7 +433,7 @@ class PuertoController extends BaseController
             self::startupSensores();
         }catch (\Exception $ex) {
             DB::rollBack();
-            $logcadena = "Error al tratar alarmas IO persistSensor";
+            $logcadena = "Error al tratar alarmas IO persistSensor \r\n";
             HelpMen::report($movil->equipo_id,$logcadena);
         }
     }

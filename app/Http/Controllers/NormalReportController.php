@@ -48,7 +48,7 @@ class NormalReportController extends BaseController
           }else{
             $mcRta2    = '1';
             $movil     = $mcRta;
-            $logcadena ="::::::::Procesando:".$arrCadena['IMEI']."- Movil_id:".$movil->movil_id."-MovilOld_id:".$movil->movilOldId."::::::::";
+            $logcadena ="::::::::Procesando:".$arrCadena['IMEI']."- Movil_id:".$movil->movil_id."-MovilOld_id:".$movil->movilOldId.":::::::: \r\n";
             HelpMen::report($movil->equipo_id,$logcadena);
           }
         }else{
@@ -122,7 +122,7 @@ class NormalReportController extends BaseController
   public function tratarReporte($cadena,$movil){
     $rta  = "";
     try{
-      $logcadena ="Equipo=>".$movil->equipo_id." MOVIL=>".$movil->movilOldId."-Cadena=>".$cadena;
+      $logcadena ="Equipo=>".$movil->equipo_id." MOVIL=>".$movil->movilOldId."-Cadena=>".$cadena."\r\n";
       HelpMen::report($movil->equipo_id,$logcadena);
       $rta  = app()->Puerto->analizeReport($cadena,$movil) ;
     }catch(Exception $e){

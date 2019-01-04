@@ -156,7 +156,7 @@ class CommandController extends BaseController
         if($contador>1){
           //significa que vienen varios comandos concatenados tengo que limpiarlos
           //3-los comandos en rsp_id=2 e intentos <3 ->los seteo en pendiente rsp_id=1 y les sumo 1 al intentos, excepto al obtenido para rta
-          $logcadena ="IMEI:".$imei.":::Comandos Concatenados:::".$comandoRta;
+          $logcadena ="IMEI:".$imei.":::Comandos Concatenados:::".$comandoRta."\r\n";
           HelpMen::report($equipo_id,$logcadena);
           DB::beginTransaction();
           try {
@@ -170,7 +170,7 @@ class CommandController extends BaseController
           }catch (\Exception $ex) {
             DB::rollBack();
             $errorSolo  = explode("Stack trace", $ex);
-            $logcadena ="Error al procesar update de comandos ".$errorSolo[0];
+            $logcadena ="Error al procesar update de comandos ".$errorSolo[0]."\r\n";
             HelpMen::report($equipo_id,$logcadena);
           }
           return "AT+OK\r\n";
@@ -198,7 +198,7 @@ class CommandController extends BaseController
             HelpMen::report($equipo_id,$logcadena);
             return "AT+OK\r\n";
           }else{
-            $logcadena = "No existe comando pendiente";
+            $logcadena = "No existe comando pendiente \r\n";
             HelpMen::report($equipo_id,$logcadena);
           }
         }
@@ -208,12 +208,12 @@ class CommandController extends BaseController
       $OUTPendiente = $this->OUTPendiente($equipo_id);
       if(!is_null($OUTPendiente)){
         if($OUTPendiente->auxiliar=='0,1' && $valor=='10'){//activar modo corte
-          $logcadena = "modo corte activado equipo:".$equipo_id;
+          $logcadena = "modo corte activado equipo:".$equipo_id." \r\n";
           HelpMen::report($equipo_id,$logcadena);
           $OUTPendiente->tipo_posicion  = 70;
         }
         if($OUTPendiente->auxiliar=='0,0' && $valor=='00'){//activar modo corte
-          $logcadena = "modo corte desactivado equipo:".$equipo_id;
+          $logcadena = "modo corte desactivado equipo:".$equipo_id." \r\n";
           HelpMen::report($equipo_id,$logcadena);
           $OUTPendiente->tipo_posicion  = 70;
         }
