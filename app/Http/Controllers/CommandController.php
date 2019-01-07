@@ -145,6 +145,7 @@ class CommandController extends BaseController
       }*/
     }
     public function update(Request $request, $imei) {
+      Log::error($request->input('rta'));
         $comandoRta = $request->input('rta');
         $estado     = $request->input('estado_comando_id');
         $estadotipo_posicion = 66;
