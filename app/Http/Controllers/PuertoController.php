@@ -19,6 +19,7 @@ Use App\Movil;
 /*Helpers*/
 use App\Helpers\MemVar;
 use GuzzleHttp\Client;
+use App\Helpers\HelpMen;
 
 class PuertoController extends BaseController
 {
@@ -295,6 +296,11 @@ class PuertoController extends BaseController
                 //cmd_id=65/50 si es pos, cmd_id=49 si es evento o alarma
                 DB::beginTransaction();
                 try {
+                      $json=  ["movil"=>intval($movil->movilOldId),
+                        "point"=> ["type"=>"Point","coordinates"=> [$arrInfoGprmc['longitud'],$arrInfoGprmc['latitud'] ] ],
+                        "received"=>$fecha, "speed"=> $arrInfoGprmc['velocidad'], "direction"=>$arrInfoGprmc['rumbo']
+                        ];
+                    HelpMen::posteaPosicion("operativo/positions",$json);
                     $posicion = Posiciones::create(['movil_id'=>intval($movil->movilOldId),'cmd_id'=>65,
                                     'tipo'=>$frData[1],'fecha'=>$fecha,'rumbo_id'=>$arrInfoGprmc['rumbo'],
                                     'latitud'=>$arrInfoGprmc['latitud'],'longitud'=>$arrInfoGprmc['longitud'],

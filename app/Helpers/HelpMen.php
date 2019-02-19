@@ -78,4 +78,10 @@ class HelpMen
 	    file_put_contents(storage_path('logs/equipo_'.$archivo.'_'.date('Y-m-d').'.log'), (string) $logdata, FILE_APPEND);
 	    return;
 	}
+	public static function posteaPosicion($recurso,$json){		
+		$urlP       = env('API_URL').$recurso;
+		$client 	= new Client( [ 'headers' => [ 'Content-Type' => 'application/json' ] ] );
+		$response 	= $client->post($urlP,['body' => json_encode( $json )] );
+		return $response->getBody();
+	}
 }
