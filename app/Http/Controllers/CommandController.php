@@ -96,7 +96,7 @@ class CommandController extends BaseController
           }
           $logcadena = "Respuesta IMEI:".$imei." - Equipo:".$equipo_id." rta:".$comandoRta." de CMD_ID:".$commandoId;
           HelpMen::report($equipo_id,$logcadena);
-          Log::info(print_r($mensaje,true));
+          Log::info("la concha de la lora puta".print_r($mensaje,true));
           if(!is_null($mensaje)){
             $mensaje->rsp_id      = 3;
             $mensaje->comando     = $arrCmdRta[0];
