@@ -93,6 +93,7 @@ class CommandController extends BaseController
                                   ->where('cmd_id','=',$commandoId)->where('cmd_id','<>',22)
                                   ->orderBy('prioridad','DESC')
                                   ->get()->first(); 
+            Log::info("cajeta...".print_r($mensaje,true));
           }
           $logcadena = "Respuesta IMEI:".$imei." - Equipo:".$equipo_id." rta:".$comandoRta." de CMD_ID:".$commandoId;
           HelpMen::report($equipo_id,$logcadena);
