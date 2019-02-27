@@ -306,7 +306,7 @@ class PuertoController extends BaseController
                                     'latitud'=>$arrInfoGprmc['latitud'],'longitud'=>$arrInfoGprmc['longitud'],
                                     'velocidad'=>$arrInfoGprmc['velocidad'],
                                     'valida'=>1,'estado_u'=>$movil->estado_u,'estado_v'=>$info['mod_presencia'],'estado_w'=>0,
-                                    'km_recorridos'=>$kmtField['KMT'],
+                                    'km_recorridos'=>$odpField['ODP'],
                                     'ltrs_consumidos'=>$info['ltrs']]);
                     $posicion->save();
 
