@@ -300,13 +300,14 @@ class PuertoController extends BaseController
                         "point"=> ["type"=>"Point","coordinates"=> [$arrInfoGprmc['longitud'],$arrInfoGprmc['latitud'] ] ],
                         "received"=>$fecha, "speed"=> $arrInfoGprmc['velocidad'], "direction"=>$arrInfoGprmc['rumbo']
                         ];
+                    $odp    = number_format(($odpField['ODP']/1000),2, '.', '');
                     //HelpMen::posteaPosicion("operativo/positions",$json);
                     $posicion = Posiciones::create(['movil_id'=>intval($movil->movilOldId),'cmd_id'=>65,
                                     'tipo'=>$frData[1],'fecha'=>$fecha,'rumbo_id'=>$arrInfoGprmc['rumbo'],
                                     'latitud'=>$arrInfoGprmc['latitud'],'longitud'=>$arrInfoGprmc['longitud'],
                                     'velocidad'=>$arrInfoGprmc['velocidad'],
                                     'valida'=>1,'estado_u'=>$movil->estado_u,'estado_v'=>$info['mod_presencia'],'estado_w'=>0,
-                                    'km_recorridos'=>$odpField['ODP'],
+                                    'km_recorridos'=>$odp,
                                     'ltrs_consumidos'=>$info['ltrs']]);
                     $posicion->save();
 
