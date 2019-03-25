@@ -141,6 +141,7 @@ class PuertoController extends BaseController
                             $lastPosition = DB::table('POSICIONES_HISTORICAS')
                                             ->where('movil_id',intval($movil->movilOldId))
                                             ->orderBy('fecha', 'DESC')->first();
+                            Log::info(print_r($lastPosition,true));
                             $lastPosition->fecha = $fecha;
                             $lastPosition->save();
                             $update         = true;
