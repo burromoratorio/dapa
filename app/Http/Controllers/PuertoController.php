@@ -97,10 +97,16 @@ class PuertoController extends BaseController
             return true;
         }
     }
+    /*Verifica existencia de segmento de memoria de posiciones
+    verifica la existencia de informacion de la ultima velocidad y fecha para el $imei dado
+    Verifica si el movil pasó de det->mov y de mov->det
+    actualiza estados
+    */
     public static function validezReporte($imei,$fecha,$velocidad,$fr,$movil){
         $shmidPos       = MemVar::OpenToRead('posiciones.dat');
         $posicionesMC   = [];
         $frArr          = explode(',',$fr); 
+        $update         = false;
         if($shmidPos == '0'){
             //Log::info("creando segmento de memoria posicionesMC");
             $posicionesMC[$imei]=$fecha."|".$velocidad;
@@ -126,29 +132,44 @@ class PuertoController extends BaseController
                         Log::info("movil:".$imei." paso de detenido a movimiento");
                         $logcadena ="movil:".$imei." - equipo:".$movil->equipo_id." - paso de detenido a movimiento \r\n";
                         HelpMen::report($movil->equipo_id,$logcadena);
-                        $posArr->$imei  = $fecha."|".$velocidad;
+                        $posArr->$imei  = $fecha."|".$velocidad."|0";
+                    }elseif ($arrInternalInfo[1]<=5 && $velocidad<8 && $frArr[0]<=120) {//continua detenido...
+                        //ver si ya hay mas de un registro con velocidad 0
+                        if($arrInternalInfo[2]=="0"){//inserto el registro
+                            $posArr->$imei  = $fecha."|".$velocidad."|1";
+                        }else{//updateo el ultimo registro
+                            $lastPosition = DB::table('POSICIONES_HISTORICAS')
+                                            ->where('movil_id',intval($movil->movilOldId))
+                                            ->orderBy('fecha', 'DESC')->first();
+                            $lastPosition->fecha = $fecha;
+                            $lastPosition->save();
+                            $update         = true;
+                            $posArr->$imei  = $fecha."|".$velocidad."|2";
+                        }
+                        
                     }
                     //movil pasó de movimiento a detenido
                     if( $arrInternalInfo[1]>=8 && $velocidad<5 && $frArr[0]>120 ){
                         $logcadena ="movil:".$imei." - equipo:".$movil->equipo_id." - paso de movimiento a detenido \r\n";
                         HelpMen::report($movil->equipo_id,$logcadena);
-                        $posArr->$imei  = $fecha."|".$velocidad;
+                        $posArr->$imei  = $fecha."|".$velocidad."|0";
                     }
                     $posicionesMC   = $posArr;
                 }else{//el movil no tiene datos de posiciones->almaceno la info
                     $logcadena ="movil:".$imei." - equipo:".$movil->equipo_id." - no tiene datos de posiciones-->almaceno \r\n";
                     HelpMen::report($movil->equipo_id,$logcadena);
-                    $posArr->$imei   = $fecha."|".$velocidad;
+                    $posArr->$imei   = $fecha."|".$velocidad."|0";
                     $posicionesMC   = $posArr;
                 }
             }else{
-                $posicionesMC[$imei]=$fecha."|".$velocidad;
+                $posicionesMC[$imei]=$fecha."|".$velocidad."|0";
                 //Log::info("le pije del mone::".$imei." fecha:".$fecha."- velocidad:".$velocidad);
             }
             
             MemVar::Eliminar( 'posiciones.dat' );
             self::CargarMemoria('posiciones.dat',$posicionesMC);
         }
+        return $update;
         
     }
     /*maximo 15 caracteres numericos*/
@@ -251,6 +272,11 @@ class PuertoController extends BaseController
                 $odpField   = self::validateIndexCadena("ODP",$report);
                 $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0]);
                 $validezReporte = self::validezReporte($report['IMEI'],$fecha,$gprmcData[6],$frData['FR'],$movil);
+                if($validezReporte==true){
+                    Log::info("se updateo..no insertar de nuevo".$validezReporte);
+                }else{
+                    Log::info("hay que insertar la posicion..".$validezReporte);
+                }
                 $posicionGP = GprmcEntrada::create([
                     'imei'=>$report['IMEI'],'gprmc'=>'GPRMC,'.$report['GPRMC'],'pid'=>$pid,'sec_pid'=>$sec_pid,
                     'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],
