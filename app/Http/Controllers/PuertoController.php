@@ -167,8 +167,6 @@ class PuertoController extends BaseController
                 $posicionesMC[$imei]=$fecha."|".$velocidad."|0";
                 Log::info("le pije del mone::".$imei." fecha:".$fecha."- velocidad:".$velocidad);
             }
-            $algo   = $posicionesMC[$imei];
-            Log::error(print_r($algo,true));
             MemVar::Eliminar( 'posiciones.dat' );
             self::CargarMemoria('posiciones.dat',$posicionesMC);
         }
