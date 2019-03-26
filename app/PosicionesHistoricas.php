@@ -10,7 +10,7 @@ class PosicionesHistoricas extends Model
     public $timestamps      = false;
     protected $connection   = 'siac';
     protected $primaryKey   = ['posicion_id'];    
-    protected $fillable     = array('movil_id', 'fecha', 'velocidad','latitud','longitud','valida',
+    protected $fillable     = array('posicion_id','movil_id', 'fecha', 'velocidad','latitud','longitud','valida','cmd_id',
                                 'km_recorridos','referencia','rumbo_id','estado_u' ,'estado_v' ,
                                 'estado_w','ltrs_consumidos','ltrs_100');
                                         
