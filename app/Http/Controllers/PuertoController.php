@@ -146,7 +146,7 @@ class PuertoController extends BaseController
                                             
                             Log::info(print_r($lastPosition,true));
                             $lastPosition->fecha = $fecha;
-                            $lastPosition->save();
+                            $lastPosition->saveOrFail();
                             $update         = true;
                             $posArr->$imei  = $fecha."|".$velocidad."|2";
                         }
