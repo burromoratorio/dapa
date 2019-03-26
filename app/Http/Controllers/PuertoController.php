@@ -146,7 +146,11 @@ class PuertoController extends BaseController
                             /*$myTable = 'POSICIONES_HISTORICAS';
                             DB::statement('SET IDENTITY_INSERT ' . $myTable . ' ON');
                             */
-                            PosicionesHistoricas::where('posicion_id',$lastPosition->posicion_id)->delete();
+                            if(DB::connection()->getDatabaseName()=='moviles'){
+                        config()->set('database.default', 'siac');
+                        $movilModel->setConnection('siac');
+                        
+                                   PosicionesHistoricas::where('posicion_id',$lastPosition->posicion_id)->delete();
                             
                             DB::table('POSICIONES_HISTORICAS')->insert(['posicion_id'=>$lastPosition->posicion_id,
                                         'movil_id'=>intval($movil->movilOldId),'tipo'=>$lastPosition->tipo,
@@ -158,6 +162,10 @@ class PuertoController extends BaseController
                                         'estado_u' =>$lastPosition->estado_u,'estado_v' =>$lastPosition->estado_v,
                                         'estado_w' =>$lastPosition->estado_w, 'km_recorridos' =>$lastPosition->km_recorridos,
                                         'ltrs_consumidos' =>$lastPosition->ltrs_consumidos,'ltrs_100' =>$lastPosition->ltrs_100]); 
+                    }
+                    //DB::commit();
+                    config()->set('database.default', 'moviles');
+                            
 
                            /* $posicionHNew   = PosicionesHistoricas::create(['posicion_id'=>$lastPosition->posicion_id,
                                         'movil_id'=>intval($movil->movilOldId),$lastPosition->movil_id,
