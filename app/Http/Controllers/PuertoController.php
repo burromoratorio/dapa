@@ -16,6 +16,7 @@ use App\Posiciones;
 use App\Alarmas;
 Use App\EstadosSensores;
 Use App\Movil;
+Use App\PosicionesHistoricas;
 /*Helpers*/
 use App\Helpers\MemVar;
 use GuzzleHttp\Client;
@@ -139,9 +140,10 @@ class PuertoController extends BaseController
                         if($arrInternalInfo[2]=="0"){//inserto el registro
                             $posArr->$imei  = $fecha."|".$velocidad."|1";
                         }else{//updateo el ultimo registro
-                            $lastPosition = DB::table('POSICIONES_HISTORICAS')
-                                            ->where('movil_id',intval($movil->movilOldId))
+                            $lastPosition = PosicionesHistoricas::where('movil_id',intval($movil->movilOldId))
                                             ->orderBy('fecha', 'DESC')->first();
+                            //DB::table('POSICIONES_HISTORICAS')
+                                            
                             Log::info(print_r($lastPosition,true));
                             $lastPosition->fecha = $fecha;
                             $lastPosition->save();
