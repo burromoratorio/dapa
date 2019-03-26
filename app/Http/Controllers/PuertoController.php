@@ -149,7 +149,7 @@ class PuertoController extends BaseController
                             PosicionesHistoricas::where('posicion_id',$lastPosition->posicion_id)->delete();
                             
                             DB::table('POSICIONES_HISTORICAS')->insert(['posicion_id'=>$lastPosition->posicion_id,
-                                        'movil_id'=>intval($movil->movilOldId),'tipo'=>$lastPosition->,
+                                        'movil_id'=>intval($movil->movilOldId),'tipo'=>$lastPosition->tipo,
                                         'fecha'=>$fecha,'velocidad'=>$lastPosition->velocidad,
                                         'latitud'=>$lastPosition->latitud,'longitud'=>$lastPosition->longitud,
                                         'valida'=>1,'km_recorridos'=>$lastPosition->km_recorridos,
