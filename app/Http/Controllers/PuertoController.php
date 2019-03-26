@@ -147,10 +147,9 @@ class PuertoController extends BaseController
                             DB::statement('SET IDENTITY_INSERT ' . $myTable . ' ON');
                             */
                             if(DB::connection()->getDatabaseName()=='moviles'){
-                        config()->set('database.default', 'siac');
-                        //$movilModel->setConnection('siac');
-                        
-                                   PosicionesHistoricas::where('posicion_id',$lastPosition->posicion_id)->delete();
+                                config()->set('database.default', 'siac');
+                            }
+                            PosicionesHistoricas::where('posicion_id',$lastPosition->posicion_id)->delete();
                             
                             DB::table('POSICIONES_HISTORICAS')->insert(['posicion_id'=>$lastPosition->posicion_id,
                                         'movil_id'=>intval($movil->movilOldId),'tipo'=>$lastPosition->tipo,
@@ -162,7 +161,6 @@ class PuertoController extends BaseController
                                         'estado_u' =>$lastPosition->estado_u,'estado_v' =>$lastPosition->estado_v,
                                         'estado_w' =>$lastPosition->estado_w, 'km_recorridos' =>$lastPosition->km_recorridos,
                                         'ltrs_consumidos' =>$lastPosition->ltrs_consumidos,'ltrs_100' =>$lastPosition->ltrs_100]); 
-                    }
                     //DB::commit();
                     config()->set('database.default', 'moviles');
                             
@@ -177,7 +175,7 @@ class PuertoController extends BaseController
                                         'estado_w' =>$lastPosition->estado_w, 'km_recorridos' =>$lastPosition->km_recorridos,
                                         'ltrs_consumidos' =>$lastPosition->ltrs_consumidos,'ltrs_100' =>$lastPosition->ltrs_100]);
                             DB::statement('SET IDENTITY_INSERT ' . $myTable . ' OFF');*/
-                            Log::info(print_r($posicionHNew,true));
+                           // Log::info(print_r($posicionHNew,true));
                             //$lastPosition->movil_id = intval($movil->movilOldId);
                             //$lastPosition->fecha    = $fecha;
                             //$lastPosition->save();
