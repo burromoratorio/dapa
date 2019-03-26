@@ -109,7 +109,7 @@ class PuertoController extends BaseController
         $update         = false;
         if($shmidPos == '0'){
             //Log::info("creando segmento de memoria posicionesMC");
-            $posicionesMC[$imei]=$fecha."|".$velocidad;
+            $posicionesMC[$imei]=$fecha."|".$velocidad."|0";
             self::CargarMemoria('posiciones.dat',$posicionesMC);
             $shmid      = MemVar::OpenToRead('posiciones.dat');
             MemVar::initIdentifier($shmid);
