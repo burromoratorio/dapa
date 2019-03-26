@@ -143,7 +143,7 @@ class PuertoController extends BaseController
                             $lastPosition = PosicionesHistoricas::where('movil_id',intval($movil->movilOldId))
                                             ->orderBy('fecha', 'DESC')->first();
                             $posicionAux    = $lastPosition;
-                            $myTable = 'PosicionesHistoricas';
+                            $myTable = 'POSICIONES_HISTORICAS';
                             DB::statement('SET IDENTITY_INSERT ' . $myTable . ' ON');
                             // DB::table($myTable)->truncate();
                             /*DB::table($myTable)->insert([
