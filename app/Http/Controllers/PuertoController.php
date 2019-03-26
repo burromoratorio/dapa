@@ -150,6 +150,7 @@ class PuertoController extends BaseController
                             
                             DB::table('POSICIONES_HISTORICAS')->insert(['posicion_id'=>$lastPosition->posicion_id,
                                         'movil_id'=>intval($movil->movilOldId),'tipo'=>$lastPosition->tipo,
+                                        'rumbo_id'=>$lastPosition->rumbo_id,
                                         'fecha'=>$fecha,'velocidad'=>$lastPosition->velocidad,
                                         'latitud'=>$lastPosition->latitud,'longitud'=>$lastPosition->longitud,
                                         'valida'=>1,'km_recorridos'=>$lastPosition->km_recorridos,
