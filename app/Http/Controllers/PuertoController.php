@@ -148,7 +148,7 @@ class PuertoController extends BaseController
                             */
                             if(DB::connection()->getDatabaseName()=='moviles'){
                         config()->set('database.default', 'siac');
-                        $movilModel->setConnection('siac');
+                        //$movilModel->setConnection('siac');
                         
                                    PosicionesHistoricas::where('posicion_id',$lastPosition->posicion_id)->delete();
                             
