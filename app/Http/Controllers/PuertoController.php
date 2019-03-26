@@ -143,15 +143,22 @@ class PuertoController extends BaseController
                             $lastPosition = PosicionesHistoricas::where('movil_id',intval($movil->movilOldId))
                                             ->orderBy('fecha', 'DESC')->first();
                             $posicionAux    = $lastPosition;
-                            $myTable = 'POSICIONES_HISTORICAS';
+                            /*$myTable = 'POSICIONES_HISTORICAS';
                             DB::statement('SET IDENTITY_INSERT ' . $myTable . ' ON');
-                            // DB::table($myTable)->truncate();
-                            /*DB::table($myTable)->insert([
-                                'id' => 10,
-                                'name' => 'some name',
-                            ]);*/
+                            */
                             PosicionesHistoricas::where('posicion_id',$lastPosition->posicion_id)->delete();
-                            $posicionHNew   = PosicionesHistoricas::create(['posicion_id'=>$lastPosition->posicion_id,
+                            
+                            DB::table('POSICIONES_HISTORICAS')->insert(['posicion_id'=>$lastPosition->posicion_id,
+                                        'movil_id'=>intval($movil->movilOldId),$lastPosition->movil_id,
+                                        'fecha'=>$fecha,'velocidad'=>$lastPosition->velocidad,
+                                        'latitud'=>$lastPosition->latitud,'longitud'=>$lastPosition->longitud,
+                                        'valida'=>1,'km_recorridos'=>$lastPosition->km_recorridos,
+                                        'referencia'=>$lastPosition->referencia,'cmd_id'=>$lastPosition->cmd_id,
+                                        'estado_u' =>$lastPosition->estado_u,'estado_v' =>$lastPosition->estado_v,
+                                        'estado_w' =>$lastPosition->estado_w, 'km_recorridos' =>$lastPosition->km_recorridos,
+                                        'ltrs_consumidos' =>$lastPosition->ltrs_consumidos,'ltrs_100' =>$lastPosition->ltrs_100]); 
+
+                           /* $posicionHNew   = PosicionesHistoricas::create(['posicion_id'=>$lastPosition->posicion_id,
                                         'movil_id'=>intval($movil->movilOldId),$lastPosition->movil_id,
                                         'fecha'=>$fecha,'velocidad'=>$lastPosition->velocidad,
                                         'latitud'=>$lastPosition->latitud,'longitud'=>$lastPosition->longitud,
@@ -160,7 +167,7 @@ class PuertoController extends BaseController
                                         'estado_u' =>$lastPosition->estado_u,'estado_v' =>$lastPosition->estado_v,
                                         'estado_w' =>$lastPosition->estado_w, 'km_recorridos' =>$lastPosition->km_recorridos,
                                         'ltrs_consumidos' =>$lastPosition->ltrs_consumidos,'ltrs_100' =>$lastPosition->ltrs_100]);
-                            DB::statement('SET IDENTITY_INSERT ' . $myTable . ' OFF');
+                            DB::statement('SET IDENTITY_INSERT ' . $myTable . ' OFF');*/
                             Log::info(print_r($posicionHNew,true));
                             //$lastPosition->movil_id = intval($movil->movilOldId);
                             //$lastPosition->fecha    = $fecha;
