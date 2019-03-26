@@ -145,8 +145,9 @@ class PuertoController extends BaseController
                             //DB::table('POSICIONES_HISTORICAS')
                                             
                             Log::info(print_r($lastPosition,true));
-                            //$lastPosition->fecha = $fecha;
-                            //$lastPosition->save();
+                            $lastPosition->movil_id = intval($movil->movilOldId);
+                            $lastPosition->fecha    = $fecha;
+                            $lastPosition->save();
                             $update         = true;
                             $posArr->$imei  = $fecha."|".$velocidad."|2";
                         }
