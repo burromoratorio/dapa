@@ -143,7 +143,7 @@ class PuertoController extends BaseController
                             $lastPosition = PosicionesHistoricas::where('movil_id',intval($movil->movilOldId))
                                             ->orderBy('fecha', 'DESC')->first();
                             $posicionAux    = $lastPosition;
-                            PosicionesHistoricas::where('posicion_id',$lastPosition->posicion_id)->delete();
+                            //PosicionesHistoricas::where('posicion_id',$lastPosition->posicion_id)->delete();
                             $posicionHNew   = PosicionesHistoricas::create(['posicion_id'=>$lastPosition->posicion_id,
                                         'movil_id'=>intval($movil->movilOldId),$lastPosition->movil_id,
                                         'fecha'=>$fecha,'velocidad'=>$lastPosition->velocidad,
