@@ -145,7 +145,7 @@ class PuertoController extends BaseController
                             $posicionAux    = $lastPosition;
                             $lastPosition->delete();
                             $posicionHNew   = PosicionesHistoricas::create([
-                                        'movil_id'=>,$lastPosition->movil_id,'fecha'=>$fecha,
+                                        'movil_id'=>intval($movil->movilOldId),$lastPosition->movil_id,'fecha'=>$fecha,
                                         'velocidad'=>$lastPosition->velocidad,
                                         'latitud'=>$lastPosition->latitud,'longitud'=>$lastPosition->longitud,
                                         'valida'=>1,'km_recorridos'=>$lastPosition->km_recorridos,
