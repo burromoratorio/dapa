@@ -135,7 +135,9 @@ class PuertoController extends BaseController
                         $logcadena ="movil:".$imei." - equipo:".$movil->equipo_id." - paso de detenido a movimiento \r\n";
                         HelpMen::report($movil->equipo_id,$logcadena);
                         $posArr->$imei  = $fecha."|".$velocidad."|0";
-                    }elseif ($arrInternalInfo[1]<=5 && $velocidad<8 && $frArr[0]<=120) {//continua detenido...
+                    }
+                    if ($arrInternalInfo[1]<=5 && $velocidad<8 && $frArr[0]>=120) {//continua detenido...
+                        Log::info("entrando a verificacion de estado de velocidad");
                         //ver si ya hay mas de un registro con velocidad 0
                         if($arrInternalInfo[2]=="0"){//inserto el registro
                             $posArr->$imei  = $fecha."|".$velocidad."|1";
@@ -161,8 +163,8 @@ class PuertoController extends BaseController
                                         'estado_u' =>$lastPosition->estado_u,'estado_v' =>$lastPosition->estado_v,
                                         'estado_w' =>$lastPosition->estado_w, 'km_recorridos' =>$lastPosition->km_recorridos,
                                         'ltrs_consumidos' =>$lastPosition->ltrs_consumidos,'ltrs_100' =>$lastPosition->ltrs_100]); 
-                    //DB::commit();
-                    config()->set('database.default', 'moviles');
+                            //DB::commit();
+                            config()->set('database.default', 'moviles');
                             
 
                            /* $posicionHNew   = PosicionesHistoricas::create(['posicion_id'=>$lastPosition->posicion_id,
