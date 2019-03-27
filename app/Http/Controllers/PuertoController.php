@@ -129,7 +129,35 @@ class PuertoController extends BaseController
                     $arrInternalInfo= explode("|", $internalInfo);
                     Log::info(print_r($arrInternalInfo,true));
                     Log::info("los datos, velocAnterior:".$arrInternalInfo[1]." velocActual:".$velocidad." FR:".$frArr[0]);
-                    //evaluo si paso de detenido a movimiento
+                    
+
+                    //evaluo frecuencia de repo
+    /*Movimiento*/  if($frArr[0]<=120){
+                        if($arrInternalInfo[1]<=5){//detenido a movimiento
+                            Log::info("detenido a movimiento");
+                            $posArr->$imei  = $fecha."|".$velocidad."|0";
+                        }else{//continua en movimiento
+                            Log::info("continua en movimiento");
+                        }
+    /*detenido*/    }else{
+                        if($arrInternalInfo[1]>=8){//movimiento a detenido
+                            Log::info("movimiento a detenido");
+                            $posArr->$imei  = $fecha."|".$velocidad."|0";
+                        }else{//continua detenido
+                            Log::info("continua detenido");
+                            if($arrInternalInfo[2]=="0"){
+                                $posArr->$imei  = $fecha."|".$velocidad."|1";
+                                Log::info("es el segundo reg con veloc 0-->lo inserto");
+                            }else{
+                                $posArr->$imei  = $fecha."|".$velocidad."|2";
+                                Log::info("actualizo fechas, esta detenido hace mas de 2 posiciones");
+
+                            }
+                            
+                        }
+                    }
+
+               /*     //evaluo si paso de detenido a movimiento
                     if( $arrInternalInfo[1]<=5 && $velocidad>8 && $frArr[0]<=120 ){
                         Log::info("movil:".$imei." paso de detenido a movimiento");
                         $logcadena ="movil:".$imei." - equipo:".$movil->equipo_id." - paso de detenido a movimiento \r\n";
@@ -145,9 +173,6 @@ class PuertoController extends BaseController
                             $lastPosition = PosicionesHistoricas::where('movil_id',intval($movil->movilOldId))
                                             ->orderBy('fecha', 'DESC')->first();
                             $posicionAux    = $lastPosition;
-                            /*$myTable = 'POSICIONES_HISTORICAS';
-                            DB::statement('SET IDENTITY_INSERT ' . $myTable . ' ON');
-                            */
                             if(DB::connection()->getDatabaseName()=='moviles'){
                                 config()->set('database.default', 'siac');
                             }
@@ -174,7 +199,7 @@ class PuertoController extends BaseController
                         HelpMen::report($movil->equipo_id,$logcadena);
                         $posArr->$imei  = $fecha."|".$velocidad."|0";
                          Log::info("entrando a verificacion de estado de velocidad");
-                    }
+                    }*/
                     $posicionesMC   = $posArr;
                 }else{//el movil no tiene datos de posiciones->almaceno la info
                     $logcadena ="movil:".$imei." - equipo:".$movil->equipo_id." - no tiene datos de posiciones-->almaceno \r\n";
