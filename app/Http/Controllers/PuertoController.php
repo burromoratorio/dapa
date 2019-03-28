@@ -341,30 +341,34 @@ class PuertoController extends BaseController
                         HelpMen::report($movil->equipo_id,$logcadena);
                     }
                 }
-                Log::info(print_r($posicion,true));
-                //inserto alarma de panico!!
-                $estadoMovilidad = self::tratarAlarmasIO($ioData,$perField['PER'],$report['IMEI'],$posicion->posicion_id,
-                                        $movil,$fecha,$estadoMovilidad);
+                //Log::info(print_r($posicion,true));
+                if(isset($posicion)){
+                    //inserto alarma de panico!!
+                    $estadoMovilidad = self::tratarAlarmasIO($ioData,$perField['PER'],$report['IMEI'],$posicion->posicion_id,
+                                            $movil,$fecha,$estadoMovilidad);
 
-                if( $estadoMovilidad==7 ){
-                    if($arrInfoGprmc['velocidad']>12){
-                        $estadoMovilidad=($movil->estado_u==0)?3:4;//movimiento vacio estado_u=0, otro..movimiento cargado
-                    }else{
-                        $estadoMovilidad=($movil->estado_u==0)?1:2;//detenido vacio estado_u=0, otro..detenido cargado2
+                    if( $estadoMovilidad==7 ){
+                        if($arrInfoGprmc['velocidad']>12){
+                            $estadoMovilidad=($movil->estado_u==0)?3:4;//movimiento vacio estado_u=0, otro..movimiento cargado
+                        }else{
+                            $estadoMovilidad=($movil->estado_u==0)?1:2;//detenido vacio estado_u=0, otro..detenido cargado2
+                        }
                     }
+                    if(DB::connection()->getDatabaseName()=='moviles'){
+                        config()->set('database.default', 'siac');
+                        $movilModel = new Movil;
+                        $movilModel->setConnection('siac');
+                        $updateMovil= $movilModel->where('movil_id','=',intval($movil->movilOldId))
+                                    ->update(['latitud'=>$arrInfoGprmc['latitud'],'longitud'=>$arrInfoGprmc['longitud'],
+                                            'rumbo_id'=>$arrInfoGprmc['rumbo'],'estado'=>$estadoMovilidad,
+                                            'velocidad'=>$arrInfoGprmc['velocidad'],'fecha_ult_posicion'=>$fecha]);
+                                       
+                    }
+                    //DB::commit();
+                    config()->set('database.default', 'moviles');
                 }
-                if(DB::connection()->getDatabaseName()=='moviles'){
-                    config()->set('database.default', 'siac');
-                    $movilModel = new Movil;
-                    $movilModel->setConnection('siac');
-                    $updateMovil= $movilModel->where('movil_id','=',intval($movil->movilOldId))
-                                ->update(['latitud'=>$arrInfoGprmc['latitud'],'longitud'=>$arrInfoGprmc['longitud'],
-                                        'rumbo_id'=>$arrInfoGprmc['rumbo'],'estado'=>$estadoMovilidad,
-                                        'velocidad'=>$arrInfoGprmc['velocidad'],'fecha_ult_posicion'=>$fecha]);
-                                   
-                }
-                //DB::commit();
-                config()->set('database.default', 'moviles');
+
+                
                 /*Cambios de estados FUNCIONA descomentar cuando se use
                 if($perField['PER']=='NULL'){
                     $info       = self::ModPrecencia($ioData['IO']);
