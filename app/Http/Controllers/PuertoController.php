@@ -297,6 +297,7 @@ class PuertoController extends BaseController
                 $validezReporte = self::validezReporte($report['IMEI'],$fecha,$gprmcData[6],$frData['FR'],$movil);
                 if($validezReporte>0){
                     Log::info("se updateo..no insertar de nuevo".$validezReporte);
+                    $posicion               = new Posiciones;
                     $posicion->posicion_id  = $validezReporte;
                     $respuesta              = $validezReporte;
                 }else{
