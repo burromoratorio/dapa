@@ -107,7 +107,7 @@ class PuertoController extends BaseController
         $shmidPos       = MemVar::OpenToRead('posiciones.dat');
         $posicionesMC   = [];
         $frArr          = explode(',',$fr); 
-        $update         = false;
+        $update         = 0;
         if($shmidPos == '0'){
             //Log::info("creando segmento de memoria posicionesMC");
             $posicionesMC[$imei]=$fecha."|".$velocidad."|0";
@@ -168,7 +168,7 @@ class PuertoController extends BaseController
                                             'ltrs_consumidos' =>$lastPosition->ltrs_consumidos,'ltrs_100' =>$lastPosition->ltrs_100
                                             ]); 
                                 config()->set('database.default', 'moviles');
-                                $update         = true;
+                                $update         = $lastPosition->posicion_id;
                             }
                             
                         }
@@ -288,13 +288,20 @@ class PuertoController extends BaseController
                 $vbaField   = self::validateIndexCadena("VBA",$report);
                 $odpField   = self::validateIndexCadena("ODP",$report);
                 $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0]);
+                if($perField['PER']=='NULL'){
+                    $info       = self::ModPrecencia($ioData['IO']);
+                }else{
+                    $info        = self::AnalPerifericos($perField['PER']); 
+                }
+                $arrInfoGprmc   = self::Gprmc2Data($gprmcData);
                 $validezReporte = self::validezReporte($report['IMEI'],$fecha,$gprmcData[6],$frData['FR'],$movil);
-                if($validezReporte==true){
+                if($validezReporte>0){
                     Log::info("se updateo..no insertar de nuevo".$validezReporte);
+                    $posicion->posicion_id  = $validezReporte;
+                    $respuesta              = $validezReporte;
                 }else{
                     Log::info("hay que insertar la posicion..".$validezReporte);
-                }
-                $posicionGP = GprmcEntrada::create([
+                    $posicionGP = GprmcEntrada::create([
                     'imei'=>$report['IMEI'],'gprmc'=>'GPRMC,'.$report['GPRMC'],'pid'=>$pid,'sec_pid'=>$sec_pid,
                     'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],
                     'rumbo'=>$gprmcData[7],'io'=>'IO,'.$ioData['IO'],'panico'=>$panico,'desenganche'=>'0','encendido'=>'0',
@@ -305,8 +312,57 @@ class PuertoController extends BaseController
                     'kmt'=>'KMT,'.$kmtField['KMT'],'km_totales'=>$kmtField['KMT'],'odp'=>'ODP,'.$odpField['ODP'],
                     'mts_parciales'=>$odpField['ODP'],'ala'=>'ALA,'.$alaField['ALA'],'mcp'=>$mcpData['MCP'],
                     'cfg_principal'=>$mcpData[0],'cfg_auxiliar'=>$mcpData[1],'per'=>$perField['PER'],'log'=>'cadena valida' ]);
-                $respuesta      = $posicionGP->pid;
-                $rumbo_id       = self::Rumbo2String( $gprmcData[7] );
+                    $respuesta      = $posicionGP->pid;
+                    $rumbo_id       = self::Rumbo2String( $gprmcData[7] );
+                    //cmd_id=65/50 si es pos, cmd_id=49 si es evento o alarma
+                    DB::beginTransaction();
+                    try {
+                        $odp    = number_format(($odpField['ODP']/1000),2, '.', '');
+                        $posicion = Posiciones::create(['movil_id'=>intval($movil->movilOldId),'cmd_id'=>65,
+                                        'tipo'=>$frData[1],'fecha'=>$fecha,'rumbo_id'=>$arrInfoGprmc['rumbo'],
+                                        'latitud'=>$arrInfoGprmc['latitud'],'longitud'=>$arrInfoGprmc['longitud'],
+                                        'velocidad'=>$arrInfoGprmc['velocidad'],
+                                        'valida'=>1,'estado_u'=>$movil->estado_u,'estado_v'=>$info['mod_presencia'],'estado_w'=>0,
+                                        'km_recorridos'=>$odp,
+                                        'ltrs_consumidos'=>$info['ltrs']]);
+                        $posicion->save();
+
+                        if($alaField["ALA"]=="V"){
+                            $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion->posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>7,'fecha_alarma'=>$fecha,'falsa'=>0]);
+                            $estadoMovilidad    = 11;
+                        }
+                        DB::commit();
+                        
+                    }catch(\Exception $ex) {
+                        DB::rollBack();
+                        $errorSolo  = explode("Stack trace", $ex);
+                        $logcadena = "Error al procesar posicion en puerto controller".$errorSolo[0]."\r\n";
+                        HelpMen::report($movil->equipo_id,$logcadena);
+                    }
+                }
+                //inserto alarma de panico!!
+                $estadoMovilidad = self::tratarAlarmasIO($ioData,$perField['PER'],$report['IMEI'],$posicion->posicion_id,
+                                        $movil,$fecha,$estadoMovilidad);
+
+                if( $estadoMovilidad==7 ){
+                    if($arrInfoGprmc['velocidad']>12){
+                        $estadoMovilidad=($movil->estado_u==0)?3:4;//movimiento vacio estado_u=0, otro..movimiento cargado
+                    }else{
+                        $estadoMovilidad=($movil->estado_u==0)?1:2;//detenido vacio estado_u=0, otro..detenido cargado2
+                    }
+                }
+                if(DB::connection()->getDatabaseName()=='moviles'){
+                    config()->set('database.default', 'siac');
+                    $movilModel = new Movil;
+                    $movilModel->setConnection('siac');
+                    $updateMovil= $movilModel->where('movil_id','=',intval($movil->movilOldId))
+                                ->update(['latitud'=>$arrInfoGprmc['latitud'],'longitud'=>$arrInfoGprmc['longitud'],
+                                        'rumbo_id'=>$arrInfoGprmc['rumbo'],'estado'=>$estadoMovilidad,
+                                        'velocidad'=>$arrInfoGprmc['velocidad'],'fecha_ult_posicion'=>$fecha]);
+                                   
+                }
+                //DB::commit();
+                config()->set('database.default', 'moviles');
                 /*Cambios de estados FUNCIONA descomentar cuando se use
                 if($perField['PER']=='NULL'){
                     $info       = self::ModPrecencia($ioData['IO']);
@@ -329,67 +385,12 @@ class PuertoController extends BaseController
                         
                     }
                 }*/
-                if($perField['PER']=='NULL'){
-                    $info       = self::ModPrecencia($ioData['IO']);
-                }else{
-                    $info        = self::AnalPerifericos($perField['PER']); 
-                }
-                $arrInfoGprmc   = self::Gprmc2Data($gprmcData);
-                //Log::error(print_r($movil_id, true));
-                //cmd_id=65/50 si es pos, cmd_id=49 si es evento o alarma
-                DB::beginTransaction();
-                try {
+                /*para comunicacion con API NAcho
                       $json=  ["movil"=>intval($movil->movilOldId),
                         "point"=> ["type"=>"Point","coordinates"=> [$arrInfoGprmc['longitud'],$arrInfoGprmc['latitud'] ] ],
                         "received"=>$fecha, "speed"=> $arrInfoGprmc['velocidad'], "direction"=>$arrInfoGprmc['rumbo']
                         ];
-                    $odp    = number_format(($odpField['ODP']/1000),2, '.', '');
-                    //HelpMen::posteaPosicion("operativo/positions",$json);
-                    $posicion = Posiciones::create(['movil_id'=>intval($movil->movilOldId),'cmd_id'=>65,
-                                    'tipo'=>$frData[1],'fecha'=>$fecha,'rumbo_id'=>$arrInfoGprmc['rumbo'],
-                                    'latitud'=>$arrInfoGprmc['latitud'],'longitud'=>$arrInfoGprmc['longitud'],
-                                    'velocidad'=>$arrInfoGprmc['velocidad'],
-                                    'valida'=>1,'estado_u'=>$movil->estado_u,'estado_v'=>$info['mod_presencia'],'estado_w'=>0,
-                                    'km_recorridos'=>$odp,
-                                    'ltrs_consumidos'=>$info['ltrs']]);
-                    $posicion->save();
-
-                    if($alaField["ALA"]=="V"){
-                        $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion->posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>7,'fecha_alarma'=>$fecha,'falsa'=>0]);
-                        $estadoMovilidad    = 11;
-                    }
-                    DB::commit();
-                    //inserto alarma de panico!!
-                    $estadoMovilidad = self::tratarAlarmasIO($ioData,$perField['PER'],$report['IMEI'],$posicion->posicion_id,
-                                        $movil,$fecha,$estadoMovilidad);
-
-                    if( $estadoMovilidad==7 ){
-                        if($arrInfoGprmc['velocidad']>12){
-                            $estadoMovilidad=($movil->estado_u==0)?3:4;//movimiento vacio estado_u=0, otro..movimiento cargado
-                        }else{
-                            $estadoMovilidad=($movil->estado_u==0)?1:2;//detenido vacio estado_u=0, otro..detenido cargado2
-                        }
-                    }
-                    /*update movil record*/
-                    if(DB::connection()->getDatabaseName()=='moviles'){
-                        config()->set('database.default', 'siac');
-                        $movilModel = new Movil;
-                        $movilModel->setConnection('siac');
-                        $updateMovil= $movilModel->where('movil_id','=',intval($movil->movilOldId))
-                                    ->update(['latitud'=>$arrInfoGprmc['latitud'],'longitud'=>$arrInfoGprmc['longitud'],
-                                            'rumbo_id'=>$arrInfoGprmc['rumbo'],'estado'=>$estadoMovilidad,
-                                            'velocidad'=>$arrInfoGprmc['velocidad'],'fecha_ult_posicion'=>$fecha]);
-                                   
-                    }
-                    //DB::commit();
-                    config()->set('database.default', 'moviles');
-                    /*fin update movil*/
-                }catch (\Exception $ex) {
-                    DB::rollBack();
-                    $errorSolo  = explode("Stack trace", $ex);
-                    $logcadena = "Error al procesar posicion en puerto controller".$errorSolo[0]."\r\n";
-                    HelpMen::report($movil->equipo_id,$logcadena);
-                }
+                        HelpMen::posteaPosicion("operativo/positions",$json);*/
             }else{
                 $respuesta  = "0";
             }
