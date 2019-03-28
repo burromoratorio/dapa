@@ -52,7 +52,7 @@ class PuertoController extends BaseController
             if(self::validateImei($arrCampos['IMEI'])){
                 switch (self::positionOrDesconect($arrCampos)) {
                     case 'GPRMC':
-                        //Log::info("Normal GPRMC");
+                        Log::info("Normal GPRMC");
                         $posicionID=self::storeGprmc($arrCampos,$movil);
                         if($posicionID!='0'){
                            /*no guardo las alarmas en dbPrimaria self::findAndStoreAlarm($arrCampos,$posicionID);*/
@@ -127,7 +127,7 @@ class PuertoController extends BaseController
                 if(property_exists($posArr, $imei)){//Log::info("el movil:".$imei." tiene datos en el array de posiciones");
                     $internalInfo   = $posArr->$imei;
                     $arrInternalInfo= explode("|", $internalInfo);
-                    Log::info(print_r($arrInternalInfo,true));
+                    //Log::info(print_r($arrInternalInfo,true));
                     Log::info("los datos, velocAnterior:".$arrInternalInfo[1]." velocActual:".$velocidad." FR:".$frArr[0]);
                     //evaluo frecuencia de repo
     /*Movimiento*/  if($frArr[0]<=120){
@@ -271,6 +271,7 @@ class PuertoController extends BaseController
         $errorLog   = "";
         $estadoMovilidad    = 7;//estado normal
         //Log::info("Validando GPRMC...".$report['GPRMC']);
+        Log::info(print_r($report['GPRMC'],true));
         if($report['GPRMC']!=''){
             $gprmcData  = explode(",",$report['GPRMC']);
             $gprmcVal   = self::validateGprmc($gprmcData);
