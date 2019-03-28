@@ -129,8 +129,6 @@ class PuertoController extends BaseController
                     $arrInternalInfo= explode("|", $internalInfo);
                     Log::info(print_r($arrInternalInfo,true));
                     Log::info("los datos, velocAnterior:".$arrInternalInfo[1]." velocActual:".$velocidad." FR:".$frArr[0]);
-                    
-
                     //evaluo frecuencia de repo
     /*Movimiento*/  if($frArr[0]<=120){
                         if($arrInternalInfo[1]<=5){//detenido a movimiento
@@ -151,55 +149,30 @@ class PuertoController extends BaseController
                             }else{
                                 $posArr->$imei  = $fecha."|".$velocidad."|2";
                                 Log::info("actualizo fechas, esta detenido hace mas de 2 posiciones");
-
-                            }
-                            
-                        }
-                    }
-
-               /*     //evaluo si paso de detenido a movimiento
-                    if( $arrInternalInfo[1]<=5 && $velocidad>8 && $frArr[0]<=120 ){
-                        Log::info("movil:".$imei." paso de detenido a movimiento");
-                        $logcadena ="movil:".$imei." - equipo:".$movil->equipo_id." - paso de detenido a movimiento \r\n";
-                        HelpMen::report($movil->equipo_id,$logcadena);
-                        $posArr->$imei  = $fecha."|".$velocidad."|0";
-                    }
-                    if ($arrInternalInfo[1]<=5 && $velocidad<8 && $frArr[0]>=120) {//continua detenido...
-                        Log::info("entrando a verificacion de estado de velocidad");
-                        //ver si ya hay mas de un registro con velocidad 0
-                        if($arrInternalInfo[2]=="0"){//inserto el registro
-                            $posArr->$imei  = $fecha."|".$velocidad."|1";
-                        }else{//updateo el ultimo registro
-                            $lastPosition = PosicionesHistoricas::where('movil_id',intval($movil->movilOldId))
+                                $lastPosition = PosicionesHistoricas::where('movil_id',intval($movil->movilOldId))
                                             ->orderBy('fecha', 'DESC')->first();
-                            $posicionAux    = $lastPosition;
-                            if(DB::connection()->getDatabaseName()=='moviles'){
-                                config()->set('database.default', 'siac');
+                                $posicionAux    = $lastPosition;
+                                if(DB::connection()->getDatabaseName()=='moviles'){
+                                    config()->set('database.default', 'siac');
+                                }
+                                PosicionesHistoricas::where('posicion_id',$lastPosition->posicion_id)->delete();
+                                
+                                DB::table('POSICIONES_HISTORICAS')->insert(['posicion_id'=>$lastPosition->posicion_id,
+                                            'movil_id'=>intval($movil->movilOldId),'tipo'=>$lastPosition->tipo,
+                                            'rumbo_id'=>$lastPosition->rumbo_id,'fecha'=>$fecha,'velocidad'=>$lastPosition->velocidad,
+                                            'latitud'=>$lastPosition->latitud,'longitud'=>$lastPosition->longitud,
+                                            'valida'=>1,'km_recorridos'=>$lastPosition->km_recorridos,
+                                            'referencia'=>$lastPosition->referencia,'cmd_id'=>$lastPosition->cmd_id,
+                                            'estado_u' =>$lastPosition->estado_u,'estado_v' =>$lastPosition->estado_v,
+                                            'estado_w' =>$lastPosition->estado_w, 'km_recorridos' =>$lastPosition->km_recorridos,
+                                            'ltrs_consumidos' =>$lastPosition->ltrs_consumidos,'ltrs_100' =>$lastPosition->ltrs_100
+                                            ]); 
+                                config()->set('database.default', 'moviles');
+                                $update         = true;
                             }
-                            PosicionesHistoricas::where('posicion_id',$lastPosition->posicion_id)->delete();
                             
-                            DB::table('POSICIONES_HISTORICAS')->insert(['posicion_id'=>$lastPosition->posicion_id,
-                                        'movil_id'=>intval($movil->movilOldId),'tipo'=>$lastPosition->tipo,
-                                        'rumbo_id'=>$lastPosition->rumbo_id,
-                                        'fecha'=>$fecha,'velocidad'=>$lastPosition->velocidad,
-                                        'latitud'=>$lastPosition->latitud,'longitud'=>$lastPosition->longitud,
-                                        'valida'=>1,'km_recorridos'=>$lastPosition->km_recorridos,
-                                        'referencia'=>$lastPosition->referencia,'cmd_id'=>$lastPosition->cmd_id,
-                                        'estado_u' =>$lastPosition->estado_u,'estado_v' =>$lastPosition->estado_v,
-                                        'estado_w' =>$lastPosition->estado_w, 'km_recorridos' =>$lastPosition->km_recorridos,
-                                        'ltrs_consumidos' =>$lastPosition->ltrs_consumidos,'ltrs_100' =>$lastPosition->ltrs_100]); 
-                            config()->set('database.default', 'moviles');
-                            $update         = true;
-                            $posArr->$imei  = $fecha."|".$velocidad."|2";
                         }
                     }
-                    //movil pasó de movimiento a detenido
-                    if( $arrInternalInfo[1]>=8 && $velocidad<5 && $frArr[0]>120 ){
-                        $logcadena ="movil:".$imei." - equipo:".$movil->equipo_id." - paso de movimiento a detenido \r\n";
-                        HelpMen::report($movil->equipo_id,$logcadena);
-                        $posArr->$imei  = $fecha."|".$velocidad."|0";
-                         Log::info("entrando a verificacion de estado de velocidad");
-                    }*/
                     $posicionesMC   = $posArr;
                 }else{//el movil no tiene datos de posiciones->almaceno la info
                     $logcadena ="movil:".$imei." - equipo:".$movil->equipo_id." - no tiene datos de posiciones-->almaceno \r\n";
@@ -215,7 +188,6 @@ class PuertoController extends BaseController
             self::CargarMemoria('posiciones.dat',$posicionesMC);
         }
         return $update;
-        
     }
     /*maximo 15 caracteres numericos*/
     public static function validateImei($imei){
