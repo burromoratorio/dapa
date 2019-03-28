@@ -341,6 +341,7 @@ class PuertoController extends BaseController
                         HelpMen::report($movil->equipo_id,$logcadena);
                     }
                 }
+                Log::info(print_r($posicion,true));
                 //inserto alarma de panico!!
                 $estadoMovilidad = self::tratarAlarmasIO($ioData,$perField['PER'],$report['IMEI'],$posicion->posicion_id,
                                         $movil,$fecha,$estadoMovilidad);
