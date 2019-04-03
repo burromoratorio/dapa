@@ -116,7 +116,6 @@ class PuertoController extends BaseController
             MemVar::initIdentifier($shmid);
             $memoPos    = MemVar::GetValue();
         }else{
-            //Log::error(print_r($shmidPos, true));
             MemVar::initIdentifier($shmidPos);
             $memoPos    = MemVar::GetValue();
             $posArr     = json_decode($memoPos);
@@ -132,20 +131,20 @@ class PuertoController extends BaseController
                     //evaluo frecuencia de repo
     /*Movimiento*/  if($frArr[0]<=120){
                         if($arrInternalInfo[1]<=5){//detenido a movimiento
-                            Log::info("detenido a movimiento");
+                            Log::info($imei."=>detenido a movimiento");
                             $posArr->$imei  = $fecha."|".$velocidad."|0";
                         }else{//continua en movimiento
-                            Log::info("continua en movimiento");
+                            Log::info($imei."..continua en movimiento");
                         }
     /*detenido*/    }else{
                         if($arrInternalInfo[1]>=8){//movimiento a detenido
-                            Log::info("movimiento a detenido");
+                            Log::info($imei."=>movimiento a detenido");
                             $posArr->$imei  = $fecha."|".$velocidad."|0";
                         }else{//continua detenido
-                            Log::info("continua detenido");
+                            Log::info($imei."..continua detenido");
                             if($arrInternalInfo[2]=="0"){
                                 $posArr->$imei  = $fecha."|".$velocidad."|1";
-                                Log::info("es el segundo reg con veloc 0-->lo inserto");
+                                //Log::info("es el segundo reg con veloc 0-->lo inserto");
                             }else{
                                 $posArr->$imei  = $fecha."|".$velocidad."|2";
                                 Log::info("actualizo fechas, esta detenido hace mas de 2 posiciones");
@@ -182,7 +181,7 @@ class PuertoController extends BaseController
                 }
             }else{
                 $posicionesMC[$imei]=$fecha."|".$velocidad."|0";
-                Log::info("le pije del mone::".$imei." fecha:".$fecha."- velocidad:".$velocidad);
+                //Log::info("le pije del mone::".$imei." fecha:".$fecha."- velocidad:".$velocidad);
             }
             MemVar::Eliminar( 'posiciones.dat' );
             self::CargarMemoria('posiciones.dat',$posicionesMC);
@@ -211,6 +210,12 @@ class PuertoController extends BaseController
     public static function ddmmyy2yyyymmdd($fecha,$hora){
         $formatFecha = date("Y-m-d H:i:s", mktime(substr($hora, 0,2), substr($hora, 2,2), substr($hora, 4,2), substr($fecha, 2,2), substr($fecha, 0,2), substr($fecha, -2,2)));
         $nuevafecha = strtotime ( '-3 hours' , strtotime ( $formatFecha ) ) ;
+        //-----aviso a seba de reporte viejo----//
+        $fechacompara   = date('Y-m-j H:i:s'); 
+        $newDateCompa   = strtotime ( '-10 minute' , strtotime ($fechacompara) ) ; 
+        if($nuevafecha<=$newDateCompa){
+            Log::info("////Reporte Historico///");
+        }
         $nuevafecha = date ( 'Y-m-d H:i:s' , $nuevafecha );
         return $nuevafecha;
     }
@@ -297,12 +302,12 @@ class PuertoController extends BaseController
                 $arrInfoGprmc   = self::Gprmc2Data($gprmcData);
                 $validezReporte = self::validezReporte($report['IMEI'],$fecha,$gprmcData[6],$frData['FR'],$movil);
                 if($validezReporte>0){
-                    Log::info("se updateo..no insertar de nuevo".$validezReporte);
+                    Log::info("actualiza hora de posicion en detenido");
                     $posicion               = new Posiciones;
                     $posicion->posicion_id  = $validezReporte;
                     $respuesta              = $validezReporte;
                 }else{
-                    Log::info("hay que insertar la posicion..".$validezReporte);
+                    //Log::info("se inserta nueva posicion");
                     $posicionGP = GprmcEntrada::create([
                     'imei'=>$report['IMEI'],'gprmc'=>'GPRMC,'.$report['GPRMC'],'pid'=>$pid,'sec_pid'=>$sec_pid,
                     'fecha_mensaje'=>$fecha,'latitud'=>$gprmcData[2],'longitud'=>$gprmcData[4],'velocidad'=>$gprmcData[6],
