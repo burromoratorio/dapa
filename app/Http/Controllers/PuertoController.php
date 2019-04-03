@@ -214,7 +214,7 @@ class PuertoController extends BaseController
         $fechacompara   = date('Y-m-j H:i:s'); 
         $newDateCompa   = strtotime ( '-10 minute' , strtotime ($fechacompara) ) ; 
         if($nuevafecha<=$newDateCompa){
-            $logeo  = "////Reporte Historico///";
+            $logeo  = "^^^<Reporte Historico>^^^";  
             HelpMen::report($movil->equipo_id,$logeo);
         }
         $nuevafecha = date ( 'Y-m-d H:i:s' , $nuevafecha );
