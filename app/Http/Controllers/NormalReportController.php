@@ -104,7 +104,8 @@ class NormalReportController extends BaseController
   protected function obtenerMoviles() {
       Log::error("Buscando moviles en code.siacseguridad.com");
       // Create a client with a base URI
-      $client = new Client(['base_uri' => 'http://code.siacseguridad.com:8080/api/']);
+      $urlP       = env('CODE_URL');
+      $client = new Client(['base_uri' => $urlP]);
       // Send a request to https://foo.com/api/test
       $response = $client->request('GET', 'equipos/1');
 

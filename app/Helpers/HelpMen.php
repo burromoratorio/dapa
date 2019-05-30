@@ -30,8 +30,8 @@ class HelpMen
   	public static function obtenerMoviles() {
       Log::error("Buscando moviles en code.siacseguridad.com");
       // Create a client with a base URI
-      $client = new Client(['base_uri' => 'http://code.siacseguridad.com:8080/api/']);
-      // Send a request to https://foo.com/api/test
+      $urlP       = env('CODE_URL');
+      $client = new Client(['base_uri' => $urlP]);
       $response = $client->request('GET', 'equipos/1');
       return $response;
   	}
