@@ -10,6 +10,7 @@ use Storage;
 use DB;
 /*DDBB Principal*/
 use App\ColaMensajes;
+use App\InstalacionSiac;
 /*Helpers*/
 use App\Helpers\MemVar;
 use App\Helpers\HelpMen;
@@ -105,6 +106,23 @@ class CommandController extends BaseController
             $mensaje->fecha_final = date("Y-m-d H:i:s");
             $mensaje->save();
             $logcadena = "actualizacion correcta devuelvo:AT+OK\r\n";
+            //actualizo la instalacion para reflejar el cambio de frecuencias
+            $instalacionMovil = InstalacionSiac::find($equipo_id);
+            if($commandoId==20){
+              $valoresArr = explode(",",$arrCmdRta[1]);
+              if($arrCmdRta[0]=='+FR'){
+                if($valoresArr[1]==1){
+                  $instalacionMovil->frecuencia_reporte_velocidad = $valoresArr[2];
+                }
+                if($valoresArr[1]==0){
+                  $instalacionMovil->frecuencia_reporte_detenido  = $valoresArr[2];
+                }
+              }
+              if($arrCmdRta[0]=='+ALV'){
+                $instalacionMovil->frecuencia_reporte_exceso_velocidad  = $valoresArr[0];
+              }
+              $instalacionMovil->save();
+            } 
             HelpMen::report($equipo_id,$logcadena);
             return "AT+OK\r\n";
           }else{
