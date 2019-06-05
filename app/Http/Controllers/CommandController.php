@@ -107,7 +107,7 @@ class CommandController extends BaseController
             $mensaje->save();
             $logcadena = "actualizacion correcta devuelvo:AT+OK\r\n";
             //actualizo la instalacion para reflejar el cambio de frecuencias
-            $instalacionMovil = InstalacionSiac::where('modem_id',$equipo_id)->get();
+            $instalacionMovil = InstalacionSiac::where('modem_id',$equipo_id)->get()->first;
             if($commandoId==20){
               Log::info("entrando al comandoooooooooo");
               $valoresArr = explode(",",$arrCmdRta[1]);
@@ -126,7 +126,7 @@ class CommandController extends BaseController
               if($arrCmdRta[0]=='+ALV'){
                 $instalacionMovil->frecuencia_reporte_exceso_velocidad  = $valoresArr[0];
               }
-              $instalacionMovil->save();
+              $instalacionMovil->save;
             } 
             HelpMen::report($equipo_id,$logcadena);
             return "AT+OK\r\n";
