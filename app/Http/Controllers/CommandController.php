@@ -107,14 +107,19 @@ class CommandController extends BaseController
             $mensaje->save();
             $logcadena = "actualizacion correcta devuelvo:AT+OK\r\n";
             //actualizo la instalacion para reflejar el cambio de frecuencias
-            $instalacionMovil = InstalacionSiac::find($equipo_id);
+            $instalacionMovil = InstalacionSiac::where('modem_id',$equipo_id)->get();
             if($commandoId==20){
+              Log::info("entrando al comandoooooooooo");
               $valoresArr = explode(",",$arrCmdRta[1]);
               if($arrCmdRta[0]=='+FR'){
                 if($valoresArr[1]==1){
+                                Log::info("frecuencia de velocidad");
+
                   $instalacionMovil->frecuencia_reporte_velocidad = $valoresArr[2];
                 }
                 if($valoresArr[1]==0){
+                                                  Log::info("frecuencia de detenido");
+
                   $instalacionMovil->frecuencia_reporte_detenido  = $valoresArr[2];
                 }
               }
