@@ -98,7 +98,7 @@ class CommandController extends BaseController
           }
           $logcadena = "Respuesta IMEI:".$imei." - Equipo:".$equipo_id." rta:".$comandoRta." de CMD_ID:".$commandoId;
           HelpMen::report($equipo_id,$logcadena);
-          Log::info("la concha de la lora puta".print_r($mensaje,true));
+         // Log::info("la concha de la lora puta".print_r($mensaje,true));
           if(!is_null($mensaje)){
             $mensaje->rsp_id      = 3;
             $mensaje->comando     = $arrCmdRta[0];
@@ -109,17 +109,12 @@ class CommandController extends BaseController
             //actualizo la instalacion para reflejar el cambio de frecuencias
             $instalacionMovil = InstalacionSiac::where('modem_id',$equipo_id)->get()->first();
             if($commandoId==20){
-              Log::info("entrando al comandoooooooooo");
               $valoresArr = explode(",",$arrCmdRta[1]);
               if($arrCmdRta[0]=='+FR'){
                 if($valoresArr[1]==1){
-                                Log::info("frecuencia de velocidad");
-
                   $instalacionMovil->frecuencia_reporte_velocidad = $valoresArr[2];
                 }
                 if($valoresArr[1]==0){
-                                                  Log::info("frecuencia de detenido");
-
                   $instalacionMovil->frecuencia_reporte_detenido  = $valoresArr[2];
                 }
               }
