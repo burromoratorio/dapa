@@ -398,12 +398,18 @@ class PuertoController extends BaseController
                         
                     }
                 }*/
-                /*para comunicacion con API NAcho
-                      $json=  ["movil"=>intval($movil->movilOldId),
+                
+                /*********para comunicacion con API NAcho********/
+                      
+                $movTestings = array(10004, 10006, 10033);
+                if (in_array($movil->equipo_id, $movTestings)){
+                    /*$json=  ["movil"=>intval($movil->movilOldId),
                         "point"=> ["type"=>"Point","coordinates"=> [$arrInfoGprmc['longitud'],$arrInfoGprmc['latitud'] ] ],
                         "received"=>$fecha, "speed"=> $arrInfoGprmc['velocidad'], "direction"=>$arrInfoGprmc['rumbo']
                         ];
                         HelpMen::posteaPosicion("operativo/positions",$json);*/
+                }
+                /*********para comunicacion con API NAcho********/
             }else{
                 $respuesta  = "0";
             }
