@@ -83,6 +83,20 @@ class HelpMen
 		$urlP       = env('API_URL').$recurso;
 		$client 	= new Client( [ 'headers' => [ 'Content-Type' => 'application/json' ] ] );
 		$response 	= $client->post($urlP,['body' => json_encode( $json )] );
-		return $response->getBody();
+		$statuscode = $response->getStatusCode();
+		Log::error("Bad Response :: code:".$$statuscode." reason::".$response->getBody());
+		if (200 === $statuscode) {
+		  // Do something
+		}
+		elseif (304 === $statuscode) {
+		  // Nothing to do
+		}
+		elseif (404 === $statuscode) {
+		  // Clean up DB or something like this
+		}
+		else {
+		  throw new MyException("Invalid response from api...");
+		}
+				return $response->getBody();
 	}
 }
