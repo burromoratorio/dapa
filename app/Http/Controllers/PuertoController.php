@@ -402,9 +402,9 @@ class PuertoController extends BaseController
                 /*********para comunicacion con API NAcho********/
                       
                 $movTestings = array(10004, 10006, 10033);
-                Log::info("por enviar al api de nacho el movil:".$movil->equipo_id);
+                
                 if (in_array($movil->equipo_id, $movTestings)){
-
+                    Log::info("por enviar al api de nacho el movil:".$movil->equipo_id);
                     /*$json=  ["movil"=>intval($movil->movilOldId),
                         "point"=> ["type"=>"Point","coordinates"=> [$arrInfoGprmc['longitud'],$arrInfoGprmc['latitud'] ] ],
                         "received"=>$fecha, "speed"=> $arrInfoGprmc['velocidad'], "direction"=>$arrInfoGprmc['rumbo']
