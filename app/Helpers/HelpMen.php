@@ -82,7 +82,6 @@ class HelpMen
 	public static function posteaPosicion($recurso,$json){		
 		$urlP       = env('API_URL').$recurso;
 		$client 	= new Client( [ 'headers' => [ 'Content-Type' => 'application/json' ] ] );
-		Log::error(print_r($json,true));
 		$response 	= $client->post($urlP,['body' => json_encode( $json )] );
 		$statuscode = $response->getStatusCode();
 		Log::error("Bad Response :: code:".$$statuscode." reason::".$response->getBody());
