@@ -84,7 +84,7 @@ class HelpMen
 		$client 	= new Client( [ 'headers' => [ 'Content-Type' => 'application/json' ] ] );
 		$response 	= $client->post($urlP,['body' => json_encode( $json )] );
 		$statuscode = $response->getStatusCode();
-		Log::error("Bad Response :: code:".$statuscode." reason::".$response->getBody());
+		
 		if (200 === $statuscode) {
 		  // Do something
 		}
@@ -95,7 +95,7 @@ class HelpMen
 		  // Clean up DB or something like this
 		}
 		else {
-		  throw new MyException("Invalid response from api...");
+			Log::error("Bad :: code:".$statuscode." reason::".$response->getBody());
 		}
 				return $response->getBody();
 	}
