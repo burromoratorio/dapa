@@ -567,8 +567,8 @@ class PuertoController extends BaseController
     }
     public static function AnalPerifericos($cadena){
         //Log::error(print_r($cadena, true));
-        Log::info("ingresa por AnalPerifericos porque Per==>".$arrPeriferico[0]);
         $arrPeriferico     = explode(',', $cadena);
+        Log::info("ingresa por AnalPerifericos porque Per==>".$arrPeriferico[0]);
         $valorPeriferico   = '';
         $perifericos       = array("ltrs"=>0,"mod_presencia"=>1,"tmg"=>0,"panico"=>0,"desenganche"=>0); 
         switch ($arrPeriferico[0]) {
