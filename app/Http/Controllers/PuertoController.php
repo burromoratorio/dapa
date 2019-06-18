@@ -583,6 +583,7 @@ class PuertoController extends BaseController
                 $perifericos["tmg"] = $valorPeriferico;
                 break;
             case 'IOM':
+                Log::info("ingresa a Anal Perifericos por IOM");
                 $perifericos["mod_presencia"]= $arrPeriferico[3];
                 break;
             case 'BIO':
