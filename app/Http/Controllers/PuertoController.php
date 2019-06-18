@@ -383,7 +383,7 @@ class PuertoController extends BaseController
                 }else{
                     $info        = self::AnalPerifericos($perField['PER']); 
                     Log::error("El info IOM:".$info['mod_presencia']);
-                    $sensorEstado   = self::getSensores(351687030222110);
+                    $sensorEstado   = self::getSensores($report['IMEI']);
                     if($sensorEstado){
                         $arrPeriferico  = explode(',',$perField['PER']);
                         $arrayMCIom     = str_split($sensorEstado->iom);
@@ -583,7 +583,7 @@ class PuertoController extends BaseController
                 $perifericos["tmg"] = $valorPeriferico;
                 break;
             case 'IOM':
-                Log::info("ingresa a Anal Perifericos por IOM:".$arrPeriferico[3]);
+                Log::info("::::::::::ingresa a Anal Perifericos por IOM:".$arrPeriferico[3].":::::::");
                 $perifericos["mod_presencia"]= $arrPeriferico[3];
                 break;
             case 'BIO':
