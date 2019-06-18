@@ -685,7 +685,7 @@ class PuertoController extends BaseController
         */
         //ver si aca puedo buscar asi $memoEstados[$imei]
         $encontrado     = self::binarySearch($memoEstados, 0, count($memoEstados) - 1, $imei);
-        Log::error("El encontrado es:"$encontrado);
+        Log::error("El encontrado es:".$encontrado);
         return $encontrado;
         
     }
