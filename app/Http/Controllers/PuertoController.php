@@ -376,7 +376,7 @@ class PuertoController extends BaseController
                 }
 
                 
-                /*Cambios de estados FUNCIONA descomentar cuando se use
+                /*Cambios de estados FUNCIONA descomentar cuando se use*/
                 if($perField['PER']=='NULL'){
                     $info       = self::ModPrecencia($ioData['IO']);
                     Log::error("El info:".$info['mod_presencia']);
@@ -397,7 +397,7 @@ class PuertoController extends BaseController
                         Log::info("El sensor IOM:".$sensorEstado->iom."..estado del Periferico:".$arrPeriferico[1]);
                         
                     }
-                }*/
+                }
                 
                 /*********para comunicacion con API NAcho********/
                       
@@ -662,9 +662,10 @@ class PuertoController extends BaseController
             return self::binarySearch($arr, $mid + 1, $end, $x);
         }
     }
+    /*Sensores IOM*/
     public static function getSensores($imei) {
        //MemVar::VaciaMemoria();
-        //Log::error("obteniendo sensores");
+        Log::error("obteniendo sensores");
         $shmid    = MemVar::OpenToRead('sensores.dat');
         if($shmid=='0'){
             $memoEstados    = self::startupSensores();
@@ -707,6 +708,7 @@ class PuertoController extends BaseController
         return $memoEstados;
     
     }
+    /*Fin sensores IOM*/
     public static function CargarMemoria($archivo,$dataArray){
         $memvar     = MemVar::Instance($archivo);
         $enstring   = json_encode($dataArray);
