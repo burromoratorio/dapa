@@ -125,6 +125,7 @@ class NormalReportController extends BaseController
     try{
       $logcadena ="Equipo=>".$movil->equipo_id." MOVIL=>".$movil->movilOldId."-Cadena=>".$cadena."\r\n";
       HelpMen::report($movil->equipo_id,$logcadena);
+      Log::info($logcadena);
       $rta  = app()->Puerto->analizeReport($cadena,$movil) ;
     }catch(Exception $e){
       $rta  = "error";

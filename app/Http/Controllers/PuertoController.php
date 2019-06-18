@@ -277,7 +277,7 @@ class PuertoController extends BaseController
         $errorLog   = "";
         $estadoMovilidad    = 7;//estado normal
         //Log::info("Validando GPRMC...".$report['GPRMC']);
-        Log::error($report['GPRMC']);
+       // Log::error($report['GPRMC']);
         if($report['GPRMC']!=''){
             $gprmcData  = explode(",",$report['GPRMC']);
             $gprmcVal   = self::validateGprmc($gprmcData);
