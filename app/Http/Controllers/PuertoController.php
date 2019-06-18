@@ -386,8 +386,12 @@ class PuertoController extends BaseController
                     $sensorEstado   = self::getSensores($report['IMEI']);
                     if($sensorEstado){
                         $arrPeriferico  = explode(',',$perField['PER']);
-                        $arrayMCIom     = str_split($sensorEstado->iom);
                         $arrayGPRMCIom  = str_split($arrPeriferico[1]);
+                        if($sensorEstado->iom=="NULL"){
+                            $arrayMCIom     = $arrayGPRMCIom;
+                        }else{
+                            $arrayMCIom     = str_split($sensorEstado->iom);
+                        }
                         if($arrayMCIom[3]!=$arrayGPRMCIom[3]){//desenganche
                             Log::info("informo cambio de estado en desenganche:".$arrayMCIom[3]."->".$arrayGPRMCIom[3]);
                         }
@@ -677,7 +681,6 @@ class PuertoController extends BaseController
             MemVar::initIdentifier($shmid);
             $memoEstados    = MemVar::GetValue();
             $memoEstados    = json_decode($memoEstados);
-             Log::error(print_r($memoEstados,true));
         }
         /*si encuentro el movil veo el sensor, si difiere al enviado por parametro
         genero un nuevo elemento y lo cargo en el array y en la ddbb
@@ -685,7 +688,6 @@ class PuertoController extends BaseController
         */
         //ver si aca puedo buscar asi $memoEstados[$imei]
         $encontrado     = self::binarySearch($memoEstados, 0, count($memoEstados) - 1, $imei);
-        Log::error(print_r($encontrado,true));
         return $encontrado;
         
     }
