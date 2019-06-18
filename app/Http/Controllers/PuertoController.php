@@ -677,6 +677,7 @@ class PuertoController extends BaseController
             MemVar::initIdentifier($shmid);
             $memoEstados    = MemVar::GetValue();
             $memoEstados    = json_decode($memoEstados);
+             Log::error(print_r($memoEstados,true));
         }
         /*si encuentro el movil veo el sensor, si difiere al enviado por parametro
         genero un nuevo elemento y lo cargo en el array y en la ddbb
