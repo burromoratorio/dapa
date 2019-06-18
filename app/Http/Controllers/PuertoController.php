@@ -410,7 +410,7 @@ class PuertoController extends BaseController
                         "point"=> ["type"=>"Point","coordinates"=> [$arrInfoGprmc['longitud'],$arrInfoGprmc['latitud'] ] ],
                         "received"=>$fecha, "speed"=> $arrInfoGprmc['velocidad'], "direction"=>$arrInfoGprmc['rumbo']
                         ];
-                        HelpMen::posteaPosicion("operativo/positions",$json);
+                        //HelpMen::posteaPosicion("operativo/positions",$json);
                 }
                 /*********para comunicacion con API NAcho********/
             }else{
