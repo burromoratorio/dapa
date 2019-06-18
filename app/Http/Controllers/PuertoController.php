@@ -391,6 +391,7 @@ class PuertoController extends BaseController
                         if($arrayMCIom[3]!=$arrayGPRMCIom[3]){//desenganche
                             Log::info("informo cambio de estado en desenganche:".$arrayMCIom[3]."->".$arrayGPRMCIom[3]);
                         }
+                        Log::info(print_r($arrayMCIom,true));
                         if($arrayMCIom[5]!=$arrayGPRMCIom[5]){//compuerta
                             Log::info("informo cambio de estado en desenganche:".$arrayMCIom[5]."->".$arrayGPRMCIom[5]);
                         }
