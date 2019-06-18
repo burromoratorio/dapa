@@ -671,6 +671,8 @@ class PuertoController extends BaseController
         $shmid    = MemVar::OpenToRead('sensores.dat');
         if($shmid=='0'){
             $memoEstados    = self::startupSensores();
+                    Log::error("STARTUPPPP sensores");
+
         }else{
             MemVar::initIdentifier($shmid);
             $memoEstados    = MemVar::GetValue();
