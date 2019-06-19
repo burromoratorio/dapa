@@ -478,6 +478,7 @@ class PuertoController extends BaseController
             }
         }else{    //no se encontró el imei en la tabla de sensores,inserto e informo alarmas 
             if($perField!='NULL'){
+                Log::info("::::::::::entrando a Tratar alarmas IO pero en parte de IOM:::::::::::::");
                 $arrIOM     = explode(',',$perField);
                 $perField   = ($arrIOM[0]=='IOM')?$arrIOM[1]:'NULL';
             }
