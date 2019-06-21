@@ -296,14 +296,15 @@ class PuertoController extends BaseController
                 $odpField   = self::validateIndexCadena("ODP",$report);
                 $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0],$movil);
                 //-------si viene el campo PER con IOM ya no le doy bola al IO///////-------
-                /*Cambios de estados FUNCIONA descomentar cuando se use*/
+                /*en esta parte solo busco el modo de presencia*/
                 if($perField['PER']=='NULL'){
-                    $info       = self::ModPrecencia($ioData['IO']);
+                    $info       = self::ModPrecencia($ioData['IO'],"IO");
                     //Log::error("El info:".$info['mod_presencia']);
                 }else{
-                    $info        = self::AnalPerifericos($perField['PER']); 
+                    $info       = self::ModPrecencia($perField['PER'],"IOM");
+                    //$info        = self::AnalPerifericos($perField['PER'],"IOM"); 
                     Log::error("El info IOM:".$info['mod_presencia']);
-                    $sensorEstado   = self::getSensores($report['IMEI']);
+                    /*$sensorEstado   = self::getSensores($report['IMEI']);
                     if($sensorEstado){
                         $arrPeriferico  = explode(',',$perField['PER']);
                         $arrayGPRMCIom  = str_split($arrPeriferico[1]);
@@ -322,7 +323,7 @@ class PuertoController extends BaseController
                         }
                         Log::info("El sensor IOM en DDBB:".$sensorEstado->iom."..estado del Periferico en Cadena:".$arrPeriferico[1]);
                         
-                    }
+                    }*/
                 }
 
 
@@ -615,18 +616,48 @@ class PuertoController extends BaseController
     2 = CORTE
     3 = BLOQUEO DE INHIBICIÓN
     4 = ALARMA*/
-    public static function ModPrecencia($arrPrescense){
+    public static function ModPrecencia($arrPrescense,$entradaSalida){
         //Log::info("ingresa por modPresencia porque PER==NULL");
         $IOEstados       = array("ltrs"=>0,"mod_presencia"=>1,"tmg"=>0,"panico"=>0,"desenganche"=>0);
-        if($arrPrescense[2]=='O01' || $arrPrescense[2]=='O11'){
+        if($entradaSalida=="IO"){
+            if($arrPrescense[2]=='O01' || $arrPrescense[2]=='O11'){
             $IOEstados['mod_presencia']   =   2;
+            }
+            if($arrPrescense[1]=='I00'){
+                $IOEstados['panico']   =   1;
+            }
+            if($arrPrescense[1]=='I10'){
+                $IOEstados['bat']   =   1;
+            }
+        }else{ //parte de iom
+            $arrPeriferico     = explode(',', $arrPrescense);
+            Log::info("ingresa por AnalPerifericos porque Per==>".$arrPeriferico[0]);
+            $valorPeriferico   = '';
+            switch ($arrPeriferico[0]) {
+                case 'CAU':
+                    $valorPeriferico    = $arrPeriferico[1];
+                    $valorPeriferico    = intval(($valorPeriferico)*10);
+                    $IOEstados["ltrs"]= $valorPeriferico;
+                     break;
+                case 'TMG':
+                    array_shift($arrPeriferico);
+                    $valorPeriferico    = implode(',',$arrPeriferico);
+                    $IOEstados["tmg"] = $valorPeriferico;
+                    break;
+                case 'IOM':
+                    Log::info("::::::::::ingresa a Anal Perifericos por IOM:".$arrPeriferico[3].":::::::");
+                    $IOEstados["mod_presencia"]= $arrPeriferico[3];
+                    break;
+                case 'BIO':
+                //falta ejemplo de sebas para armar cadena
+                    $IOEstados["mod_presencia"]= $arrPeriferico[3];
+                    break;
+                default:
+                    # code...
+                    break;
+            }
         }
-        if($arrPrescense[1]=='I00'){
-            $IOEstados['panico']   =   1;
-        }
-        if($arrPrescense[1]=='I10'){
-            $IOEstados['bat']   =   1;
-        }
+        
         return $IOEstados;
     }
     public static function Gprmc2Data( $arrCadena ){
