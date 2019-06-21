@@ -309,6 +309,7 @@ class PuertoController extends BaseController
                         $arrayGPRMCIom  = str_split($arrPeriferico[1]);
                         if($sensorEstado->iom=="NULL"){
                             $arrayMCIom     = $arrayGPRMCIom;
+                            Log::info("dio null el IOM...tengo que almacenarlo");
                         }else{
                             $arrayMCIom     = str_split($sensorEstado->iom);
                         }
