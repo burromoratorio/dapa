@@ -295,11 +295,38 @@ class PuertoController extends BaseController
                 $vbaField   = self::validateIndexCadena("VBA",$report);
                 $odpField   = self::validateIndexCadena("ODP",$report);
                 $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0],$movil);
+                //-------si viene el campo PER con IOM ya no le doy bola al IO///////-------
+                /*Cambios de estados FUNCIONA descomentar cuando se use*/
                 if($perField['PER']=='NULL'){
                     $info       = self::ModPrecencia($ioData['IO']);
+                    //Log::error("El info:".$info['mod_presencia']);
                 }else{
                     $info        = self::AnalPerifericos($perField['PER']); 
+                    Log::error("El info IOM:".$info['mod_presencia']);
+                    $sensorEstado   = self::getSensores($report['IMEI']);
+                    if($sensorEstado){
+                        $arrPeriferico  = explode(',',$perField['PER']);
+                        $arrayGPRMCIom  = str_split($arrPeriferico[1]);
+                        if($sensorEstado->iom=="NULL"){
+                            $arrayMCIom     = $arrayGPRMCIom;
+                        }else{
+                            $arrayMCIom     = str_split($sensorEstado->iom);
+                        }
+                        if($arrayMCIom[3]!=$arrayGPRMCIom[3]){//desenganche
+                            Log::info("informo cambio de estado en desenganche:".$arrayMCIom[3]."->".$arrayGPRMCIom[3]);
+                        }
+                        //Log::info(print_r($arrayMCIom,true));
+                        if($arrayMCIom[5]!=$arrayGPRMCIom[5]){//compuerta
+                            Log::info("informo cambio de estado en compuerta:".$arrayMCIom[5]."->".$arrayGPRMCIom[5]);
+                        }
+                        Log::info("El sensor IOM en DDBB:".$sensorEstado->iom."..estado del Periferico en Cadena:".$arrPeriferico[1]);
+                        
+                    }
                 }
+
+
+
+
                 $arrInfoGprmc   = self::Gprmc2Data($gprmcData);
                 $validezReporte = self::validezReporte($report['IMEI'],$fecha,$gprmcData[6],$frData['FR'],$movil);
                 if($validezReporte>0){
@@ -374,36 +401,6 @@ class PuertoController extends BaseController
                     //DB::commit();
                     config()->set('database.default', 'moviles');
                 }
-
-                
-                /*Cambios de estados FUNCIONA descomentar cuando se use*/
-                if($perField['PER']=='NULL'){
-                    $info       = self::ModPrecencia($ioData['IO']);
-                    Log::error("El info:".$info['mod_presencia']);
-                }else{
-                    $info        = self::AnalPerifericos($perField['PER']); 
-                    Log::error("El info IOM:".$info['mod_presencia']);
-                    $sensorEstado   = self::getSensores($report['IMEI']);
-                    if($sensorEstado){
-                        $arrPeriferico  = explode(',',$perField['PER']);
-                        $arrayGPRMCIom  = str_split($arrPeriferico[1]);
-                        if($sensorEstado->iom=="NULL"){
-                            $arrayMCIom     = $arrayGPRMCIom;
-                        }else{
-                            $arrayMCIom     = str_split($sensorEstado->iom);
-                        }
-                        if($arrayMCIom[3]!=$arrayGPRMCIom[3]){//desenganche
-                            Log::info("informo cambio de estado en desenganche:".$arrayMCIom[3]."->".$arrayGPRMCIom[3]);
-                        }
-                        Log::info(print_r($arrayMCIom,true));
-                        if($arrayMCIom[5]!=$arrayGPRMCIom[5]){//compuerta
-                            Log::info("informo cambio de estado en desenganche:".$arrayMCIom[5]."->".$arrayGPRMCIom[5]);
-                        }
-                        Log::info("El sensor IOM:".$sensorEstado->iom."..estado del Periferico:".$arrPeriferico[1]);
-                        
-                    }
-                }
-                
                 /*********para comunicacion con API NAcho********/
                       
                 $movTestings = array(10004, 10006, 10033);
@@ -478,7 +475,7 @@ class PuertoController extends BaseController
             }
         }else{    //no se encontró el imei en la tabla de sensores,inserto e informo alarmas 
             if($perField!='NULL'){
-                Log::info("::::::::::entrando a Tratar alarmas IO pero en parte de IOM:::::::::::::");
+                Log::info("::::::::::entrando a Tratar alarmas IO pero en parte de IOM Va a ALMACENAR EN LA DDBB::::::::::::");
                 $arrIOM     = explode(',',$perField);
                 $perField   = ($arrIOM[0]=='IOM')?$arrIOM[1]:'NULL';
             }
@@ -571,6 +568,16 @@ class PuertoController extends BaseController
         //return $arrRumbo[$intRumbo];
         return $intRumbo;
     }
+    /*Analisis de cadena IOM
+    Con Estado en modo RESET=> no realizo evaluaciones, dado que es modo de pruebas Lab+Ing.
+    $arrPeriferico[0]=IOM
+    $arrPeriferico[1]=I1..I14
+    $arrPeriferico[2]=O1..O14
+    $arrPeriferico[3]=E(modo de trabajo del equipo)
+    $arrPeriferico[4]=PR(método de restablecimiento Manual)
+    $arrPeriferico[5]=NB(Normal o backgrond)
+    $arrPeriferico[6]=P (Panico)
+    */
     public static function AnalPerifericos($cadena){
         //Log::error(print_r($cadena, true));
         $arrPeriferico     = explode(',', $cadena);
