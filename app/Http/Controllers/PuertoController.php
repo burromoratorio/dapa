@@ -679,6 +679,7 @@ class PuertoController extends BaseController
     /*Sensores IOM*/
     public static function getSensores($imei) {
        //MemVar::VaciaMemoria();
+        Log::error("buscando informacion de sensores de IMEI:".$imei);
         Log::error("obteniendo sensores");
         $shmid    = MemVar::OpenToRead('sensores.dat');
         if($shmid=='0'){
