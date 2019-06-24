@@ -380,7 +380,7 @@ class PuertoController extends BaseController
                 //Log::info(print_r($posicion,true));
                 if(isset($posicion)){
                     //inserto alarma de panico!!
-                    $estadoMovilidad = self::tratarAlarmasIO($ioData,$perField['PER'],$report['IMEI'],$posicion->posicion_id,
+                    $estadoMovilidad = self::sensorAnalisis($ioData,$perField['PER'],$report['IMEI'],$posicion->posicion_id,
                                             $movil,$fecha,$estadoMovilidad);
 
                     if( $estadoMovilidad==7 ){
@@ -429,9 +429,25 @@ class PuertoController extends BaseController
         }
         return $respuesta;
     }
-    public static function tratarAlarmasIO($ioData,$perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
+    public static function sensorAnalisis($ioData,$perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
+        //falta devolver el estado en  el que quedó el movil luego del proceso de analisis
+        $cambioBits = 0;
+        if($perField!='NULL'){ //analisis en bits sensores IOM y ALA
+            $cambioBits = self::analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
+            if($cambioBits==1){
+                updateSensores($imei,$movil_id,$perField,$io);
+            }
+        }else{ //analisis en bits IO
+            $cambioBits = self::analisisIO($ioData,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
+            if($cambioBits==1){
+                updateSensores($imei,$movil_id,"",$io);
+            }
+        }
+    }
+    public static function analisisIO($ioData,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
         $movilOldId = intval($movil->movilOldId);
         $movil_id   = intval($movil->movil_id);
+        $rta        = 0;
         //si no tiene posicion_id y es una alarma de panico , informar mail?¡
         if($ioData[0]=="I00"){//ingreso de alarma de panico bit en 0
             $logcadena = "Panico presionado Equipo:".$imei." - Movil:".$movilOldId."\r\n";
@@ -462,8 +478,9 @@ class PuertoController extends BaseController
             $tipo_alarma_id=49;
             $estado_movil_id=14;
         }
-        if($sensorEstado){
+        if($sensorEstado){//tiene datos en la MC de sensores?
             if($io!=$sensorEstado->io){ //evaluo cambio de bits de sensor IO
+                $rta=1;
                DB::beginTransaction();
                 try {
                     EstadosSensores::where('imei', '=', $imei)->update(array('io' => $io));
@@ -475,12 +492,8 @@ class PuertoController extends BaseController
                     HelpMen::report($movil->equipo_id,$logcadena);
                 }
             }
-        }else{    //no se encontró el imei en la tabla de sensores,inserto e informo alarmas 
-            if($perField!='NULL'){
-                Log::info("::::::::::entrando a Tratar alarmas IO pero en parte de IOM Va a ALMACENAR EN LA DDBB::::::::::::");
-                $arrIOM     = explode(',',$perField);
-                $perField   = ($arrIOM[0]=='IOM')?$arrIOM[1]:'NULL';
-            }
+        }else{ // doy de alta el registro en la DDBB y recargo MC
+            $rta=0;
             DB::beginTransaction();
             try {
                 EstadosSensores::create(['imei'=>$imei,'movil_id'=>$movil_id,'iom'=>$perField,'io'=>$io]);
@@ -490,11 +503,37 @@ class PuertoController extends BaseController
                 DB::rollBack();
                 $logcadena = "Error al tratar alarmas IO..".$ex."\r\n";
                 HelpMen::report($movil->equipo_id,$logcadena);
-            }
+            } 
+
         }
-        return $estadoMovilidad;
-        /*cambios de bateria*/
-        //Log::info(print_r($sensorEstado,true));
+        return $rta;
+    }
+    public static function analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
+        $arrIOM     = explode(',',$perField);
+        if($perField!='NULL' && $arrIOM[0]=='IOM'){
+                Log::info("::::::::::entrando a Tratar alarmas IO pero en parte de IOM Va a ALMACENAR EN LA DDBB::::::::::::");
+                $perField   = $arrIOM[1];
+                Log::info("el IOM tiene:::".$perField);
+
+        }
+            
+    }
+    public static function updateSensores($imei,$movil_id,$perField,$io){
+        DB::beginTransaction();
+        try {
+            if($perField!=""){
+                EstadosSensores::where('imei', '=', $imei)->update(array('iom' => $iperField));
+            }else{
+                EstadosSensores::where('imei', '=', $imei)->update(array('io' => $io));
+            }
+            self::persistSensor($ioData,$imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id);
+            DB::commit();
+        }catch (\Exception $ex) {
+            DB::rollBack();
+            $logcadena = "Error al tratar alarmas IO..".$ex."\r\n";
+            HelpMen::report($movil->equipo_id,$logcadena);
+        }
+        
     }
     public static function persistSensor($ioData,$imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id){
         $movilOldId = intval($movil->movilOldId);
@@ -515,6 +554,75 @@ class PuertoController extends BaseController
             HelpMen::report($movil->equipo_id,$logcadena);
         }
     }
+    public static function tratarAlarmasIO($ioData,$perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
+      /*  $movilOldId = intval($movil->movilOldId);
+        $movil_id   = intval($movil->movil_id);
+        //si no tiene posicion_id y es una alarma de panico , informar mail?¡
+        if($ioData[0]=="I00"){//ingreso de alarma de panico bit en 0
+            $logcadena = "Panico presionado Equipo:".$imei." - Movil:".$movilOldId."\r\n";
+            HelpMen::report($movil->equipo_id,$logcadena);
+            DB::beginTransaction();
+            try {
+                $alarmaPanico   = Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,'tipo_alarma_id'=>1,'fecha_alarma'=>$fecha,'falsa'=>0]);
+                $alarmaPanico->save();
+                DB::commit();
+                }catch (\Exception $ex) {
+                    DB::rollBack();
+                    $logcadena = "Error al tratar alarmas IO..".$ex;
+                    HelpMen::report($movil->equipo_id,$logcadena);
+                }
+        }
+        /*cambios de estado IO alarmas de bateria/
+        $arrPeriferico  = $ioData[1];
+        $io             = str_replace("I", "",$ioData[1] );
+        $sensorEstado   = self::getSensores($imei);
+        if($io=='10'){ 
+            $logcadena = "Movil: ".$imei." - Equipo: ".$movil->equipo_id." - funcionando con bateria auxiliar\r\n";
+            HelpMen::report($movil->equipo_id,$logcadena);
+            $tipo_alarma_id=50;
+            $estado_movil_id=13;
+            $estadoMovilidad=$estado_movil_id;
+        }
+        if($io=='11'){//alimentacion ppal 
+            $tipo_alarma_id=49;
+            $estado_movil_id=14;
+        }
+        if($sensorEstado){
+            if($io!=$sensorEstado->io){ //evaluo cambio de bits de sensor IO
+               DB::beginTransaction();
+                try {
+                    EstadosSensores::where('imei', '=', $imei)->update(array('io' => $io));
+                    self::persistSensor($ioData,$imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id);
+                    DB::commit();
+                }catch (\Exception $ex) {
+                    DB::rollBack();
+                    $logcadena = "Error al tratar alarmas IO..".$ex."\r\n";
+                    HelpMen::report($movil->equipo_id,$logcadena);
+                }
+            }
+        }
+        else{    //no se encontró el imei en la tabla de sensores,inserto e informo alarmas 
+            if($perField!='NULL'){
+                Log::info("::::::::::entrando a Tratar alarmas IO pero en parte de IOM Va a ALMACENAR EN LA DDBB::::::::::::");
+                $arrIOM     = explode(',',$perField);
+                $perField   = ($arrIOM[0]=='IOM')?$arrIOM[1]:'NULL';
+            }
+            DB::beginTransaction();
+            try {
+                EstadosSensores::create(['imei'=>$imei,'movil_id'=>$movil_id,'iom'=>$perField,'io'=>$io]);
+                self::persistSensor($ioData,$imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id);
+                DB::commit();
+            }catch (\Exception $ex) {
+                DB::rollBack();
+                $logcadena = "Error al tratar alarmas IO..".$ex."\r\n";
+                HelpMen::report($movil->equipo_id,$logcadena);
+            }
+        }*/
+        //return $estadoMovilidad;
+        /*cambios de bateria*/
+        //Log::info(print_r($sensorEstado,true));
+    }
+    
     public static function findAndStoreAlarm($report,$posicionID){
         $alaField   = self::validateIndexCadena("ALA",$report);
         $perField   = self::validateIndexCadena("PER",$report);
