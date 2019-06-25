@@ -518,19 +518,19 @@ class PuertoController extends BaseController
                 $largor          = count($arrIOM);
                 Log::error("el LARGOR:".$largor . "  per field:".$perField);
 
-                if($largor==5 && $arrIOM[5]=="P"){
+                if($largor==6 && $arrIOM[5]=="P"){
                    Log::error("INFORMAR ALARMA DE PANICO");
                 }
-                if($largor==6 && $arrIOM[5]=="ALA"){
+                if($largor==7 && $arrIOM[5]=="ALA"){
                     Log::error("ANALIZAR BIT QUE GENERÖ ALARMA");
                 }
-                if($largor==7){
+                if($largor==8){
                     if( $arrIOM[5]=="P"){
                         Log::error("INFORMAR ALARMA DE PANICO y LUEGO BIT ALARMA");
                     }
                     Log::error("ANALIZAR POR DEFECTO BIT ALARMA en pos 7");
                 }    
-                if($largor==8){
+                if($largor==9){
                     if($arrIOM[6]=="P"){
                         Log::error("INFORMAR ALARMA DE PANICO en pos 6 y LUEGO BIT ALARMA");
                     }
