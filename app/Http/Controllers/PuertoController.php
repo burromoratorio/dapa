@@ -435,12 +435,12 @@ class PuertoController extends BaseController
         if($perField!='NULL'){ //analisis en bits sensores IOM y ALA
             $cambioBits = self::analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
             if($cambioBits==1){
-                updateSensores($imei,$movil_id,$perField,$io);
+                self::updateSensores($imei,$movil_id,$perField,$io);
             }
         }else{ //analisis en bits IO
             $cambioBits = self::analisisIO($ioData,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
             if($cambioBits==1){
-                updateSensores($imei,$movil_id,"",$io);
+                self::updateSensores($imei,$movil_id,"",$io);
             }
         }
     }
@@ -512,8 +512,13 @@ class PuertoController extends BaseController
         $arrIOM     = explode(',',$perField);
         if($perField!='NULL' && $arrIOM[0]=='IOM'){
                 Log::info("::::::::::entrando a Tratar alarmas IO pero en parte de IOM Va a ALMACENAR EN LA DDBB::::::::::::");
-                $perField   = $arrIOM[1];
-                Log::info("el IOM tiene:::".$perField);
+                $perFieldInput   = $arrIOM[1];
+                $perFieldOutput  = $arrIOM[2];
+                $perFieldWorkMode= $arrIOM[3];
+                if($arrIOM[5]!="NB" && $arrIOM[5]!="P"){ //estos campos pueden estar o no... busco el ALA
+
+                }
+                Log::info("el IOM tiene:::".$perFieldInput);
 
         }
             
