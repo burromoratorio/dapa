@@ -515,12 +515,35 @@ class PuertoController extends BaseController
                 $perFieldInput   = $arrIOM[1];
                 $perFieldOutput  = $arrIOM[2];
                 $perFieldWorkMode= $arrIOM[3];
-                if( isset($arrIOM[5]) ){ //estos campos pueden estar o no... busco el ALA
-                    if( $arrIOM[5]!="NB" && $arrIOM[5]!="P" ){
-                        Log::info( "en el indice 5 hay:".$arrIOM[5] );
+                $largor          = count($arrIOM);
+                if($largor==5 && $arrIOM[5]=="P"){
+                   Log::error("INFORMAR ALARMA DE PANICO");
+                }
+                if($largor==6 && $arrIOM[5]=="ALA"){
+                    Log::error("ANALIZAR BIT QUE GENERÖ ALARMA");
+                }
+                if($largor==7){
+                    if( $arrIOM[5]=="P"){
+                        Log::error("INFORMAR ALARMA DE PANICO y LUEGO BIT ALARMA");
                     }
+                    Log::error("ANALIZAR POR DEFECTO BIT ALARMA en pos 7");
+                }    
+                if($largor==8){
+                    if($arrIOM[6]=="P"){
+                        Log::error("INFORMAR ALARMA DE PANICO en pos 6 y LUEGO BIT ALARMA");
+                    }
+                    Log::error("ANALIZAR POR DEFECTO BIT ALARMA EN pos 8");
                 }
                 Log::info("el IOM tiene:::".$perFieldInput);
+                /*1)PER,IOM,01101101110010,000000XXXX,2,1,NB,P,ALA,XX0XXXXXXXXXXX
+
+                2)PER,IOM,01100101110010,101000XXXX,2,1,NB,ALA,XXXX0XXXXXXXXX
+
+                2b)PER,IOM,01100101110010,101000XXXX,2,1,P,ALA,XXXX0XXXXXXXXX
+
+                3)PER,IOM,01100101110010,101000XXXX,2,1,ALA,XXXX0XXXXXXXXX
+
+                4)PER,IOM,01101101110010,000000XXXX,1,1*/
 
         }
             
