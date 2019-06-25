@@ -431,24 +431,25 @@ class PuertoController extends BaseController
     }
     public static function sensorAnalisis($ioData,$perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
         //falta devolver el estado en  el que quedó el movil luego del proceso de analisis
-        $cambioBits = 0;
-        $io             = str_replace("I", "",$ioData[1] );
+        //$estadoMovilidad y $tipo_alarma_id necesito devolver desde los metodos de analisis para el update
+        $cambioBits = array("rta"=>0,"estado_movil_id"=>$estadoMovilidad,"tipo_alarma_id"=>0);
+        $io         = str_replace("I", "",$ioData[1] );
         if($perField!='NULL'){ //analisis en bits sensores IOM y ALA
             $cambioBits = self::analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
-            if($cambioBits==1){
-                self::updateSensores($imei,intval($movil->movil_id),$perField,$io);
+            if($cambioBits["rta"]==1){
+                self::updateSensores($imei,$movil,$perField,$io,$cambioBits["tipo_alarma_id"],$cambioBits["estado_movil_id"]);
             }
         }else{ //analisis en bits IO
             $cambioBits = self::analisisIO($ioData,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
-            if($cambioBits==1){
-                self::updateSensores($imei,intval($movil->movil_id),"",$io);
+            if($cambioBits["rta"]==1){
+                self::updateSensores($imei,$movil,"",$io,$cambioBits["tipo_alarma_id"],$cambioBits["estado_movil_id"]);
             }
         }
     }
     public static function analisisIO($ioData,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
         $movilOldId = intval($movil->movilOldId);
         $movil_id   = intval($movil->movil_id);
-        $rta        = 0;
+        $rta        = array("rta"=>0,"estado_movil_id"=>$estadoMovilidad,"tipo_alarma_id"=>0);
         //si no tiene posicion_id y es una alarma de panico , informar mail?¡
         if($ioData[0]=="I00"){//ingreso de alarma de panico bit en 0
             $logcadena = "Panico presionado Equipo:".$imei." - Movil:".$movilOldId."\r\n";
@@ -481,10 +482,12 @@ class PuertoController extends BaseController
         }
         if($sensorEstado){//tiene datos en la MC de sensores?
             if($io!=$sensorEstado->io){ //evaluo cambio de bits de sensor IO
-                $rta=1;
+                $rta["rta"]=1;
                DB::beginTransaction();
                 try {
                     EstadosSensores::where('imei', '=', $imei)->update(array('io' => $io));
+                    $rta["estado_movil_id"]=$estado_movil_id
+                    $rta["tipo_alarma_id"] =$tipo_alarma_id;
                     self::persistSensor($ioData,$imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id);
                     DB::commit();
                 }catch (\Exception $ex) {
@@ -494,7 +497,9 @@ class PuertoController extends BaseController
                 }
             }
         }else{ // doy de alta el registro en la DDBB y recargo MC
-            $rta=0;
+            $rta["rta"]=0;
+            $rta["estado_movil_id"]=$estado_movil_id
+            $rta["tipo_alarma_id"] =$tipo_alarma_id;
             DB::beginTransaction();
             try {
                 EstadosSensores::create(['imei'=>$imei,'movil_id'=>$movil_id,'iom'=>$perField,'io'=>$io]);
@@ -556,7 +561,7 @@ class PuertoController extends BaseController
         }
             
     }
-    public static function updateSensores($imei,$movil_id,$perField,$io){
+    public static function updateSensores($imei,$movil,$perField,$io,$tipo_alarma_id,$estado_movil_id){
         DB::beginTransaction();
         try {
             if($perField!=""){
