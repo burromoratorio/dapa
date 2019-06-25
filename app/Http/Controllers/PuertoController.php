@@ -435,12 +435,12 @@ class PuertoController extends BaseController
         if($perField!='NULL'){ //analisis en bits sensores IOM y ALA
             $cambioBits = self::analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
             if($cambioBits==1){
-                self::updateSensores($imei,$movil_id,$perField,$io);
+                self::updateSensores($imei,intval($movil->movil_id),$perField,$io);
             }
         }else{ //analisis en bits IO
             $cambioBits = self::analisisIO($ioData,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
             if($cambioBits==1){
-                self::updateSensores($imei,$movil_id,"",$io);
+                self::updateSensores($imei,intval($movil->movil_id),"",$io);
             }
         }
     }
