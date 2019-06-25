@@ -516,6 +516,8 @@ class PuertoController extends BaseController
                 $perFieldOutput  = $arrIOM[2];
                 $perFieldWorkMode= $arrIOM[3];
                 $largor          = count($arrIOM);
+                Log::error("el LARGOR:".$largor . "  per field:".$perField);
+
                 if($largor==5 && $arrIOM[5]=="P"){
                    Log::error("INFORMAR ALARMA DE PANICO");
                 }
