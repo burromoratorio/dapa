@@ -486,7 +486,7 @@ class PuertoController extends BaseController
                DB::beginTransaction();
                 try {
                     EstadosSensores::where('imei', '=', $imei)->update(array('io' => $io));
-                    $rta["estado_movil_id"]=$estado_movil_id
+                    $rta["estado_movil_id"]=$estado_movil_id;
                     $rta["tipo_alarma_id"] =$tipo_alarma_id;
                     self::persistSensor($ioData,$imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id);
                     DB::commit();
@@ -498,7 +498,7 @@ class PuertoController extends BaseController
             }
         }else{ // doy de alta el registro en la DDBB y recargo MC
             $rta["rta"]=0;
-            $rta["estado_movil_id"]=$estado_movil_id
+            $rta["estado_movil_id"]=$estado_movil_id;
             $rta["tipo_alarma_id"] =$tipo_alarma_id;
             DB::beginTransaction();
             try {
