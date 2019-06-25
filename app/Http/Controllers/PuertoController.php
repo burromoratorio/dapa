@@ -432,6 +432,7 @@ class PuertoController extends BaseController
     public static function sensorAnalisis($ioData,$perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
         //falta devolver el estado en  el que quedó el movil luego del proceso de analisis
         $cambioBits = 0;
+        $io             = str_replace("I", "",$ioData[1] );
         if($perField!='NULL'){ //analisis en bits sensores IOM y ALA
             $cambioBits = self::analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
             if($cambioBits==1){
