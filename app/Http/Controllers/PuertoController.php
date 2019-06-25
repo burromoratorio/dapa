@@ -515,8 +515,10 @@ class PuertoController extends BaseController
                 $perFieldInput   = $arrIOM[1];
                 $perFieldOutput  = $arrIOM[2];
                 $perFieldWorkMode= $arrIOM[3];
-                if($arrIOM[5]!="NB" && $arrIOM[5]!="P"){ //estos campos pueden estar o no... busco el ALA
-
+                if( isset($arrIOM[5]) ){ //estos campos pueden estar o no... busco el ALA
+                    if( $arrIOM[5]!="NB" && $arrIOM[5]!="P" ){
+                        Log::info( "en el indice 5 hay:".$arrIOM[5] );
+                    }
                 }
                 Log::info("el IOM tiene:::".$perFieldInput);
 
