@@ -531,7 +531,7 @@ I6: Compuerta=>0 = CERRADA; 1 = ABIERTA
             $perFieldOutput  = $arrIOM[2];
             $perFieldWorkMode= $arrIOM[3];
             $largor          = count($arrIOM);
-            if($sensorEstado->iom=="NULL"){
+            if($sensorEstado->iom)){
                 EstadosSensores::where('imei', '=', $imei)->update(array('iom' => $perFieldInput));
             }
             Log::error("el LARGOR:".$largor . "  per field:".$perField);
