@@ -518,7 +518,7 @@ class PuertoController extends BaseController
     public static function analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estado_movil_id){
         $arrIOM      = explode(',',$perField);
         $sensorEstado= self::getSensores($imei); 
-        $rta         = array("rta"=>0,"estado_movil_id"=>$estadoMovilidad,"tipo_alarma_id"=>7); //alarma_id=7 (Normal)
+        $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>7); //alarma_id=7 (Normal)
         Log::info(print_r($sensorEstado,true));
         if($perField!='NULL' && $arrIOM[0]=='IOM'){
             Log::info("::::::::::entrando a Tratar alarmas IOM pero en parte de IOM Va a ALMACENAR EN LA DDBB::::::::::::");
