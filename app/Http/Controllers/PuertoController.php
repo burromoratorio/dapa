@@ -437,7 +437,7 @@ class PuertoController extends BaseController
         if($perField!='NULL'){ //analisis en bits sensores IOM y ALA
             $cambioBits = self::analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
             if($cambioBits["rta"]==1){
-                self::updateSensores($imei,$movil,$perField,$io,$cambioBits["tipo_alarma_id"],$cambioBits["estado_movil_id"]);
+                //self::updateSensores($imei,$movil,$perField,$io,$cambioBits["tipo_alarma_id"],$cambioBits["estado_movil_id"]);
             }
         }else{ //analisis en bits IO
             $cambioBits = self::analisisIO($ioData,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
@@ -514,9 +514,20 @@ class PuertoController extends BaseController
         }
         return $rta;
     }
+/*1)PER,IOM,01101101110010,000000XXXX,2,1,NB,P,ALA,XX0XXXXXXXXXXX-->2)PER,IOM,01100101110010,101000XXXX,2,1,NB,ALA,XXXX0XXXXXXXXX
+2b)PER,IOM,01100101110010,101000XXXX,2,1,P,ALA,XXXX0XXXXXXXXX--->3)PER,IOM,01100101110010,101000XXXX,2,1,ALA,XXXX0XXXXXXXXX
+4)PER,IOM,01101101110010,000000XXXX,1,1*/
+/*I4: Desenganche=>0 = ENGANCHADO; 1 = DESENGANCHADO
+I5: Antisabotaje=>0 = VIOLACION; 1 = NORMAL
+I6: Compuerta=>0 = CERRADA; 1 = ABIERTA
+*/
     public static function analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
         $arrIOM      = explode(',',$perField);
         $sensorEstado= self::getSensores($imei); 
+        Log::info("$sensorEstado->iom:::".$sensorEstado->iom);
+        if($sensorEstado->iom){
+
+        }
         if($perField!='NULL' && $arrIOM[0]=='IOM'){
                 Log::info("::::::::::entrando a Tratar alarmas IO pero en parte de IOM Va a ALMACENAR EN LA DDBB::::::::::::");
                 $perFieldInput   = $arrIOM[1];
@@ -524,16 +535,11 @@ class PuertoController extends BaseController
                 $perFieldWorkMode= $arrIOM[3];
                 $largor          = count($arrIOM);
                 Log::error("el LARGOR:".$largor . "  per field:".$perField);
-                /*I4: Desenganche=>0 = ENGANCHADO; 1 = DESENGANCHADO
-                I5: Antisabotaje=>0 = VIOLACION; 1 = NORMAL
-                I6: Compuerta=>0 = CERRADA; 1 = ABIERTA
-                */
                 if($largor==6 && $arrIOM[5]=="P"){
                    Log::error("INFORMAR ALARMA DE PANICO");
                 }
                 if($largor==7 && $arrIOM[5]=="ALA"){
                     Log::error("ANALIZAR BIT QUE GENERÖ ALARMA::".$sensorEstado->iom);
-                    
                 }
                 if($largor==8){
                     if( $arrIOM[5]=="P"){
@@ -548,15 +554,7 @@ class PuertoController extends BaseController
                     Log::error("ANALIZAR POR DEFECTO BIT ALARMA EN pos 8::".$sensorEstado->iom);
                 }
                 //Log::info("el IOM tiene:::".$perFieldInput);
-                /*1)PER,IOM,01101101110010,000000XXXX,2,1,NB,P,ALA,XX0XXXXXXXXXXX
-
-                2)PER,IOM,01100101110010,101000XXXX,2,1,NB,ALA,XXXX0XXXXXXXXX
-
-                2b)PER,IOM,01100101110010,101000XXXX,2,1,P,ALA,XXXX0XXXXXXXXX
-
-                3)PER,IOM,01100101110010,101000XXXX,2,1,ALA,XXXX0XXXXXXXXX
-
-                4)PER,IOM,01101101110010,000000XXXX,1,1*/
+               
 
         }
             
