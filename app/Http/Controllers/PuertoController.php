@@ -544,7 +544,16 @@ I6: Compuerta=>0 = CERRADA; 1 = ABIERTA
                 }
             }else{
                 if($sensorEstado->iom){
-                    EstadosSensores::where('imei', '=', $imei)->update(array('iom' => $perFieldInput));
+                    DB::beginTransaction();
+                    try {
+                        EstadosSensores::where('imei', '=', $imei)->update(array('iom' => $perFieldInput));
+                        DB::commit();
+                    }catch (\Exception $ex) {
+                        DB::rollBack();
+                        $logcadena = "Error Update sensor IOM..de::".$imei."---".$ex."\r\n";
+                        HelpMen::report($movil->equipo_id,$logcadena);
+                    }
+                    self::startupSensores();
                 }
             }
             Log::error("el LARGOR:".$largor . "  per field:".$perField);
