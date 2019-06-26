@@ -592,11 +592,11 @@ class PuertoController extends BaseController
     public static function cambiosInputIOM($imei,$iomArr,$sensorEstado){
         if($sensorEstado && $sensorEstado->iom){
             $estadoArr = str_split($sensorEstado->iom);
-            if( $$estadoArr[3]==0 && $iomArr[3]==1 )Log::error("PASO DE ENGANCHADO A DESENGANCHADO");
-            if( $$estadoArr[3]==1 && $iomArr[3]==0 )Log::error("PASO DE DESENGANCHADO A ENGANCHADO");
+            if( $estadoArr[3]==0 && $iomArr[3]==1 )Log::error("PASO DE ENGANCHADO A DESENGANCHADO");
+            if( $estadoArr[3]==1 && $iomArr[3]==0 )Log::error("PASO DE DESENGANCHADO A ENGANCHADO");
             //compuerta
-            if( $$estadoArr[5]==0 && $iomArr[5]==1 )Log::error("COMPUERTA DE CERRADA A ABIERTA");
-            if( $$estadoArr[5]==1 && $iomArr[5]==0 )Log::error("COMPUERTA DE ABIERTA A CERRADA");
+            if( $estadoArr[5]==0 && $iomArr[5]==1 )Log::error("COMPUERTA DE CERRADA A ABIERTA");
+            if( $estadoArr[5]==1 && $iomArr[5]==0 )Log::error("COMPUERTA DE ABIERTA A CERRADA");
         }
         if($iomArr[0]==1)Log::error("PANICO");
         if($iomArr[4]==0)Log::error("ANTISABOTAJE ACTIVADO");
