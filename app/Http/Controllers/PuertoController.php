@@ -514,7 +514,6 @@ class PuertoController extends BaseController
         }
         return $rta;
     }
-/*I4: Desenganche=>0 = ENGANCHADO; 1 = DESENGANCHADO | I5: Antisabotaje=>0 = VIOLACION; 1 = NORMAL | I6: Compuerta=>0 = CERRADA; 1 = ABIERTA*/
     public static function analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estado_movil_id){
         $arrIOM      = explode(',',$perField);
         $sensorEstado= self::getSensores($imei); 
@@ -525,6 +524,7 @@ class PuertoController extends BaseController
             $perFieldInput   = $arrIOM[1];
             $perFieldOutput  = $arrIOM[2];
             $perFieldWorkMode= $arrIOM[3];
+/*****si $perFieldWorkMode= 0 =>RESET no informo alertas de nada solo actualizo estado de movil****/
              //se usa el campo input de la cadena salvo en estado de Panico "P" y "ALA"
             $iomArr = str_split($perFieldInput);
             $largor = count($arrIOM);
@@ -588,14 +588,20 @@ class PuertoController extends BaseController
         }
             
     }
+    /*I4: Desenganche=>0 = ENGANCHADO; 1 = DESENGANCHADO | I5: Antisabotaje=>0 = VIOLACION; 1 = NORMAL | I6: Compuerta=>0 = CERRADA; 1 = ABIERTA*/
     public static function cambiosInputIOM($imei,$iomArr,$sensorEstado){
         if($sensorEstado && $sensorEstado->iom){
-            Log::info("hay sensorEstado, debo comparar cambios de bits");
+            $estadoArr = str_split($sensorEstado->iom;
+            if( $$estadoArr[3]==0 && $iomArr[3]==1 )Log::error("PASO DE ENGANCHADO A DESENGANCHADO");
+            if( $$estadoArr[3]==1 && $iomArr[3]==0 )Log::error("PASO DE DESENGANCHADO A ENGANCHADO");
+            //compuerta
+            if( $$estadoArr[5]==0 && $iomArr[5]==1 )Log::error("COMPUERTA DE CERRADA A ABIERTA");
+            if( $$estadoArr[5]==1 && $iomArr[5]==0 )Log::error("COMPUERTA DE ABIERTA A CERRADA");
         }
         if($iomArr[0]==1)Log::error("PANICO");
-        if($iomArr[3]==1)Log::error("DESENGANCHADO");
         if($iomArr[4]==0)Log::error("ANTISABOTAJE ACTIVADO");
-        if($iomArr[5]==1)Log::error("COMPUERTA ABIERTA");
+        //if($iomArr[3]==1)Log::error("DESENGANCHADO");
+        //if($iomArr[5]==1)Log::error("COMPUERTA ABIERTA");
     }
     public static function updateSensores($imei,$movil,$perField,$io,$tipo_alarma_id,$estado_movil_id){
         DB::beginTransaction();
@@ -629,7 +635,7 @@ class PuertoController extends BaseController
             self::startupSensores();
         }catch (\Exception $ex) {
             DB::rollBack();
-            $logcadena = "Error al tratar alarmas IO persistSensor \r\n";
+            $logcadena = "Error al tratar alarmas persistSensor \r\n";
             HelpMen::report($movil->equipo_id,$logcadena);
         }
     }
