@@ -432,7 +432,7 @@ class PuertoController extends BaseController
     public static function sensorAnalisis($ioData,$perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
         //falta devolver el estado en  el que quedó el movil luego del proceso de analisis
         //$estadoMovilidad y $tipo_alarma_id necesito devolver desde los metodos de analisis para el update
-        $cambioBits = array("rta"=>0,"estado_movil_id"=>$estadoMovilidad,"tipo_alarma_id"=>0);
+        $cambioBits = array("rta"=>0,"estado_movil_id"=>$estadoMovilidad,"tipo_alarma_id"=>7); //alarma_id=7 (Normal)
         $io         = str_replace("I", "",$ioData[1] );
         if($perField!='NULL'){ //analisis en bits sensores IOM y ALA
             $cambioBits = self::analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
@@ -449,7 +449,7 @@ class PuertoController extends BaseController
     public static function analisisIO($ioData,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
         $movilOldId = intval($movil->movilOldId);
         $movil_id   = intval($movil->movil_id);
-        $rta        = array("rta"=>0,"estado_movil_id"=>$estadoMovilidad,"tipo_alarma_id"=>0);
+        $rta        = array("rta"=>0,"estado_movil_id"=>$estadoMovilidad,"tipo_alarma_id"=>7); //alarma_id=7 (Normal)
         //si no tiene posicion_id y es una alarma de panico , informar mail?¡
         if($ioData[0]=="I00"){//ingreso de alarma de panico bit en 0
             $logcadena = "Panico presionado Equipo:".$imei." - Movil:".$movilOldId."\r\n";
@@ -488,7 +488,7 @@ class PuertoController extends BaseController
                     EstadosSensores::where('imei', '=', $imei)->update(array('io' => $io));
                     $rta["estado_movil_id"]=$estado_movil_id;
                     $rta["tipo_alarma_id"] =$tipo_alarma_id;
-                    self::persistSensor($ioData,$imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id);
+                    self::persistSensor($imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id);
                     DB::commit();
                 }catch (\Exception $ex) {
                     DB::rollBack();
@@ -503,7 +503,7 @@ class PuertoController extends BaseController
             DB::beginTransaction();
             try {
                 EstadosSensores::create(['imei'=>$imei,'movil_id'=>$movil_id,'iom'=>$perField,'io'=>$io]);
-                self::persistSensor($ioData,$imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id);
+                self::persistSensor($imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id);
                 DB::commit();
             }catch (\Exception $ex) {
                 DB::rollBack();
@@ -514,28 +514,57 @@ class PuertoController extends BaseController
         }
         return $rta;
     }
-/*1)PER,IOM,01101101110010,000000XXXX,2,1,NB,P,ALA,XX0XXXXXXXXXXX-->2)PER,IOM,01100101110010,101000XXXX,2,1,NB,ALA,XXXX0XXXXXXXXX
-2b)PER,IOM,01100101110010,101000XXXX,2,1,P,ALA,XXXX0XXXXXXXXX--->3)PER,IOM,01100101110010,101000XXXX,2,1,ALA,XXXX0XXXXXXXXX
-4)PER,IOM,01101101110010,000000XXXX,1,1*/
-/*I4: Desenganche=>0 = ENGANCHADO; 1 = DESENGANCHADO
-I5: Antisabotaje=>0 = VIOLACION; 1 = NORMAL
-I6: Compuerta=>0 = CERRADA; 1 = ABIERTA
-*/
-    public static function analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
+/*I4: Desenganche=>0 = ENGANCHADO; 1 = DESENGANCHADO | I5: Antisabotaje=>0 = VIOLACION; 1 = NORMAL | I6: Compuerta=>0 = CERRADA; 1 = ABIERTA*/
+    public static function analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estado_movil_id){
         $arrIOM      = explode(',',$perField);
         $sensorEstado= self::getSensores($imei); 
+        $rta         = array("rta"=>0,"estado_movil_id"=>$estadoMovilidad,"tipo_alarma_id"=>7); //alarma_id=7 (Normal)
         Log::info(print_r($sensorEstado,true));
         if($perField!='NULL' && $arrIOM[0]=='IOM'){
             Log::info("::::::::::entrando a Tratar alarmas IOM pero en parte de IOM Va a ALMACENAR EN LA DDBB::::::::::::");
             $perFieldInput   = $arrIOM[1];
             $perFieldOutput  = $arrIOM[2];
             $perFieldWorkMode= $arrIOM[3];
-            $largor          = count($arrIOM);
+             //se usa el campo input de la cadena salvo en estado de Panico "P" y "ALA"
+            $iomArr = str_split($perFieldInput);
+            $largor = count($arrIOM);
+            Log::error("el LARGOR:".$largor . "  per field:".$perField);
+            if($largor==6 && $arrIOM[5]=="P"){
+                $rta["estado_movil_id"]= 10;//estado "en alarma"
+                $rta["tipo_alarma_id"] = 1;//panico
+                Log::error("INFORMAR ALARMA DE PANICO");
+            }
+            if($largor==7 && $arrIOM[5]=="ALA"){
+                //IOM,01100101110010,101000XXXX,2,1,ALA,XXXX0XXXXXXXXX
+                $rta["estado_movil_id"]= 10;//estado "en alarma"
+                Log::error("ANALIZAR BIT QUE GENERÖ ALARMA::".$sensorEstado->iom);
+                $iomArr = str_split($arrIOM[6]);
+            }
+            if($largor==8){
+                //IOM,01100101110010,101000XXXX,2,1,NB,ALA,XXXX0XXXXXXXXX ó IOM,01100101110010,101000XXXX,2,1,P,ALA,XXXX0XXXXXXXXX
+                if( $arrIOM[5]=="P"){
+                    $rta["estado_movil_id"]= 10;//estado "en alarma"
+                    $rta["tipo_alarma_id"] = 1;//panico
+                    Log::error("INFORMAR ALARMA DE PANICO y LUEGO BIT ALARMA");
+                }
+                Log::error("ANALIZAR POR DEFECTO BIT ALARMA en pos 7::".$sensorEstado->iom);
+            }    
+            if($largor==9){
+                //IOM,01101101110010,000000XXXX,2,1,NB,P,ALA,XX0XXXXXXXXXXX
+                if($arrIOM[6]=="P"){
+                    $rta["estado_movil_id"]= 10;//estado "en alarma"
+                    $rta["tipo_alarma_id"] = 1;//panico
+                    Log::error("INFORMAR ALARMA DE PANICO en pos 6 y LUEGO BIT ALARMA");
+                }
+                Log::error("ANALIZAR POR DEFECTO BIT ALARMA EN pos 8::".$sensorEstado->iom);
+            }
+            //luego del analisis actualizo los datos de sensores, primero analiso e informo alarmas
+            $id_tipo_alarma = self::cambiosInputIOM($imei,$iomArr,$sensorEstado);
             if(!$sensorEstado){
                 DB::beginTransaction();
                 try {
                     EstadosSensores::create(['imei'=>$imei,'movil_id'=>intval($movil->movil_id),'iom'=>$perFieldInput]);
-                    self::persistSensor($ioData,$imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id);
+                    self::persistSensor($imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id);
                     DB::commit();
                 }catch (\Exception $ex) {
                     DB::rollBack();
@@ -556,30 +585,17 @@ I6: Compuerta=>0 = CERRADA; 1 = ABIERTA
                     self::startupSensores();
                 }
             }
-            Log::error("el LARGOR:".$largor . "  per field:".$perField);
-            if($largor==6 && $arrIOM[5]=="P"){
-               Log::error("INFORMAR ALARMA DE PANICO");
-            }
-            if($largor==7 && $arrIOM[5]=="ALA"){
-                Log::error("ANALIZAR BIT QUE GENERÖ ALARMA::".$sensorEstado->iom);
-            }
-            if($largor==8){
-                if( $arrIOM[5]=="P"){
-                    Log::error("INFORMAR ALARMA DE PANICO y LUEGO BIT ALARMA");
-                }
-                Log::error("ANALIZAR POR DEFECTO BIT ALARMA en pos 7::".$sensorEstado->iom);
-            }    
-            if($largor==9){
-                if($arrIOM[6]=="P"){
-                    Log::error("INFORMAR ALARMA DE PANICO en pos 6 y LUEGO BIT ALARMA");
-                }
-                Log::error("ANALIZAR POR DEFECTO BIT ALARMA EN pos 8::".$sensorEstado->iom);
-            }
-            //Log::info("el IOM tiene:::".$perFieldInput);
-               
-
         }
             
+    }
+    public static function cambiosInputIOM($imei,$iomArr,$sensorEstado){
+        if($sensorEstado && $sensorEstado->iom){
+            Log::info("hay sensorEstado, debo comparar cambios de bits");
+        }
+        if($iomArr[0]==1){Log::error("PANICO")}
+        if($iomArr[3]==1){Log::error("DESENGANCHADO")}
+        if($iomArr[4]==0){Log::error("ANTISABOTAJE ACTIVADO")}
+        if($iomArr[5]==1){Log::error("COMPUERTA ABIERTA")}
     }
     public static function updateSensores($imei,$movil,$perField,$io,$tipo_alarma_id,$estado_movil_id){
         DB::beginTransaction();
@@ -589,7 +605,7 @@ I6: Compuerta=>0 = CERRADA; 1 = ABIERTA
             }else{
                 EstadosSensores::where('imei', '=', $imei)->update(array('io' => $io));
             }
-            self::persistSensor($ioData,$imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id);
+            self::persistSensor($imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id);
             DB::commit();
         }catch (\Exception $ex) {
             DB::rollBack();
@@ -598,7 +614,7 @@ I6: Compuerta=>0 = CERRADA; 1 = ABIERTA
         }
         
     }
-    public static function persistSensor($ioData,$imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id){
+    public static function persistSensor($imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id){
         $movilOldId = intval($movil->movilOldId);
         $movil_id   = intval($movil->movil_id);
         DB::beginTransaction();
