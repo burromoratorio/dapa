@@ -523,37 +523,37 @@ I6: Compuerta=>0 = CERRADA; 1 = ABIERTA
 */
     public static function analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
         $arrIOM      = explode(',',$perField);
-        $sensorEstado= self::getSensores($imei); 
-        Log::info("$sensorEstado->iom:::".$sensorEstado->iom);
-        if($sensorEstado->iom){
-
-        }
+        $sensorEstado= self::getSensores(1); 
+        Log::info(print_r($sensorEstado,true));
         if($perField!='NULL' && $arrIOM[0]=='IOM'){
-                Log::info("::::::::::entrando a Tratar alarmas IO pero en parte de IOM Va a ALMACENAR EN LA DDBB::::::::::::");
-                $perFieldInput   = $arrIOM[1];
-                $perFieldOutput  = $arrIOM[2];
-                $perFieldWorkMode= $arrIOM[3];
-                $largor          = count($arrIOM);
-                Log::error("el LARGOR:".$largor . "  per field:".$perField);
-                if($largor==6 && $arrIOM[5]=="P"){
-                   Log::error("INFORMAR ALARMA DE PANICO");
+            Log::info("::::::::::entrando a Tratar alarmas IOM pero en parte de IOM Va a ALMACENAR EN LA DDBB::::::::::::");
+            $perFieldInput   = $arrIOM[1];
+            $perFieldOutput  = $arrIOM[2];
+            $perFieldWorkMode= $arrIOM[3];
+            $largor          = count($arrIOM);
+            if($sensorEstado->iom=="NULL"){
+                EstadosSensores::where('imei', '=', $imei)->update(array('iom' => $perFieldInput));
+            }
+            Log::error("el LARGOR:".$largor . "  per field:".$perField);
+            if($largor==6 && $arrIOM[5]=="P"){
+               Log::error("INFORMAR ALARMA DE PANICO");
+            }
+            if($largor==7 && $arrIOM[5]=="ALA"){
+                Log::error("ANALIZAR BIT QUE GENERÖ ALARMA::".$sensorEstado->iom);
+            }
+            if($largor==8){
+                if( $arrIOM[5]=="P"){
+                    Log::error("INFORMAR ALARMA DE PANICO y LUEGO BIT ALARMA");
                 }
-                if($largor==7 && $arrIOM[5]=="ALA"){
-                    Log::error("ANALIZAR BIT QUE GENERÖ ALARMA::".$sensorEstado->iom);
+                Log::error("ANALIZAR POR DEFECTO BIT ALARMA en pos 7::".$sensorEstado->iom);
+            }    
+            if($largor==9){
+                if($arrIOM[6]=="P"){
+                    Log::error("INFORMAR ALARMA DE PANICO en pos 6 y LUEGO BIT ALARMA");
                 }
-                if($largor==8){
-                    if( $arrIOM[5]=="P"){
-                        Log::error("INFORMAR ALARMA DE PANICO y LUEGO BIT ALARMA");
-                    }
-                    Log::error("ANALIZAR POR DEFECTO BIT ALARMA en pos 7::".$sensorEstado->iom);
-                }    
-                if($largor==9){
-                    if($arrIOM[6]=="P"){
-                        Log::error("INFORMAR ALARMA DE PANICO en pos 6 y LUEGO BIT ALARMA");
-                    }
-                    Log::error("ANALIZAR POR DEFECTO BIT ALARMA EN pos 8::".$sensorEstado->iom);
-                }
-                //Log::info("el IOM tiene:::".$perFieldInput);
+                Log::error("ANALIZAR POR DEFECTO BIT ALARMA EN pos 8::".$sensorEstado->iom);
+            }
+            //Log::info("el IOM tiene:::".$perFieldInput);
                
 
         }
