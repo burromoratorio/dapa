@@ -523,7 +523,7 @@ I6: Compuerta=>0 = CERRADA; 1 = ABIERTA
 */
     public static function analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
         $arrIOM      = explode(',',$perField);
-        $sensorEstado= self::getSensores(1); 
+        $sensorEstado= self::getSensores($imei); 
         Log::info(print_r($sensorEstado,true));
         if($perField!='NULL' && $arrIOM[0]=='IOM'){
             Log::info("::::::::::entrando a Tratar alarmas IOM pero en parte de IOM Va a ALMACENAR EN LA DDBB::::::::::::");
