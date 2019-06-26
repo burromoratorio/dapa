@@ -591,7 +591,7 @@ class PuertoController extends BaseController
     /*I4: Desenganche=>0 = ENGANCHADO; 1 = DESENGANCHADO | I5: Antisabotaje=>0 = VIOLACION; 1 = NORMAL | I6: Compuerta=>0 = CERRADA; 1 = ABIERTA*/
     public static function cambiosInputIOM($imei,$iomArr,$sensorEstado){
         if($sensorEstado && $sensorEstado->iom){
-            $estadoArr = str_split($sensorEstado->iom;
+            $estadoArr = str_split($sensorEstado->iom);
             if( $$estadoArr[3]==0 && $iomArr[3]==1 )Log::error("PASO DE ENGANCHADO A DESENGANCHADO");
             if( $$estadoArr[3]==1 && $iomArr[3]==0 )Log::error("PASO DE DESENGANCHADO A ENGANCHADO");
             //compuerta
