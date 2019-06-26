@@ -531,8 +531,21 @@ I6: Compuerta=>0 = CERRADA; 1 = ABIERTA
             $perFieldOutput  = $arrIOM[2];
             $perFieldWorkMode= $arrIOM[3];
             $largor          = count($arrIOM);
-            if($sensorEstado->iom){
-                EstadosSensores::where('imei', '=', $imei)->update(array('iom' => $perFieldInput));
+            if(!$sensorEstado){
+                DB::beginTransaction();
+                try {
+                    EstadosSensores::create(['imei'=>$imei,'movil_id'=>intval($movil->movil_id),'iom'=>$perFieldInput]);
+                    self::persistSensor($ioData,$imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id);
+                    DB::commit();
+                }catch (\Exception $ex) {
+                    DB::rollBack();
+                    $logcadena = "Error al dar de alta sensor IOM..".$ex."\r\n";
+                    HelpMen::report($movil->equipo_id,$logcadena);
+                }
+            }else{
+                if($sensorEstado->iom){
+                    EstadosSensores::where('imei', '=', $imei)->update(array('iom' => $perFieldInput));
+                }
             }
             Log::error("el LARGOR:".$largor . "  per field:".$perField);
             if($largor==6 && $arrIOM[5]=="P"){
