@@ -592,10 +592,10 @@ class PuertoController extends BaseController
         if($sensorEstado && $sensorEstado->iom){
             Log::info("hay sensorEstado, debo comparar cambios de bits");
         }
-        if($iomArr[0]==1){Log::error("PANICO")}
-        if($iomArr[3]==1){Log::error("DESENGANCHADO")}
-        if($iomArr[4]==0){Log::error("ANTISABOTAJE ACTIVADO")}
-        if($iomArr[5]==1){Log::error("COMPUERTA ABIERTA")}
+        if($iomArr[0]==1)Log::error("PANICO");
+        if($iomArr[3]==1)Log::error("DESENGANCHADO");
+        if($iomArr[4]==0)Log::error("ANTISABOTAJE ACTIVADO");
+        if($iomArr[5]==1)Log::error("COMPUERTA ABIERTA");
     }
     public static function updateSensores($imei,$movil,$perField,$io,$tipo_alarma_id,$estado_movil_id){
         DB::beginTransaction();
