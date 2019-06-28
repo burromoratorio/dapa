@@ -542,6 +542,7 @@ class PuertoController extends BaseController
             //luego del analisis actualizo los datos de sensores, primero analiso e informo alarmas, y estado del movil
             $idEstados = self::cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil,$estado_movil_id);
             if(!$sensorEstado){
+                Log::info("ACA VA A CREAR SENSOR");
                 DB::beginTransaction();
                 try {
                     EstadosSensores::create(['imei'=>$imei,'movil_id'=>intval($movil->movil_id),'iom'=>$perFieldInput]);
