@@ -597,7 +597,7 @@ class PuertoController extends BaseController
         try {
             if($perField!=""){
 
-                EstadosSensores::where('imei', '=', $imei)->update(array('iom' => $iperField));
+                EstadosSensores::where('imei', '=', $imei)->update(array('iom' => $perField));
             }else{
                 EstadosSensores::where('imei', '=', $imei)->update(array('io' => $io));
             }
