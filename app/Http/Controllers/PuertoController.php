@@ -540,7 +540,7 @@ class PuertoController extends BaseController
                 }
             }
             //luego del analisis actualizo los datos de sensores, primero analiso e informo alarmas, y estado del movil
-            $idEstados = self::cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil);
+            $idEstados = self::cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil,$estado_movil_id);
             if(!$sensorEstado){
                 DB::beginTransaction();
                 try {
@@ -562,7 +562,7 @@ class PuertoController extends BaseController
         return $rta;    
     }
     /*I4: Desenganche=>0 = ENGANCHADO; 1 = DESENGANCHADO | I5: Antisabotaje=>0 = VIOLACION; 1 = NORMAL | I6: Compuerta=>0 = CERRADA; 1 = ABIERTA*/
-    public static function cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil){
+    public static function cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil,$estado_movil_id){
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); //alarma_id=7 (Normal)
         if($sensorEstado && $sensorEstado->iom){
             $estadoArr = str_split($sensorEstado->iom);
