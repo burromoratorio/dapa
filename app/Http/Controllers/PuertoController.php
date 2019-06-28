@@ -413,9 +413,9 @@ class PuertoController extends BaseController
         $io         = str_replace("I", "",$ioData[1] );
         if($perField!='NULL'){ //analisis en bits sensores IOM y ALA
             $cambioBits = self::analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
-            if($cambioBits["rta"]==1){
-                self::updateSensores($imei,$movil,$perField,$io,$cambioBits["tipo_alarma_id"],$cambioBits["estado_movil_id"],$posicion_id,$fecha);
-            }
+            //if($cambioBits["rta"]==1){
+              //  self::updateSensores($imei,$movil,$perField,$io,$cambioBits["tipo_alarma_id"],$cambioBits["estado_movil_id"],$posicion_id,$fecha);
+            //}
         }else{ //analisis en bits IO
             $cambioBits = self::analisisIO($ioData,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
             if($cambioBits["rta"]==1){
@@ -542,7 +542,7 @@ class PuertoController extends BaseController
             //luego del analisis actualizo los datos de sensores, primero analiso e informo alarmas, y estado del movil
             $idEstados = self::cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil,$estado_movil_id);
             if(!$sensorEstado){
-                Log::info("ACA VA A CREAR SENSOR");
+               HelpMen::report($movil->equipo_id,"Datos de sensores vacios en memoria, generando...");
                 DB::beginTransaction();
                 try {
                     EstadosSensores::create(['imei'=>$imei,'movil_id'=>intval($movil->movil_id),'iom'=>$perFieldInput]);
@@ -553,6 +553,8 @@ class PuertoController extends BaseController
                     $logcadena = "Error al dar de alta sensor IOM..".$ex."\r\n";
                     HelpMen::report($movil->equipo_id,$logcadena);
                 }
+            }else{
+                self::updateSensores($imei,$movil,$iomArr,"",$idEstados["tipo_alarma_id"],$idEstados["estado_movil_id"],$posicion_id,$fecha);
             }
         }
         return $rta;    
@@ -561,9 +563,13 @@ class PuertoController extends BaseController
     public static function cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil,$estado_movil_id){
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); //alarma_id=7 (Normal)
         Log::info("iom.".print_r($iomArr,true));
+        HelpMen::report($movil->equipo_id,"iom.".$iomArr." Sensores:".$sensorEstado->iom);   
         Log::info("sensor.".print_r($sensorEstado->iom,true));
+        
         if($sensorEstado && $sensorEstado->iom){
-            $estadoArr = str_split($sensorEstado->iom);
+            $estadoArr = explode(",", $sensorEstado->iom);
+            $estadoArr = str_split($estadoArr[1]);
+
             if( $estadoArr[3]==0 && $iomArr[3]==1 ){
                 $rta["tipo_alarma_id"]=12;
                 $rta["estado_movil_id"]=5;
