@@ -414,12 +414,12 @@ class PuertoController extends BaseController
         if($perField!='NULL'){ //analisis en bits sensores IOM y ALA
             $cambioBits = self::analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
             if($cambioBits["rta"]==1){
-                self::updateSensores($imei,$movil,$perField,$io,$cambioBits["tipo_alarma_id"],$cambioBits["estado_movil_id"],$posicion_id);
+                self::updateSensores($imei,$movil,$perField,$io,$cambioBits["tipo_alarma_id"],$cambioBits["estado_movil_id"],$posicion_id,$fecha);
             }
         }else{ //analisis en bits IO
             $cambioBits = self::analisisIO($ioData,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
             if($cambioBits["rta"]==1){
-                self::updateSensores($imei,$movil,"",$io,$cambioBits["tipo_alarma_id"],$cambioBits["estado_movil_id"],$posicion_id);
+                self::updateSensores($imei,$movil,"",$io,$cambioBits["tipo_alarma_id"],$cambioBits["estado_movil_id"],$posicion_id,$fecha);
             }
         }
     }
@@ -555,7 +555,7 @@ class PuertoController extends BaseController
             }else{
                 //if($sensorEstado->iom=="NULL"){
                     $rta["rta"] = 1;
-                    self::updateSensores($imei,$movil,$perFieldInput,"",$idEstados["tipo_alarma_id"],$idEstados["estado_movil_id"],$posicion_id);
+                    self::updateSensores($imei,$movil,$perFieldInput,"",$idEstados["tipo_alarma_id"],$idEstados["estado_movil_id"],$posicion_id,$fecha);
                 //}
             }
         }
@@ -591,7 +591,7 @@ class PuertoController extends BaseController
         }
         return $rta;
     }
-    public static function updateSensores($imei,$movil,$perField,$io,$tipo_alarma_id,$estado_movil_id,$posicion_id){
+    public static function updateSensores($imei,$movil,$perField,$io,$tipo_alarma_id,$estado_movil_id,$posicion_id,$fecha){
         HelpMen::report($movil->equipo_id,"\r\n ***Update sensores iom***".$perField ."\r\n");
         DB::beginTransaction();
         try {
