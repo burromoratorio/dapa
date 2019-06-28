@@ -514,8 +514,7 @@ class PuertoController extends BaseController
                 $rta["estado_movil_id"]= 10;//estado "en alarma"
                 $rta["tipo_alarma_id"] = 1;//panico
                 HelpMen::report($movil->equipo_id,"***PANICO ACTIVADO***");
-
-                Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>1,'fecha_alarma'=>$fecha,'falsa'=>0]);
+                if($perFieldWorkMode!= 0)Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>1,'fecha_alarma'=>$fecha,'falsa'=>0]);
             }
             if($largor==7 && $arrIOM[5]=="ALA"){
                 //IOM,01100101110010,101000XXXX,2,1,ALA,XXXX0XXXXXXXXX
@@ -556,7 +555,7 @@ class PuertoController extends BaseController
             }else{
                 if($sensorEstado->iom=="NULL"){
                     $rta["rta"] = 1;
-                    self::updateSensores($imei,$movil,$perFieldInput,"",$idEstados["tipo_alarma_id"],$idEstados["estado_movil_id"],$posicion_id)
+                    self::updateSensores($imei,$movil,$perFieldInput,"",$idEstados["tipo_alarma_id"],$idEstados["estado_movil_id"],$posicion_id);
                 }
             }
         }
@@ -576,7 +575,6 @@ class PuertoController extends BaseController
                 $rta["tipo_alarma_id"]=5;
                 HelpMen::report($movil->equipo_id,"***MOVIL PASO DE DESENGANCHADO A ENGANCHADO***");
             }
-            //compuerta
             if( $estadoArr[5]==0 && $iomArr[5]==1 ){
                 $rta["tipo_alarma_id"]=9;
                 HelpMen::report($movil->equipo_id,"***COMPUERTA DE CERRADA A ABIERTA***");
