@@ -601,6 +601,7 @@ class PuertoController extends BaseController
         return $rta;
     }
     public static function updateSensores($imei,$movil,$perField,$io,$tipo_alarma_id,$estado_movil_id,$posicion_id,$fecha){
+        Log::info(print_r($perField,true));
         DB::beginTransaction();
         try {
             if($perField!=""){
