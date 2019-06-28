@@ -592,10 +592,11 @@ class PuertoController extends BaseController
         return $rta;
     }
     public static function updateSensores($imei,$movil,$perField,$io,$tipo_alarma_id,$estado_movil_id,$posicion_id){
+        HelpMen::report($movil->equipo_id,"\r\n ***Update sensores iom***".$perField ."\r\n");
         DB::beginTransaction();
         try {
             if($perField!=""){
-                HelpMen::report($movil->equipo_id,"\r\n ***Update sensores iom***".$perField ."\r\n");
+
                 EstadosSensores::where('imei', '=', $imei)->update(array('iom' => $iperField));
             }else{
                 EstadosSensores::where('imei', '=', $imei)->update(array('io' => $io));
