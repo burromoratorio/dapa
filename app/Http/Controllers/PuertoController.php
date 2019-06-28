@@ -552,11 +552,6 @@ class PuertoController extends BaseController
                     $logcadena = "Error al dar de alta sensor IOM..".$ex."\r\n";
                     HelpMen::report($movil->equipo_id,$logcadena);
                 }
-            }else{
-                //if($sensorEstado->iom=="NULL"){
-                    $rta["rta"] = 1;
-                    self::updateSensores($imei,$movil,$perFieldInput,"",$idEstados["tipo_alarma_id"],$idEstados["estado_movil_id"],$posicion_id,$fecha);
-                //}
             }
         }
         return $rta;    
@@ -569,34 +564,38 @@ class PuertoController extends BaseController
             if( $estadoArr[3]==0 && $iomArr[3]==1 ){
                 $rta["tipo_alarma_id"]=12;
                 $rta["estado_movil_id"]=5;
+                $rta["rta"]            = 1;
                 HelpMen::report($movil->equipo_id,"\r\n ***MOVIL PASO DE ENGANCHADO A DESENGANCHADO*** \r\n ");
             }
             if( $estadoArr[3]==1 && $iomArr[3]==0 ){
                 $rta["tipo_alarma_id"]=5;
+                $rta["rta"]           = 1;
                 HelpMen::report($movil->equipo_id,"\r\n ***MOVIL PASO DE DESENGANCHADO A ENGANCHADO*** \r\n");
             }
             if( $estadoArr[5]==0 && $iomArr[5]==1 ){
                 $rta["tipo_alarma_id"]=9;
+                $rta["rta"]           = 1;
                 HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA DE CERRADA A ABIERTA*** \r\n");
             }
             if( $estadoArr[5]==1 && $iomArr[5]==0 ){
                 $rta["tipo_alarma_id"]=11;
+                $rta["rta"]           = 1;
                 HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA DE ABIERTA A CERRADA*** \r\n");
             }
         }
         if($iomArr[0]==1)HelpMen::report($movil->equipo_id,"\r\n ***PANICO ACTIVADO*** \r\n");  
         if($iomArr[4]==0){
             $rta["tipo_alarma_id"]=6;
+            $rta["rta"]           = 1;
             HelpMen::report($movil->equipo_id,"\r\n ***ANTISABOTAJE ACTIVADO*** \r\n");  
         }
         return $rta;
     }
     public static function updateSensores($imei,$movil,$perField,$io,$tipo_alarma_id,$estado_movil_id,$posicion_id,$fecha){
-        HelpMen::report($movil->equipo_id,"\r\n ***Update sensores iom***".$perField ."\r\n");
         DB::beginTransaction();
         try {
             if($perField!=""){
-
+                HelpMen::report($movil->equipo_id,"\r\n ***Update sensores iom***".$perField ."\r\n");
                 EstadosSensores::where('imei', '=', $imei)->update(array('iom' => $perField));
             }else{
                 EstadosSensores::where('imei', '=', $imei)->update(array('io' => $io));
