@@ -559,6 +559,8 @@ class PuertoController extends BaseController
     /*I4: Desenganche=>0 = ENGANCHADO; 1 = DESENGANCHADO | I5: Antisabotaje=>0 = VIOLACION; 1 = NORMAL | I6: Compuerta=>0 = CERRADA; 1 = ABIERTA*/
     public static function cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil,$estado_movil_id){
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); //alarma_id=7 (Normal)
+        Log::info("iom.".print_r($iomArr,true));
+        Log::info("sensor.".print_r($sensorEstado->iom,true));
         if($sensorEstado && $sensorEstado->iom){
             $estadoArr = str_split($sensorEstado->iom);
             if( $estadoArr[3]==0 && $iomArr[3]==1 ){
