@@ -541,7 +541,7 @@ class PuertoController extends BaseController
                 }
             }
             //luego del analisis actualizo los datos de sensores, primero analiso e informo alarmas, y estado del movil
-            $idEstados = self::cambiosInputIOM($imei,$iomArr,$sensorEstado);
+            $idEstados = self::cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil);
             if(!$sensorEstado){
                 DB::beginTransaction();
                 try {
@@ -557,37 +557,40 @@ class PuertoController extends BaseController
                 if($sensorEstado->iom=="NULL"){
                     $rta["rta"] = 1;
                     self::updateSensores($imei,$movil,$perFieldInput,"",$idEstados["tipo_alarma_id"],$idEstados["estado_movil_id"],$posicion_id)
-                   /* DB::beginTransaction();
-                    try {
-                        EstadosSensores::where('imei', '=', $imei)->update(array('iom' => $perFieldInput));
-                        DB::commit();
-                    }catch (\Exception $ex) {
-                        DB::rollBack();
-                        $logcadena = "Error Update sensor IOM..de::".$imei."---".$ex."\r\n";
-                        HelpMen::report($movil->equipo_id,$logcadena);
-                    }
-                    self::startupSensores();*/
                 }
             }
         }
         return $rta;    
     }
     /*I4: Desenganche=>0 = ENGANCHADO; 1 = DESENGANCHADO | I5: Antisabotaje=>0 = VIOLACION; 1 = NORMAL | I6: Compuerta=>0 = CERRADA; 1 = ABIERTA*/
-    public static function cambiosInputIOM($imei,$iomArr,$sensorEstado){
+    public static function cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil){
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); //alarma_id=7 (Normal)
         if($sensorEstado && $sensorEstado->iom){
             $estadoArr = str_split($sensorEstado->iom);
-            if( $estadoArr[3]==0 && $iomArr[3]==1 ){ //Log::error("PASO DE ENGANCHADO A DESENGANCHADO");
+            if( $estadoArr[3]==0 && $iomArr[3]==1 ){
                 $rta["tipo_alarma_id"]=12;
                 $rta["estado_movil_id"]=5;
+                HelpMen::report($movil->equipo_id,"***MOVIL PASO DE ENGANCHADO A DESENGANCHADO***");
             }
-            if( $estadoArr[3]==1 && $iomArr[3]==0 )$rta["tipo_alarma_id"]=5;//Log::error("PASO DE DESENGANCHADO A ENGANCHADO");
+            if( $estadoArr[3]==1 && $iomArr[3]==0 ){
+                $rta["tipo_alarma_id"]=5;
+                HelpMen::report($movil->equipo_id,"***MOVIL PASO DE DESENGANCHADO A ENGANCHADO***");
+            }
             //compuerta
-            if( $estadoArr[5]==0 && $iomArr[5]==1 )$rta["tipo_alarma_id"]=9;//Log::error("COMPUERTA DE CERRADA A ABIERTA");}
-            if( $estadoArr[5]==1 && $iomArr[5]==0 )$rta["tipo_alarma_id"]=11;//Log::error("COMPUERTA DE ABIERTA A CERRADA");}
+            if( $estadoArr[5]==0 && $iomArr[5]==1 ){
+                $rta["tipo_alarma_id"]=9;
+                HelpMen::report($movil->equipo_id,"***COMPUERTA DE CERRADA A ABIERTA***");
+            }
+            if( $estadoArr[5]==1 && $iomArr[5]==0 ){
+                $rta["tipo_alarma_id"]=11;
+                HelpMen::report($movil->equipo_id,"***COMPUERTA DE ABIERTA A CERRADA***");
+            }
         }
-        if($iomArr[0]==1)Log::error("PANICO");
-        if($iomArr[4]==0)$rta["tipo_alarma_id"]=6;//Log::error("ANTISABOTAJE ACTIVADO");
+        if($iomArr[0]==1)HelpMen::report($movil->equipo_id,"***PANICO ACTIVADO***");  
+        if($iomArr[4]==0){
+            $rta["tipo_alarma_id"]=6;
+            HelpMen::report($movil->equipo_id,"***ANTISABOTAJE ACTIVADO***");  
+        }
         return $rta;
     }
     public static function updateSensores($imei,$movil,$perField,$io,$tipo_alarma_id,$estado_movil_id,$posicion_id){
