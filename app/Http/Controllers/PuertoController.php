@@ -605,8 +605,9 @@ class PuertoController extends BaseController
         DB::beginTransaction();
         try {
             if($perField!=""){
+                $perField   = implode("",$perField);
                 HelpMen::report($movil->equipo_id,"\r\n ***Update sensores iom***".$perField ."\r\n");
-                EstadosSensores::where('imei', '=', $imei)->update(array('iom' => implode("",$perField)));
+                EstadosSensores::where('imei', '=', $imei)->update(array('iom' => $perField));
             }else{
                 EstadosSensores::where('imei', '=', $imei)->update(array('io' => $io));
             }
