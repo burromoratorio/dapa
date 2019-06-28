@@ -568,7 +568,7 @@ class PuertoController extends BaseController
         
         if($sensorEstado && $sensorEstado->iom){
             $estadoArr = explode(",", $sensorEstado->iom);
-            $estadoArr = str_split($estadoArr[1]);
+           // $estadoArr = str_split($estadoArr[1]);
 
             if( $estadoArr[3]==0 && $iomArr[3]==1 ){
                 $rta["tipo_alarma_id"]=12;
