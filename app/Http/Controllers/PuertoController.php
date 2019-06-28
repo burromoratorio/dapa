@@ -553,10 +553,10 @@ class PuertoController extends BaseController
                     HelpMen::report($movil->equipo_id,$logcadena);
                 }
             }else{
-                if($sensorEstado->iom=="NULL"){
+                //if($sensorEstado->iom=="NULL"){
                     $rta["rta"] = 1;
                     self::updateSensores($imei,$movil,$perFieldInput,"",$idEstados["tipo_alarma_id"],$idEstados["estado_movil_id"],$posicion_id);
-                }
+                //}
             }
         }
         return $rta;    
