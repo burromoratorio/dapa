@@ -418,10 +418,11 @@ class PuertoController extends BaseController
             //}
         }else{ //analisis en bits IO
             $cambioBits = self::analisisIO($ioData,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
-            if($cambioBits["rta"]==1){
+           /*if($cambioBits["rta"]==1){
                 self::updateSensores($imei,$movil,"",$io,$cambioBits["tipo_alarma_id"],$cambioBits["estado_movil_id"],$posicion_id,$fecha);
-            }
+            }*/
         }
+        return $cambioBits["estado_movil_id"];
     }
     public static function analisisIO($ioData,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
         $movilOldId = intval($movil->movilOldId);
@@ -451,43 +452,31 @@ class PuertoController extends BaseController
             HelpMen::report($movil->equipo_id,$logcadena);
             $tipo_alarma_id=50;
             $estado_movil_id=13;
-            $estadoMovilidad=$estado_movil_id;
         }
         if($io=='11'){//alimentacion ppal 
             $tipo_alarma_id=49;
             $estado_movil_id=14;
         }
-        if($sensorEstado){//tiene datos en la MC de sensores?
-            if($io!=$sensorEstado->io){ //evaluo cambio de bits de sensor IO
-                $rta["rta"]=1;
-               DB::beginTransaction();
-                try {
-                    EstadosSensores::where('imei', '=', $imei)->update(array('io' => $io));
-                    $rta["estado_movil_id"]=$estado_movil_id;
-                    $rta["tipo_alarma_id"] =$tipo_alarma_id;
-                    self::persistSensor($imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id);
-                    DB::commit();
-                }catch (\Exception $ex) {
-                    DB::rollBack();
-                    $logcadena = "Error al tratar alarmas IO..".$ex."\r\n";
-                    HelpMen::report($movil->equipo_id,$logcadena);
-                }
-            }
-        }else{ // doy de alta el registro en la DDBB y recargo MC
-            $rta["rta"]=0;
-            $rta["estado_movil_id"]=$estado_movil_id;
-            $rta["tipo_alarma_id"] =$tipo_alarma_id;
+        $rta["estado_movil_id"]=$estado_movil_id;
+        $rta["tipo_alarma_id"] =$tipo_alarma_id;
+        if(!$sensorEstado){
+            HelpMen::report($movil->equipo_id,"Datos de sensores IO vacios en memoria, generando...");
             DB::beginTransaction();
             try {
-                EstadosSensores::create(['imei'=>$imei,'movil_id'=>$movil_id,'iom'=>$perField,'io'=>$io]);
+                EstadosSensores::create(['imei'=>$imei,'movil_id'=>intval($movil->movil_id),'io'=>$io]);
                 self::persistSensor($imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id);
                 DB::commit();
+                $rta["rta"]=0;
             }catch (\Exception $ex) {
                 DB::rollBack();
-                $logcadena = "Error al tratar alarmas IO..".$ex."\r\n";
+                $logcadena = "Error al dar de alta sensor IO..".$ex."\r\n";
                 HelpMen::report($movil->equipo_id,$logcadena);
-            } 
-
+            }
+        }else{
+            if($io!=$sensorEstado->io){ //evaluo cambio de bits de sensor IO
+                $rta["rta"]=1;
+                self::updateSensores($imei,$movil,"",$io,$tipo_alarma_id,$estado_movil_id,$posicion_id,$fecha);
+            }
         }
         return $rta;
     }
@@ -554,6 +543,7 @@ class PuertoController extends BaseController
                     HelpMen::report($movil->equipo_id,$logcadena);
                 }
             }else{
+                if($idEstados["rta"]==1)
                 self::updateSensores($imei,$movil,$iomArr,"",$idEstados["tipo_alarma_id"],$idEstados["estado_movil_id"],$posicion_id,$fecha);
             }
         }
@@ -601,7 +591,6 @@ class PuertoController extends BaseController
         return $rta;
     }
     public static function updateSensores($imei,$movil,$perField,$io,$tipo_alarma_id,$estado_movil_id,$posicion_id,$fecha){
-        Log::info(print_r($perField,true));
         DB::beginTransaction();
         try {
             if($perField!=""){
