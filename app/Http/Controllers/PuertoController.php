@@ -488,7 +488,6 @@ class PuertoController extends BaseController
         $arrIOM      = explode(',',$perField);
         $sensorEstado= self::getSensores($imei); 
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>7); //alarma_id=7 (Normal)
-        //Log::info(print_r($sensorEstado,true));
         if($perField!='NULL' && $arrIOM[0]=='IOM'){
             Log::info("::::::::::entrando a Tratar alarmas IOM pero en parte de IOM Va a ALMACENAR EN LA DDBB::::::::::::");
             $perFieldInput   = $arrIOM[1];
@@ -498,15 +497,13 @@ class PuertoController extends BaseController
              //se usa el campo input de la cadena salvo en estado de Panico "P" y "ALA"
             $iomArr = str_split($perFieldInput);
             $largor = count($arrIOM);
-            Log::error("el LARGOR:".$largor . "  per field:".$perField);
             if($largor==6 && $arrIOM[5]=="P"){
                 $rta["estado_movil_id"]= 10;//estado "en alarma"
                 $rta["tipo_alarma_id"] = 1;//panico
                 HelpMen::report($movil->equipo_id,"***PANICO ACTIVADO***");
                 if($perFieldWorkMode!= 0)Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>1,'fecha_alarma'=>$fecha,'falsa'=>0]);
             }
-            if($largor==7 && $arrIOM[5]=="ALA"){
-                //IOM,01100101110010,101000XXXX,2,1,ALA,XXXX0XXXXXXXXX
+            if($largor==7 && $arrIOM[5]=="ALA"){//IOM,01100101110010,101000XXXX,2,1,ALA,XXXX0XXXXXXXXX
                 $rta["estado_movil_id"]= 10;//estado "en alarma"
                 $iomArr = str_split($arrIOM[6]);
             }
@@ -519,8 +516,7 @@ class PuertoController extends BaseController
                     HelpMen::report($movil->equipo_id,"***PANICO ACTIVADO***");
                 }
             }    
-            if($largor==9){
-                //IOM,01101101110010,000000XXXX,2,1,NB,P,ALA,XX0XXXXXXXXXXX
+            if($largor==9){ //IOM,01101101110010,000000XXXX,2,1,NB,P,ALA,XX0XXXXXXXXXXX
                 if($arrIOM[6]=="P"){
                     $rta["estado_movil_id"]= 10;//estado "en alarma"
                     $rta["tipo_alarma_id"] = 1;//panico
@@ -552,14 +548,8 @@ class PuertoController extends BaseController
     /*I4: Desenganche=>0 = ENGANCHADO; 1 = DESENGANCHADO | I5: Antisabotaje=>0 = VIOLACION; 1 = NORMAL | I6: Compuerta=>0 = CERRADA; 1 = ABIERTA*/
     public static function cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil,$estado_movil_id){
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); //alarma_id=7 (Normal)
-        Log::info("iom.".print_r($iomArr,true));
-        //HelpMen::report($movil->equipo_id,"iom.".$iomArr." Sensores:".$sensorEstado->iom);   
-        Log::info("sensor.".print_r($sensorEstado->iom,true));
-        
         if($sensorEstado && $sensorEstado->iom){
-           // $estadoArr = explode(",", $sensorEstado->iom);
             $estadoArr = str_split($sensorEstado->iom);
-
             if( $estadoArr[3]==0 && $iomArr[3]==1 ){
                 $rta["tipo_alarma_id"]=12;
                 $rta["estado_movil_id"]=5;
