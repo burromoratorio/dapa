@@ -64,7 +64,7 @@ class PuertoController extends BaseController
                         break;
                     case 'DAD':
                         Log::info("Reporte Desconexion DAD");
-                        self::storeDad($arrCampos);
+                        self::storeDad($arrCampos,$movil);
                         break;
                     case 'NODAD':
                         Log::info("Reporte Desconexion Sin Fecha NODAD");
@@ -248,13 +248,13 @@ class PuertoController extends BaseController
     /*
         funcion para almacenar un reporte de desconexion
     */
-    public static function storeDad($report){
+    public static function storeDad($report,$movil){
         $dadData    = self::validateIndexCadena("DAD",$report,8);
         $frData     = self::validateIndexCadena("FR",$report,2);
         $lacData    = self::validateIndexCadena("LAC",$report,2);
         $kmtField   = self::validateIndexCadena("KMT",$report);
         $odpField   = self::validateIndexCadena("ODP",$report);
-        $fechaDad   = ($dadData[0]!="NULL")?self::ddmmyy2yyyymmdd($dadData[0],"000000"):"NULL";
+        $fechaDad   = ($dadData[0]!="NULL")?self::ddmmyy2yyyymmdd($dadData[0],"000000",$movil):"NULL";
         $evento = GprmcDesconexion::create([
             'imei'=>$report['IMEI'],'dad'=>$dadData['DAD'],'fecha_desconexion'=>$fechaDad,
             'cant_desconexiones'=>$dadData[2],'senial_desconexion'=>$dadData[3],'sim_desconexion'=>$dadData[4],
