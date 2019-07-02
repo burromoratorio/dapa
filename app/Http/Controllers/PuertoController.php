@@ -63,8 +63,8 @@ class PuertoController extends BaseController
                         }
                         break;
                     case 'DAD':
-                        Log::info("Reporte Desconexion DAD");
-                        self::storeDad($arrCampos,$movil);
+                        Log::info("Reporte Desconexion DAD...Movil:".$movil->movilOldId." - Equipo:".$movil->equipo_id);
+                        //self::storeDad($arrCampos,$movil);
                         break;
                     case 'NODAD':
                         Log::info("Reporte Desconexion Sin Fecha NODAD");
