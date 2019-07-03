@@ -59,6 +59,8 @@ class PuertoController extends BaseController
                             $imei="OK";
                         }else{
                             Log::error("Cadena GPRMC vacia");
+                            Log::error("cadena sin posicion DEVOLVIDO ACA TRABAJO ALARMAS gprmc");
+                            self::findAndStoreAlarm();
                             $imei="error";
                         }
                         break;
@@ -276,8 +278,6 @@ class PuertoController extends BaseController
         $sec_pid    = rand(0,1000);
         $errorLog   = "";
         $estadoMovilidad    = 7;//estado normal
-        //Log::info("Validando GPRMC...".$report['GPRMC']);
-       // Log::error($report['GPRMC']);
         if($report['GPRMC']!=''){
             $gprmcData  = explode(",",$report['GPRMC']);
             $gprmcVal   = self::validateGprmc($gprmcData);
@@ -397,8 +397,8 @@ class PuertoController extends BaseController
                 Log::error("cadena sin posicion");
             }
         }else{
+            //evaluar si en la cadena vino un panico, en 
             $respuesta  = "0";
-            Log::error("cadena sin posicion ya desde gprmc");
         }
         try{
             DB::disconnect();
@@ -407,6 +407,21 @@ class PuertoController extends BaseController
         }
         return $respuesta;
     }
+    public static function findAndStoreAlarm($report,$posicionID){
+        $alaField   = self::validateIndexCadena("ALA",$report);
+        $perField   = self::validateIndexCadena("PER",$report);
+        if($alaField['ALA']!="NULL"){
+            //entonces vino el campo alarma con datos
+            $posicion = GprmcAlarma::create([
+            'imei'=>$report['IMEI'],'entrada_id'=>$posicionID,'ala'=>$alaField['ALA'],'per'=>$perField['PER'] ]);
+        return $posicion->id;
+            Log::info("el campo ala tiene:".$alaField['ALA']."-->Posicion:".$posicionID);
+        }else{
+            //vino el campo alarma pero vacio
+            Log::info("el campo ala tiene:".$alaField['ALA']);
+        }
+        
+    } 
     public static function sensorAnalisis($ioData,$perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
         //falta devolver el estado en  el que quedó el movil luego del proceso de analisis
         //$estadoMovilidad y $tipo_alarma_id necesito devolver desde los metodos de analisis para el update
@@ -611,21 +626,6 @@ class PuertoController extends BaseController
             $logcadena = "Error al tratar alarmas persistSensor \r\n";
             HelpMen::report($movil->equipo_id,$logcadena);
         }
-    }
-    public static function findAndStoreAlarm($report,$posicionID){
-        $alaField   = self::validateIndexCadena("ALA",$report);
-        $perField   = self::validateIndexCadena("PER",$report);
-        if($alaField['ALA']!="NULL"){
-            //entonces vino el campo alarma con datos
-            $posicion = GprmcAlarma::create([
-            'imei'=>$report['IMEI'],'entrada_id'=>$posicionID,'ala'=>$alaField['ALA'],'per'=>$perField['PER'] ]);
-        return $posicion->id;
-            Log::info("el campo ala tiene:".$alaField['ALA']."-->Posicion:".$posicionID);
-        }else{
-            //vino el campo alarma pero vacio
-            Log::info("el campo ala tiene:".$alaField['ALA']);
-        }
-        
     }
     public static function Rumbo2String( $rumbo ){
         $arrRumbo = array(1 =>'Norte',2=>'Noroeste',3=>'Oeste',4=>'Suroeste',5=>'Sur',6=>'Sureste',7=>'Este',8=>'Noreste');
