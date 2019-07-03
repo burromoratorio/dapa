@@ -408,20 +408,17 @@ class PuertoController extends BaseController
         return $respuesta;
     }
     public static function findAndStoreAlarm($report,$movil){
-        $alaField   = self::validateIndexCadena("ALA",$report);
         $perField   = self::validateIndexCadena("PER",$report);
         $ioData     = self::validateIndexCadena("IO",$report,2);
         $panico     = str_replace("I0", "",$ioData[0] );
-Log::error("el IO Panico:".$panico );
-
         if($panico==0)Log::error("aghhhh PANICOOO");
-        if($alaField['ALA']!="NULL"){
-            //entonces vino el campo alarma con datos
-            Log::info("el campo ala tiene:".$alaField['ALA']."-->movil:".$movil->equipo_id);
-        }else{
-            //vino el campo alarma pero vacio
-            Log::info("el campo ala tiene:".$alaField['ALA']);
+        if($perField!='NULL'){
+            //$arrIOM = explode(',',$perField);
+            if (strpos($perField, 'P') !== false) Log::error("PANICO EN IOM");
+            Log::info("el campo PER tiene:".$perField."-->movil:".$movil->equipo_id);
+
         }
+       
         
     } 
     public static function sensorAnalisis($ioData,$perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
