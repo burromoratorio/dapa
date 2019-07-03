@@ -410,6 +410,9 @@ class PuertoController extends BaseController
     public static function findAndStoreAlarm($report,$movil){
         $alaField   = self::validateIndexCadena("ALA",$report);
         $perField   = self::validateIndexCadena("PER",$report);
+        $ioData     = self::validateIndexCadena("IO",$report,2);
+        $panico     = str_replace("I0", "",$ioData[0] );
+        if($panico==0)Log::error("aghhhh PANICOOO");
         if($alaField['ALA']!="NULL"){
             //entonces vino el campo alarma con datos
             Log::info("el campo ala tiene:".$alaField['ALA']."-->movil:".$movil->equipo_id);
