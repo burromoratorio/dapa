@@ -413,6 +413,7 @@ class PuertoController extends BaseController
         $panico     = str_replace("I0", "",$ioData[0] );
         if($panico==0)Log::error("aghhhh PANICOOO");
         if($perField!='NULL'){
+            $perField=implode(",", $perField);
             //$arrIOM = explode(',',$perField);
             if (strpos($perField, 'P') !== false) Log::error("PANICO EN IOM");
             Log::info("el campo PER tiene:".$perField."-->movil:".$movil->equipo_id);
