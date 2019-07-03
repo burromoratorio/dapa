@@ -416,13 +416,13 @@ class PuertoController extends BaseController
         $logcadena  = "PANICO PRESIONADO EN CADENA SI POSICION";
         if($panico==0){
             HelpMen::report($movil->equipo_id,$logcadena);
-            self::enviarMail($asunto,$cuerpo,$destinatarios);
+            //self::enviarMail($asunto,$cuerpo,$destinatarios);
         }
         if($perField!='NULL'){
             $perField=implode(",", $perField);
             if (strpos($perField, 'P') !== false){ 
                 HelpMen::report($movil->equipo_id,$logcadena);
-                self::enviarMail($asunto,$cuerpo,$destinatarios);
+                //self::enviarMail($asunto,$cuerpo,$destinatarios);
             }
         }
     } 
