@@ -412,6 +412,8 @@ class PuertoController extends BaseController
         $perField   = self::validateIndexCadena("PER",$report);
         $ioData     = self::validateIndexCadena("IO",$report,2);
         $panico     = str_replace("I0", "",$ioData[0] );
+Log::error("el IO Panico:".$panico );
+
         if($panico==0)Log::error("aghhhh PANICOOO");
         if($alaField['ALA']!="NULL"){
             //entonces vino el campo alarma con datos
