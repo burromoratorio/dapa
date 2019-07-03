@@ -419,7 +419,7 @@ class PuertoController extends BaseController
             Log::info("el campo PER tiene:".$perField."-->movil:".$movil->equipo_id);
             $cuerpo = "panico en IOM";
             $asunto = "miedo panico";
-            self::enviarMail($asunto,$cuerpo,"amoratorio@siacseguridad.com");
+            self::enviarMail($asunto,$cuerpo,"mriva@siacseguridad.com");
 
         }
        
