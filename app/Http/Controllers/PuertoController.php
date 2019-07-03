@@ -417,11 +417,21 @@ class PuertoController extends BaseController
             //$arrIOM = explode(',',$perField);
             if (strpos($perField, 'P') !== false) Log::error("PANICO EN IOM");
             Log::info("el campo PER tiene:".$perField."-->movil:".$movil->equipo_id);
+            $cuerpo = "panico en IOM";
+            $asunto = "miedo panico";
+            self::enviarMail($asunto,$cuerpo,"amoratorio@siacseguridad.com");
 
         }
        
         
     } 
+    public static function enviarMail($asunto,$cuerpo,$destinatarios){
+        $sock = stream_socket_client('tcp://192.168.0.247:2022', $errno, $errstr);
+        fwrite($sock, $asunto.";".$cuerpo.";".$destinatarios);
+        echo fread($sock, 4096)."\n";
+        fclose($sock);
+        
+    }  
     public static function sensorAnalisis($ioData,$perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
         //falta devolver el estado en  el que quedó el movil luego del proceso de analisis
         //$estadoMovilidad y $tipo_alarma_id necesito devolver desde los metodos de analisis para el update
