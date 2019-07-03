@@ -61,7 +61,7 @@ class PuertoController extends BaseController
                             Log::error("Cadena GPRMC vacia");
                             Log::error("cadena sin posicion DEVOLVIDO ACA TRABAJO ALARMAS gprmc");
                             self::findAndStoreAlarm($arrCampos,$movil);
-                            $imei="error";
+                            $imei="error"; 
                         }
                         break;
                     case 'DAD':
