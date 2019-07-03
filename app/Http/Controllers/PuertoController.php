@@ -60,7 +60,7 @@ class PuertoController extends BaseController
                         }else{
                             Log::error("Cadena GPRMC vacia");
                             Log::error("cadena sin posicion DEVOLVIDO ACA TRABAJO ALARMAS gprmc");
-                            self::findAndStoreAlarm($arrCampos,$movil);
+                            self::findAndSendAlarm($arrCampos,$movil);
                             $imei="error"; 
                         }
                         break;
@@ -407,23 +407,23 @@ class PuertoController extends BaseController
         }
         return $respuesta;
     }
-    public static function findAndStoreAlarm($report,$movil){
+    public static function findAndSendAlarm($report,$movil){
+        $destinatarios  = "amoratorio@siacseguridad.com";
+        $cuerpo = "Panico Presionado Equipo:".$movil->equipo_id;
+        $asunto = "Panico Sin Posicion";
         $perField   = self::validateIndexCadena("PER",$report);
         $ioData     = self::validateIndexCadena("IO",$report,2);
         $panico     = str_replace("I0", "",$ioData[0] );
-        if($panico==0)Log::error("aghhhh PANICOOO");
+        if($panico==0){
+            Log::error("aghhhh PANICOOO");
+            self::enviarMail($asunto,$cuerpo,$destinatarios);
+        }
         if($perField!='NULL'){
             $perField=implode(",", $perField);
-            //$arrIOM = explode(',',$perField);
             if (strpos($perField, 'P') !== false) Log::error("PANICO EN IOM");
             Log::info("el campo PER tiene:".$perField."-->movil:".$movil->equipo_id);
-            $cuerpo = "panico en IOM";
-            $asunto = "miedo panico";
-            //self::enviarMail($asunto,$cuerpo,"mriva@siacseguridad.com");
-
+            self::enviarMail($asunto,$cuerpo,$destinatarios);
         }
-       
-        
     } 
     public static function enviarMail($asunto,$cuerpo,$destinatarios){
         $sock = stream_socket_client('tcp://192.168.0.247:2022', $errno, $errstr);
