@@ -398,6 +398,7 @@ class PuertoController extends BaseController
             }
         }else{
             $respuesta  = "0";
+            Log::error("cadena sin posicion ya desde gprmc");
         }
         try{
             DB::disconnect();
