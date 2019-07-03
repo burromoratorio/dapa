@@ -59,7 +59,6 @@ class PuertoController extends BaseController
                             $imei="OK";
                         }else{
                             Log::error("Cadena GPRMC vacia");
-                            Log::error("cadena sin posicion DEVOLVIDO ACA TRABAJO ALARMAS gprmc");
                             self::findAndSendAlarm($arrCampos,$movil);
                             $imei="error"; 
                         }
@@ -414,15 +413,17 @@ class PuertoController extends BaseController
         $perField   = self::validateIndexCadena("PER",$report);
         $ioData     = self::validateIndexCadena("IO",$report,2);
         $panico     = str_replace("I0", "",$ioData[0] );
+        $logcadena  = "PANICO PRESIONADO EN CADENA SI POSICION";
         if($panico==0){
-            Log::error("aghhhh PANICOOO");
+            HelpMen::report($movil->equipo_id,$logcadena);
             self::enviarMail($asunto,$cuerpo,$destinatarios);
         }
         if($perField!='NULL'){
             $perField=implode(",", $perField);
-            if (strpos($perField, 'P') !== false) Log::error("PANICO EN IOM");
-            Log::info("el campo PER tiene:".$perField."-->movil:".$movil->equipo_id);
-            self::enviarMail($asunto,$cuerpo,$destinatarios);
+            if (strpos($perField, 'P') !== false){ 
+                HelpMen::report($movil->equipo_id,$logcadena);
+                self::enviarMail($asunto,$cuerpo,$destinatarios);
+            }
         }
     } 
     public static function enviarMail($asunto,$cuerpo,$destinatarios){
