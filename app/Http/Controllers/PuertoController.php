@@ -60,7 +60,7 @@ class PuertoController extends BaseController
                         }else{
                             Log::error("Cadena GPRMC vacia");
                             Log::error("cadena sin posicion DEVOLVIDO ACA TRABAJO ALARMAS gprmc");
-                            self::findAndStoreAlarm();
+                            self::findAndStoreAlarm($arrCampos,$movil);
                             $imei="error";
                         }
                         break;
@@ -407,15 +407,12 @@ class PuertoController extends BaseController
         }
         return $respuesta;
     }
-    public static function findAndStoreAlarm($report,$posicionID){
+    public static function findAndStoreAlarm($report,$movil){
         $alaField   = self::validateIndexCadena("ALA",$report);
         $perField   = self::validateIndexCadena("PER",$report);
         if($alaField['ALA']!="NULL"){
             //entonces vino el campo alarma con datos
-            $posicion = GprmcAlarma::create([
-            'imei'=>$report['IMEI'],'entrada_id'=>$posicionID,'ala'=>$alaField['ALA'],'per'=>$perField['PER'] ]);
-        return $posicion->id;
-            Log::info("el campo ala tiene:".$alaField['ALA']."-->Posicion:".$posicionID);
+            Log::info("el campo ala tiene:".$alaField['ALA']."-->movil:".$movil->equipo_id);
         }else{
             //vino el campo alarma pero vacio
             Log::info("el campo ala tiene:".$alaField['ALA']);
@@ -728,7 +725,21 @@ class PuertoController extends BaseController
         return $coord;
         
     }
-    
+    public static function findAndStoreAlarGPRMC($report,$posicionID){
+        $alaField   = self::validateIndexCadena("ALA",$report);
+        $perField   = self::validateIndexCadena("PER",$report);
+        if($alaField['ALA']!="NULL"){
+            //entonces vino el campo alarma con datos
+            $posicion = GprmcAlarma::create([
+            'imei'=>$report['IMEI'],'entrada_id'=>$posicionID,'ala'=>$alaField['ALA'],'per'=>$perField['PER'] ]);
+        return $posicion->id;
+            Log::info("el campo ala tiene:".$alaField['ALA']."-->Posicion:".$posicionID);
+        }else{
+            //vino el campo alarma pero vacio
+            Log::info("el campo ala tiene:".$alaField['ALA']);
+        }
+        
+    } 
     public static function binarySearch(Array $arr, $start, $end, $x){
         if ($end < $start)
             return false;
