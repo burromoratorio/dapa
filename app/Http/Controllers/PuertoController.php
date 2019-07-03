@@ -302,8 +302,7 @@ class PuertoController extends BaseController
                     //Log::error("El info:".$info['mod_presencia']);
                 }else{
                     $info       = self::ModPrecencia($perField['PER'],"IOM");
-                    //$info        = self::AnalPerifericos($perField['PER'],"IOM"); 
-                    Log::error("El info IOM:".$info['mod_presencia']);
+                     Log::error("El info IOM:".$info['mod_presencia']);
                 }
 
                 $arrInfoGprmc   = self::Gprmc2Data($gprmcData);
@@ -395,6 +394,7 @@ class PuertoController extends BaseController
                 /*********para comunicacion con API NAcho********/
             }else{
                 $respuesta  = "0";
+                Log::error("cadena sin posicion");
             }
         }else{
             $respuesta  = "0";
