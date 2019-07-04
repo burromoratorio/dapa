@@ -69,9 +69,16 @@ class NormalReportController extends BaseController
             $memoMoviles  = json_decode($apiRta->getBody());
             $encontrado     = app()->Puerto::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $arrCadena['IMEI']);
             if(!$encontrado){
-              $movilFicticio  = {"equipo_id":"-666","imei":$arrCadena['IMEI'],"movil_id":"-666",
-                              "frec_rep_detenido":,"frec_rep_velocidad":,"frec_rep_exceso_vel":,
-                              "velocidad_max":,"movilOldId":,"estado_u":}
+              $movilFicticio = new stdClass();
+              $movilFicticio->equipo_id = "-666";
+              $movilFicticio->imei = $arrCadena['IMEI'];
+              $movilFicticio->movil_id = "";
+              $movilFicticio->frec_rep_detenido = "";
+              $movilFicticio->frec_rep_velocidad = "";
+              $movilFicticio->frec_rep_exceso_vel = "";
+              $movilFicticio->velocidad_max = "";
+              $movilFicticio->movilOldId = "";
+              $movilFicticio->estado_u = "";
             }
             Log::error(print_r($movilFicticio,true));
            /* MemVar::VaciaMemoria();
