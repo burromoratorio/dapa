@@ -66,8 +66,9 @@ class NormalReportController extends BaseController
             $largo    = (int)$length;
             //Log::error("Content-Length:::".strlen($apiRta->getBody()));
             /*Primero hacer binarySearch con lo que trae la api, si el movil está ahí=>guardo el array en MC y sino, pongo banderas y agrego ese registro al apiRta para contenerlo y no volver a buscar DDBB*/
-            Log::error($apiRta->getBody());
-            //$encontrado     = app()->Puerto::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $imei);
+            $memoMoviles  = json_decode($apiRta->getBody())
+            $encontrado     = app()->Puerto::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $imei);
+            Log::error(print_r($encontrado,true));
            /* MemVar::VaciaMemoria();
             $memvar = MemVar::Instance('moviles.dat');
             $memvar->init('moviles.dat',$largo);
