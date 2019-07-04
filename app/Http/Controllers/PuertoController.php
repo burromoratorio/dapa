@@ -502,7 +502,6 @@ class PuertoController extends BaseController
         return $rta;
     }
     /************Analisis de cadena IOM*********
-    Con Estado en modo RESET=> no realizo evaluaciones, dado que es modo de pruebas Lab+Ing.
     $arrPeriferico[0]=IOM,  $arrPeriferico[1]=I1..I14, $arrPeriferico[2]=O1..O14, $arrPeriferico[3]=E(modo de trabajo del equipo)
     $arrPeriferico[4]=PR(método de restablecimiento Manual),  $arrPeriferico[5]=NB(Normal o backgrond),  $arrPeriferico[6]=P (Panico)  */
     public static function analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estado_movil_id){
@@ -533,7 +532,7 @@ class PuertoController extends BaseController
                 if( $arrIOM[5]=="P"){
                     $rta["estado_movil_id"]= 10;//estado "en alarma"
                     $rta["tipo_alarma_id"] = 1;//panico
-                    Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>1,'fecha_alarma'=>$fecha,'falsa'=>0]);
+                    if($perFieldWorkMode!= 0)Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>1,'fecha_alarma'=>$fecha,'falsa'=>0]);
                     HelpMen::report($movil->equipo_id,"***PANICO ACTIVADO***");
                 }
             }    
@@ -541,7 +540,7 @@ class PuertoController extends BaseController
                 if($arrIOM[6]=="P"){
                     $rta["estado_movil_id"]= 10;//estado "en alarma"
                     $rta["tipo_alarma_id"] = 1;//panico
-                    Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>1,'fecha_alarma'=>$fecha,'falsa'=>0]);
+                    if($perFieldWorkMode!= 0)Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>1,'fecha_alarma'=>$fecha,'falsa'=>0]);
                     HelpMen::report($movil->equipo_id,"***PANICO ACTIVADO***");                
                 }
             }
@@ -678,7 +677,6 @@ class PuertoController extends BaseController
             }
         }else{ //parte de iom
             $arrPeriferico     = explode(',', $arrPrescense);
-            Log::info("ingresa por AnalPerifericos porque Per==>".$arrPeriferico[0]);
             $valorPeriferico   = '';
             switch ($arrPeriferico[0]) {
                 case 'CAU':
@@ -692,7 +690,6 @@ class PuertoController extends BaseController
                     $IOEstados["tmg"] = $valorPeriferico;
                     break;
                 case 'IOM':
-                    Log::info("::::::::::ingresa a Anal Perifericos por IOM:".$arrPeriferico[3].":::::::");
                     $IOEstados["mod_presencia"]= $arrPeriferico[3];
                     break;
                 case 'BIO':
@@ -768,7 +765,6 @@ class PuertoController extends BaseController
             return self::binarySearch($arr, $mid + 1, $end, $x);
         }
     }
-    /*Sensores IOM*/
     public static function getSensores($imei) {
        //MemVar::VaciaMemoria();
         Log::error("buscando informacion de sensores de IMEI:".$imei);
@@ -776,18 +772,16 @@ class PuertoController extends BaseController
         $shmid    = MemVar::OpenToRead('sensores.dat');
         if($shmid=='0'){
             $memoEstados    = self::startupSensores();
-                    Log::error("STARTUPPPP sensores");
-
+            Log::error("Buscando datos de sensores IMEI:".$imei);
         }else{
             MemVar::initIdentifier($shmid);
             $memoEstados    = MemVar::GetValue();
             $memoEstados    = json_decode($memoEstados);
         }
-        /*si encuentro el movil veo el sensor, si difiere al enviado por parametro
+        /*si encuentro el movil y el sensor difiere al enviado por parametro
         genero un nuevo elemento y lo cargo en el array y en la ddbb
         elimino el elemento anterior del array, limpio y vuelvo a cargar la memoria
         */
-        //ver si aca puedo buscar asi $memoEstados[$imei]
         $encontrado     = self::binarySearch($memoEstados, 0, count($memoEstados) - 1, $imei);
         return $encontrado;
         
@@ -817,7 +811,6 @@ class PuertoController extends BaseController
         return $memoEstados;
     
     }
-    /*Fin sensores IOM*/
     public static function CargarMemoria($archivo,$dataArray){
         $memvar     = MemVar::Instance($archivo);
         $enstring   = json_encode($dataArray);
