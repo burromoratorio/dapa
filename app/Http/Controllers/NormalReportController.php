@@ -43,7 +43,20 @@ class NormalReportController extends BaseController
           if($mcRta==false){//no fue encontrado en MC
             Log::error("El IMEI ".$arrCadena['IMEI']." no está en la memoria");
             $requestApi = '1';
-            $movilOmoviles  = $this->fijateQueOnda($arrCadena['IMEI']);
+          }elseif ($mcRta=="-666") {//en MC pero sin instalacion
+            Log::error("El IMEI ".$arrCadena['IMEI']." se encuentra sin INSTALACION");
+            $requestApi = '2';
+          }else{ 
+            $movil     = $mcRta;
+            $logcadena ="::::::::Procesando:".$arrCadena['IMEI']."- Movil_id:".$movil->movil_id."-MovilOld_id:".$movil->movilOldId.":::::::: \r\n";
+            HelpMen::report($movil->equipo_id,$logcadena);
+          }
+        }else{
+          $requestApi   = '1';
+          Log::info("No existe el shmid->voy a crear nuevo segmento");
+        }
+        if($requestApi   == '1'){
+          $movilOmoviles  = $this->fijateQueOnda($arrCadena['IMEI']);
             if(isset($movilOmoviles->imei)){ //esta en memo
               $movil = $movilOmoviles;
             }else{//no esta en memo ni en ddbb
@@ -64,23 +77,13 @@ class NormalReportController extends BaseController
               $memvar->setValue( $movilesForMemo );
               $shmid  = MemVar::OpenToRead('moviles.dat');
             }
-          }elseif ($mcRta=="-666") {//en MC pero sin instalacion
-            Log::error("El IMEI ".$arrCadena['IMEI']." se encuentra sin INSTALACION");
-            $requestApi = '2';
-            $movilOmoviles= $this->fijateQueOnda($arrCadena['IMEI']);
+        }
+        if($requestApi   == '2'){
+          $movilOmoviles= $this->fijateQueOnda($arrCadena['IMEI']);
             if(isset($movilOmoviles->imei)){
               $movil = $movilOmoviles;
             }
-          }else{ 
-            $movil     = $mcRta;
-            $logcadena ="::::::::Procesando:".$arrCadena['IMEI']."- Movil_id:".$movil->movil_id."-MovilOld_id:".$movil->movilOldId.":::::::: \r\n";
-            HelpMen::report($movil->equipo_id,$logcadena);
-          }
-        }else{
-          $requestApi   = '1';
-          Log::info("No existe el shmid->voy a crear nuevo segmento");
         }
-        
         /*Fin nuevaMC*/
         if($movil!=false){
           $rta    = $this->tratarReporte($jsonReq['cadena'],$movil);
