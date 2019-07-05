@@ -33,6 +33,7 @@ class NormalReportController extends BaseController
         $arrCadena = app()->Puerto::changeString2array($jsonReq["cadena"]);
         /*primero validaciones en MC*/
         $shmid        = MemVar::OpenToRead('moviles.dat');
+        Log::error(print_r($shmid));
         $requestApi   = '0';
         $mcRta        = '0';
         $movil        = false;
