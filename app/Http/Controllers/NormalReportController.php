@@ -53,7 +53,7 @@ class NormalReportController extends BaseController
               $movilFicticio->frec_rep_exceso_vel = "";$movilFicticio->velocidad_max = "";
               $movilFicticio->movilOldId = "";$movilFicticio->estado_u = "";
               array_push($memoMoviles, $movilFicticio);
-              $movilesForMemo = JSON.stringify($memoMoviles);
+              $movilesForMemo = json_encode($memoMoviles);
               Log::info($$movilesForMemo);
               MemVar::VaciaMemoria();
               $memvar = MemVar::Instance('moviles.dat');
