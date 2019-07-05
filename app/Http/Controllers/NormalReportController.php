@@ -54,7 +54,7 @@ class NormalReportController extends BaseController
               $movilFicticio->movilOldId = "";$movilFicticio->estado_u = "";
               array_push($memoMoviles, $movilFicticio);
               $movilesForMemo = json_encode($memoMoviles);
-              Log::info($$movilesForMemo);
+              //Log::info($movilesForMemo);
               MemVar::VaciaMemoria();
               $memvar = MemVar::Instance('moviles.dat');
               $memvar->init('moviles.dat',$largo+1);
