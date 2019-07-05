@@ -146,6 +146,7 @@ class NormalReportController extends BaseController
     $memoMoviles    = MemVar::GetValue();
     $memoMoviles    = json_decode($memoMoviles);
     $ultimoIndex    = (count($memoMoviles)-1);
+    Log::error(print_r($memoMoviles[$ultimoIndex],true));
     if($memoMoviles[$ultimoIndex]->imei==$imei && $memoMoviles[$ultimoIndex]->equipo_id=="-666"){//si es el ultimo y no tiene instalacion
       $encontrado   = "-666";
     }else{
