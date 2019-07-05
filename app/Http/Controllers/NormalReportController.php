@@ -37,7 +37,6 @@ class NormalReportController extends BaseController
         $mcRta        = '0';
         $movil        = false;
         if($shmid!='0'){
-          Log::error(print_r($shmid));
           Log::info("Verificando validez IMEI ".$arrCadena['IMEI']);
           $mcRta      = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
           if($mcRta==false){//no fue encontrado en MC
@@ -150,7 +149,6 @@ class NormalReportController extends BaseController
     $memoMoviles    = MemVar::GetValue();
     $memoMoviles    = json_decode($memoMoviles);
     $ultimoIndex    = (count($memoMoviles)-1);
-    Log::error(print_r($memoMoviles[$ultimoIndex],true));
     if($memoMoviles[$ultimoIndex]->imei==$imei && $memoMoviles[$ultimoIndex]->equipo_id=="-666"){//si es el ultimo y no tiene instalacion
       $encontrado   = "-666";
     }else{
