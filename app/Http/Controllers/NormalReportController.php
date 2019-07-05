@@ -29,24 +29,46 @@ class NormalReportController extends BaseController
     if ($request->isMethod('post')) {
 	    $rta="";
       $jsonReq = $request->json()->all();
-      //Log::error(print_r($jsonReq, true));
       if(isset($jsonReq["cadena"])){
-        //pruebas en obtencion de imei del json -->el imei de sebas $arrCadena['IMEI']  = '861075026533174';
         $arrCadena = app()->Puerto::changeString2array($jsonReq["cadena"]);
         /*primero validaciones en MC*/
         $shmid        = MemVar::OpenToRead('moviles.dat');
         $requestApi   = '0';
         $mcRta        = '0';
-        $mcRta2       = '0';
         $movil        = false;
         if($shmid!='0'){
           Log::info("Verificando validez IMEI ".$arrCadena['IMEI']);
-          $mcRta        = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
-          if($mcRta==false){
+          $mcRta      = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
+          if($mcRta==false){//no fue encontrado en MC
             Log::error("El IMEI ".$arrCadena['IMEI']." no está en la memoria");
-            $requestApi= '1';
-          }else{
-            $mcRta2    = '1';
+            $requestApi = '1';
+            $movilOmoviles  = $this->fijateQueOnda($arrCadena['IMEI']);
+            if(isset($movilOmoviles->imei)){ //esta en memo
+              $movil = $movilOmoviles;
+            }else{//no esta en memo ni en ddbb
+              $memoMoviles    = json_decode($movilOmoviles);
+              $movilFicticio  = new stdClass();
+              $movilFicticio->equipo_id = "-666";$movilFicticio->imei = $arrCadena['IMEI']; $movilFicticio->movil_id = "";
+              $movilFicticio->frec_rep_detenido = "";$movilFicticio->frec_rep_velocidad = "";
+              $movilFicticio->frec_rep_exceso_vel = "";$movilFicticio->velocidad_max = "";
+              $movilFicticio->movilOldId = "";$movilFicticio->estado_u = "";
+              array_push($memoMoviles, $movilFicticio);
+              $movilesForMemo = JSON.stringify($memoMoviles);
+              Log::info($$movilesForMemo);
+              MemVar::VaciaMemoria();
+              $memvar = MemVar::Instance('moviles.dat');
+              $memvar->init('moviles.dat',$largo+1);
+              $memvar->setValue( $movilesForMemo );
+              $shmid  = MemVar::OpenToRead('moviles.dat');
+            }
+          }elseif ($mcRta=="-666") {//en MC pero sin instalacion
+            Log::error("El IMEI ".$arrCadena['IMEI']." se encuentra sin INSTALACION");
+            $requestApi = '2';
+            $movilOmoviles= $this->fijateQueOnda($arrCadena['IMEI']);
+            if(isset($movilOmoviles->imei)){
+              $movil = $movilOmoviles;
+            }
+          }else{ 
             $movil     = $mcRta;
             $logcadena ="::::::::Procesando:".$arrCadena['IMEI']."- Movil_id:".$movil->movil_id."-MovilOld_id:".$movil->movilOldId.":::::::: \r\n";
             HelpMen::report($movil->equipo_id,$logcadena);
@@ -55,42 +77,7 @@ class NormalReportController extends BaseController
           $requestApi   = '1';
           Log::info("No existe el shmid->voy a crear nuevo segmento");
         }
-        /*fin validaciones MC*/
-        /*cargo nuevos datos en MC API REQUEST y vuelvo a comprobar
-          si no está en la DDBB-->no sigo la ejecucion de esa cadena
-        */
-        if($requestApi   == '1'){
-          $apiRta   = $this->obtenerMoviles();
-          if($apiRta->getStatusCode()=="200" && $apiRta->getReasonPhrase()=="OK"){
-            $length   = strlen($apiRta->getBody());
-            $largo    = (int)$length;
-            //Log::error("Content-Length:::".strlen($apiRta->getBody()));
-            /*Primero hacer binarySearch con lo que trae la api, si el movil está ahí=>guardo el array en MC y sino, pongo banderas y agrego ese registro al apiRta para contenerlo y no volver a buscar DDBB*/
-            $memoMoviles  = json_decode($apiRta->getBody());
-            $encontrado     = app()->Puerto::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $arrCadena['IMEI']);
-            if(!$encontrado){
-              $movilFicticio = new stdClass();
-              $movilFicticio->equipo_id = "-666";
-              $movilFicticio->imei = $arrCadena['IMEI'];
-              $movilFicticio->movil_id = "";
-              $movilFicticio->frec_rep_detenido = "";
-              $movilFicticio->frec_rep_velocidad = "";
-              $movilFicticio->frec_rep_exceso_vel = "";
-              $movilFicticio->velocidad_max = "";
-              $movilFicticio->movilOldId = "";
-              $movilFicticio->estado_u = "";
-            }
-            Log::error(print_r($movilFicticio,true));
-           /* MemVar::VaciaMemoria();
-            $memvar = MemVar::Instance('moviles.dat');
-            $memvar->init('moviles.dat',$largo);
-            $memvar->setValue( $apiRta->getBody() );
-            $shmid  = MemVar::OpenToRead('moviles.dat');
-            $movil  = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);*/
-          }else{
-            Log::error("Bad Response :: code:".$code." reason::".$reason);
-          }
-        }
+        
         /*Fin nuevaMC*/
         if($movil!=false){
           $rta    = $this->tratarReporte($jsonReq['cadena'],$movil);
@@ -117,6 +104,30 @@ class NormalReportController extends BaseController
             'estado' => $rta
         ]);
   }
+  protected function fijateQueOnda($imei){
+    $movil  = false;
+    $apiRta   = $this->obtenerMoviles();
+    if($apiRta->getStatusCode()=="200" && $apiRta->getReasonPhrase()=="OK"){
+      $length       = strlen($apiRta->getBody());
+      $largo        = (int)$length;
+      $memoMoviles  = json_decode($apiRta->getBody());
+      $movilesForMemo=$apiRta->getBody();
+      $encontrado   = app()->Puerto::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $imei);
+      if($encontrado){
+        MemVar::VaciaMemoria();
+        $memvar = MemVar::Instance('moviles.dat');
+        $memvar->init('moviles.dat',$largo+1);
+        $memvar->setValue( $movilesForMemo );
+        $shmid  = MemVar::OpenToRead('moviles.dat');
+        $movil = $encontrado;
+      }else{
+        $movil = $movilesForMemo;
+      }
+    }else{
+      Log::error("Bad Response :: code:".$code." reason::".$reason);
+    }
+    return $movil;
+  }
   protected function obtenerMoviles() {
       Log::error("Buscando moviles en code.siacseguridad.com");
       // Create a client with a base URI
@@ -132,7 +143,12 @@ class NormalReportController extends BaseController
     MemVar::initIdentifier($shmid);
     $memoMoviles    = MemVar::GetValue();
     $memoMoviles    = json_decode($memoMoviles);
-    $encontrado     = app()->Puerto::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $imei);
+    $ultimoIndex    = (count($memoMoviles)-1);
+    if($memoMoviles[$ultimoIndex]->imei==$imei && $memoMoviles[$ultimoIndex]->equipo_id=="-666"){//si es el ultimo y no tiene instalacion
+      $encontrado   = "-666";
+    }else{
+      $encontrado   = app()->Puerto::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $imei);
+    }
     return $encontrado;
     
   }
