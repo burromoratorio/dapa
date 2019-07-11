@@ -502,8 +502,12 @@ class PuertoController extends BaseController
         $claveArgentina=array_search('ALA', $arrIOM);
         if( $claveArgentina ){
             $estadoArr = str_split($arrIOM[$claveArgentina+1]);
-            if($estadoArr[1]==0)Log::info("ALARMA PUERTA CONDUCTOR ABIERTA");
-            if($estadoArr[2]==0)Log::info("ALARMA PUERTA ACOMPAÑANTE ABIERTA");
+            if($estadoArr[1]=="0"){
+                Log::info("ALARMA PUERTA CONDUCTOR ABIERTA");
+            }
+            if($estadoArr[2]=="0"){
+                Log::info("ALARMA PUERTA ACOMPAÑANTE ABIERTA");
+            }
             Log::error("KEYALARMA::".$claveArgentina." ESTO ESTA EN ALARMAAAAA:::".$arrIOM[$claveArgentina+1]);
         }else{
             Log::error("NO HAY ALARMA");    
