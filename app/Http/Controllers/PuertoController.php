@@ -499,8 +499,14 @@ class PuertoController extends BaseController
         $arrIOM      = explode(',',$perField);
         $sensorEstado= self::getSensores($imei); 
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>7); //alarma_id=7 (Normal)
-        $clave       = array_search('ALA', $arrIOM); // $clave = 2;
-        Log::error("el campo ala esta en la posicion:".$clave);
+        $claveArgentina=array_search('ALA', $arrIOM);
+        if( $claveArgentina>=0 ){
+            Log::error("ESTO ESTA EN ALARMAAAAA:::".$arrIOM[$claveArgentina+1]);
+        }else{
+            Log::error("NO HAY ALARMA");    
+        }
+        
+        
         if($perField!='NULL' && $arrIOM[0]=='IOM'){
             Log::info("::::::::::entrando a Tratar alarmas IOM pero en parte de IOM Va a ALMACENAR EN LA DDBB::::::::::::");
             $perFieldInput   = $arrIOM[1];
