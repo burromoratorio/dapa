@@ -503,10 +503,16 @@ class PuertoController extends BaseController
         if( $claveArgentina ){
             $estadoArr = str_split($arrIOM[$claveArgentina+1]);
             if($estadoArr[1]=="0"){
-                Log::info("ALARMA PUERTA CONDUCTOR ABIERTA");
+                $rta["tipo_alarma_id"]=4;
+                $rta["estado_movil_id"]=10;
+                $rta["rta"]            = 1;
+                HelpMen::report($movil->equipo_id,"\r\n ***PUERTA CONDUCTOR ABIERTA*** \r\n ");
             }
             if($estadoArr[2]=="0"){
-                Log::info("ALARMA PUERTA ACOMPAÑANTE ABIERTA");
+                $rta["tipo_alarma_id"]=24;
+                $rta["estado_movil_id"]=7;
+                $rta["rta"]            = 1;
+                HelpMen::report($movil->equipo_id,"\r\n ***PUERTA ACOMPAÑANTE ABIERTA*** \r\n ");
             }
             Log::error("KEYALARMA::".$claveArgentina." ESTO ESTA EN ALARMAAAAA:::".$arrIOM[$claveArgentina+1]);
         }else{
