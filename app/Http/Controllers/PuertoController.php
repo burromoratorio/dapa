@@ -587,7 +587,7 @@ class PuertoController extends BaseController
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); //alarma_id=7 (Normal)
         if($sensorEstado && $sensorEstado->iom){
             $estadoArr = str_split($sensorEstado->iom);
-            
+            HelpMen::report($movil->equipo_id,"el sensor de memoria:".$sensorEstado->iom." el iom:".implode(",", $iomArr));
             if( $estadoArr[3]==0 && $iomArr[3]==1 ){
                 $rta["tipo_alarma_id"]=12;
                 $rta["estado_movil_id"]=5;
