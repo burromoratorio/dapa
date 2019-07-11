@@ -588,30 +588,30 @@ class PuertoController extends BaseController
         if($sensorEstado && $sensorEstado->iom){
             $estadoArr = str_split($sensorEstado->iom);
             
-            if( $estadoArr[3]==0 && $iomArr[3]==1 ){
+            if( $estadoArr[3]=="0" && $iomArr[3]=="1" ){
                 $rta["tipo_alarma_id"]=12;
                 $rta["estado_movil_id"]=5;
                 $rta["rta"]            = 1;
                 HelpMen::report($movil->equipo_id,"\r\n ***MOVIL PASO DE ENGANCHADO A DESENGANCHADO*** \r\n ");
             }
-            if( $estadoArr[3]==1 && $iomArr[3]==0 ){
+            if( $estadoArr[3]=="1" && $iomArr[3]=="0" ){
                 $rta["tipo_alarma_id"]=5;
                 $rta["rta"]           = 1;
                 HelpMen::report($movil->equipo_id,"\r\n ***MOVIL PASO DE DESENGANCHADO A ENGANCHADO*** \r\n");
             }
-            if( $estadoArr[5]==0 && $iomArr[5]==1 ){
+            if( $estadoArr[5]=="0" && $iomArr[5]=="1" ){
                 $rta["tipo_alarma_id"]=9;
                 $rta["rta"]           = 1;
                 HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA DE CERRADA A ABIERTA*** \r\n");
             }
-            if( $estadoArr[5]==1 && $iomArr[5]==0 ){
+            if( $estadoArr[5]=="1" && $iomArr[5]=="0" ){
                 $rta["tipo_alarma_id"]=11;
                 $rta["rta"]           = 1;
                 HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA DE ABIERTA A CERRADA*** \r\n");
             }
         }
-        if($iomArr[0]==1)HelpMen::report($movil->equipo_id,"\r\n ***PANICO ACTIVADO*** \r\n");  
-        if($iomArr[4]==0){
+        if($iomArr[0]=="1")HelpMen::report($movil->equipo_id,"\r\n ***PANICO ACTIVADO*** \r\n");  
+        if($iomArr[4]=="0"){
             $rta["tipo_alarma_id"]=6;
             $rta["rta"]           = 1;
             HelpMen::report($movil->equipo_id,"\r\n ***ANTISABOTAJE ACTIVADO*** \r\n");  
