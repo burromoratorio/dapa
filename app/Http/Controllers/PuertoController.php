@@ -500,7 +500,7 @@ class PuertoController extends BaseController
         $sensorEstado= self::getSensores($imei); 
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>7); //alarma_id=7 (Normal)
         $claveArgentina=array_search('ALA', $arrIOM);
-        if( $claveArgentina>=0 ){
+        if( $claveArgentina ){
             Log::error("KEYALARMA::".$claveArgentina." ESTO ESTA EN ALARMAAAAA:::".$arrIOM[$claveArgentina+1]);
         }else{
             Log::error("NO HAY ALARMA");    
