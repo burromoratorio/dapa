@@ -1,26 +1,18 @@
 <?php
 namespace App\Http\Controllers;
-use Laravel\Lumen\Routing\Controller as BaseController;
-use Illuminate\Http\Request;
-Use Log;
-use stdClass;
-use Storage;
-use DB;
-use App\Http\Controllers\EquipoController;
-use App\Http\Controllers\MovilController;
-/*DDBB Primitiva*/
-use App\GprmcEntrada;
-use App\GprmcDesconexion;
-/*DDBB Principal*/
-use App\Posiciones;
 use App\Alarmas;
-Use App\EstadosSensores;
-Use App\Movil;
-Use App\PosicionesHistoricas;
-/*Helpers*/
-use App\Helpers\MemVar;
-use GuzzleHttp\Client;
+use App\EstadosSensores;
+use App\GprmcAlarma;
+use App\GprmcDesconexion;
+use App\GprmcEntrada;
+use App\Movil;
+use App\Posiciones;
+use App\PosicionesHistoricas;
 use App\Helpers\HelpMen;
+use App\Helpers\MemVar;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Laravel\Lumen\Routing\Controller as BaseController;
 
 class PuertoController extends BaseController
 {
@@ -570,6 +562,30 @@ class PuertoController extends BaseController
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); //alarma_id=7 (Normal)
         if($sensorEstado && $sensorEstado->iom){
             $estadoArr = str_split($sensorEstado->iom);
+            if( $estadoArr[1]==1 && $iomArr[1]==0 ){
+                $rta["tipo_alarma_id"]=4;
+                $rta["estado_movil_id"]=10;
+                $rta["rta"]            = 1;
+                HelpMen::report($movil->equipo_id,"\r\n ***PUERTA CONDUCTOR ABIERTA*** \r\n ");
+            }
+            if( $estadoArr[1]==0 && $iomArr[1]==1 ){
+                $rta["tipo_alarma_id"]=10;
+                $rta["estado_movil_id"]=7;
+                $rta["rta"]            = 1;
+                HelpMen::report($movil->equipo_id,"\r\n ***PUERTA CONDUCTOR CERRADA*** \r\n ");
+            }
+            if( $estadoArr[2]==1 && $iomArr[2]==0 ){
+                $rta["tipo_alarma_id"]=24;
+                $rta["estado_movil_id"]=7;
+                $rta["rta"]            = 1;
+                HelpMen::report($movil->equipo_id,"\r\n ***PUERTA ACOMPAÑANTE ABIERTA*** \r\n ");
+            }
+            if( $estadoArr[2]==0 && $iomArr[2]==1 ){
+                $rta["tipo_alarma_id"]=25;
+                $rta["estado_movil_id"]=10;
+                $rta["rta"]            = 1;
+                HelpMen::report($movil->equipo_id,"\r\n ***PUERTA ACOMPAÑANTE CERRADA*** \r\n ");
+            }
             if( $estadoArr[3]==0 && $iomArr[3]==1 ){
                 $rta["tipo_alarma_id"]=12;
                 $rta["estado_movil_id"]=5;

@@ -1,22 +1,17 @@
 <?php
 namespace App\Http\Controllers;
-use Laravel\Lumen\Routing\Controller as BaseController;
-use Illuminate\Http\Request;
-Use Log;
-use stdClass;
-use Storage;
-use DB;
-
-/*Helpers*/
+use App\Helpers\HelpMen;
 use App\Helpers\MemVar;
 use GuzzleHttp\Client;
-use App\Helpers\HelpMen;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Laravel\Lumen\Routing\Controller as BaseController;
+use Exception;
+use stdClass;
 //use App\Http\Controllers\PuertoController;
 //Use Puerto;
 class NormalReportController extends BaseController
 {
-  
-
   public function index(Request $request) {
     return "ok";
   }   
@@ -55,7 +50,7 @@ class NormalReportController extends BaseController
           Log::info("No existe el shmid->voy a crear nuevo segmento");
         }
         if($requestApi   == '1'){
-          $movilOmoviles  = $this->fijateQueOnda($arrCadena['IMEI']);
+          $movilOmoviles  = $this->fijateQueOnda($arrCadena['IMEI']); //devuelve un obj movil, o un json con todos los moviles de ddbb
             if(isset($movilOmoviles->imei)){ //esta en memo
               $movil = $movilOmoviles;
             }else{//no esta en memo ni en ddbb
@@ -135,10 +130,8 @@ class NormalReportController extends BaseController
   }
   protected function obtenerMoviles() {
       Log::error("Buscando moviles en code.siacseguridad.com");
-      // Create a client with a base URI
-      $urlP       = env('CODE_URL');
-      $client = new Client(['base_uri' => $urlP]);
-      // Send a request to https://foo.com/api/test
+      $urlP     = env('CODE_URL');
+      $client   = new Client(['base_uri' => $urlP]);
       $response = $client->request('GET', 'equipos/1');
 
       return $response;
