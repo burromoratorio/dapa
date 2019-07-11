@@ -499,8 +499,8 @@ class PuertoController extends BaseController
     public static function analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estado_movil_id){
         $arrIOM      = explode(',',$perField);
         $sensorEstado= self::getSensores($imei);
-        HelpMen::report($movil->equipo_id,"el perfield en analisisIOM:".$perField);
-        HelpMen::report($movil->equipo_id,"el snesor estado en analisisIOM:".$sensorEstado);
+        HelpMen::report($movil->equipo_id,"\r\n el perfield en analisisIOM:".$perField);
+        HelpMen::report($movil->equipo_id,"\r\n ::::::el snesor estado en analisisIOM:".$sensorEstado);
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>7); //alarma_id=7 (Normal)
         $claveArgentina=array_search('ALA', $arrIOM);
         if( $claveArgentina ){
