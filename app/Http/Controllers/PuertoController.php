@@ -330,7 +330,7 @@ class PuertoController extends BaseController
                                         'km_recorridos'=>$odp,
                                         'ltrs_consumidos'=>$info['ltrs']]);
                         $posicion->save();
-
+                        Log::error("campo alarma:::".$alaField["ALA"]);
                         if($alaField["ALA"]=="V"){
                             $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion->posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>7,'fecha_alarma'=>$fecha,'falsa'=>0]);
                             $estadoMovilidad    = 11;

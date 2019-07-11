@@ -1,20 +1,13 @@
 <?php
 namespace App\Http\Controllers;
-use Laravel\Lumen\Routing\Controller as BaseController;
-use Illuminate\Http\Request;
-use PhpAmqpLib\Connection\AMQPStreamConnection;
-use PhpAmqpLib\Message\AMQPMessage;
-Use Log;
-use stdClass;
-use Storage;
-use DB;
-/*DDBB Principal*/
 use App\ColaMensajes;
 use App\InstalacionSiac;
-/*Helpers*/
-use App\Helpers\MemVar;
 use App\Helpers\HelpMen;
-use GuzzleHttp\Client;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Laravel\Lumen\Routing\Controller as BaseController;
+use Exception;
 
 class CommandController extends BaseController
 {
