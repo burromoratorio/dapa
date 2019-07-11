@@ -430,6 +430,7 @@ class PuertoController extends BaseController
         $cambioBits = array("rta"=>0,"estado_movil_id"=>$estadoMovilidad,"tipo_alarma_id"=>7); //alarma_id=7 (Normal)
         $io         = str_replace("I", "",$ioData[1] );
         if($perField!='NULL'){ //analisis en bits sensores IOM y ALA
+            HelpMen::report($movil->equipo_id,$perField);
             $cambioBits = self::analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
         }else{ //analisis en bits IO
             $cambioBits = self::analisisIO($ioData,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
@@ -497,7 +498,9 @@ class PuertoController extends BaseController
     $arrPeriferico[4]=PR(método de restablecimiento Manual),  $arrPeriferico[5]=NB(Normal o backgrond),  $arrPeriferico[6]=P (Panico)  */
     public static function analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estado_movil_id){
         $arrIOM      = explode(',',$perField);
-        $sensorEstado= self::getSensores($imei); 
+        $sensorEstado= self::getSensores($imei);
+        HelpMen::report($movil->equipo_id,"el perfield en analisisIOM:".$perField);
+        HelpMen::report($movil->equipo_id,"el snesor estado en analisisIOM:".$sensorEstado);
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>7); //alarma_id=7 (Normal)
         $claveArgentina=array_search('ALA', $arrIOM);
         if( $claveArgentina ){
@@ -523,8 +526,6 @@ class PuertoController extends BaseController
         }else{
             Log::error("NO HAY ALARMA");    
         }
-        
-        
         if($perField!='NULL' && $arrIOM[0]=='IOM'){
             Log::info("::::::::::entrando a Tratar alarmas IOM pero en parte de IOM Va a ALMACENAR EN LA DDBB::::::::::::");
             $perFieldInput   = $arrIOM[1];
