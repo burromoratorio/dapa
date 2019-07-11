@@ -330,7 +330,6 @@ class PuertoController extends BaseController
                                         'km_recorridos'=>$odp,
                                         'ltrs_consumidos'=>$info['ltrs']]);
                         $posicion->save();
-                        Log::error("campo alarma:::".$alaField["ALA"]);
                         if($alaField["ALA"]=="V"){
                             $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion->posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>7,'fecha_alarma'=>$fecha,'falsa'=>0]);
                             $estadoMovilidad    = 11;
@@ -500,6 +499,8 @@ class PuertoController extends BaseController
         $arrIOM      = explode(',',$perField);
         $sensorEstado= self::getSensores($imei); 
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>7); //alarma_id=7 (Normal)
+        $clave       = array_search('ALA', $arrIOM); // $clave = 2;
+        Log::error("el campo ala esta en la posicion:".$clave);
         if($perField!='NULL' && $arrIOM[0]=='IOM'){
             Log::info("::::::::::entrando a Tratar alarmas IOM pero en parte de IOM Va a ALMACENAR EN LA DDBB::::::::::::");
             $perFieldInput   = $arrIOM[1];
