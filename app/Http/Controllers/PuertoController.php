@@ -514,6 +514,11 @@ class PuertoController extends BaseController
                 $rta["rta"]            = 1;
                 HelpMen::report($movil->equipo_id,"\r\n ***PUERTA ACOMPAÑANTE ABIERTA*** \r\n ");
             }
+            if($estadoArr[7]=="0"){
+                $rta["tipo_alarma_id"]=3;
+                $rta["rta"]            = 1;
+                HelpMen::report($movil->equipo_id,"\r\n ***MOTOR ENCENDIDO*** \r\n ");
+            }
             Log::error("KEYALARMA::".$claveArgentina." ESTO ESTA EN ALARMAAAAA:::".$arrIOM[$claveArgentina+1]);
         }else{
             Log::error("NO HAY ALARMA");    
@@ -582,30 +587,7 @@ class PuertoController extends BaseController
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); //alarma_id=7 (Normal)
         if($sensorEstado && $sensorEstado->iom){
             $estadoArr = str_split($sensorEstado->iom);
-            /*if( $estadoArr[1]==1 && $iomArr[1]==0 ){
-                $rta["tipo_alarma_id"]=4;
-                $rta["estado_movil_id"]=10;
-                $rta["rta"]            = 1;
-                HelpMen::report($movil->equipo_id,"\r\n ***PUERTA CONDUCTOR ABIERTA*** \r\n ");
-            }
-            if( $estadoArr[1]==0 && $iomArr[1]==1 ){
-                $rta["tipo_alarma_id"]=10;
-                $rta["estado_movil_id"]=7;
-                $rta["rta"]            = 1;
-                HelpMen::report($movil->equipo_id,"\r\n ***PUERTA CONDUCTOR CERRADA*** \r\n ");
-            }
-            if( $estadoArr[2]==1 && $iomArr[2]==0 ){
-                $rta["tipo_alarma_id"]=24;
-                $rta["estado_movil_id"]=7;
-                $rta["rta"]            = 1;
-                HelpMen::report($movil->equipo_id,"\r\n ***PUERTA ACOMPAÑANTE ABIERTA*** \r\n ");
-            }
-            if( $estadoArr[2]==0 && $iomArr[2]==1 ){
-                $rta["tipo_alarma_id"]=25;
-                $rta["estado_movil_id"]=10;
-                $rta["rta"]            = 1;
-                HelpMen::report($movil->equipo_id,"\r\n ***PUERTA ACOMPAÑANTE CERRADA*** \r\n ");
-            }*/
+            
             if( $estadoArr[3]==0 && $iomArr[3]==1 ){
                 $rta["tipo_alarma_id"]=12;
                 $rta["estado_movil_id"]=5;
