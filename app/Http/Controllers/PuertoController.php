@@ -620,6 +620,7 @@ class PuertoController extends BaseController
                 Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,
                             'tipo_alarma_id'=>$tipo_alarma_id,'fecha_alarma'=>$fecha,'falsa'=>0]);
             }
+            Log::error("actualiza a ESTE ESTASDO DE MIUERDAAA::".$estado_movil_id);
             Movil::where('movil_id', '=', $movil_id)->update(array('estado_movil_id' => $estado_movil_id));
             DB::commit();
             self::startupSensores();
