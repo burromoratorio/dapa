@@ -544,7 +544,7 @@ class PuertoController extends BaseController
             }
             if($largor==7 && $arrIOM[5]=="ALA"){//IOM,01100101110010,101000XXXX,2,1,ALA,XXXX0XXXXXXXXX
                 $rta["estado_movil_id"]= 10;//estado "en alarma"
-                $iomArr = str_split($perFieldInput);
+               // $iomArr = str_split($perFieldInput);
             }
             if($largor==8){
                 //IOM,01100101110010,101000XXXX,2,1,NB,ALA,XXXX0XXXXXXXXX ó IOM,01100101110010,101000XXXX,2,1,P,ALA,XXXX0XXXXXXXXX
@@ -579,7 +579,7 @@ class PuertoController extends BaseController
                 }
             }else{
                 if($idEstados["rta"]==1)
-                self::updateSensores($imei,$movil,$iomArr,"",$idEstados["tipo_alarma_id"],$idEstados["estado_movil_id"],$posicion_id,$fecha);
+                    self::updateSensores($imei,$movil,$perFieldInput,"",$idEstados["tipo_alarma_id"],$idEstados["estado_movil_id"],$posicion_id,$fecha);
             }
         }
         return $rta;    
@@ -624,7 +624,8 @@ class PuertoController extends BaseController
         DB::beginTransaction();
         try {
             if($perField!=""){
-                $perField   = implode("",$perField);
+               // $perField   = implode("",$perField);
+                Log::info("***Update sensores iom***".$perField);
                 HelpMen::report($movil->equipo_id,"\r\n ***Update sensores iom***".$perField ."\r\n");
                 EstadosSensores::where('imei', '=', $imei)->update(array('iom' => $perField));
             }else{
