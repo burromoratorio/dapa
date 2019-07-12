@@ -594,6 +594,8 @@ class PuertoController extends BaseController
     }
     public static function updateSensores($imei,$movil,$perField,$io,$tipo_alarma_id,$estado_movil_id,$posicion_id,$fecha){
         DB::beginTransaction();
+        Log::error("actualiza a ESTE ESTASDO DE CAJETAZA::".$estado_movil_id);
+        
         try {
             if($perField!=""){
                // $perField   = implode("",$perField);
