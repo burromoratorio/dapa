@@ -589,7 +589,7 @@ class PuertoController extends BaseController
                 HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA DE ABIERTA A CERRADA*** \r\n");
             }
         }
-        if($iomArr[0]==1)HelpMen::report($movil->equipo_id,"\r\n ***PANICO ACTIVADO*** \r\n");  
+        //if($iomArr[0]==1)HelpMen::report($movil->equipo_id,"\r\n ***PANICO ACTIVADO*** \r\n");  
         if($iomArr[4]==0){
             $rta["tipo_alarma_id"]=6;
             $rta["rta"]           = 1;
