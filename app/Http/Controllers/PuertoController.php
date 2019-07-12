@@ -531,7 +531,7 @@ class PuertoController extends BaseController
             $keyNB=array_search('NB', $arrIOM);
             if( $keyNB ){
                 $rta["estado_movil_id"]= 10;//estado "en alarma"
-                $rta["tipo_alarma_id"] = 32;//modo NB
+                $rta["tipo_alarma_id"] = 31;//modo NB
                 HelpMen::report($movil->equipo_id,"***EQUIPO EN MODO SILENCIOSO***");
                 if($perFieldWorkMode!= 0)Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>32,'fecha_alarma'=>$fecha,'falsa'=>0]);
             }
