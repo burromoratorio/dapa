@@ -428,7 +428,6 @@ class PuertoController extends BaseController
         //falta devolver el estado en  el que quedó el movil luego del proceso de analisis
         //$estadoMovilidad y $tipo_alarma_id necesito devolver desde los metodos de analisis para el update
         $cambioBits = array("rta"=>0,"estado_movil_id"=>$estadoMovilidad,"tipo_alarma_id"=>7); //alarma_id=7 (Normal)
-        $io         = str_replace("I", "",$ioData[1] );
         if($perField!='NULL'){ //analisis en bits sensores IOM y ALA
             HelpMen::report($movil->equipo_id,$perField);
             $cambioBits = self::analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
@@ -439,7 +438,6 @@ class PuertoController extends BaseController
     }
     public static function analisisIO($ioData,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
         $movilOldId = intval($movil->movilOldId);
-        $movil_id   = intval($movil->movil_id);
         $rta        = array("rta"=>0,"estado_movil_id"=>$estadoMovilidad,"tipo_alarma_id"=>7); //alarma_id=7 (Normal)
         //si no tiene posicion_id y es una alarma de panico , informar mail?¡
         if($ioData[0]=="I00"){//ingreso de alarma de panico bit en 0
@@ -457,7 +455,6 @@ class PuertoController extends BaseController
                 }
         }
         /*cambios de estado IO alarmas de bateria*/
-        $arrPeriferico  = $ioData[1];
         $io             = str_replace("I", "",$ioData[1] );
         $sensorEstado   = self::getSensores($imei);
         if($io=='10'){ 
@@ -501,7 +498,6 @@ class PuertoController extends BaseController
         $sensorEstado= self::getSensores($imei);
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>7); //alarma_id=7 (Normal)
         if($perField!='NULL' && $arrIOM[0]=='IOM'){
-            Log::info("::::::::::entrando a Tratar alarmas IOM pero en parte de IOM Va a ALMACENAR EN LA DDBB::::::::::::");
             $perFieldInput   = $arrIOM[1];
             //$perFieldOutput  = $arrIOM[2];
             $perFieldWorkMode= $arrIOM[3];
@@ -517,7 +513,6 @@ class PuertoController extends BaseController
                 }
                 if($estadoArr[2]=="0"){
                     $rta["tipo_alarma_id"]=24;
-                    $rta["estado_movil_id"]=7;
                     HelpMen::report($movil->equipo_id,"\r\n ***PUERTA ACOMPAÑANTE ABIERTA*** \r\n ");
                 }
                 if($estadoArr[7]=="0"){
@@ -542,13 +537,12 @@ class PuertoController extends BaseController
             }
             $iomArr = str_split($perFieldInput);
             //luego del analisis actualizo los datos de sensores, primero analiso e informo alarmas, y estado del movil
-            $idEstados = self::cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil,$estado_movil_id);
             if(!$sensorEstado){
                HelpMen::report($movil->equipo_id,"Datos de sensores vacios en memoria, generando...");
                 DB::beginTransaction();
                 try {
                     EstadosSensores::create(['imei'=>$imei,'movil_id'=>intval($movil->movil_id),'iom'=>$perFieldInput]);
-                    self::persistSensor($imei,$posicion_id,$movil,$fecha,$idEstados["tipo_alarma_id"],$idEstados["estado_movil_id"]);
+                    self::persistSensor($imei,$posicion_id,$movil,$fecha,$rta["tipo_alarma_id"],$rta["estado_movil_id"]);
                     DB::commit();
                 }catch (\Exception $ex) {
                     DB::rollBack();
@@ -556,6 +550,7 @@ class PuertoController extends BaseController
                     HelpMen::report($movil->equipo_id,$logcadena);
                 }
             }else{
+                $idEstados = self::cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil,$estado_movil_id);
                 if($idEstados["rta"]==1)
                     self::updateSensores($imei,$movil,$perFieldInput,"",$idEstados["tipo_alarma_id"],$idEstados["estado_movil_id"],$posicion_id,$fecha);
             }
