@@ -500,7 +500,7 @@ class PuertoController extends BaseController
         $arrIOM      = explode(',',$perField);
         $sensorEstado= self::getSensores($imei);
         Log::error("perfield en analisisIOM:".$perField);
-        Log::error("::::::el snesor estado en analisisIOM:".$sensorEstado->iom);
+        Log::error("::::::el sensor estado en analisisIOM:".$sensorEstado->iom);
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>7); //alarma_id=7 (Normal)
         $claveArgentina=array_search('ALA', $arrIOM);
         if( $claveArgentina ){
@@ -544,7 +544,7 @@ class PuertoController extends BaseController
             }
             if($largor==7 && $arrIOM[5]=="ALA"){//IOM,01100101110010,101000XXXX,2,1,ALA,XXXX0XXXXXXXXX
                 $rta["estado_movil_id"]= 10;//estado "en alarma"
-                $iomArr = str_split($arrIOM[6]);
+                $iomArr = str_split($perFieldInput);
             }
             if($largor==8){
                 //IOM,01100101110010,101000XXXX,2,1,NB,ALA,XXXX0XXXXXXXXX ó IOM,01100101110010,101000XXXX,2,1,P,ALA,XXXX0XXXXXXXXX
