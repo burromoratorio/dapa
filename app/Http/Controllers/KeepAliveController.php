@@ -86,6 +86,7 @@ class KeepAliveController extends BaseController
     if($mensajePendiente){
       //1-obtener comandos con 3 intentos y ponerlos en estado rsp_id=6->sin respuesta
       $esEnTest = $this->isMovilInTest($equipo_id);
+      Log::error(print_r($esEnTest,true));
       if( is_null($esEnTest) || count($esEnTest)==0 ){ //si no está en test doy prioridad a los OUTS
         $flagEnviarComando  = 1;
         $outmsj             = $this->OUTPendiente($equipo_id);
