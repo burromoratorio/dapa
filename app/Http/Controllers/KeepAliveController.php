@@ -126,7 +126,7 @@ class KeepAliveController extends BaseController
     }else{
       $mensaje=false;
     }
-    Log::error(print_r($$mensaje,true));
+    Log::error(print_r($mensaje,true));
     
     return $mensaje;
   }
