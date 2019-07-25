@@ -146,11 +146,11 @@ class KeepAliveController extends BaseController
       $movilTest = DB::table('TEST_COMANDO')
                        ->select(DB::raw('count(*) as comandos'))
                        ->where('fin', '=', 0)->where('modem_id', '=',$equipo_id)
-                       ->groupBy('modem_id')
+                       //->groupBy('modem_id')
                        ->get();
     }
     config()->set('database.default', 'moviles');
-    Log::error(print_r($movilTest['comandos'],true));
+    Log::error(print_r($movilTest,true));
     return $movilTest;
   }
   public function kaReportFrecuency($equipo_id,$aux){
