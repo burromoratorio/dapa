@@ -227,8 +227,6 @@ class KeepAliveController extends BaseController
                       break;
                   case 2:
                       $valorSet="CMD_CORTE";
-                      Log::error("CMD_CORTE");
-                      
                       break;
                   case 3:
                       $valorSet="CMD_BLQINH";
@@ -238,6 +236,7 @@ class KeepAliveController extends BaseController
                       break;
               }
               $cadenaComando = "+PER=IOM,".$valorSet;
+              Log::error($cadenaComando);
           }
         break;
       case 100://reset
