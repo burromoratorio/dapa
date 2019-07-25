@@ -3,7 +3,6 @@ namespace App\Http\Controllers;
 use App\ColaMensajes;
 use App\Helpers\HelpMen;
 use function ArrayIterator\count;
-use function Faker\Provider\ja_JP\Text\explode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
