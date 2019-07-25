@@ -86,7 +86,6 @@ class KeepAliveController extends BaseController
     if($mensajePendiente){
       //1-obtener comandos con 3 intentos y ponerlos en estado rsp_id=6->sin respuesta
       $esEnTest = $this->isMovilInTest($equipo_id);
-      Log::error(print_r($esEnTest,true));
       if( is_null($esEnTest) || count($esEnTest)==0 ){ //si no está en test doy prioridad a los OUTS
         $flagEnviarComando  = 1;
         $outmsj             = $this->OUTPendiente($equipo_id);
@@ -141,7 +140,7 @@ class KeepAliveController extends BaseController
     return $outMs;
   }
   public function isMovilInTest($equipo_id){
-    $movilTest = 0;
+    $movilTest = false;
     if(DB::connection()->getDatabaseName()=='moviles'){
       config()->set('database.default', 'siac');
       $movilTest = DB::table('TEST_COMANDO')
@@ -151,6 +150,7 @@ class KeepAliveController extends BaseController
                        ->get();
     }
     config()->set('database.default', 'moviles');
+    Log::error(print_r($movilTest,true));
     return $movilTest;
   }
   public function kaReportFrecuency($equipo_id,$aux){
