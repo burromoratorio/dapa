@@ -126,8 +126,6 @@ class KeepAliveController extends BaseController
     }else{
       $mensaje=false;
     }
-    Log::error(print_r($mensaje,true));
-    
     return $mensaje;
   }
   public function OUTPendiente($equipo_id){
@@ -167,6 +165,7 @@ class KeepAliveController extends BaseController
   public function decodificarComando($mensaje,$movil){
     //si el aux viene vacio....es una consulta mandar solo el ?
     //falta guardar en memoria el estado de velocidad max del equipo y tiempo de veloc max
+    Log::error("decodificandooooooo");
     $auxParams  = explode(",",$mensaje->auxiliar);
     switch ($mensaje->cmd_id) {
       case 17:
@@ -228,6 +227,8 @@ class KeepAliveController extends BaseController
                       break;
                   case 2:
                       $valorSet="CMD_CORTE";
+                      Log::error("CMD_CORTE");
+                      
                       break;
                   case 3:
                       $valorSet="CMD_BLQINH";
