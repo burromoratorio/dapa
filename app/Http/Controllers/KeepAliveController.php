@@ -150,7 +150,7 @@ class KeepAliveController extends BaseController
                        ->get();
     }
     config()->set('database.default', 'moviles');
-    Log::error(print_r($movilTest,true));
+    Log::error(print_r($movilTest->comandos,true));
     return $movilTest;
   }
   public function kaReportFrecuency($equipo_id,$aux){
