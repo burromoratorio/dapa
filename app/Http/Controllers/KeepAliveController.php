@@ -1,17 +1,14 @@
 <?php
 namespace App\Http\Controllers;
-use Laravel\Lumen\Routing\Controller as BaseController;
-use Illuminate\Http\Request;
-Use Log;
-use stdClass;
-use Storage;
-use DB;
-/*DDBB Principal*/
 use App\ColaMensajes;
-/*Helpers*/
-use App\Helpers\MemVar;
 use App\Helpers\HelpMen;
-use GuzzleHttp\Client;
+use function ArrayIterator\count;
+use function Faker\Provider\ja_JP\Text\explode;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Laravel\Lumen\Routing\Controller as BaseController;
+use Exception;
 class KeepAliveController extends BaseController
 {
   const EN_MOVIMIENTO = 1;
@@ -211,17 +208,42 @@ class KeepAliveController extends BaseController
         
         break;
       case 22://modo corte(aux=1,2->0,1) y modo normal(aux=1,1->0,0)
-        if(isset($auxParams[1]) && !is_null($auxParams[1]) && $auxParams[1]!=''){
-          $valor      = ($auxParams[1]=="2")?"1":"0";
-          $valorSet   = "=0,".$valor;
-        }else{
-          $valorSet   = '?';
-        }
-        $cadenaComando = "+OUTS".$valorSet;
+          /*encontrar el tipo de instalacion...si tiene IOM resolver de otra manera*/
+          if(!$movil->perif_io_id){ //moviles sin IOM 
+              if(isset($auxParams[1]) && !is_null($auxParams[1]) && $auxParams[1]!=''){
+                  $valor      = ($auxParams[1]=="2")?"1":"0";
+                  $valorSet   = "=0,".$valor;
+              }else{
+                  $valorSet   = '?';
+              }
+              $cadenaComando = "+OUTS".$valorSet;
+          }else{ //moviles con IOM
+              switch ($auxParams[1]) {
+                  case 0:
+                      $valorSet="CMD_RESET";
+                      break;
+                  case 1:
+                      $valorSet="CMD_NORMAL";
+                      break;
+                  case 2:
+                      $valorSet="CMD_CORTE";
+                      break;
+                  case 3:
+                      $valorSet="CMD_BLQINH";
+                      break;
+                  case 4:
+                      $valorSet="CMD_ALARMAS";
+                      break;
+              }
+              $cadenaComando = "+PER=IOM,".$valorSet;
+          }
         break;
       case 100://reset
         $cadenaComando = "+RES=".$auxParams[0];
         break;
+      case 134: //conf.sensores que generan corte
+           $cadenaComando="+PER=IOM,HAS,".$auxParams[];
+       break;
       default:
         $cadenaComando  = "+GETGP?";
         break;

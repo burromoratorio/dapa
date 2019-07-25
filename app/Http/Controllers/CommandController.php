@@ -18,7 +18,10 @@ class CommandController extends BaseController
   const CONFIGURAR_FRECUENCIAS=20;
   const CAMBIO_MODO_PRESENCIA_GPRS=22;
   const RESET_GPRMC=100;
-  static $comandoDefinitions  = array("+GETGP"=>17,"+FR"=>20,"+ALV"=>20,"+RES"=>100,"+OUTS"=>22,"+VER"=>00);
+  static $comandoDefinitions  = array("+GETGP"=>17,"+FR"=>20,"+ALV"=>20,"+RES"=>100,"+OUTS"=>22,"+VER"=>00,
+        "+PER=IOM,HAS"=>134,"+PER=IOM,INI"=>106,"+PER=IOM,CMD_NORMAL"=>22,"+PER=IOM,CMD_CORTE"=>22,
+        "+PER=IOM,CMD_BLQINH"=>22,"+PER=IOM,CMD_ALARMAS"=>22,"+PER=IOM,CMD_RESET"=>22,
+        "+PER=IOM,CFG_CORTE"=>112,"+PER=IOM,RES"=>115);
   static $comandoGenerico     = array("+GEN"=>666); 
   public function index(Request $request) {
     //return "ok";
@@ -80,7 +83,11 @@ class CommandController extends BaseController
           $arrCmdRta  = explode(":",$comandoRta);
           $commandoId = (isset(self::$comandoDefinitions[$arrCmdRta[0]]))?self::$comandoDefinitions[$arrCmdRta[0]]:self::$comandoGenerico["+GEN"];
           if($commandoId==22 || $arrCmdRta[0]=='+OUTS'){
-            $mensaje  = $this->tratarOUTS($equipo_id,$arrCmdRta[1]);
+              if(!$movil->perif_io_id){//moviles sin IOM
+                  $mensaje  = $this->tratarOUTS($equipo_id,$arrCmdRta[1]);
+              }else{//tiene IOM $arrCmdRta[0]=='+PER =>$arrCmdRta[1]=IOM,CMD_<...>,AUX
+                  $mensaje  = $this->tratarIOM($equipo_id,$arrCmdRta[1]);
+              }
           }else{
             $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)
                                   ->where('rsp_id','=',2)
@@ -89,9 +96,8 @@ class CommandController extends BaseController
                                   ->get()->first(); 
             //Log::info("Equipo:".$equipo_id." de CMD_ID:".$commandoId." cajeta...". print_r($mensaje,true));
           }
-          $logcadena = "Respuesta IMEI:".$imei." - Equipo:".$equipo_id." rta:".$comandoRta." de CMD_ID:".$commandoId;
+          $logcadena = "\r\n Respuesta IMEI:".$imei." - Equipo:".$equipo_id." rta:".$comandoRta." de CMD_ID:".$commandoId." \r\n";
           HelpMen::report($equipo_id,$logcadena);
-         // Log::info("la concha de la lora puta".print_r($mensaje,true));
           if(!is_null($mensaje)){
             $mensaje->rsp_id      = 3;
             $mensaje->comando     = $arrCmdRta[0];
@@ -139,7 +145,6 @@ class CommandController extends BaseController
           $OUTPendiente->tipo_posicion  = 70;
         }
       }
-      
       return $OUTPendiente;
     }
     public function OUTPendiente($equipo_id){
@@ -151,5 +156,34 @@ class CommandController extends BaseController
                                   ->get()->first(); 
       return $outMs;
     }
+    public function tratarIOM($equipo_id,$valor){
+        $logcadena="....";
+        $arrVal=explode(",",$valor);
+        $OUTPendiente = null;
+        $OUTPendiente = $this->OUTPendiente($equipo_id);
+        if(!is_null($OUTPendiente)){
+            switch ($arrVal[1]){
+                case'CMD_NORMAL':
+                    $logcadena = "Modo normal activado equipo:".$equipo_id." \r\n";
+                    break;
+                case'CMD_CORTE':
+                    $logcadena = "Modo corte activado equipo:".$equipo_id." \r\n";
+                    break;
+                case'CMD_BLQINH':
+                    $logcadena = "Modo Bloqueo Inhibicion activado equipo:".$equipo_id." \r\n";
+                    break;
+                case'CMD_ALARMAS':
+                    $logcadena = "Modo Alarmas activado equipo:".$equipo_id." \r\n";
+                    break;
+                case'CMD_RESET':
+                    $logcadena = "Modo Reset activado equipo:".$equipo_id." \r\n";
+                    break;
+            }
+        $OUTPendiente->tipo_posicion  = 70;
+        }
+        HelpMen::report($equipo_id,$logcadena);
+        return $OUTPendiente;
+    }
+    
 }
 

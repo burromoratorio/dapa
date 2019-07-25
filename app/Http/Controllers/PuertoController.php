@@ -290,12 +290,10 @@ class PuertoController extends BaseController
                 /*en esta parte solo busco el modo de presencia*/
                 if($perField['PER']=='NULL'){
                     $info       = self::ModPrecencia($ioData['IO'],"IO");
-                    //Log::error("El info:".$info['mod_presencia']);
                 }else{
                     $info       = self::ModPrecencia($perField['PER'],"IOM");
                      Log::error("El info IOM:".$info['mod_presencia']);
                 }
-
                 $arrInfoGprmc   = self::Gprmc2Data($gprmcData);
                 $validezReporte = self::validezReporte($report['IMEI'],$fecha,$gprmcData[6],$frData['FR'],$movil);
                 if($validezReporte>0){
@@ -348,7 +346,6 @@ class PuertoController extends BaseController
                     //inserto alarma de panico!!
                     $estadoMovilidad = self::sensorAnalisis($ioData,$perField['PER'],$report['IMEI'],$posicion->posicion_id,
                                             $movil,$fecha,$estadoMovilidad);
-
                     if( $estadoMovilidad==7 ){
                         if($arrInfoGprmc['velocidad']>12){
                             $estadoMovilidad=($movil->estado_u==0)?3:4;//movimiento vacio estado_u=0, otro..movimiento cargado
@@ -437,8 +434,8 @@ class PuertoController extends BaseController
         return $cambioBits["estado_movil_id"];
     }
     public static function analisisIO($ioData,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
-        $movilOldId = intval($movil->movilOldId);
-        $rta        = array("rta"=>0,"estado_movil_id"=>$estadoMovilidad,"tipo_alarma_id"=>7); //alarma_id=7 (Normal)
+        $movilOldId = intval($movil->movilOldId);//alarma_id=7 (Normal)//estado_movil_id=10(si alarma)
+        $rta        = array("rta"=>0,"estado_movil_id"=>$estadoMovilidad,"tipo_alarma_id"=>7); 
         //si no tiene posicion_id y es una alarma de panico , informar mail?¡
         if($ioData[0]=="I00"){//ingreso de alarma de panico bit en 0
             $logcadena = "Panico presionado Equipo:".$imei." - Movil:".$movilOldId."\r\n";
@@ -495,8 +492,8 @@ class PuertoController extends BaseController
     $arrPeriferico[4]=PR(método de restablecimiento Manual),  $arrPeriferico[5]=NB(Normal o backgrond),  $arrPeriferico[6]=P (Panico)  */
     public static function analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estado_movil_id){
         $arrIOM      = explode(',',$perField);
-        $sensorEstado= self::getSensores($imei);
-        $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>7); //alarma_id=7 (Normal)
+        $sensorEstado= self::getSensores($imei);//alarma_id=7 (Normal)//estado_movil_id=10(si alarma)
+        $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>7); 
         if($perField!='NULL' && $arrIOM[0]=='IOM'){
             $perFieldInput   = $arrIOM[1];
             //$perFieldOutput  = $arrIOM[2];
@@ -570,16 +567,19 @@ class PuertoController extends BaseController
             }
             if( $estadoArr[3]==1 && $iomArr[3]==0 ){
                 $rta["tipo_alarma_id"]=5;
+                $rta["estado_movil_id"]=7;
                 $rta["rta"]           = 1;
                 HelpMen::report($movil->equipo_id,"\r\n ***MOVIL PASO DE DESENGANCHADO A ENGANCHADO*** \r\n");
             }
             if( $estadoArr[5]==0 && $iomArr[5]==1 ){
                 $rta["tipo_alarma_id"]=9;
+                $rta["estado_movil_id"]=10;
                 $rta["rta"]           = 1;
                 HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA DE CERRADA A ABIERTA*** \r\n");
             }
             if( $estadoArr[5]==1 && $iomArr[5]==0 ){
                 $rta["tipo_alarma_id"]=11;
+                $rta["estado_movil_id"]=7;
                 $rta["rta"]           = 1;
                 HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA DE ABIERTA A CERRADA*** \r\n");
             }
@@ -587,6 +587,7 @@ class PuertoController extends BaseController
         //if($iomArr[0]==1)HelpMen::report($movil->equipo_id,"\r\n ***PANICO ACTIVADO*** \r\n");  
         if($iomArr[4]==0){
             $rta["tipo_alarma_id"]=6;
+            $rta["estado_movil_id"]=10;
             $rta["rta"]           = 1;
             HelpMen::report($movil->equipo_id,"\r\n ***ANTISABOTAJE ACTIVADO*** \r\n");  
         }
