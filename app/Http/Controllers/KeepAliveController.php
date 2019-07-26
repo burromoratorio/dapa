@@ -228,7 +228,7 @@ class KeepAliveController extends BaseController
                       $valorSet="CMD_CORTE";
                       break;
                   case 3:
-                      $valorSet="CMD_BLQINH";
+                      $valorSet="CMD_BLOQINH";
                       break;
                   case 4:
                       $valorSet="CMD_ALARMAS";

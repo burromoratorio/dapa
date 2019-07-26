@@ -20,7 +20,7 @@ class CommandController extends BaseController
   const RESET_GPRMC=100;
   static $comandoDefinitions  = array("+GETGP"=>17,"+FR"=>20,"+ALV"=>20,"+RES"=>100,"+OUTS"=>22,"+VER"=>00,
         "+PER=IOM,HAS"=>134,"+PER=IOM,INI"=>106,"+PER=IOM,CMD_NORMAL"=>22,"+PER=IOM,CMD_CORTE"=>22,
-        "+PER=IOM,CMD_BLQINH"=>22,"+PER=IOM,CMD_ALARMAS"=>22,"+PER=IOM,CMD_RESET"=>22,"+PER=IOM,ERROR"=>22,
+        "+PER=IOM,CMD_BLOQINH"=>22,"+PER=IOM,CMD_ALARMAS"=>22,"+PER=IOM,CMD_RESET"=>22,"+PER=IOM,ERROR"=>22,
         "+PER=IOM,CFG_CORTE"=>112,"+PER=IOM,RES"=>115);
   static $comandoGenerico     = array("+GEN"=>666); 
   public function index(Request $request) {
@@ -171,7 +171,7 @@ class CommandController extends BaseController
                 case'CMD_CORTE':
                     $logcadena = "Modo corte activado equipo:".$equipo_id." \r\n";
                     break;
-                case'CMD_BLQINH':
+                case'CMD_BLOQINH':
                     $logcadena = "Modo Bloqueo Inhibicion activado equipo:".$equipo_id." \r\n";
                     break;
                 case'CMD_ALARMAS':
