@@ -61,7 +61,7 @@ class CommandController extends BaseController
         if($contador>1){
           //significa que vienen varios comandos concatenados tengo que limpiarlos
           //3-los comandos en rsp_id=2 e intentos <3 ->los seteo en pendiente rsp_id=1 y les sumo 1 al intentos, excepto al obtenido para rta
-          $logcadena ="IMEI:".$imei.":::Comandos Concatenados:::".$comandoRta."\r\n";
+          $logcadena ="IMEI:".$imei.":::Comandos Concatenados:::".$comandoRta." \r\n";
           HelpMen::report($equipo_id,$logcadena);
           DB::beginTransaction();
           try {
@@ -75,16 +75,17 @@ class CommandController extends BaseController
           }catch (\Exception $ex) {
             DB::rollBack();
             $errorSolo  = explode("Stack trace", $ex);
-            $logcadena ="Error al procesar update de comandos ".$errorSolo[0]."\r\n";
+            $logcadena ="Error al procesar update de comandos ".$errorSolo[0]." \r\n";
             HelpMen::report($equipo_id,$logcadena);
           }
-          return "AT+OK\r\n";
+          return "AT+OK \r\n";
         }else{
           $arrCmdRta  = explode(":",$comandoRta);
-          HelpMen::report($equipo_id,"commandController::".$arrCmdRta[0]);
+          HelpMen::report($equipo_id," commandController::".$arrCmdRta[0]." \r\n");
+          
           $commandoId = (isset(self::$comandoDefinitions[$arrCmdRta[0]]))?self::$comandoDefinitions[$arrCmdRta[0]]:self::$comandoGenerico["+GEN"];
           if($arrCmdRta[0]=="+PER"){
-              HelpMen::report($equipo_id,"commandController::".$arrCmdRta[1]);
+              HelpMen::report($equipo_id," commandController::".$arrCmdRta[1]." \r\n");
               $mensaje  = $this->tratarIOM($equipo_id,$arrCmdRta[1]);
           }elseif ($mensaje  = $this->tratarIOM($equipo_id,$arrCmdRta[1])){
               $mensaje  = $this->tratarOUTS($equipo_id,$arrCmdRta[1]);
@@ -96,7 +97,7 @@ class CommandController extends BaseController
               ->get()->first();
               //Log::info("Equipo:".$equipo_id." de CMD_ID:".$commandoId." cajeta...". print_r($mensaje,true));
           }
-          $logcadena = "\r\n Respuesta IMEI:".$imei." - Equipo:".$equipo_id." rta:".$comandoRta." de CMD_ID:".$commandoId." \r\n";
+          $logcadena = " Respuesta IMEI:".$imei." - Equipo:".$equipo_id." rta:".$comandoRta." de CMD_ID:".$commandoId." \r\n";
           HelpMen::report($equipo_id,$logcadena);
           if(!is_null($mensaje)){
             $mensaje->rsp_id      = 3;
@@ -104,7 +105,7 @@ class CommandController extends BaseController
             $mensaje->respuesta   = $comandoRta;
             $mensaje->fecha_final = date("Y-m-d H:i:s");
             $mensaje->save();
-            $logcadena = "\r\n actualizacion correcta :AT+OK\r\n";
+            $logcadena = " actualizacion correcta :AT+OK \r\n";
             //actualizo la instalacion para reflejar el cambio de frecuencias
             $instalacionMovil = InstalacionSiac::where('modem_id',$equipo_id)->get()->first();
             if($commandoId==20){
@@ -123,9 +124,9 @@ class CommandController extends BaseController
               $instalacionMovil->save();
             } 
             HelpMen::report($equipo_id,$logcadena);
-            return "\r\n AT+OK \r\n";
+            return "AT+OK \r\n";
           }else{
-            $logcadena = "\r\n No existe comando pendiente \r\n";
+            $logcadena = "No existe comando pendiente \r\n";
             HelpMen::report($equipo_id,$logcadena);
           }
         }
@@ -135,12 +136,12 @@ class CommandController extends BaseController
       $OUTPendiente = $this->OUTPendiente($equipo_id);
       if(!is_null($OUTPendiente)){
         if($OUTPendiente->auxiliar=='0,1' && $valor=='10'){//activar modo corte
-          $logcadena = "\r\n Modo Corte activado equipo:".$equipo_id." \r\n";
+          $logcadena = "Modo Corte activado equipo:".$equipo_id." \r\n";
           HelpMen::report($equipo_id,$logcadena);
           $OUTPendiente->tipo_posicion  = 70;
         }
         if($OUTPendiente->auxiliar=='0,0' && $valor=='00'){//activar modo corte
-          $logcadena = "\r\n Modo Corte desactivado equipo:".$equipo_id." \r\n";
+          $logcadena = "Modo Corte desactivado equipo:".$equipo_id." \r\n";
           HelpMen::report($equipo_id,$logcadena);
           $OUTPendiente->tipo_posicion  = 70;
         }
@@ -157,7 +158,7 @@ class CommandController extends BaseController
       return $outMs;
     }
     public function tratarIOM($equipo_id,$valor){
-        HelpMen::report($equipo_id,$valor);
+        HelpMen::report($equipo_id,$valor." \r\n");
         $logcadena="....";
         $arrVal=explode(",",$valor);
         $OUTPendiente = null;
@@ -165,22 +166,22 @@ class CommandController extends BaseController
         if(!is_null($OUTPendiente)){
             switch ($arrVal[1]){
                 case'CMD_NORMAL':
-                    $logcadena = "\r\n Modo normal activado equipo:".$equipo_id." \r\n";
+                    $logcadena = "Modo normal activado equipo:".$equipo_id." \r\n";
                     break;
                 case'CMD_CORTE':
-                    $logcadena = "\r\n Modo corte activado equipo:".$equipo_id." \r\n";
+                    $logcadena = "Modo corte activado equipo:".$equipo_id." \r\n";
                     break;
                 case'CMD_BLQINH':
-                    $logcadena = "\r\n Modo Bloqueo Inhibicion activado equipo:".$equipo_id." \r\n";
+                    $logcadena = "Modo Bloqueo Inhibicion activado equipo:".$equipo_id." \r\n";
                     break;
                 case'CMD_ALARMAS':
-                    $logcadena = "\r\n Modo Alarmas activado equipo:".$equipo_id." \r\n";
+                    $logcadena = "Modo Alarmas activado equipo:".$equipo_id." \r\n";
                     break;
                 case'CMD_RESET':
-                    $logcadena = "\r\n Modo Reset activado equipo:".$equipo_id." \r\n";
+                    $logcadena = "Modo Reset activado equipo:".$equipo_id." \r\n";
                     break;
                 case 'ERROR':
-                    $logcadena = "\r\n Modulo IOM reporta error en equipo:".$equipo_id." \r\n";
+                    $logcadena = "Modulo IOM reporta error en equipo:".$equipo_id." \r\n";
                     break;
             }
         $OUTPendiente->tipo_posicion  = 70;
