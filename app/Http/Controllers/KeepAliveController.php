@@ -40,7 +40,7 @@ class KeepAliveController extends BaseController
           }else{
             $comando  ="AT+OK\r\n"; 
           }
-          $logcadena ="KeepAlive IMEI:".$movil->imei." - equipo:".$movil->equipo_id." - Comando:".$comando." \r\n";
+          $logcadena ="\r\n KeepAlive IMEI:".$movil->imei." - equipo:".$movil->equipo_id." - Comando:".$comando." \r\n";
           HelpMen::report($movil->equipo_id,$logcadena);
         }else{
           Log::error("El IMEI:".$jsonReq["cadena"]. "no Existe en la DDBB, se desecha el reporte");
@@ -48,7 +48,7 @@ class KeepAliveController extends BaseController
         
        }elseif($jsonReq["KEY"]=="KA"){
         //por ahora devuelvo este de ejemplo
-        $comando  ="AT+GETGP?\r\n";
+        $comando  =" \r\n AT+GETGP?\r\n";
       }else{
         return "ERROR:Json mal formado!";
         Log::error("Error:json mal formado, ver palabra clave");
@@ -90,7 +90,7 @@ class KeepAliveController extends BaseController
         $outmsj             = $this->OUTPendiente($equipo_id);
         $mensaje            = (is_null($outmsj))?$mensajePendiente:$outmsj;
       }else{//si está en test ejecuto uno a uno por prioridad
-        $logcadena ="Ejecutando Test Equipo::".$equipo_id." Comandos en test:".count($esEnTest)." \r\n";
+        $logcadena ="\r\n Ejecutando Test Equipo::".$equipo_id." Comandos en test:".count($esEnTest)." \r\n";
         HelpMen::report($equipo_id,$logcadena);
         $comandoAEnviar15   = $this->kaReportFrecuency($equipo_id,15);
         if($comandoAEnviar15){
@@ -120,7 +120,7 @@ class KeepAliveController extends BaseController
       }catch (\Exception $ex) {
         DB::rollBack();
         $errorSolo  = explode("Stack trace", $ex);
-        $logcadena ="Error al procesar el KA ".$errorSolo[0]." \r\n";
+        $logcadena ="\r\n Error al procesar el KA ".$errorSolo[0]." \r\n";
         HelpMen::report($equipo_id,$logcadena);
       }
     }else{
@@ -247,7 +247,7 @@ class KeepAliveController extends BaseController
         $cadenaComando  = "+GETGP?";
         break;
     }
-    $logcadena ="Comando decodificado en KA".$cadenaComando." \r\n";
+    $logcadena ="\r\n Comando decodificado en KA".$cadenaComando." \r\n";
     HelpMen::report($movil->equipo_id,$logcadena);
     return $cadenaComando;
   }

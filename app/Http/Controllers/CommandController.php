@@ -104,7 +104,7 @@ class CommandController extends BaseController
             $mensaje->respuesta   = $comandoRta;
             $mensaje->fecha_final = date("Y-m-d H:i:s");
             $mensaje->save();
-            $logcadena = "actualizacion correcta devuelvo:AT+OK\r\n";
+            $logcadena = "\r\n actualizacion correcta :AT+OK\r\n";
             //actualizo la instalacion para reflejar el cambio de frecuencias
             $instalacionMovil = InstalacionSiac::where('modem_id',$equipo_id)->get()->first();
             if($commandoId==20){
@@ -123,9 +123,9 @@ class CommandController extends BaseController
               $instalacionMovil->save();
             } 
             HelpMen::report($equipo_id,$logcadena);
-            return "AT+OK\r\n";
+            return "\r\n AT+OK \r\n";
           }else{
-            $logcadena = "No existe comando pendiente \r\n";
+            $logcadena = "\r\n No existe comando pendiente \r\n";
             HelpMen::report($equipo_id,$logcadena);
           }
         }
@@ -135,12 +135,12 @@ class CommandController extends BaseController
       $OUTPendiente = $this->OUTPendiente($equipo_id);
       if(!is_null($OUTPendiente)){
         if($OUTPendiente->auxiliar=='0,1' && $valor=='10'){//activar modo corte
-          $logcadena = "modo corte activado equipo:".$equipo_id." \r\n";
+          $logcadena = "\r\n Modo Corte activado equipo:".$equipo_id." \r\n";
           HelpMen::report($equipo_id,$logcadena);
           $OUTPendiente->tipo_posicion  = 70;
         }
         if($OUTPendiente->auxiliar=='0,0' && $valor=='00'){//activar modo corte
-          $logcadena = "modo corte desactivado equipo:".$equipo_id." \r\n";
+          $logcadena = "\r\n Modo Corte desactivado equipo:".$equipo_id." \r\n";
           HelpMen::report($equipo_id,$logcadena);
           $OUTPendiente->tipo_posicion  = 70;
         }
@@ -157,6 +157,7 @@ class CommandController extends BaseController
       return $outMs;
     }
     public function tratarIOM($equipo_id,$valor){
+        HelpMen::report($equipo_id,$valor);
         $logcadena="....";
         $arrVal=explode(",",$valor);
         $OUTPendiente = null;
@@ -164,22 +165,22 @@ class CommandController extends BaseController
         if(!is_null($OUTPendiente)){
             switch ($arrVal[1]){
                 case'CMD_NORMAL':
-                    $logcadena = "Modo normal activado equipo:".$equipo_id." \r\n";
+                    $logcadena = "\r\n Modo normal activado equipo:".$equipo_id." \r\n";
                     break;
                 case'CMD_CORTE':
-                    $logcadena = "Modo corte activado equipo:".$equipo_id." \r\n";
+                    $logcadena = "\r\n Modo corte activado equipo:".$equipo_id." \r\n";
                     break;
                 case'CMD_BLQINH':
-                    $logcadena = "Modo Bloqueo Inhibicion activado equipo:".$equipo_id." \r\n";
+                    $logcadena = "\r\n Modo Bloqueo Inhibicion activado equipo:".$equipo_id." \r\n";
                     break;
                 case'CMD_ALARMAS':
-                    $logcadena = "Modo Alarmas activado equipo:".$equipo_id." \r\n";
+                    $logcadena = "\r\n Modo Alarmas activado equipo:".$equipo_id." \r\n";
                     break;
                 case'CMD_RESET':
-                    $logcadena = "Modo Reset activado equipo:".$equipo_id." \r\n";
+                    $logcadena = "\r\n Modo Reset activado equipo:".$equipo_id." \r\n";
                     break;
                 case 'ERROR':
-                    $logcadena = "Modulo IOM reporta error en equipo:".$equipo_id." \r\n";
+                    $logcadena = "\r\n Modulo IOM reporta error en equipo:".$equipo_id." \r\n";
                     break;
             }
         $OUTPendiente->tipo_posicion  = 70;
