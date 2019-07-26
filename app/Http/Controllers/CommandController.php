@@ -178,6 +178,9 @@ class CommandController extends BaseController
                 case'CMD_RESET':
                     $logcadena = "Modo Reset activado equipo:".$equipo_id." \r\n";
                     break;
+                case 'ERROR':
+                    $logcadena = "Modulo IOM reporta error en equipo:".$equipo_id." \r\n";
+                    break;
             }
         $OUTPendiente->tipo_posicion  = 70;
         }
