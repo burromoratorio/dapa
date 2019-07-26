@@ -83,19 +83,18 @@ class CommandController extends BaseController
           $arrCmdRta  = explode(":",$comandoRta);
           HelpMen::report($equipo_id,"commandController::".$arrCmdRta[0]);
           $commandoId = (isset(self::$comandoDefinitions[$arrCmdRta[0]]))?self::$comandoDefinitions[$arrCmdRta[0]]:self::$comandoGenerico["+GEN"];
-          if($commandoId==22 || $arrCmdRta[0]=='+OUTS'){
-              if(!$movil->perif_io_id){//moviles sin IOM
-                  $mensaje  = $this->tratarOUTS($equipo_id,$arrCmdRta[1]);
-              }else{//tiene IOM $arrCmdRta[0]=='+PER =>$arrCmdRta[1]=IOM,CMD_<...>,AUX
-                  $mensaje  = $this->tratarIOM($equipo_id,$arrCmdRta[1]);
-              }
-          }else{
-            $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)
-                                  ->where('rsp_id','=',2)
-                                  ->where('cmd_id','=',$commandoId)->where('cmd_id','<>',22)
-                                  ->orderBy('prioridad','DESC')
-                                  ->get()->first(); 
-            //Log::info("Equipo:".$equipo_id." de CMD_ID:".$commandoId." cajeta...". print_r($mensaje,true));
+          if($arrCmdRta[0]=="+PER"){
+              HelpMen::report($equipo_id,"commandController::".$arrCmdRta[1]);
+              $mensaje  = $this->tratarIOM($equipo_id,$arrCmdRta[1]);
+          }elseif ($mensaje  = $this->tratarIOM($equipo_id,$arrCmdRta[1])){
+              $mensaje  = $this->tratarOUTS($equipo_id,$arrCmdRta[1]);
+          }else {
+              $mensaje  = ColaMensajes::where('modem_id', '=',$equipo_id)
+              ->where('rsp_id','=',2)
+              ->where('cmd_id','=',$commandoId)->where('cmd_id','<>',22)
+              ->orderBy('prioridad','DESC')
+              ->get()->first();
+              //Log::info("Equipo:".$equipo_id." de CMD_ID:".$commandoId." cajeta...". print_r($mensaje,true));
           }
           $logcadena = "\r\n Respuesta IMEI:".$imei." - Equipo:".$equipo_id." rta:".$comandoRta." de CMD_ID:".$commandoId." \r\n";
           HelpMen::report($equipo_id,$logcadena);
