@@ -81,6 +81,7 @@ class CommandController extends BaseController
           return "AT+OK\r\n";
         }else{
           $arrCmdRta  = explode(":",$comandoRta);
+          Log::error(print_r($arrCmdRta));
           $commandoId = (isset(self::$comandoDefinitions[$arrCmdRta[0]]))?self::$comandoDefinitions[$arrCmdRta[0]]:self::$comandoGenerico["+GEN"];
           if($commandoId==22 || $arrCmdRta[0]=='+OUTS'){
               if(!$movil->perif_io_id){//moviles sin IOM
