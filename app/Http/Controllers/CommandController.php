@@ -86,7 +86,7 @@ class CommandController extends BaseController
           $commandoId = (isset(self::$comandoDefinitions[$arrCmdRta[0]]))?self::$comandoDefinitions[$arrCmdRta[0]]:self::$comandoGenerico["+GEN"];
           if($arrCmdRta[0]=="+PER"){
               HelpMen::report($equipo_id," commandController::".$arrCmdRta[1]." \r\n");
-              $mensaje  = $this->tratarIOM($equipo_id,$arrCmdRta[1],$commandoId);
+              $mensaje  = $this->tratarIOM($equipo_id,$arrCmdRta[1]);
           }elseif ($mensaje  = $this->tratarIOM($equipo_id,$arrCmdRta[1])){
               $mensaje  = $this->tratarOUTS($equipo_id,$arrCmdRta[1]);
           }else {
@@ -157,7 +157,7 @@ class CommandController extends BaseController
                                   ->get()->first(); 
       return $outMs;
     }
-    public function tratarIOM($equipo_id,$valor,$commandoId){
+    public function tratarIOM($equipo_id,$valor){
         HelpMen::report($equipo_id,$valor." \r\n");
         $logcadena="....";
         $arrVal=explode(",",$valor);
@@ -165,7 +165,8 @@ class CommandController extends BaseController
         $comandosSeteo= array("HAS","CFG_CORTE","RES");
         if(in_array($arrVal[1],$comandosSeteo)){
             $busqueda= "+PER=IOM,".$arrVal[1];
-             HelpMen::report($equipo_id,"SETEO DE:".$arrVal[1]." ID:".self::$comandoDefinitions[$busqueda]." \r\n");
+            $OUTPendiente = $this->IOMPendiente($equipo_id,$busqueda);
+            HelpMen::report($equipo_id,"SETEO DE:".$arrVal[1]." ID:".self::$comandoDefinitions[$busqueda]." \r\n");
         }else{
             $OUTPendiente = $this->OUTPendiente($equipo_id);//primero trato el OUT
             if(!is_null($OUTPendiente)){
@@ -196,7 +197,13 @@ class CommandController extends BaseController
         return $OUTPendiente;
     }
     public function IOMPendiente($equipo_id,$cmd){
-        
+        $outMs    = null;
+        $outMs    = ColaMensajes::where('modem_id', '=',$equipo_id)
+        ->where('rsp_id','=',2)->where('cmd_id','=',$cmd)
+        ->where('tipo_posicion','=',69)
+        ->orderBy('prioridad','DESC')
+        ->get()->first();
+        return $outMs;
     }
     
 }
