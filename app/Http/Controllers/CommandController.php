@@ -162,10 +162,11 @@ class CommandController extends BaseController
         $logcadena="....";
         $arrVal=explode(",",$valor);
         $OUTPendiente = null;
-        $comandosSeteo= array("HAS","CFG_CORTE","RES");
+        $comandosSeteo= array("HAS","CFG_CORTE","RES","INI");
         if(in_array($arrVal[1],$comandosSeteo)){
             $busqueda= "+PER=IOM,".$arrVal[1];
             $OUTPendiente = $this->IOMPendiente($equipo_id,self::$comandoDefinitions[$busqueda]);
+            $OUTPendiente->tipo_posicion  = 70;
             HelpMen::report($equipo_id,"SETEO DE:".$arrVal[1]." ID:".self::$comandoDefinitions[$busqueda]." \r\n");
         }else{
             $OUTPendiente = $this->OUTPendiente($equipo_id);//primero trato el OUT
