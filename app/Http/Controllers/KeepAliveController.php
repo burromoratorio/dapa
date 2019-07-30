@@ -247,7 +247,7 @@ class KeepAliveController extends BaseController
         $cadenaComando  = "+GETGP?";
         break;
     }
-    $logcadena ="\r\n Comando decodificado en KA".$cadenaComando." \r\n";
+    $logcadena ="\r\n Comando decodificado en KA->".$cadenaComando." \r\n";
     HelpMen::report($movil->equipo_id,$logcadena);
     return $cadenaComando;
   }

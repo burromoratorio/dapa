@@ -162,29 +162,34 @@ class CommandController extends BaseController
         $logcadena="....";
         $arrVal=explode(",",$valor);
         $OUTPendiente = null;
-        $OUTPendiente = $this->OUTPendiente($equipo_id);
-        if(!is_null($OUTPendiente)){
-            switch ($arrVal[1]){
-                case'CMD_NORMAL':
-                    $logcadena = "Modo normal activado equipo:".$equipo_id." \r\n";
-                    break;
-                case'CMD_CORTE':
-                    $logcadena = "Modo corte activado equipo:".$equipo_id." \r\n";
-                    break;
-                case'CMD_BLOQINH':
-                    $logcadena = "Modo Bloqueo Inhibicion activado equipo:".$equipo_id." \r\n";
-                    break;
-                case'CMD_ALARMAS':
-                    $logcadena = "Modo Alarmas activado equipo:".$equipo_id." \r\n";
-                    break;
-                case'CMD_RESET':
-                    $logcadena = "Modo Reset activado equipo:".$equipo_id." \r\n";
-                    break;
-                case 'ERROR':
-                    $logcadena = "Modulo IOM reporta error en equipo:".$equipo_id." \r\n";
-                    break;
+        $comandosSeteo= array("HAS","CFG_CORTE","RES");
+        if(in_array($arrVal[1],$comandosSeteo)){
+            HelpMen::report($equipo_id,"SETEO DE:".$arrVal[1]." \r\n");
+        }else{
+            $OUTPendiente = $this->OUTPendiente($equipo_id);//primero trato el OUT
+            if(!is_null($OUTPendiente)){
+                switch ($arrVal[1]){
+                    case'CMD_NORMAL':
+                        $logcadena = "Modo normal activado equipo:".$equipo_id." \r\n";
+                        break;
+                    case'CMD_CORTE':
+                        $logcadena = "Modo corte activado equipo:".$equipo_id." \r\n";
+                        break;
+                    case'CMD_BLOQINH':
+                        $logcadena = "Modo Bloqueo Inhibicion activado equipo:".$equipo_id." \r\n";
+                        break;
+                    case'CMD_ALARMAS':
+                        $logcadena = "Modo Alarmas activado equipo:".$equipo_id." \r\n";
+                        break;
+                    case'CMD_RESET':
+                        $logcadena = "Modo Reset activado equipo:".$equipo_id." \r\n";
+                        break;
+                    case 'ERROR':
+                        $logcadena = "Modulo IOM reporta error en equipo:".$equipo_id." \r\n";
+                        break;
+                }
+            $OUTPendiente->tipo_posicion  = 70;
             }
-        $OUTPendiente->tipo_posicion  = 70;
         }
         HelpMen::report($equipo_id,$logcadena);
         return $OUTPendiente;
