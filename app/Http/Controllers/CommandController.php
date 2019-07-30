@@ -164,7 +164,8 @@ class CommandController extends BaseController
         $OUTPendiente = null;
         $comandosSeteo= array("HAS","CFG_CORTE","RES");
         if(in_array($arrVal[1],$comandosSeteo)){
-            HelpMen::report($equipo_id,"SETEO DE:".$arrVal[1]." ID:".$commandoId." \r\n");
+            $busqueda= "+PER=IOM,".$arrVal[1];
+             HelpMen::report($equipo_id,"SETEO DE:".$arrVal[1]." ID:".self::$comandoDefinitions[$busqueda]." \r\n");
         }else{
             $OUTPendiente = $this->OUTPendiente($equipo_id);//primero trato el OUT
             if(!is_null($OUTPendiente)){
