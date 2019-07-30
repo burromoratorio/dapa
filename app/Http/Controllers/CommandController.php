@@ -86,7 +86,7 @@ class CommandController extends BaseController
           $commandoId = (isset(self::$comandoDefinitions[$arrCmdRta[0]]))?self::$comandoDefinitions[$arrCmdRta[0]]:self::$comandoGenerico["+GEN"];
           if($arrCmdRta[0]=="+PER"){
               HelpMen::report($equipo_id," commandController::".$arrCmdRta[1]." \r\n");
-              $mensaje  = $this->tratarIOM($equipo_id,$arrCmdRta[1]);
+              $mensaje  = $this->tratarIOM($equipo_id,$arrCmdRta[1],$commandoId);
           }elseif ($mensaje  = $this->tratarIOM($equipo_id,$arrCmdRta[1])){
               $mensaje  = $this->tratarOUTS($equipo_id,$arrCmdRta[1]);
           }else {
@@ -157,14 +157,14 @@ class CommandController extends BaseController
                                   ->get()->first(); 
       return $outMs;
     }
-    public function tratarIOM($equipo_id,$valor){
+    public function tratarIOM($equipo_id,$valor,$commandoId){
         HelpMen::report($equipo_id,$valor." \r\n");
         $logcadena="....";
         $arrVal=explode(",",$valor);
         $OUTPendiente = null;
         $comandosSeteo= array("HAS","CFG_CORTE","RES");
         if(in_array($arrVal[1],$comandosSeteo)){
-            HelpMen::report($equipo_id,"SETEO DE:".$arrVal[1]." \r\n");
+            HelpMen::report($equipo_id,"SETEO DE:".$arrVal[1]." ID:".$commandoId." \r\n");
         }else{
             $OUTPendiente = $this->OUTPendiente($equipo_id);//primero trato el OUT
             if(!is_null($OUTPendiente)){
@@ -193,6 +193,9 @@ class CommandController extends BaseController
         }
         HelpMen::report($equipo_id,$logcadena);
         return $OUTPendiente;
+    }
+    public function IOMPendiente($equipo_id,$cmd){
+        
     }
     
 }
