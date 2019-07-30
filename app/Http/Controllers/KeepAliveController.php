@@ -246,6 +246,9 @@ class KeepAliveController extends BaseController
       case 106: //conf.sensores bloqueados
           $cadenaComando="+PER=IOM,INI,".$mensaje->auxiliar;
           break;
+      case 112: //conf.sensores bloqueados
+          $cadenaComando="+PER=IOM,CFG_CORTE,".$mensaje->auxiliar;
+          break;
       default:
         $cadenaComando  = "+GETGP?";
         break;
