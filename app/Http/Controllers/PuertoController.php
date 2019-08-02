@@ -517,6 +517,7 @@ class PuertoController extends BaseController
                     $rta["tipo_alarma_id"]=3;
                     HelpMen::report($movil->equipo_id,"\r\n ***MOTOR ENCENDIDO*** \r\n ");
                 }
+                Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta["tipo_alarma_id"],'fecha_alarma'=>$fecha,'falsa'=>0]);
             }
             /*****si $perFieldWorkMode= 0 =>RESET no informo alertas de nada solo actualizo estado de movil****/
             $keyPanico=array_search('P', $arrIOM);
@@ -601,7 +602,7 @@ class PuertoController extends BaseController
         try {
             if($perField!=""){
                // $perField   = implode("",$perField);
-                HelpMen::report($movil->equipo_id,"\r\n ***Update sensores iom***".$perField ."\r\n");
+                //HelpMen::report($movil->equipo_id,"\r\n ***Update sensores iom***".$perField ."\r\n");
                 EstadosSensores::where('imei', '=', $imei)->update(array('iom' => $perField));
             }else{
                 EstadosSensores::where('imei', '=', $imei)->update(array('io' => $io));
@@ -624,7 +625,7 @@ class PuertoController extends BaseController
                 Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,
                             'tipo_alarma_id'=>$tipo_alarma_id,'fecha_alarma'=>$fecha,'falsa'=>0]);
             }
-            Log::error("actualiza a ESTE ESTASDO DE MIUERDAAA::".$estado_movil_id);
+            //Log::error("actualiza a ESTE ESTASDO DE MIUERDAAA::".$estado_movil_id);
             Movil::where('movil_id', '=', $movil_id)->update(array('estado_movil_id' => $estado_movil_id));
             DB::commit();
             self::startupSensores();
