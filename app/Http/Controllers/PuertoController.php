@@ -489,7 +489,8 @@ class PuertoController extends BaseController
     }
     /************Analisis de cadena IOM*********
     $arrPeriferico[0]=IOM,  $arrPeriferico[1]=I1..I14, $arrPeriferico[2]=O1..O14, $arrPeriferico[3]=E(modo de trabajo del equipo)
-    $arrPeriferico[4]=PR(método de restablecimiento Manual),  $arrPeriferico[5]=NB(Normal o backgrond),  $arrPeriferico[6]=P (Panico)  */
+    $arrPeriferico[4]=PR(método de restablecimiento Manual),  $arrPeriferico[5]=NB(Normal o backgrond),  $arrPeriferico[6]=P (Panico) 
+    si algun sendor trae el caracter X entonces no lo tengo en cuenta */
     public static function analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estado_movil_id){
         $arrIOM      = explode(',',$perField);
         $sensorEstado= self::getSensores($imei);//alarma_id=7 (Normal)//estado_movil_id=10(si alarma)
@@ -504,15 +505,15 @@ class PuertoController extends BaseController
                 $estadoArr = str_split($arrIOM[$keyAlarma+1]);
                 $rta["estado_movil_id"]=10;
                 $rta["rta"]            = 1;
-                if($estadoArr[1]=="0"){
+                if($estadoArr[1]=="0" && $estadoArr[1]!="X"){
                     $rta["tipo_alarma_id"]=4;
                     HelpMen::report($movil->equipo_id,"\r\n ***PUERTA CONDUCTOR ABIERTA*** \r\n ");
                 }
-                if($estadoArr[2]=="0"){
+                if($estadoArr[2]=="0" && $estadoArr[2]!="X"){
                     $rta["tipo_alarma_id"]=24;
                     HelpMen::report($movil->equipo_id,"\r\n ***PUERTA ACOMPAÑANTE ABIERTA*** \r\n ");
                 }
-                if($estadoArr[7]=="0"){
+                if($estadoArr[7]=="0" && $estadoArr[7]!="X"){
                     $rta["tipo_alarma_id"]=3;
                     HelpMen::report($movil->equipo_id,"\r\n ***MOTOR ENCENDIDO*** \r\n ");
                 }
@@ -559,25 +560,25 @@ class PuertoController extends BaseController
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); //alarma_id=7 (Normal)
         if($sensorEstado && $sensorEstado->iom){
             $estadoArr = str_split($sensorEstado->iom);
-            if( $estadoArr[3]==0 && $iomArr[3]==1 ){
+            if( $estadoArr[3]==0 && $iomArr[3]==1 && $iomArr[3]!="X"){
                 $rta["tipo_alarma_id"]=12;
                 $rta["estado_movil_id"]=5;
                 $rta["rta"]            = 1;
                 HelpMen::report($movil->equipo_id,"\r\n ***MOVIL PASO DE ENGANCHADO A DESENGANCHADO*** \r\n ");
             }
-            if( $estadoArr[3]==1 && $iomArr[3]==0 ){
+            if( $estadoArr[3]==1 && $iomArr[3]==0 && $iomArr[3]!="X"){
                 $rta["tipo_alarma_id"]=5;
                 $rta["estado_movil_id"]=7;
                 $rta["rta"]           = 1;
                 HelpMen::report($movil->equipo_id,"\r\n ***MOVIL PASO DE DESENGANCHADO A ENGANCHADO*** \r\n");
             }
-            if( $estadoArr[5]==0 && $iomArr[5]==1 ){
+            if( $estadoArr[5]==0 && $iomArr[5]==1 && $iomArr[5]!="X" ){
                 $rta["tipo_alarma_id"]=9;
                 $rta["estado_movil_id"]=10;
                 $rta["rta"]           = 1;
                 HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA DE CERRADA A ABIERTA*** \r\n");
             }
-            if( $estadoArr[5]==1 && $iomArr[5]==0 ){
+            if( $estadoArr[5]==1 && $iomArr[5]==0 && $iomArr[5]!="X"){
                 $rta["tipo_alarma_id"]=11;
                 $rta["estado_movil_id"]=7;
                 $rta["rta"]           = 1;
@@ -585,7 +586,7 @@ class PuertoController extends BaseController
             }
         }
         //if($iomArr[0]==1)HelpMen::report($movil->equipo_id,"\r\n ***PANICO ACTIVADO*** \r\n");  
-        if($iomArr[4]==0){
+        if($iomArr[4]==0 && $iomArr[4]!="X"){
             $rta["tipo_alarma_id"]=6;
             $rta["estado_movil_id"]=10;
             $rta["rta"]           = 1;
