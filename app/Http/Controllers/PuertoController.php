@@ -517,7 +517,9 @@ class PuertoController extends BaseController
                     $rta["tipo_alarma_id"]=3;
                     HelpMen::report($movil->equipo_id,"\r\n ***MOTOR ENCENDIDO*** \r\n ");
                 }
-                Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta["tipo_alarma_id"],'fecha_alarma'=>$fecha,'falsa'=>0]);
+                HelpMen::report($movil->equipo_id,"\r\n ***POSICION ID***".$posicion_id." \r\n ");
+                Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),
+                    'tipo_alarma_id'=>$rta["tipo_alarma_id"],'fecha_alarma'=>$fecha,'falsa'=>0]);
             }
             /*****si $perFieldWorkMode= 0 =>RESET no informo alertas de nada solo actualizo estado de movil****/
             $keyPanico=array_search('P', $arrIOM);
@@ -530,7 +532,7 @@ class PuertoController extends BaseController
             $keyNB=array_search('NB', $arrIOM);
             if( $keyNB ){
                 $rta["estado_movil_id"]= 10;//estado "en alarma"
-                $rta["tipo_alarma_id"] = 31;//modo NB
+                $rta["tipo_alarma_id"] = 32;//modo NB
                 HelpMen::report($movil->equipo_id,"***EQUIPO EN MODO SILENCIOSO***");
                 if($perFieldWorkMode!= 0)Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>32,'fecha_alarma'=>$fecha,'falsa'=>0]);
             }
@@ -597,11 +599,8 @@ class PuertoController extends BaseController
     }
     public static function updateSensores($imei,$movil,$perField,$io,$tipo_alarma_id,$estado_movil_id,$posicion_id,$fecha){
         DB::beginTransaction();
-        Log::error("actualiza a ESTE ESTASDO DE CAJETAZA::".$estado_movil_id);
-        
         try {
             if($perField!=""){
-               // $perField   = implode("",$perField);
                 //HelpMen::report($movil->equipo_id,"\r\n ***Update sensores iom***".$perField ."\r\n");
                 EstadosSensores::where('imei', '=', $imei)->update(array('iom' => $perField));
             }else{
