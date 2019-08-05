@@ -494,7 +494,7 @@ class PuertoController extends BaseController
     public static function analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estado_movil_id){
         $arrIOM      = explode(',',$perField);
         $sensorEstado= self::getSensores($imei);//alarma_id=7 (Normal)//estado_movil_id=10(si alarma)
-        $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>7); 
+        $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); 
         if($perField!='NULL' && $arrIOM[0]=='IOM'){
             $perFieldInput   = $arrIOM[1];
             //$perFieldOutput  = $arrIOM[2];
@@ -572,33 +572,33 @@ class PuertoController extends BaseController
                 $rta["tipo_alarma_id"]=12;
                 $rta["estado_movil_id"]=5;
                 $rta["rta"]            = 1;
-                HelpMen::report($movil->equipo_id,"\r\n ***MOVIL PASO DE ENGANCHADO A DESENGANCHADO*** \r\n ");
+                HelpMen::report($movil->equipo_id,"\r\n ***MOVIL DESENGANCHADO*** \r\n ");
             }
             if( $estadoArr[3]==1 && $iomArr[3]==0 && $iomArr[3]!="X"){
                 $rta["tipo_alarma_id"]=5;
                 $rta["estado_movil_id"]=7;
                 $rta["rta"]           = 1;
-                HelpMen::report($movil->equipo_id,"\r\n ***MOVIL PASO DE DESENGANCHADO A ENGANCHADO*** \r\n");
+                HelpMen::report($movil->equipo_id,"\r\n ***MOVIL ENGANCHADO*** \r\n");
             }
             if( $estadoArr[5]==0 && $iomArr[5]==1 && $iomArr[5]!="X" ){
                 $rta["tipo_alarma_id"]=9;
                 $rta["estado_movil_id"]=10;
                 $rta["rta"]           = 1;
-                HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA DE CERRADA A ABIERTA*** \r\n");
+                HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA ABIERTA*** \r\n");
             }
             if( $estadoArr[5]==1 && $iomArr[5]==0 && $iomArr[5]!="X"){
                 $rta["tipo_alarma_id"]=11;
                 $rta["estado_movil_id"]=7;
                 $rta["rta"]           = 1;
-                HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA DE ABIERTA A CERRADA*** \r\n");
+                HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA CERRADA*** \r\n");
             }
-        }
-        //if($iomArr[0]==1)HelpMen::report($movil->equipo_id,"\r\n ***PANICO ACTIVADO*** \r\n");  
-        if($iomArr[4]==0 && $iomArr[4]!="X"){
-            $rta["tipo_alarma_id"]=6;
-            $rta["estado_movil_id"]=10;
-            $rta["rta"]           = 1;
-            HelpMen::report($movil->equipo_id,"\r\n ***ANTISABOTAJE ACTIVADO*** \r\n");  
+            //if($iomArr[0]==1)HelpMen::report($movil->equipo_id,"\r\n ***PANICO ACTIVADO*** \r\n");
+            if($iomArr[4]==0 && $iomArr[4]!="X"){
+                $rta["tipo_alarma_id"]=6;
+                $rta["estado_movil_id"]=10;
+                $rta["rta"]           = 1;
+                HelpMen::report($movil->equipo_id,"\r\n ***ANTISABOTAJE ACTIVADO*** \r\n");
+            }
         }
         return $rta;
     }
