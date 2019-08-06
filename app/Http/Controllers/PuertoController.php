@@ -21,12 +21,6 @@ class PuertoController extends BaseController
 
     private static $cadena;
     protected static $moviles_activos = null;
-    const OFFSET_LATITUD= 2;
-    const OFFSET_NS     = 3;
-    const OFFSET_LONGITUD= 4;
-    const OFFSET_EW     = 5;
-    const OFFSET_VELOCIDAD= 6;
-    const OFFSET_RUMBO  = 7;
     private static $modoArr      = [0=>"RESET",1=>"NORMAL",2=>"CORTE",3=>"BLOQUEO DE INHIBICIÓN",4=>"ALARMA"];
     private function __clone() {} //Prevent any copy of this object
     private function __wakeup() {}

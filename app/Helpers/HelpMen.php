@@ -19,6 +19,12 @@ use GuzzleHttp\Client;
 
 class HelpMen
 {
+    const OFFSET_LATITUD= 2;
+    const OFFSET_NS     = 3;
+    const OFFSET_LONGITUD= 4;
+    const OFFSET_EW     = 5;
+    const OFFSET_VELOCIDAD= 6;
+    const OFFSET_RUMBO  = 7;
     public static function compruebaMovilMC($imei,$shmid){
         //Movil Binary Search 
         MemVar::initIdentifier($shmid);
