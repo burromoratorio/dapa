@@ -5,6 +5,7 @@ use App\Alarmas;
 use App\EstadosSensores;
 use App\Movil;
 use App\Helpers\HelpMen;
+use App\Helpers\MemVar;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\PuertoController;
