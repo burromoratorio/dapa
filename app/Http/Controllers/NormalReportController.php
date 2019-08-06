@@ -112,7 +112,7 @@ class NormalReportController extends BaseController
       $largo        = (int)$length;
       $memoMoviles  = json_decode($apiRta->getBody());
       $movilesForMemo=$apiRta->getBody();
-      $encontrado   = app()->Puerto::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $imei);
+      $encontrado   = HelpMen::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $imei);
       if($encontrado){
         MemVar::VaciaMemoria();
         $memvar = MemVar::Instance('moviles.dat');
@@ -145,7 +145,7 @@ class NormalReportController extends BaseController
     if($memoMoviles[$ultimoIndex]->imei==$imei && $memoMoviles[$ultimoIndex]->equipo_id=="-666"){//si es el ultimo y no tiene instalacion
       $encontrado   = "-666";
     }else{
-      $encontrado   = app()->Puerto::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $imei);
+      $encontrado   = HelpMen::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $imei);
     }
     return $encontrado;
     
