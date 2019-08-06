@@ -626,7 +626,6 @@ class PuertoController extends BaseController
         DB::beginTransaction();
         try {
             if($tipo_alarma_id!=49 && $tipo_alarma_id!=0 ){//solo si es cualquier alarma distinta de alimentacion ppal
-                HelpMen::report($movil->equipo_id,"\r\n ***Creo alarma en posicion:***".$posicion_id ."\r\n");
                 Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,
                             'tipo_alarma_id'=>$tipo_alarma_id,'fecha_alarma'=>$fecha,'falsa'=>0]);
             }
