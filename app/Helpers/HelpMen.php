@@ -120,4 +120,37 @@ class HelpMen
         $memvar->init($archivo,$largo);
         $memvar->setValue( $enstring );
     }
+    public static function Gprmc2Data( $arrCadena ){
+        //latitud
+        $latitud    = self::ConvertirCoordenada( $arrCadena[self::OFFSET_LATITUD], $arrCadena[self::OFFSET_NS] );
+        //lingitud
+        $longitud   = self::ConvertirCoordenada( $arrCadena[self::OFFSET_LONGITUD], $arrCadena[self::OFFSET_EW] );
+        $velocidad  = $arrCadena[self::OFFSET_VELOCIDAD];
+        $rumbo      = $arrCadena[self::OFFSET_RUMBO];
+        $velocidad  = ((int)($velocidad*1.852));
+        return array(
+            'latitud'   => $latitud,
+            'longitud'  => $longitud,
+            'velocidad' => $velocidad,
+            'rumbo'     => self::Rumbo2String($rumbo)
+        );
+    }
+    public static function ConvertirCoordenada( $coord, $hemisphere ) {
+        if ($hemisphere == "N" || $hemisphere == "E") // North - East => Positivo
+        {
+            $signo = 1;
+        }else{
+            $signo = -1;
+        }
+        $coord /= 100.0; // Quedan los grados como enteros
+        $grados = ((int)($coord)); // Resguarda los grados
+        $coord -= $grados; // Le quita los grados
+        $coord *= 100.0; // Lo lleva al formato inicial sin los grados
+        $coord /= 60; // Lo lleva a decimales de grado
+        $coord += $grados; // Le agrega los grados
+        $coord *= $signo; // Le pone el signo segun norte o sur
+        
+        return $coord;
+        
+    }
 }
