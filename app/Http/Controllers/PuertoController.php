@@ -12,6 +12,8 @@ use App\Helpers\HelpMen;
 use App\Helpers\MemVar;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\SensorController;
+
 use Laravel\Lumen\Routing\Controller as BaseController;
 
 class PuertoController extends BaseController
@@ -344,7 +346,7 @@ class PuertoController extends BaseController
                 //Log::info(print_r($posicion,true));
                 if(isset($posicion)){
                     //inserto alarma de panico!!
-                    $estadoMovilidad = self::sensorAnalisis($ioData,$perField['PER'],$report['IMEI'],$posicion->posicion_id,
+                    $estadoMovilidad = SensorController::sensorAnalisis($ioData,$perField['PER'],$report['IMEI'],$posicion->posicion_id,
                                             $movil,$fecha,$estadoMovilidad);
                     if( $estadoMovilidad==7 ){
                         if($arrInfoGprmc['velocidad']>12){
