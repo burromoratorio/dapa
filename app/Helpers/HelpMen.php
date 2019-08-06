@@ -157,6 +157,29 @@ class HelpMen
         $coord *= $signo; // Le pone el signo segun norte o sur
         
         return $coord;
-        
+    }
+    public static function Rumbo2String( $rumbo ){
+        $arrRumbo = array(1 =>'Norte',2=>'Noroeste',3=>'Oeste',4=>'Suroeste',5=>'Sur',6=>'Sureste',7=>'Este',8=>'Noreste');
+        if (($rumbo > 337.5 && $rumbo <= 22.5) || ($rumbo == 0)){
+            $intRumbo = 1;//North
+        }else if ($rumbo > 22.5 && $rumbo <= 67.5){
+            $intRumbo = 6;//NorthEast
+        }else if ($rumbo > 67.5 && $rumbo <= 112.5){
+            $intRumbo = 7;//East
+        }else if ($rumbo > 112.5 && $rumbo <= 157.5){
+            $intRumbo = 6;//SouthEast
+        }else if ($rumbo > 157.5 && $rumbo <= 202.5){
+            $intRumbo = 5;//South
+        }else if ($rumbo > 202.5 && $rumbo <= 247.5){
+            $intRumbo = 4;//SouthWest
+        }else if ($rumbo > 247.5 && $rumbo <= 292.5){
+            $intRumbo = 3;//West
+        }else if ($rumbo > 292.5 && $rumbo <= 337.5){
+            $intRumbo = 2;//NorthWest
+        }else{
+            $intRumbo = 1;
+        }
+        //return $arrRumbo[$intRumbo];
+        return $intRumbo;
     }
 }
