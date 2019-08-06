@@ -311,7 +311,7 @@ class PuertoController extends BaseController
                     'mts_parciales'=>$odpField['ODP'],'ala'=>'ALA,'.$alaField['ALA'],'mcp'=>$mcpData['MCP'],
                     'cfg_principal'=>$mcpData[0],'cfg_auxiliar'=>$mcpData[1],'per'=>$perField['PER'],'log'=>'cadena valida' ]);
                     $respuesta      = $posicionGP->pid;
-                    $rumbo_id       = self::Rumbo2String( $gprmcData[7] );
+                    $rumbo_id       = HelpMen::Rumbo2String( $gprmcData[7] );
                     //cmd_id=65/50 si es pos, cmd_id=49 si es evento o alarma
                     DB::beginTransaction();
                     try {
