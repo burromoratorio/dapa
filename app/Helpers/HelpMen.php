@@ -99,4 +99,18 @@ class HelpMen
 		}
 				return $response->getBody();
 	}
+        public static function binarySearch(Array $arr, $start, $end, $x){
+            if ($end < $start)
+                return false;
+            $mid = floor(($end + $start)/2);
+            if ($arr[$mid]->imei == $x) 
+                return $arr[$mid];
+            elseif ($arr[$mid]->imei > $x) {
+                // call binarySearch on [start, mid - 1]
+                return self::binarySearch($arr, $start, $mid - 1, $x);
+            }else {
+                // call binarySearch on [mid + 1, end]
+                return self::binarySearch($arr, $mid + 1, $end, $x);
+            }
+        }
 }

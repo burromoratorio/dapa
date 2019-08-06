@@ -8,8 +8,6 @@ use App\Helpers\HelpMen;
 use App\Helpers\MemVar;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\PuertoController;
-
 use Laravel\Lumen\Routing\Controller as BaseController;
 /**
  * Encargado de realizar el analisis de cambios en 
@@ -250,7 +248,7 @@ class SensorController extends BaseController {
         genero un nuevo elemento y lo cargo en el array y en la ddbb
         elimino el elemento anterior del array, limpio y vuelvo a cargar la memoria
         */
-        $encontrado     = PuertoController::binarySearch($memoEstados, 0, count($memoEstados) - 1, $imei);
+        $encontrado     = HelpMen::binarySearch($memoEstados, 0, count($memoEstados) - 1, $imei);
         return $encontrado;
         
     }
