@@ -1,4 +1,6 @@
 <?php
+namespace App\Http\Controllers;
+
 use App\Alarmas;
 use App\EstadosSensores;
 use App\Movil;
@@ -8,7 +10,6 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\PuertoController;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
-namespace App\Http\Controllers;
 /**
  * Encargado de realizar el analisis de cambios en 
  * bits IO y IOM
