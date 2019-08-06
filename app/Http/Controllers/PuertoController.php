@@ -426,7 +426,7 @@ class PuertoController extends BaseController
         //$estadoMovilidad y $tipo_alarma_id necesito devolver desde los metodos de analisis para el update
         $cambioBits = array("rta"=>0,"estado_movil_id"=>$estadoMovilidad,"tipo_alarma_id"=>7); //alarma_id=7 (Normal)
         if($perField!='NULL'){ //analisis en bits sensores IOM y ALA
-            HelpMen::report($movil->equipo_id,$perField);
+            //HelpMen::report($movil->equipo_id,$perField);
             $cambioBits = self::analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
         }else{ //analisis en bits IO
             $cambioBits = self::analisisIO($ioData,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
@@ -523,7 +523,7 @@ class PuertoController extends BaseController
                     Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),
                         'tipo_alarma_id'=>$rta["tipo_alarma_id"],'fecha_alarma'=>$fecha,'falsa'=>0]);
                 }
-                HelpMen::report($movil->equipo_id,"\r\n ***POSICION ID***".$posicion_id." \r\n ");
+                //HelpMen::report($movil->equipo_id,"\r\n ***POSICION ID***".$posicion_id." \r\n ");
                 
             }
             /*****si $perFieldWorkMode= 0 =>RESET no informo alertas de nada solo actualizo estado de movil****/
@@ -531,14 +531,14 @@ class PuertoController extends BaseController
             if( $keyPanico ){
                 $rta["estado_movil_id"]= 10;//estado "en alarma"
                 $rta["tipo_alarma_id"] = 1;//panico
-                HelpMen::report($movil->equipo_id,"***PANICO ACTIVADO***");
+                HelpMen::report($movil->equipo_id,"***PANICO ACTIVADO*** \r\n");
                 if($perFieldWorkMode!= 0)Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>1,'fecha_alarma'=>$fecha,'falsa'=>0]);
             }
             $keyNB=array_search('NB', $arrIOM);
             if( $keyNB ){
                 $rta["estado_movil_id"]= 10;//estado "en alarma"
                 $rta["tipo_alarma_id"] = 32;//modo NB
-                HelpMen::report($movil->equipo_id,"***EQUIPO EN MODO SILENCIOSO***");
+                HelpMen::report($movil->equipo_id,"***EQUIPO EN MODO SILENCIOSO*** \r\n");
                 if($perFieldWorkMode!= 0)Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>32,'fecha_alarma'=>$fecha,'falsa'=>0]);
             }
             $iomArr = str_split($perFieldInput);
