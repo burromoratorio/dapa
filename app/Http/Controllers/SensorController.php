@@ -62,6 +62,9 @@ class SensorController extends BaseController {
             $tipo_alarma_id=49;
             $estado_movil_id=14;
         }
+        if($io=='1X'){
+            HelpMen::report($movil->equipo_id,"Alimentacion PPal Inhibida");
+        }
         $rta["estado_movil_id"]=$estado_movil_id;
         $rta["tipo_alarma_id"] =$tipo_alarma_id;
         if(!$sensorEstado){
@@ -109,9 +112,21 @@ class SensorController extends BaseController {
                     Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),
                         'tipo_alarma_id'=>$rta["tipo_alarma_id"],'fecha_alarma'=>$fecha,'falsa'=>0]);
                 }
+                if($estadoArr[1]=="1" && $estadoArr[1]!="X"){
+                    $rta["tipo_alarma_id"]=10;
+                    HelpMen::report($movil->equipo_id,"\r\n ***PUERTA CONDUCTOR CERRADA*** \r\n ");
+                    Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),
+                        'tipo_alarma_id'=>$rta["tipo_alarma_id"],'fecha_alarma'=>$fecha,'falsa'=>0]);
+                }
                 if($estadoArr[2]=="0" && $estadoArr[2]!="X"){
                     $rta["tipo_alarma_id"]=24;
                     HelpMen::report($movil->equipo_id,"\r\n ***PUERTA ACOMPAÑANTE ABIERTA*** \r\n ");
+                    Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),
+                        'tipo_alarma_id'=>$rta["tipo_alarma_id"],'fecha_alarma'=>$fecha,'falsa'=>0]);
+                }
+                if($estadoArr[2]=="1" && $estadoArr[2]!="X"){
+                    $rta["tipo_alarma_id"]=25;
+                    HelpMen::report($movil->equipo_id,"\r\n ***PUERTA ACOMPAÑANTE CERRADA*** \r\n ");
                     Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),
                         'tipo_alarma_id'=>$rta["tipo_alarma_id"],'fecha_alarma'=>$fecha,'falsa'=>0]);
                 }
@@ -120,6 +135,12 @@ class SensorController extends BaseController {
                     HelpMen::report($movil->equipo_id,"\r\n ***MOTOR ENCENDIDO*** \r\n ");
                     Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),
                         'tipo_alarma_id'=>$rta["tipo_alarma_id"],'fecha_alarma'=>$fecha,'falsa'=>0]);
+                }
+                if($perFieldWorkMode== 4 && $estadoArr[0]=="0" && $estadoArr[0]!="X"){ //si está en modo alarmas darle bola al campo panico en ALA
+                    $rta["estado_movil_id"]= 10;//estado "en alarma"
+                    $rta["tipo_alarma_id"] = 1;//panico
+                    HelpMen::report($movil->equipo_id,"***PANICO ACTIVADO*** \r\n");
+                    Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>1,'fecha_alarma'=>$fecha,'falsa'=>0]);
                 }
             }
             /*****si $perFieldWorkMode= 0 =>RESET no informo alertas de nada solo actualizo estado de movil****/
