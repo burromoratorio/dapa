@@ -31,7 +31,6 @@ class NormalReportController extends BaseController
         $requestApi   = '0';
         $mcRta        = '0';
         $movil        = false;
-        var_dump($shmid);
         if($shmid!='0'){
           Log::info("Verificando validez IMEI ".$arrCadena['IMEI']);
           $mcRta      = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
