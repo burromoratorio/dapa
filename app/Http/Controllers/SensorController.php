@@ -176,6 +176,7 @@ class SensorController extends BaseController {
             }else{
                 if($sensorEstado->iom=="NULL"){
                     HelpMen::report($movil->equipo_id,"Actualizando datos de IOM en instalacion que antes tenia IO");
+                    Log::info("Actualizando datos de IOM en instalacion que antes tenia IO");
                     DB::beginTransaction();
                     try {
                         $sensorNuevo  = EstadosSensores::where('id', '=',$sensorEstado->id);
@@ -188,10 +189,11 @@ class SensorController extends BaseController {
                         $logcadena = "Error acutalizando campo IOM..".$ex."\r\n";
                         HelpMen::report($movil->equipo_id,$logcadena);
                     }
+                }else{
+                    $idEstados = self::cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil,$estado_movil_id);
+                    if($idEstados["rta"]==1)
+                        self::updateSensores($imei,$movil,$perFieldInput,"",$idEstados["tipo_alarma_id"],$idEstados["estado_movil_id"],$posicion_id,$fecha);
                 }
-                $idEstados = self::cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil,$estado_movil_id);
-                if($idEstados["rta"]==1)
-                    self::updateSensores($imei,$movil,$perFieldInput,"",$idEstados["tipo_alarma_id"],$idEstados["estado_movil_id"],$posicion_id,$fecha);
             }
         }
         return $rta;    
