@@ -185,7 +185,7 @@ class SensorController extends BaseController {
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); //alarma_id=7 (Normal)
         if($sensorEstado && $sensorEstado->iom){
             $estadoArr = str_split($sensorEstado->iom);
-            var_dump($estadoArr);
+            Log::info(print_r($estadoArr,true));
             if( $estadoArr[3]==0 && $iomArr[3]==1 && $iomArr[3]!="X"){
                 $rta["tipo_alarma_id"]=12;
                 $rta["estado_movil_id"]=5;
