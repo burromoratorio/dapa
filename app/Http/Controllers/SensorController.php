@@ -178,8 +178,9 @@ class SensorController extends BaseController {
                     HelpMen::report($movil->equipo_id,"Actualizando datos de IOM en instalacion que antes tenia IO");
                     DB::beginTransaction();
                     try {
-                        $sensorEstado->iom=$perFieldInput;
-                        $sensorEstado->save();
+                        $sensorNuevo  = EstadosSensores::where('id', '=',$sensorEstado->id);
+                        $sensorNuevo->iom=$perFieldInput;
+                        $sensorNuevo->save();
                         self::persistSensor($imei,$posicion_id,$movil,$fecha,$rta["tipo_alarma_id"],$rta["estado_movil_id"]);
                         DB::commit();
                     }catch (\Exception $ex) {
