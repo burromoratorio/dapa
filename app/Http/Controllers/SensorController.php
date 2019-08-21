@@ -160,7 +160,7 @@ class SensorController extends BaseController {
             }
             $iomArr = str_split($perFieldInput);
             //luego del analisis actualizo los datos de sensores, primero analiso e informo alarmas, y estado del movil
-            if(!$sensorEstado){
+            if(!$sensorEstado || $sensorEstado=="NULL" || is_null($sensorEstado)){
                HelpMen::report($movil->equipo_id,"Datos de sensores vacios en memoria, generando...");
                 DB::beginTransaction();
                 try {
