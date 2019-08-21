@@ -161,7 +161,7 @@ class SensorController extends BaseController {
             $iomArr = str_split($perFieldInput);
             //luego del analisis actualizo los datos de sensores, primero analiso e informo alarmas, y estado del movil
             Log::info(print_r($sensorEstado,true));
-            if(!$sensorEstado || $sensorEstado=="NULL" || is_null($sensorEstado)){
+            if(!$sensorEstado ){
                HelpMen::report($movil->equipo_id,"Datos de sensores vacios en memoria, generando...");
                 DB::beginTransaction();
                 try {
@@ -174,6 +174,20 @@ class SensorController extends BaseController {
                     HelpMen::report($movil->equipo_id,$logcadena);
                 }
             }else{
+                if($sensorEstado->iom=="NULL"){
+                    HelpMen::report($movil->equipo_id,"Actualizando datos de IOM en instalacion que antes tenia IO");
+                    DB::beginTransaction();
+                    try {
+                        $sensorEstado->iom=$perFieldInput;
+                        $sensorEstado->save();
+                        self::persistSensor($imei,$posicion_id,$movil,$fecha,$rta["tipo_alarma_id"],$rta["estado_movil_id"]);
+                        DB::commit();
+                    }catch (\Exception $ex) {
+                        DB::rollBack();
+                        $logcadena = "Error acutalizando campo IOM..".$ex."\r\n";
+                        HelpMen::report($movil->equipo_id,$logcadena);
+                    }
+                }
                 $idEstados = self::cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil,$estado_movil_id);
                 if($idEstados["rta"]==1)
                     self::updateSensores($imei,$movil,$perFieldInput,"",$idEstados["tipo_alarma_id"],$idEstados["estado_movil_id"],$posicion_id,$fecha);
