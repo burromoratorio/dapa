@@ -101,7 +101,7 @@ class SensorController extends BaseController {
             //$perFieldOutput  = $arrIOM[2];
             $perFieldWorkMode= $arrIOM[3];
             $keyAlarma=array_search('ALA', $arrIOM);
-            if($perFieldWorkMode!= 4 ){
+            if($perFieldWorkMode!= 0 ){
                 //se usa el campo input de la cadena salvo en estado de Panico "P" "ALA" y NB
                 if( $keyAlarma ){
                     $estadoArr = str_split($arrIOM[$keyAlarma+1]);
