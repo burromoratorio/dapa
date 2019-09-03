@@ -88,8 +88,8 @@ class SensorController extends BaseController {
         }
         return $rta;
     }
-    /************Analisis de cadena IOM*********
-    $arrPeriferico[0]=IOM,  $arrPeriferico[1]=I1..I14, $arrPeriferico[2]=O1..O14, $arrPeriferico[3]=E(modo de trabajo del equipo)
+    /************Analisis de cadena IOM*********/
+    /*$arrPeriferico[0]=IOM,  $arrPeriferico[1]=I1..I14, $arrPeriferico[2]=O1..O14, $arrPeriferico[3]=E(modo de trabajo del equipo)
     $arrPeriferico[4]=PR(método de restablecimiento Manual),  $arrPeriferico[5]=NB(Normal o backgrond),  $arrPeriferico[6]=P (Panico) 
     si algun sendor trae el caracter X entonces no lo tengo en cuenta */
     public static function analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estado_movil_id){
@@ -113,7 +113,7 @@ class SensorController extends BaseController {
                         $rta["rta"]            = 1;
                     }
                 }
-                $rta["tipo_alarma_id"] = self::evaluaPanico($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha);
+                $rta["tipo_alarma_id"] = self::evaluaPanico($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha,$estadoArr);
                 $rta["tipo_alarma_id"] = self::evaluaNb($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha);               
                 $iomArr = str_split($perFieldInput);
                 //luego del analisis actualizo los datos de sensores, primero analiso e informo alarmas, y estado del movil
@@ -169,7 +169,7 @@ class SensorController extends BaseController {
         return $tipoAlarma;
     }
     /*****si $perFieldWorkMode= 0 =>RESET no informo alertas de nada solo actualizo estado de movil****/
-    public static function evaluaPanico($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha){
+    public static function evaluaPanico($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha,$estadoArr){
         $tipoAlarma     = 0;
         $estadoMovil    = 7;
         $keyPanico=array_search('P', $arrIOM);
