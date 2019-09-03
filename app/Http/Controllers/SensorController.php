@@ -143,11 +143,24 @@ class SensorController extends BaseController {
                         HelpMen::report($movil->equipo_id,"\r\n ***MOVIL DESENGANCHADO*** \r\n ");
                         Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>12,'fecha_alarma'=>$fecha,'falsa'=>0]);
                     }
+                    if( $estadoArr[3]==0 && $estadoArr[3]!="X"){
+                        $rta["tipo_alarma_id"]=5;
+                        $rta["estado_movil_id"]=5;
+                        HelpMen::report($movil->equipo_id,"\r\n ***MOVIL ENGANCHADO*** \r\n ");
+                        Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>5,'fecha_alarma'=>$fecha,'falsa'=>0]);
+                    }
                     if( $estadoArr[5]==1 && $estadoArr[5]!="X" ){
                         $rta["tipo_alarma_id"]=9;
                         $rta["estado_movil_id"]=10;
                         HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA ABIERTA*** \r\n");
                         Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>9,'fecha_alarma'=>$fecha,'falsa'=>0]);
+
+                    }
+                    if( $estadoArr[5]==0 && $estadoArr[5]!="X" ){
+                        $rta["tipo_alarma_id"]=11;
+                        $rta["estado_movil_id"]=10;
+                        HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA CERRADA*** \r\n");
+                        Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>11,'fecha_alarma'=>$fecha,'falsa'=>0]);
 
                     }
                     if($perFieldWorkMode== 4 && $estadoArr[0]=="0" && $estadoArr[0]!="X"){ //si está en modo alarmas darle bola al campo panico en ALA
