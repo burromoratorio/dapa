@@ -103,7 +103,7 @@ class SensorController extends BaseController {
             $keyAlarma=array_search('ALA', $arrIOM);
             if($perFieldWorkMode!= 0 ){
                 //se usa el campo input de la cadena salvo en estado de Panico "P" "ALA" y NB
-                if( $keyAlarma ){
+                if( $keyAlarma ){//Evaluo campo ALA
                     $estadoArr = str_split($arrIOM[$keyAlarma+1]);
                     $rta["estado_movil_id"]=10;
                     $rta["rta"]            = 1;
@@ -136,6 +136,19 @@ class SensorController extends BaseController {
                         HelpMen::report($movil->equipo_id,"\r\n ***MOTOR ENCENDIDO*** \r\n ");
                         Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),
                             'tipo_alarma_id'=>$rta["tipo_alarma_id"],'fecha_alarma'=>$fecha,'falsa'=>0]);
+                    }
+                    if( $estadoArr[3]==0 && $estadoArr[3]!="X"){
+                        $rta["tipo_alarma_id"]=12;
+                        $rta["estado_movil_id"]=5;
+                        HelpMen::report($movil->equipo_id,"\r\n ***MOVIL DESENGANCHADO*** \r\n ");
+                        Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>12,'fecha_alarma'=>$fecha,'falsa'=>0]);
+                    }
+                    if( $estadoArr[5]==0 && $estadoArr[5]!="X" ){
+                        $rta["tipo_alarma_id"]=9;
+                        $rta["estado_movil_id"]=10;
+                        HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA ABIERTA*** \r\n");
+                        Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>9,'fecha_alarma'=>$fecha,'falsa'=>0]);
+
                     }
                     if($perFieldWorkMode== 4 && $estadoArr[0]=="0" && $estadoArr[0]!="X"){ //si está en modo alarmas darle bola al campo panico en ALA
                         $rta["estado_movil_id"]= 10;//estado "en alarma"
