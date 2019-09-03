@@ -94,97 +94,27 @@ class SensorController extends BaseController {
     si algun sendor trae el caracter X entonces no lo tengo en cuenta */
     public static function analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estado_movil_id){
         $arrIOM      = explode(',',$perField);
-        $sensorEstado= self::getSensores($imei);//alarma_id=7 (Normal)//estado_movil_id=10(si alarma)
+        $sensorEstado= self::getSensores($imei);//estado_movil_id=7(normal), 10(Alarma)
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); 
         if($perField!='NULL' && $arrIOM[0]=='IOM'){
             $perFieldInput   = $arrIOM[1];
             //$perFieldOutput  = $arrIOM[2];
             $perFieldWorkMode= $arrIOM[3];
             $keyAlarma=array_search('ALA', $arrIOM);
+            /*****si $perFieldWorkMode= 0 =>RESET no informo alertas de nada solo actualizo estado de movil****/
             if($perFieldWorkMode!= 0 ){
                 //se usa el campo input de la cadena salvo en estado de Panico "P" "ALA" y NB
                 if( $keyAlarma ){//Evaluo campo ALA
                     $estadoArr = str_split($arrIOM[$keyAlarma+1]);
-                    $rta["estado_movil_id"]=10;
-                    $rta["rta"]            = 1;
-                    if($estadoArr[1]=="0" && $estadoArr[1]!="X"){
-                        $rta["tipo_alarma_id"]=4;
-                        HelpMen::report($movil->equipo_id,"\r\n ***PUERTA CONDUCTOR ABIERTA*** \r\n ");
-                        Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),
-                            'tipo_alarma_id'=>$rta["tipo_alarma_id"],'fecha_alarma'=>$fecha,'falsa'=>0]);
-                    }
-                    if($estadoArr[1]=="1" && $estadoArr[1]!="X"){
-                        $rta["tipo_alarma_id"]=10;
-                        HelpMen::report($movil->equipo_id,"\r\n ***PUERTA CONDUCTOR CERRADA*** \r\n ");
-                        Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),
-                            'tipo_alarma_id'=>$rta["tipo_alarma_id"],'fecha_alarma'=>$fecha,'falsa'=>0]);
-                    }
-                    if($estadoArr[2]=="0" && $estadoArr[2]!="X"){
-                        $rta["tipo_alarma_id"]=24;
-                        HelpMen::report($movil->equipo_id,"\r\n ***PUERTA ACOMPAÑANTE ABIERTA*** \r\n ");
-                        Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),
-                            'tipo_alarma_id'=>$rta["tipo_alarma_id"],'fecha_alarma'=>$fecha,'falsa'=>0]);
-                    }
-                    if($estadoArr[2]=="1" && $estadoArr[2]!="X"){
-                        $rta["tipo_alarma_id"]=25;
-                        HelpMen::report($movil->equipo_id,"\r\n ***PUERTA ACOMPAÑANTE CERRADA*** \r\n ");
-                        Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),
-                            'tipo_alarma_id'=>$rta["tipo_alarma_id"],'fecha_alarma'=>$fecha,'falsa'=>0]);
-                    }
-                    if($estadoArr[7]=="0" && $estadoArr[7]!="X"){
-                        $rta["tipo_alarma_id"]=3;
-                        HelpMen::report($movil->equipo_id,"\r\n ***MOTOR ENCENDIDO*** \r\n ");
-                        Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),
-                            'tipo_alarma_id'=>$rta["tipo_alarma_id"],'fecha_alarma'=>$fecha,'falsa'=>0]);
-                    }
-                    if( $estadoArr[3]==1 && $estadoArr[3]!="X"){
-                        $rta["tipo_alarma_id"]=12;
-                        $rta["estado_movil_id"]=5;
-                        HelpMen::report($movil->equipo_id,"\r\n ***MOVIL DESENGANCHADO*** \r\n ");
-                        Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>12,'fecha_alarma'=>$fecha,'falsa'=>0]);
-                    }
-                    if( $estadoArr[3]==0 && $estadoArr[3]!="X"){
-                        $rta["tipo_alarma_id"]=5;
-                        $rta["estado_movil_id"]=5;
-                        HelpMen::report($movil->equipo_id,"\r\n ***MOVIL ENGANCHADO*** \r\n ");
-                        Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>5,'fecha_alarma'=>$fecha,'falsa'=>0]);
-                    }
-                    if( $estadoArr[5]==1 && $estadoArr[5]!="X" ){
-                        $rta["tipo_alarma_id"]=9;
+                    $rta["tipo_alarma_id"] = self::evaluaCampoAla($estadoArr,$movil);
+                    if($rta["tipo_alarma_id"]>0){
+                        Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta["tipo_alarma_id"],'fecha_alarma'=>$fecha,'falsa'=>0]);
                         $rta["estado_movil_id"]=10;
-                        HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA ABIERTA*** \r\n");
-                        Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>9,'fecha_alarma'=>$fecha,'falsa'=>0]);
-
-                    }
-                    if( $estadoArr[5]==0 && $estadoArr[5]!="X" ){
-                        $rta["tipo_alarma_id"]=11;
-                        $rta["estado_movil_id"]=10;
-                        HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA CERRADA*** \r\n");
-                        Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>11,'fecha_alarma'=>$fecha,'falsa'=>0]);
-
-                    }
-                    if($perFieldWorkMode== 4 && $estadoArr[0]=="0" && $estadoArr[0]!="X"){ //si está en modo alarmas darle bola al campo panico en ALA
-                        $rta["estado_movil_id"]= 10;//estado "en alarma"
-                        $rta["tipo_alarma_id"] = 1;//panico
-                        HelpMen::report($movil->equipo_id,"***PANICO ACTIVADO*** \r\n");
-                        Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>1,'fecha_alarma'=>$fecha,'falsa'=>0]);
+                        $rta["rta"]            = 1;
                     }
                 }
-                /*****si $perFieldWorkMode= 0 =>RESET no informo alertas de nada solo actualizo estado de movil****/
-                $keyPanico=array_search('P', $arrIOM);
-                if( $keyPanico ){
-                    $rta["estado_movil_id"]= 10;//estado "en alarma"
-                    $rta["tipo_alarma_id"] = 1;//panico
-                    HelpMen::report($movil->equipo_id,"***PANICO ACTIVADO*** \r\n");
-                    if($perFieldWorkMode!= 0)Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>1,'fecha_alarma'=>$fecha,'falsa'=>0]);
-                }
-                $keyNB=array_search('NB', $arrIOM);
-                if( $keyNB ){
-                    $rta["estado_movil_id"]= 10;//estado "en alarma"
-                    $rta["tipo_alarma_id"] = 32;//modo NB
-                    HelpMen::report($movil->equipo_id,"***EQUIPO EN MODO SILENCIOSO*** \r\n");
-                    if($perFieldWorkMode!= 0)Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>32,'fecha_alarma'=>$fecha,'falsa'=>0]);
-                }
+                $rta["tipo_alarma_id"] = self::evaluaPanico($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha);
+                $rta["tipo_alarma_id"] = self::evaluaNb($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha);               
                 $iomArr = str_split($perFieldInput);
                 //luego del analisis actualizo los datos de sensores, primero analiso e informo alarmas, y estado del movil
                 if(!$sensorEstado ){
@@ -225,6 +155,82 @@ class SensorController extends BaseController {
             }
         }
         return $rta;    
+    }
+    public static function evaluaNb($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha){
+        $tipoAlarma     = 0;
+        $estadoMovil    = 7;
+        $keyNB=array_search('NB', $arrIOM);
+        if( $keyNB ){
+            $estadoMovil= 10;//estado "en alarma"
+            $tipoAlarma = 32;//modo NB
+            HelpMen::report($movil->equipo_id,"***EQUIPO EN MODO SILENCIOSO*** \r\n");
+            Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$tipoAlarma,'fecha_alarma'=>$fecha,'falsa'=>0]);
+        }
+        return $tipoAlarma;
+    }
+    /*****si $perFieldWorkMode= 0 =>RESET no informo alertas de nada solo actualizo estado de movil****/
+    public static function evaluaPanico($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha){
+        $tipoAlarma     = 0;
+        $estadoMovil    = 7;
+        $keyPanico=array_search('P', $arrIOM);
+        if( $keyPanico ){
+            $estadoMovil= 10;//estado "en alarma"
+            $tipoAlarma = 1;//panico
+            HelpMen::report($movil->equipo_id,"***PANICO ACTIVADO*** \r\n");
+            Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$tipoAlarma,'fecha_alarma'=>$fecha,'falsa'=>0]);
+        }
+        if($perFieldWorkMode== 4 && $estadoArr[0]=="0" && $estadoArr[0]!="X"){ //si está en modo alarmas darle bola al campo panico en ALA
+            $estadoMovil= 10;//estado "en alarma"
+            $tipoAlarma = 1;//panico
+            HelpMen::report($movil->equipo_id,"***PANICO ACTIVADO*** \r\n");
+            Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$tipoAlarma,'fecha_alarma'=>$fecha,'falsa'=>0]);
+        }
+        return $tipoAlarma;
+    }
+    public static function evaluaCampoAla($estadoArr,$movil){
+        $tipoAlarma     = 0; 
+        $estadoMovil    = 7;
+        if($estadoArr[1]=="0" && $estadoArr[1]!="X"){
+            $tipoAlarma=4;
+            HelpMen::report($movil->equipo_id,"\r\n ***PUERTA CONDUCTOR ABIERTA*** \r\n ");
+        }
+        if($estadoArr[1]=="1" && $estadoArr[1]!="X"){
+            $tipoAlarma=10;
+            HelpMen::report($movil->equipo_id,"\r\n ***PUERTA CONDUCTOR CERRADA*** \r\n ");
+        }
+        if($estadoArr[2]=="0" && $estadoArr[2]!="X"){
+            $tipoAlarma=24;
+            HelpMen::report($movil->equipo_id,"\r\n ***PUERTA ACOMPAÑANTE ABIERTA*** \r\n ");
+        }
+        if($estadoArr[2]=="1" && $estadoArr[2]!="X"){
+            $tipoAlarma=25;
+            HelpMen::report($movil->equipo_id,"\r\n ***PUERTA ACOMPAÑANTE CERRADA*** \r\n ");
+        }
+        if($estadoArr[7]=="0" && $estadoArr[7]!="X"){
+            $tipoAlarma=3;
+            HelpMen::report($movil->equipo_id,"\r\n ***MOTOR ENCENDIDO*** \r\n ");
+        }
+        if( $estadoArr[3]==1 && $estadoArr[3]!="X"){
+            $tipoAlarma=12;
+            $estadoMovil=5;
+            HelpMen::report($movil->equipo_id,"\r\n ***MOVIL DESENGANCHADO*** \r\n ");
+        }
+        if( $estadoArr[3]==0 && $estadoArr[3]!="X"){
+            $tipoAlarma=5;
+            $estadoMovil=5;
+            HelpMen::report($movil->equipo_id,"\r\n ***MOVIL ENGANCHADO*** \r\n ");
+         }
+        if( $estadoArr[5]==1 && $estadoArr[5]!="X" ){
+            $tipoAlarma=9;
+            $estadoMovil=10;
+            HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA ABIERTA*** \r\n");
+        }
+        if( $estadoArr[5]==0 && $estadoArr[5]!="X" ){
+            $tipoAlarma=11;
+            $estadoMovil=10;
+            HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA CERRADA*** \r\n");
+        }
+        return $tipoAlarma;
     }
     /*I4: Desenganche=>0 = ENGANCHADO; 1 = DESENGANCHADO | I5: Antisabotaje=>0 = VIOLACION; 1 = NORMAL | I6: Compuerta=>0 = CERRADA; 1 = ABIERTA*/
     public static function cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil,$estado_movil_id){
