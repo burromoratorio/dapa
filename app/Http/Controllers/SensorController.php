@@ -137,13 +137,13 @@ class SensorController extends BaseController {
                         Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),
                             'tipo_alarma_id'=>$rta["tipo_alarma_id"],'fecha_alarma'=>$fecha,'falsa'=>0]);
                     }
-                    if( $estadoArr[3]==0 && $estadoArr[3]!="X"){
+                    if( $estadoArr[3]==1 && $estadoArr[3]!="X"){
                         $rta["tipo_alarma_id"]=12;
                         $rta["estado_movil_id"]=5;
                         HelpMen::report($movil->equipo_id,"\r\n ***MOVIL DESENGANCHADO*** \r\n ");
                         Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>12,'fecha_alarma'=>$fecha,'falsa'=>0]);
                     }
-                    if( $estadoArr[5]==0 && $estadoArr[5]!="X" ){
+                    if( $estadoArr[5]==1 && $estadoArr[5]!="X" ){
                         $rta["tipo_alarma_id"]=9;
                         $rta["estado_movil_id"]=10;
                         HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA ABIERTA*** \r\n");
