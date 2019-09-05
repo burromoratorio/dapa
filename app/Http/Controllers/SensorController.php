@@ -106,6 +106,7 @@ class SensorController extends BaseController {
             /*****si $perFieldWorkMode= 0 =>RESET no informo alertas de nada solo actualizo estado de movil****/
             if($perFieldWorkMode!= 0 ){
                 //se usa el campo input de la cadena salvo en estado de Panico "P" "ALA" y NB
+                $estadoArr= null;
                 if( $keyAlarma ){//Evaluo campo ALA
                     $estadoArr = str_split($arrIOM[$keyAlarma+1]);
                     $rta["tipo_alarma_id"] = self::evaluaCampoAla($estadoArr,$movil);
@@ -181,7 +182,7 @@ class SensorController extends BaseController {
             HelpMen::report($movil->equipo_id,"***PANICO ACTIVADO*** \r\n");
             Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$tipoAlarma,'fecha_alarma'=>$fecha,'falsa'=>0]);
         }
-        if($perFieldWorkMode== 4 && $estadoArr[0]=="0" && $estadoArr[0]!="X"){ //si está en modo alarmas darle bola al campo panico en ALA
+        if($perFieldWorkMode== 4 && isset($estadoArr[0]) && $estadoArr[0]=="0" && $estadoArr[0]!="X"){ //si está en modo alarmas darle bola al campo panico en ALA
             $estadoMovil= 10;//estado "en alarma"
             $tipoAlarma = 1;//panico
             HelpMen::report($movil->equipo_id,"***PANICO ACTIVADO*** \r\n");
