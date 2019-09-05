@@ -22,7 +22,7 @@ class PerifericoController {
     private function __wakeup() {}
     public function __construct() {}
     public static function getSensores($equipo_id){
-        $sensor = new Periferico;
+        $sensor = new App\Periferico;
         $sensor->obtenerSensores($equipo_id);
     }
 }
