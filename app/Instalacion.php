@@ -11,8 +11,8 @@ class Instalacion extends Model
     public $timestamps = false;
     protected $fillable 	= ['equipo_id', 'localidad_id', 'movil_id'];
     
-    /*public function movil() {
-        return $this->hasOne('App\Movil');
-    }*/
-
+    public function periferico() {
+        return $this->hasOne('App\Periferico','instalacion_id','instalacion_id');
+    }
+    
 }

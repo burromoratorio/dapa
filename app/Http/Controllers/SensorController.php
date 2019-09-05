@@ -8,6 +8,8 @@ use App\Helpers\HelpMen;
 use App\Helpers\MemVar;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\PerifericoController;
+
 use Laravel\Lumen\Routing\Controller as BaseController;
 /**
  * Encargado de realizar el analisis de cambios en 
@@ -193,6 +195,9 @@ class SensorController extends BaseController {
         if($estadoArr[1]=="0" && $estadoArr[1]!="X"){
             $tipoAlarma=4;
             HelpMen::report($movil->equipo_id,"\r\n ***PUERTA CONDUCTOR ABIERTA*** \r\n ");
+            $perif = PerifericoController::getSensores($movil->equipo_id);
+            Log::info(print_r($perif,true));
+            
         }
         if($estadoArr[1]=="1" && $estadoArr[1]!="X"){
             $tipoAlarma=10;
