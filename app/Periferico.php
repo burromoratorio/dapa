@@ -15,7 +15,7 @@ class Periferico extends Model
     public function instalacion() {
         return $this->belongsTo('App\Instalacion','instalacion_id','instalacion_id');
     }
-    public function obtenerSensores($equipo_id){
+    public static function obtenerSensores($equipo_id){
         return Periferico::with('instalacion')->where('instalacion.equipo_id','=',$equipo_id);
         /*DB::table('users')
         ->join('contacts', function ($join) {
