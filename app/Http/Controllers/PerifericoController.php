@@ -25,7 +25,7 @@ class PerifericoController extends BaseController
         try{
             
             $perif = self::getSensores($equipo_id);
-            dd($perif);
+           // dd($perif);
             $perif->sensor_pulsador_panico=$sensores[0];
             $perif->sensor_puerta_conductor=$sensores[1];
             $perif->sensor_puerta_acompaniante=$sensores[2];
@@ -34,7 +34,7 @@ class PerifericoController extends BaseController
             $perif->sensor_compuerta=$sensores[5];
             //$perif->PERIF_IO->sensor_encendido=$sensores[7];
             $perif->save();
-            Log::info("Actualizando PerifericoController:::");
+            Log::info("Actualizando PerifericoController:::iddd:".$perif->perif_io_id);
 
             DB::commit();
         }catch (\Exception $ex) {
