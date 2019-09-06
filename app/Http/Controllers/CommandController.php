@@ -163,7 +163,7 @@ class CommandController extends BaseController
         $arrVal=explode(",",$valor);
         $OUTPendiente = null;
         $comandosSeteo= array("HAS","CFG_CORTE","RES","INI");
-        if(in_array($arrVal[1],$comandosSeteo)){
+        if(isset($arrVal[1]) && in_array($arrVal[1],$comandosSeteo)){
             $busqueda= "+PER=IOM,".$arrVal[1];
             $OUTPendiente = $this->IOMPendiente($equipo_id,self::$comandoDefinitions[$busqueda]);
             $OUTPendiente->tipo_posicion  = 70;

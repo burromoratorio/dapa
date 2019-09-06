@@ -197,7 +197,10 @@ class SensorController extends BaseController {
             $tipoAlarma=4;
             HelpMen::report($movil->equipo_id,"\r\n ***PUERTA CONDUCTOR ABIERTA*** \r\n ");
             $perif = PerifericoController::getSensores($movil->equipo_id);
+            $perif->sensor_puerta_conductor=$estadoArr[1];
             Log::info("puertaaaaaaaaaAA:::".$perif->sensor_puerta_conductor);
+            $perif->save();
+            Log::info("Sensor puerta pasa a:::".$estadoArr[1]);
             
         }
         if($estadoArr[1]=="1" && $estadoArr[1]!="X"){
