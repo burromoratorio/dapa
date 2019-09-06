@@ -27,10 +27,10 @@ class PerifericoController extends BaseController
             $perif->sensor_pulsador_panico=$sensores[0];
             $perif->sensor_puerta_conductor=$sensores[1];
             $perif->sensor_puerta_acompaniante=$sensores[2];
-            $perif->PERIF_IO->sensor_desenganche=$sensores[3];
-            $perif->PERIF_IO->sensor_antisabotaje=$sensores[4];
+            $perif->sensor_desenganche=$sensores[3];
+            $perif->sensor_antisabotaje=$sensores[4];
             $perif->sensor_compuerta=$sensores[5];
-            $perif->PERIF_IO->sensor_encendido=$sensores[7];
+            $perif->sensor_encendido=$sensores[7];
             $perif->save();
             Log::info("Actualizando PerifericoController:::");
 

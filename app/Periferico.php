@@ -17,7 +17,9 @@ class Periferico extends Model
     }
     public static function obtenerSensores($equipo_id){
         //return Periferico::with('instalacion')->where('instalacion.equipo_id','=',$equipo_id)->get()->first();
-        return Periferico::join('INSTALACIONES', 'PERIF_IO.instalacion_id', '=', 'INSTALACIONES.instalacion_id')
+        return Periferico::select('sensor_pulsador_panico','sensor_puerta_conductor','sensor_puerta_acompaniante',
+                                    'PERIF_IO.sensor_desenganche','PERIF_IO.sensor_antisabotaje','sensor_compuerta','PERIF_IO.sensor_encendido'
+                                    )->join('INSTALACIONES', 'PERIF_IO.instalacion_id', '=', 'INSTALACIONES.instalacion_id')
                         ->when($equipo_id, function ($query) use ($equipo_id) {
                             return $query->where('INSTALACIONES.equipo_id', $equipo_id);
                         })->get()->first();
