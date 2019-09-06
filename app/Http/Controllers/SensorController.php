@@ -196,12 +196,6 @@ class SensorController extends BaseController {
         if($estadoArr[1]=="0" && $estadoArr[1]!="X"){
             $tipoAlarma=4;
             HelpMen::report($movil->equipo_id,"\r\n ***PUERTA CONDUCTOR ABIERTA*** \r\n ");
-            $perif = PerifericoController::getSensores($movil->equipo_id);
-            $perif->sensor_puerta_conductor=$estadoArr[1];
-            Log::info("puertaaaaaaaaaAA:::".$perif->sensor_puerta_conductor);
-            $perif->save();
-            Log::info("Sensor puerta pasa a:::".$estadoArr[1]);
-            
         }
         if($estadoArr[1]=="1" && $estadoArr[1]!="X"){
             $tipoAlarma=10;
@@ -244,6 +238,7 @@ class SensorController extends BaseController {
     /*I4: Desenganche=>0 = ENGANCHADO; 1 = DESENGANCHADO | I5: Antisabotaje=>0 = VIOLACION; 1 = NORMAL | I6: Compuerta=>0 = CERRADA; 1 = ABIERTA*/
     public static function cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil,$estado_movil_id){
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); //alarma_id=7 (Normal)
+        PerifericoController::actualizarPerifericos($movil,$iomArr);
         if($sensorEstado && $sensorEstado->iom){
             $estadoArr = str_split($sensorEstado->iom);
             //Log::info(print_r($estadoArr,true));
@@ -358,4 +353,16 @@ class SensorController extends BaseController {
         return $memoEstados;
     
     }
+    public static function actualizarPerifericos($movil,$estadoArr){
+        Log::info("Actualizando datos de Perifericos:::");
+        try{
+            PerifericoController::setSensores($movil->equipo_id,$estadoArr);
+        }catch (\Exception $ex) {
+            DB::rollBack();
+            $errorSolo  = explode("Stack trace", $ex);
+            $logcadena ="Error al procesar update de comandos ".$errorSolo[0]." \r\n";
+            Log::info($logcadena);
+        }
+    }
+    
 }

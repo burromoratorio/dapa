@@ -17,8 +17,26 @@ class PerifericoController extends BaseController
     private function __wakeup() {}
     public function __construct() {}
     public static function getSensores($equipo_id){
-        $sensor = Periferico::obtenerSensores($equipo_id);
-        return $sensor;
-       
+        $periferico = Periferico::obtenerSensores($equipo_id);
+        return $periferico;
+    }
+    public static function setSensores($equipo_id,$sensores){
+        DB::beginTransaction();
+        try{
+            $perif = self::getSensores($equipo_id);
+            $perif->sensor_pulsador_panico=$sensores[0];
+            $perif->sensor_puerta_conductor=$sensores[1];
+            $perif->sensor_puerta_acompaniante=$sensores[2];
+            $perif->sensor_desenganche=$sensores[3];
+            $perif->sensor_antisabotaje=$sensores[4];
+            $perif->sensor_compuerta=$sensores[5];
+            $perif->save();
+            DB::commit();
+        }catch (\Exception $ex) {
+            DB::rollBack();
+            $errorSolo  = explode("Stack trace", $ex);
+            $logcadena ="Error al procesar update de comandos ".$errorSolo[0]." \r\n";
+            Log::info($logcadena);
+        }
     }
 }
