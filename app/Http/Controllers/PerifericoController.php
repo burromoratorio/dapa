@@ -23,8 +23,9 @@ class PerifericoController extends BaseController
     public static function setSensores($equipo_id,$sensores){
         DB::beginTransaction();
         try{
-            dd($perif);
+            
             $perif = self::getSensores($equipo_id);
+            dd($perif);
             $perif->sensor_pulsador_panico=$sensores[0];
             $perif->sensor_puerta_conductor=$sensores[1];
             $perif->sensor_puerta_acompaniante=$sensores[2];
