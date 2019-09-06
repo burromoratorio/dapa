@@ -31,6 +31,8 @@ class PerifericoController extends BaseController
             $perif->sensor_antisabotaje=$sensores[4];
             $perif->sensor_compuerta=$sensores[5];
             $perif->save();
+            Log::info("Actualizando PerifericoController:::");
+
             DB::commit();
         }catch (\Exception $ex) {
             DB::rollBack();
