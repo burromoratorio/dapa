@@ -25,7 +25,8 @@ class PerifericoController extends BaseController
         try{
             
             $perif = self::getSensores($equipo_id);
-           // dd($perif);
+            $consumer = Periferico::find($perif->perif_io_id);
+            dd($consumer);
             $perif->sensor_pulsador_panico=$sensores[0];
             $perif->sensor_puerta_conductor=$sensores[1];
             $perif->sensor_puerta_acompaniante=$sensores[2];
