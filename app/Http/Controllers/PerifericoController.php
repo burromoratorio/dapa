@@ -26,17 +26,15 @@ class PerifericoController extends BaseController
             
             $perif = self::getSensores($equipo_id);
             $consumer = Periferico::find($perif->perif_io_id);
-            dd($consumer);
-            $perif->sensor_pulsador_panico=$sensores[0];
-            $perif->sensor_puerta_conductor=$sensores[1];
-            $perif->sensor_puerta_acompaniante=$sensores[2];
-            //$perif->PERIF_IO->sensor_desenganche=$sensores[3];
-            //$perif->PERIF_IO->sensor_antisabotaje=$sensores[4];
-            $perif->sensor_compuerta=$sensores[5];
-            //$perif->PERIF_IO->sensor_encendido=$sensores[7];
-            $perif->save();
+            $consumer->sensor_pulsador_panico=$sensores[0];
+            $consumer->sensor_puerta_conductor=$sensores[1];
+            $consumer->sensor_puerta_acompaniante=$sensores[2];
+            $consumer->PERIF_IO->sensor_desenganche=$sensores[3];
+            $consumer->PERIF_IO->sensor_antisabotaje=$sensores[4];
+            $consumer->sensor_compuerta=$sensores[5];
+            $consumer->PERIF_IO->sensor_encendido=$sensores[7];
+            $consumer->save();
             Log::info("Actualizando PerifericoController:::iddd:".$perif->perif_io_id);
-
             DB::commit();
         }catch (\Exception $ex) {
             DB::rollBack();
