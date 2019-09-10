@@ -446,7 +446,7 @@ class PuertoController extends BaseController
                     $IOEstados["tmg"] = $valorPeriferico;
                     break;
                 case 'IOM':
-                    $IOEstados["mod_presencia"]= $arrPeriferico[3];
+                    $IOEstados["mod_presencia"]= (isset($arrPeriferico[3]))?$arrPeriferico[3]:1;
                     break;
                 case 'BIO':
                 //falta ejemplo de sebas para armar cadena
