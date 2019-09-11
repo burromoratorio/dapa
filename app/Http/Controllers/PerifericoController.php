@@ -20,7 +20,7 @@ class PerifericoController extends BaseController
         $periferico = Periferico::obtenerSensores($equipo_id);
         return $periferico;
     }
-    public static function setSensores($equipo_id,$sensores,$salidas){
+    public static function setSensores($equipo_id,$sensores,$salidas,$modo,$restabManual){
         DB::beginTransaction();
         try{
             $salidasArr = str_split($salidas);
@@ -34,12 +34,16 @@ class PerifericoController extends BaseController
             $consumer->sensor_antisabotaje=$sensores[4];
             $consumer->sensor_compuerta=$sensores[5];
             $consumer->sensor_encendido=$sensores[7];
+            $consumer->sensor_presencia_tablero=$sensores[8];
+            $consumer->sensor_lave_tablero=$sensores[10];
+            
+
             $consumer->salida_corte=$salidasArr[0];
             $consumer->salida_frenos=$salidasArr[1];
             $consumer->salida_sirena=$salidasArr[2];
             $consumer->salida_auxiliar_1=$salidasArr[3];
-            $consumer->salida_auxiliar_2=$salidasArr[4];            
-            $consumer->salida_auxiliar_3=$salidasArr[5];
+            $consumer->salida_auxiliar_2=$salidasArr[4];  
+            $consumer->restablecimiento_manual=$restabManual;
             $consumer->save();
             Log::info("Actualizando PerifericoController:::iddd:".$perif->perif_io_id);
             DB::commit();
