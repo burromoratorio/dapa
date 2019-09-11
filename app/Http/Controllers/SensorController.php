@@ -100,7 +100,7 @@ class SensorController extends BaseController {
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); 
         if($perField!='NULL' && $arrIOM[0]=='IOM'){
             $perFieldInput   = $arrIOM[1];
-            //$perFieldOutput  = $arrIOM[2];
+            $perFieldOutput  = $arrIOM[2];
             $perFieldWorkMode= $arrIOM[3];
             $keyAlarma=array_search('ALA', $arrIOM);
             /*****si $perFieldWorkMode= 0 =>RESET no informo alertas de nada solo actualizo estado de movil****/
@@ -148,7 +148,7 @@ class SensorController extends BaseController {
                             HelpMen::report($movil->equipo_id,$logcadena);
                         }
                     }else{
-                        $idEstados = self::cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil,$estado_movil_id);
+                        $idEstados = self::cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil,$estado_movil_id,$perFieldOutput);
                         if($idEstados["rta"]==1)
                             self::updateSensores($imei,$movil,$perFieldInput,"",$idEstados["tipo_alarma_id"],$idEstados["estado_movil_id"],$posicion_id,$fecha);
                     }
@@ -236,10 +236,10 @@ class SensorController extends BaseController {
         return $tipoAlarma;
     }
     /*I4: Desenganche=>0 = ENGANCHADO; 1 = DESENGANCHADO | I5: Antisabotaje=>0 = VIOLACION; 1 = NORMAL | I6: Compuerta=>0 = CERRADA; 1 = ABIERTA*/
-    public static function cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil,$estado_movil_id){
+    public static function cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil,$estado_movil_id,$perFieldOutput){
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); //alarma_id=7 (Normal)
         Log::info("CAMBIOS INPUT OUTPUTTTTTT");
-        self::actualizarPerifericos($movil,$iomArr);
+        self::actualizarPerifericos($movil,$iomArr,$perFieldOutput);
         if($sensorEstado && $sensorEstado->iom){
             $estadoArr = str_split($sensorEstado->iom);
             //Log::info(print_r($estadoArr,true));
@@ -354,10 +354,10 @@ class SensorController extends BaseController {
         return $memoEstados;
     
     }
-    public static function actualizarPerifericos($movil,$estadoArr){
+    public static function actualizarPerifericos($movil,$estadoArr,$perFieldOutput){
         Log::info(":::::::Actualizando datos de Perifericos:::");
         try{
-            PerifericoController::setSensores($movil->equipo_id,$estadoArr);
+            PerifericoController::setSensores($movil->equipo_id,$estadoArr,$perFieldOutput);
         }catch (\Exception $ex) {
             DB::rollBack();
             $errorSolo  = explode("Stack trace", $ex);
