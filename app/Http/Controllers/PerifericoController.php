@@ -35,7 +35,7 @@ class PerifericoController extends BaseController
             $consumer->sensor_compuerta=$sensores[5];
             $consumer->sensor_encendido=$sensores[7];
             $consumer->sensor_presencia_tablero=$sensores[8];
-            $consumer->sensor_lave_tablero=$sensores[10];
+            $consumer->sensor_llave_tablero=$sensores[10];
             
 
             $consumer->salida_corte=$salidasArr[0];
