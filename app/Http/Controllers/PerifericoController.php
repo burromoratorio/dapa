@@ -24,7 +24,7 @@ class PerifericoController extends BaseController
         DB::beginTransaction();
         try{
             $salidasArr = str_split($salidas);
-            Log::info(print_r($salidas,true));
+            Log::info("las salidas:".$salidas);
             $perif = self::getSensores($equipo_id);
             $consumer = Periferico::find($perif->perif_io_id);
             $consumer->sensor_pulsador_panico=$sensores[0];
@@ -36,8 +36,6 @@ class PerifericoController extends BaseController
             $consumer->sensor_encendido=$sensores[7];
             $consumer->sensor_presencia_tablero=$sensores[8];
             $consumer->sensor_llave_tablero=$sensores[10];
-            
-
             $consumer->salida_corte=$salidasArr[0];
             $consumer->salida_frenos=$salidasArr[1];
             $consumer->salida_sirena=$salidasArr[2];

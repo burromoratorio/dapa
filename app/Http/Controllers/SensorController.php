@@ -149,7 +149,7 @@ class SensorController extends BaseController {
                             HelpMen::report($movil->equipo_id,$logcadena);
                         }
                     }else{
-                        $idEstados = self::cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil,$estado_movil_id,$perFieldWorkMode,$manualRestartMethod);
+                        $idEstados = self::cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil,$estado_movil_id,$perFieldOutput,$manualRestartMethod);
                         if($idEstados["rta"]==1)
                             self::updateSensores($imei,$movil,$perFieldInput,"",$idEstados["tipo_alarma_id"],$idEstados["estado_movil_id"],$posicion_id,$fecha);
                     }
