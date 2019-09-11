@@ -37,9 +37,9 @@ class PerifericoController extends BaseController
             $consumer->salida_corte=$salidasArr[0];
             $consumer->salida_frenos=$salidasArr[1];
             $consumer->salida_sirena=$salidasArr[2];
-            $consumer->salida_auxiliar1=$salidasArr[3];
-            $consumer->salida_auxiliar2=$salidasArr[4];            
-            $consumer->salida_auxiliar3=$salidasArr[5];
+            $consumer->salida_auxiliar_1=$salidasArr[3];
+            $consumer->salida_auxiliar_2=$salidasArr[4];            
+            $consumer->salida_auxiliar_3=$salidasArr[5];
             $consumer->save();
             Log::info("Actualizando PerifericoController:::iddd:".$perif->perif_io_id);
             DB::commit();
