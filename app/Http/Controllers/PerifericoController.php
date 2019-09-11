@@ -20,7 +20,7 @@ class PerifericoController extends BaseController
         $periferico = Periferico::obtenerSensores($equipo_id);
         return $periferico;
     }
-    public static function setSensores($equipo_id,$sensores,$salidas,$modo,$restabManual){
+    public static function setSensores($equipo_id,$sensores,$salidas,$restabManual){
         DB::beginTransaction();
         try{
             $salidasArr = str_split($salidas);

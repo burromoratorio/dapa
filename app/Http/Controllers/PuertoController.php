@@ -356,7 +356,8 @@ class PuertoController extends BaseController
                         $updateMovil= $movilModel->where('movil_id','=',intval($movil->movilOldId))
                                     ->update(['latitud'=>$arrInfoGprmc['latitud'],'longitud'=>$arrInfoGprmc['longitud'],
                                             'rumbo_id'=>$arrInfoGprmc['rumbo'],'estado'=>$estadoMovilidad,
-                                            'velocidad'=>$arrInfoGprmc['velocidad'],'fecha_ult_posicion'=>$fecha]);
+                                            'velocidad'=>$arrInfoGprmc['velocidad'],'fecha_ult_posicion'=>$fecha,
+                                        'estado_v'=>$info['mod_presencia']]);
                                        
                     }
                     //DB::commit();
