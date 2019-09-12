@@ -133,7 +133,7 @@ class HelpMen
         $longitud   = self::ConvertirCoordenada( $arrCadena[self::OFFSET_LONGITUD], $arrCadena[self::OFFSET_EW] );
         $velocidad  = $arrCadena[self::OFFSET_VELOCIDAD];
         $rumbo      = $arrCadena[self::OFFSET_RUMBO];
-        $velocidad  = ((int)($velocidad*1.852));
+        $velocidad  = ($velocidad!='')?((int)($velocidad*1.852)):0;
         return array(
             'latitud'   => $latitud,
             'longitud'  => $longitud,
