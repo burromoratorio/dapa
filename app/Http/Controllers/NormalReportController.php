@@ -25,7 +25,7 @@ class NormalReportController extends BaseController
 	    $rta="";
       $jsonReq = $request->json()->all();
       if(isset($jsonReq["cadena"])){
-        Log::info("en normal antes que nada la cadenaaaaaaa::::".$jsonReq["cadena"]);  
+        //Log::info("en normal antes que nada la cadenaaaaaaa::::".$jsonReq["cadena"]);  
         $arrCadena = app()->Puerto::changeString2array($jsonReq["cadena"]);
         /*primero validaciones en MC*/
         $shmid        = MemVar::OpenToRead('moviles.dat');
@@ -36,10 +36,10 @@ class NormalReportController extends BaseController
           Log::info("Verificando validez IMEI ".$arrCadena['IMEI']);
           $mcRta      = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
           if($mcRta==false){//no fue encontrado en MC
-            Log::error("El IMEI ".$arrCadena['IMEI']." no está en la memoria");
+            Log::info("El IMEI ".$arrCadena['IMEI']." no está en la memoria");
             $requestApi = '1';
           }elseif ($mcRta=="-666") {//en MC pero sin instalacion
-            Log::error("El IMEI ".$arrCadena['IMEI']." se encuentra sin INSTALACION");
+            Log::info("El IMEI ".$arrCadena['IMEI']." se encuentra sin INSTALACION");
             $requestApi = '2';
           }else{ 
             $movil     = $mcRta;
