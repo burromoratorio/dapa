@@ -25,6 +25,7 @@ class NormalReportController extends BaseController
 	    $rta="";
       $jsonReq = $request->json()->all();
       if(isset($jsonReq["cadena"])){
+        Log::info("en normal antes que nada la cadenaaaaaaa::::".$jsonReq["cadena"]);  
         $arrCadena = app()->Puerto::changeString2array($jsonReq["cadena"]);
         /*primero validaciones en MC*/
         $shmid        = MemVar::OpenToRead('moviles.dat');
