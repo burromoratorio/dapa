@@ -27,20 +27,8 @@ class PerifericoController extends BaseController
             Log::info("las salidas:".$salidas);
             $perif = self::getSensores($equipo_id);
             $consumer = Periferico::find($perif->perif_io_id);
-            $consumer->sensor_pulsador_panico=$sensores[0];
-            $consumer->sensor_puerta_conductor=$sensores[1];
-            $consumer->sensor_puerta_acompaniante=$sensores[2];
-            $consumer->sensor_desenganche=$sensores[3];
-            $consumer->sensor_antisabotaje=$sensores[4];
-            $consumer->sensor_compuerta=$sensores[5];
-            $consumer->sensor_encendido=$sensores[7];
-            $consumer->sensor_presencia_tablero=$sensores[8];
-            $consumer->sensor_llave_tablero=$sensores[10];
-            $consumer->salida_corte=$salidasArr[0];
-            $consumer->salida_frenos=$salidasArr[1];
-            $consumer->salida_sirena=$salidasArr[2];
-            $consumer->salida_auxiliar_1=$salidasArr[3];
-            $consumer->salida_auxiliar_2=$salidasArr[4];  
+            self::setEntradas($consumer, $sensores);
+            self::setSalidas($consumer, $salidasArr);
             $consumer->restablecimiento_manual=$restabManual;
             $consumer->save();
             Log::info("Actualizando PerifericoController:::iddd:".$perif->perif_io_id);
@@ -52,4 +40,26 @@ class PerifericoController extends BaseController
             Log::info($logcadena);
         }
     }
+    public static function setEntradas($consumer,$sensores){
+        $consumer->sensor_pulsador_panico=$sensores[0];
+        $consumer->sensor_puerta_conductor=$sensores[1];
+        $consumer->sensor_puerta_acompaniante=$sensores[2];
+        $consumer->sensor_desenganche=$sensores[3];
+        $consumer->sensor_antisabotaje=$sensores[4];
+        $consumer->sensor_compuerta=$sensores[5];
+        $consumer->sensor_contacto=$sensores[6];
+        $consumer->sensor_encendido=$sensores[7];
+        $consumer->sensor_presencia_tablero=$sensores[8];
+        $consumer->sensor_pulsador_tablero=$sensores[9];
+        $consumer->sensor_llave_tablero=$sensores[10];
+        $consumer->sensor_alimentacion_ppal=$sensores[11];
+    }
+    public static function setSalidas($consumer,$salidas){
+        $consumer->salida_corte=$salidasArr[0];
+        $consumer->salida_frenos=$salidasArr[1];
+        $consumer->salida_sirena=$salidasArr[2];
+        $consumer->salida_auxiliar_1=$salidasArr[3];
+        $consumer->salida_auxiliar_2=$salidasArr[4];  
+    }
+    
 }
