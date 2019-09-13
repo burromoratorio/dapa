@@ -145,17 +145,20 @@ class NormalReportController extends BaseController
       return $response;
   }
   public function compruebaMovilMC($imei,$shmid){
-    //Movil Binary Search 
+    $encontrado=false;
     MemVar::initIdentifier($shmid);
     $memoMoviles    = MemVar::GetValue();
     $memoMoviles    = json_decode($memoMoviles);
-    Log::info(print_r($memoMoviles,true));
-    $ultimoIndex    = (count($memoMoviles)-1);
-    if($memoMoviles[$ultimoIndex]->imei==$imei && $memoMoviles[$ultimoIndex]->equipo_id=="-666"){//si es el ultimo y no tiene instalacion
-      $encontrado   = "-666";
-    }else{
-      $encontrado   = HelpMen::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $imei);
+    if($memoMoviles!=''){
+        $ultimoIndex    = (count($memoMoviles)-1);
+        if($memoMoviles[$ultimoIndex]->imei==$imei && $memoMoviles[$ultimoIndex]->equipo_id=="-666"){//si es el ultimo y no tiene instalacion
+          $encontrado   = "-666";
+        }else{
+          $encontrado   = HelpMen::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $imei);
+        }
     }
+    Log::info(print_r($memoMoviles,true));
+    
     return $encontrado;
     
   }
