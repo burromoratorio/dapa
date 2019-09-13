@@ -32,7 +32,6 @@ class HelpMen
         $memoMoviles    = MemVar::GetValue();
         $memoMoviles    = json_decode($memoMoviles);
         if($memoMoviles!=''){
-            Log::info(print_r($memoMoviles,true));
             $encontrado     = self::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $imei);
         }
        

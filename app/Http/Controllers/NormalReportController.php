@@ -157,8 +157,6 @@ class NormalReportController extends BaseController
           $encontrado   = HelpMen::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $imei);
         }
     }
-    Log::info(print_r($memoMoviles,true));
-    
     return $encontrado;
     
   }
