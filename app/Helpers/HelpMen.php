@@ -30,6 +30,7 @@ class HelpMen
         MemVar::initIdentifier($shmid);
         $memoMoviles    = MemVar::GetValue();
         $memoMoviles    = json_decode($memoMoviles);
+        Log::info($memoMoviles);
         $encontrado     = self::binarySearch($memoMoviles, 0, count($memoMoviles) - 1, $imei);
         return $encontrado;
     } 

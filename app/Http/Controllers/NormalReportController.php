@@ -92,9 +92,7 @@ class NormalReportController extends BaseController
             }else{
                 Log::error("CADENA MAL FORMADA SIN IME-->desecho reporte");
             }
-         
         }
-        
       }elseif($jsonReq["KEY"]=="NR"){
         Log::info("Ingresando por Puerto_lite");
         foreach($jsonReq["PA"] as $posicion){
