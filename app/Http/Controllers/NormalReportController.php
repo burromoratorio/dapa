@@ -87,7 +87,7 @@ class NormalReportController extends BaseController
         if($movil!=false){
           $rta    = $this->tratarReporte($jsonReq['cadena'],$movil);
         }else{
-         Log::error("El IMEI:".$arrCadena['IMEI']." No esta en la DDBB-->desecho reporte");
+         Log::error("El IMEI:".(isset($arrCadena['IMEI']))?$arrCadena['IMEI']:"0"." No esta en la DDBB-->desecho reporte");
         }
         
       }elseif($jsonReq["KEY"]=="NR"){
