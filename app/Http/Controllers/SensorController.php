@@ -22,11 +22,8 @@ class SensorController extends BaseController {
     public function __construct() {}
     
     public static function sensorAnalisis($ioData,$perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
-        //falta devolver el estado en  el que quedó el movil luego del proceso de analisis
-        //$estadoMovilidad y $tipo_alarma_id necesito devolver desde los metodos de analisis para el update
         $cambioBits = array("rta"=>0,"estado_movil_id"=>$estadoMovilidad,"tipo_alarma_id"=>7); //alarma_id=7 (Normal)
         if($perField!='NULL'){ //analisis en bits sensores IOM y ALA
-            //HelpMen::report($movil->equipo_id,$perField);
             $cambioBits = self::analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
         }else{ //analisis en bits IO
             $cambioBits = self::analisisIO($ioData,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
@@ -103,6 +100,7 @@ class SensorController extends BaseController {
             $perFieldOutput  = $arrIOM[2];
             $perFieldWorkMode= $arrIOM[3];
             $manualRestartMethod= $arrIOM[4];
+            $iomArr = str_split($perFieldInput);
             $keyAlarma=array_search('ALA', $arrIOM);
             /*****si $perFieldWorkMode= 0 =>RESET no informo alertas de nada solo actualizo estado de movil****/
             if($perFieldWorkMode!= 0 ){
@@ -110,16 +108,16 @@ class SensorController extends BaseController {
                 $estadoArr= null;
                 if( $keyAlarma ){//Evaluo campo ALA
                     $estadoArr = str_split($arrIOM[$keyAlarma+1]);
-                    $rta["tipo_alarma_id"] = self::evaluaCampoAla($estadoArr,$movil);
+                    $rta = self::evaluaCampoAla($estadoArr,$movil);
                     if($rta["tipo_alarma_id"]>0){
                         Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta["tipo_alarma_id"],'fecha_alarma'=>$fecha,'falsa'=>0]);
                         $rta["estado_movil_id"]=10;
                         $rta["rta"]            = 1;
                     }
                 }
-                $rta["tipo_alarma_id"] = self::evaluaPanico($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha,$estadoArr);
-                $rta["tipo_alarma_id"] = self::evaluaNb($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha);               
-                $iomArr = str_split($perFieldInput);
+                $rta = self::evaluaPanico($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha,$estadoArr);
+                $rta = self::evaluaNb($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha);               
+                
                 //luego del analisis actualizo los datos de sensores, primero analiso e informo alarmas, y estado del movil
                 if(!$sensorEstado ){
                    HelpMen::report($movil->equipo_id,"Datos de sensores vacios en memoria, generando...");
@@ -155,91 +153,95 @@ class SensorController extends BaseController {
                     }
                 }
             }else{
+                /*Dicen que cuando se pone en este modo ahora hay que actualizar los datos...*/
                 HelpMen::report($movil->equipo_id,"\r\n **EQUIPO EN MODO RESET...NO INFORMO ALARMA DE NINGUN TIPO*** \r\n ");
+                self::actualizarPerifericos($movil,$iomArr,$perFieldOutput,$manualRestartMethod);
             }
         }
         return $rta;    
     }
     public static function evaluaNb($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha){
-        $tipoAlarma     = 0;
-        $estadoMovil    = 7;
+        $rta         = array("rta"=>0,"estado_movil_id"=>7,"tipo_alarma_id"=>0);
         $keyNB=array_search('NB', $arrIOM);
         if( $keyNB ){
-            $estadoMovil= 10;//estado "en alarma"
-            $tipoAlarma = 32;//modo NB
+            $rta['estado_movil_id']= 10;//estado "en alarma"
+            $rta['tipo_alarma_id'] = 32;//modo NB
             HelpMen::report($movil->equipo_id,"***EQUIPO EN MODO SILENCIOSO*** \r\n");
-            Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$tipoAlarma,'fecha_alarma'=>$fecha,'falsa'=>0]);
+            Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta['tipo_alarma_id'],'fecha_alarma'=>$fecha,'falsa'=>0]);
         }
-        return $tipoAlarma;
+        return $rta;
     }
     /*****si $perFieldWorkMode= 0 =>RESET no informo alertas de nada solo actualizo estado de movil****/
     public static function evaluaPanico($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha,$estadoArr){
-        $tipoAlarma     = 0;
-        $estadoMovil    = 7;
+        $rta         = array("rta"=>0,"estado_movil_id"=>7,"tipo_alarma_id"=>0); 
         $keyPanico=array_search('P', $arrIOM);
         if( $keyPanico ){
-            $estadoMovil= 10;//estado "en alarma"
-            $tipoAlarma = 1;//panico
+            $rta['estado_movil_id']= 10;//estado "en alarma"
+            $rta['tipo_alarma_id'] = 1;//panico
             HelpMen::report($movil->equipo_id,"***PANICO ACTIVADO*** \r\n");
-            Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$tipoAlarma,'fecha_alarma'=>$fecha,'falsa'=>0]);
+            Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta['tipo_alarma_id'] ,'fecha_alarma'=>$fecha,'falsa'=>0]);
         }
         if($perFieldWorkMode== 4 && isset($estadoArr[0]) && $estadoArr[0]=="0" && $estadoArr[0]!="X"){ //si está en modo alarmas darle bola al campo panico en ALA
-            $estadoMovil= 10;//estado "en alarma"
-            $tipoAlarma = 1;//panico
+            $rta['estado_movil_id']= 10;//estado "en alarma"
+            $rta['tipo_alarma_id'] = 1;//panico
             HelpMen::report($movil->equipo_id,"***PANICO ACTIVADO*** \r\n");
-            Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$tipoAlarma,'fecha_alarma'=>$fecha,'falsa'=>0]);
+            Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta['tipo_alarma_id'] ,'fecha_alarma'=>$fecha,'falsa'=>0]);
         }
-        return $tipoAlarma;
+        return $rta;
     }
     public static function evaluaCampoAla($estadoArr,$movil){
-        $tipoAlarma     = 0; 
-        $estadoMovil    = 7;
+        $rta         = array("rta"=>0,"estado_movil_id"=>7,"tipo_alarma_id"=>0); 
         if($estadoArr[1]=="0" && $estadoArr[1]!="X"){
-            $tipoAlarma=4;
+            $rta['estado_movil_id']= 10;
+            $rta['tipo_alarma_id'] = 4;
             HelpMen::report($movil->equipo_id,"\r\n ***PUERTA CONDUCTOR ABIERTA*** \r\n ");
         }
         if($estadoArr[1]=="1" && $estadoArr[1]!="X"){
-            $tipoAlarma=10;
+            $rta['estado_movil_id']= 10;
+            $rta['tipo_alarma_id'] = 10;
             HelpMen::report($movil->equipo_id,"\r\n ***PUERTA CONDUCTOR CERRADA*** \r\n ");
         }
         if($estadoArr[2]=="0" && $estadoArr[2]!="X"){
-            $tipoAlarma=24;
+           $rta['estado_movil_id']= 10;
+            $rta['tipo_alarma_id'] = 24;
             HelpMen::report($movil->equipo_id,"\r\n ***PUERTA ACOMPAÑANTE ABIERTA*** \r\n ");
         }
         if($estadoArr[2]=="1" && $estadoArr[2]!="X"){
-            $tipoAlarma=25;
+            $rta['estado_movil_id']= 10;
+            $rta['tipo_alarma_id'] = 25;
             HelpMen::report($movil->equipo_id,"\r\n ***PUERTA ACOMPAÑANTE CERRADA*** \r\n ");
         }
         if($estadoArr[7]=="0" && $estadoArr[7]!="X"){
-            $tipoAlarma=3;
+            $rta['estado_movil_id']= 10;
+            $rta['tipo_alarma_id'] = 3;
             HelpMen::report($movil->equipo_id,"\r\n ***MOTOR ENCENDIDO*** \r\n ");
         }
         if( $estadoArr[3]==1 && $estadoArr[3]!="X"){
-            $tipoAlarma=12;
-            $estadoMovil=5;
+            $rta['estado_movil_id']= 5;
+            $rta['tipo_alarma_id'] = 12;
             HelpMen::report($movil->equipo_id,"\r\n ***MOVIL DESENGANCHADO*** \r\n ");
         }
         if( $estadoArr[3]==0 && $estadoArr[3]!="X"){
-            $tipoAlarma=5;
-            $estadoMovil=5;
+            $rta['estado_movil_id']= 5;
+            $rta['tipo_alarma_id'] = 5;
             HelpMen::report($movil->equipo_id,"\r\n ***MOVIL ENGANCHADO*** \r\n ");
          }
         if( $estadoArr[5]==1 && $estadoArr[5]!="X" ){
-            $tipoAlarma=9;
-            $estadoMovil=10;
+            $rta['estado_movil_id']= 10;
+            $rta['tipo_alarma_id'] = 9;
             HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA ABIERTA*** \r\n");
         }
         if( $estadoArr[5]==0 && $estadoArr[5]!="X" ){
-            $tipoAlarma=11;
-            $estadoMovil=10;
+            $rta['estado_movil_id']= 10;
+            $rta['tipo_alarma_id'] = 11;
             HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA CERRADA*** \r\n");
         }
-        return $tipoAlarma;
+        return $rta;
     }
     /*I4: Desenganche=>0 = ENGANCHADO; 1 = DESENGANCHADO | I5: Antisabotaje=>0 = VIOLACION; 1 = NORMAL | I6: Compuerta=>0 = CERRADA; 1 = ABIERTA*/
     public static function cambiosInputIOM($imei,$iomArr,$sensorEstado,$movil,$estado_movil_id,$perFieldOutput,$manualRestartMethod){
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); //alarma_id=7 (Normal)
-        Log::info("CAMBIOS INPUT OUTPUTTTTTT");
+        HelpMen::report($movil->equipo_id,"*Evaluando cambios IOM* \r\n ");
         self::actualizarPerifericos($movil,$iomArr,$perFieldOutput,$manualRestartMethod);
         if($sensorEstado && $sensorEstado->iom){
             $estadoArr = str_split($sensorEstado->iom);
@@ -313,8 +315,7 @@ class SensorController extends BaseController {
         }
     }
     public static function getSensores($imei) {
-        Log::error("buscando informacion de sensores de IMEI:".$imei);
-        Log::error("obteniendo sensores");
+        Log::info("buscando informacion de sensores de IMEI:".$imei);
         $shmid    = MemVar::OpenToRead('sensores.dat');
         if($shmid=='0'){
             $memoEstados    = self::startupSensores();
