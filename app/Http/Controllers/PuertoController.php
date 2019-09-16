@@ -140,23 +140,28 @@ class PuertoController extends BaseController
                                 $lastPosition = PosicionesHistoricas::where('movil_id',intval($movil->movilOldId))
                                             ->orderBy('fecha', 'DESC')->first();
                                 $posicionAux    = $lastPosition;
-                                if(DB::connection()->getDatabaseName()=='moviles'){
+                                if($lastPosition){
+                                    if(DB::connection()->getDatabaseName()=='moviles'){
                                     config()->set('database.default', 'siac');
+                                    }
+                                    PosicionesHistoricas::where('posicion_id',$lastPosition->posicion_id)->delete();
+
+                                    DB::table('POSICIONES_HISTORICAS')->insert(['posicion_id'=>$lastPosition->posicion_id,
+                                                'movil_id'=>intval($movil->movilOldId),'tipo'=>$lastPosition->tipo,
+                                                'rumbo_id'=>$lastPosition->rumbo_id,'fecha'=>$fecha,'velocidad'=>$lastPosition->velocidad,
+                                                'latitud'=>$lastPosition->latitud,'longitud'=>$lastPosition->longitud,
+                                                'valida'=>1,'km_recorridos'=>$lastPosition->km_recorridos,
+                                                'referencia'=>$lastPosition->referencia,'cmd_id'=>$lastPosition->cmd_id,
+                                                'estado_u' =>$lastPosition->estado_u,'estado_v' =>$lastPosition->estado_v,
+                                                'estado_w' =>$lastPosition->estado_w, 'km_recorridos' =>$lastPosition->km_recorridos,
+                                                'ltrs_consumidos' =>$lastPosition->ltrs_consumidos,'ltrs_100' =>$lastPosition->ltrs_100
+                                                ]); 
+                                    config()->set('database.default', 'moviles');
+                                    $update         = $lastPosition->posicion_id;
+                                }else{
+                                    Log::error("No se encontró la posicion anterior...no modfico fechas");
                                 }
-                                PosicionesHistoricas::where('posicion_id',$lastPosition->posicion_id)->delete();
                                 
-                                DB::table('POSICIONES_HISTORICAS')->insert(['posicion_id'=>$lastPosition->posicion_id,
-                                            'movil_id'=>intval($movil->movilOldId),'tipo'=>$lastPosition->tipo,
-                                            'rumbo_id'=>$lastPosition->rumbo_id,'fecha'=>$fecha,'velocidad'=>$lastPosition->velocidad,
-                                            'latitud'=>$lastPosition->latitud,'longitud'=>$lastPosition->longitud,
-                                            'valida'=>1,'km_recorridos'=>$lastPosition->km_recorridos,
-                                            'referencia'=>$lastPosition->referencia,'cmd_id'=>$lastPosition->cmd_id,
-                                            'estado_u' =>$lastPosition->estado_u,'estado_v' =>$lastPosition->estado_v,
-                                            'estado_w' =>$lastPosition->estado_w, 'km_recorridos' =>$lastPosition->km_recorridos,
-                                            'ltrs_consumidos' =>$lastPosition->ltrs_consumidos,'ltrs_100' =>$lastPosition->ltrs_100
-                                            ]); 
-                                config()->set('database.default', 'moviles');
-                                $update         = $lastPosition->posicion_id;
                             }
                             
                         }
