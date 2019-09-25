@@ -145,6 +145,7 @@ class PuertoController extends BaseController
                                     if(DB::connection()->getDatabaseName()=='moviles'){
                                     config()->set('database.default', 'siac');
                                     }
+                                    PosicionesHistoricas::where('posicion_id',$lastPosition->posicion_id)->delete();
                                     DB::table('POSICIONES_HISTORICAS')->insert(['posicion_id'=>$lastPosition->posicion_id,
                                                 'movil_id'=>intval($movil->movilOldId),'tipo'=>$lastPosition->tipo,
                                                 'rumbo_id'=>$lastPosition->rumbo_id,'fecha'=>$fecha,'velocidad'=>$lastPosition->velocidad,
@@ -157,7 +158,6 @@ class PuertoController extends BaseController
                                                 ]); 
                                     config()->set('database.default', 'moviles');
                                     $update         = $lastPosition->posicion_id;
-                                    PosicionesHistoricas::where('posicion_id',$lastPosition->posicion_id)->delete();
                                 }else{
                                     Log::error("No se encontró la posicion anterior...no modfico fechas");
                                 }
