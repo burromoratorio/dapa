@@ -140,7 +140,7 @@ class PuertoController extends BaseController
                                 $lastPosition = PosicionesHistoricas::where('movil_id',intval($movil->movilOldId))
                                             ->orderBy('fecha', 'DESC')->first();
                                 $posicionAux    = $lastPosition;
-                                if($lastPosition){
+                                //if($lastPosition){
                                     if(DB::connection()->getDatabaseName()=='moviles'){
                                     config()->set('database.default', 'siac');
                                     }
@@ -158,9 +158,9 @@ class PuertoController extends BaseController
                                                 ]); 
                                     config()->set('database.default', 'moviles');
                                     $update         = $lastPosition->posicion_id;
-                                }else{
-                                    Log::error("No se encontró la posicion anterior...no modfico fechas");
-                                }
+                                //}else{
+                                  //  Log::error("No se encontró la posicion anterior...no modfico fechas");
+                                //s}
                                 
                             }
                             
