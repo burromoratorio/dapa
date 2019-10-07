@@ -398,12 +398,12 @@ class PuertoController extends BaseController
                         
                     }
                 }*/
-                /*para comunicacion con API NAcho
+                /*para comunicacion con API NAcho*/
                       $json=  ["movil"=>intval($movil->movilOldId),
                         "point"=> ["type"=>"Point","coordinates"=> [$arrInfoGprmc['longitud'],$arrInfoGprmc['latitud'] ] ],
                         "received"=>$fecha, "speed"=> $arrInfoGprmc['velocidad'], "direction"=>$arrInfoGprmc['rumbo']
                         ];
-                        HelpMen::posteaPosicion("operativo/positions",$json);*/
+                        HelpMen::posteaPosicion("operativo/positions",$json);
             }else{
                 $respuesta  = "0";
             }

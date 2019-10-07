@@ -80,9 +80,23 @@ class HelpMen
 	    return;
 	}
 	public static function posteaPosicion($recurso,$json){		
-		$urlP       = env('API_URL').$recurso;
-		$client 	= new Client( [ 'headers' => [ 'Content-Type' => 'application/json' ] ] );
-		$response 	= $client->post($urlP,['body' => json_encode( $json )] );
-		return $response->getBody();
-	}
+            $urlP       = env('API_URL').$recurso;
+            $client 	= new Client( [ 'headers' => [ 'Content-Type' => 'application/json' ] ] );
+            $response 	= $client->post($urlP,['body' => json_encode( $json )] );
+            $statuscode = $response->getStatusCode();
+
+            if (200 === $statuscode) {
+              // Do something
+            }
+            elseif (304 === $statuscode) {
+              // Nothing to do
+            }
+            elseif (404 === $statuscode) {
+              // Clean up DB or something like this
+            }
+            else {
+                    Log::error("Bad :: code:".$statuscode." reason::".$response->getBody());
+            }
+           return $response->getBody();
+    }
 }
