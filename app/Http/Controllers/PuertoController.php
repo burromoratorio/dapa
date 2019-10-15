@@ -141,7 +141,7 @@ class PuertoController extends BaseController
                                             ->orderBy('fecha', 'DESC')->first();
                                 $posicionAux    = $lastPosition;
                                 if($lastPosition){
-                                        Log::error("LA POSICION ANTERIOR ENCONTRADAAAA::".$lastPosition->fecha);
+                                    Log::error("LA POSICION ANTERIOR ENCONTRADAAAA::".$lastPosition->fecha);
                                     if(DB::connection()->getDatabaseName()=='moviles'){
                                     config()->set('database.default', 'siac');
                                     }
@@ -347,6 +347,8 @@ class PuertoController extends BaseController
                     //inserto alarma de panico!!
                     $estadoMovilidad = SensorController::sensorAnalisis($ioData,$perField['PER'],$report['IMEI'],$posicion->posicion_id,
                                             $movil,$fecha,$estadoMovilidad);
+                    $logcadena = "En Puerto Controller tengo este estado de movil:".$estadoMovilidad."\r\n";
+                    HelpMen::report($movil->equipo_id,$logcadena);
                     if( $estadoMovilidad==7 ){
                         if($arrInfoGprmc['velocidad']>12){
                             $estadoMovilidad=($movil->estado_u==0)?3:4;//movimiento vacio estado_u=0, otro..movimiento cargado
