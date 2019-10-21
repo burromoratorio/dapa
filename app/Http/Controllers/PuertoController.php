@@ -289,11 +289,14 @@ class PuertoController extends BaseController
                 $fecha      = self::ddmmyy2yyyymmdd($gprmcData[8],$gprmcData[0],$movil);
                 //-------si viene el campo PER con IOM ya no le doy bola al IO///////-------
                 /*en esta parte solo busco el modo de presencia*/
-                if($perField['PER']=='NULL'){
-                    $info       = self::ModPrecencia($ioData['IO'],"IO");
-                }else{
+                $info       = array("ltrs"=>0,"mod_presencia"=>$movil->estado_v,"tmg"=>0,"panico"=>0,"desenganche"=>0);
+                if(!$movil->perif_io_id){//tiene instalado IOM
+                    if($perField['PER']!='NULL'){//reportó el iom
                     $info       = self::ModPrecencia($perField['PER'],"IOM");
-                     Log::error("El info IOM:".$info['mod_presencia']);
+                    Log::error("El info IOM:".$info['mod_presencia']);
+                    }
+                }else{//no tiene iom, le doy bola al equipo
+                    $info       = self::ModPrecencia($ioData['IO'],"IO");
                 }
                 $arrInfoGprmc   = HelpMen::Gprmc2Data($gprmcData);
                 $validezReporte = self::validezReporte($report['IMEI'],$fecha,$gprmcData[6],$frData['FR'],$movil);
@@ -461,7 +464,7 @@ class PuertoController extends BaseController
                     $IOEstados["mod_presencia"]= $arrPeriferico[3];
                     break;
                 default:
-                    # code...
+                    $IOEstados["mod_presencia"]=1;
                     break;
             }
         }
