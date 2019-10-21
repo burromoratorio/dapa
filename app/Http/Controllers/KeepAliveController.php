@@ -1,17 +1,13 @@
 <?php
 namespace App\Http\Controllers;
-use Laravel\Lumen\Routing\Controller as BaseController;
-use Illuminate\Http\Request;
-Use Log;
-use stdClass;
-use Storage;
-use DB;
-/*DDBB Principal*/
 use App\ColaMensajes;
-/*Helpers*/
-use App\Helpers\MemVar;
 use App\Helpers\HelpMen;
-use GuzzleHttp\Client;
+use function ArrayIterator\count;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Laravel\Lumen\Routing\Controller as BaseController;
+use Exception;
 class KeepAliveController extends BaseController
 {
   const EN_MOVIMIENTO = 1;
@@ -44,7 +40,7 @@ class KeepAliveController extends BaseController
           }else{
             $comando  ="AT+OK\r\n"; 
           }
-          $logcadena ="KeepAlive IMEI:".$movil->imei." - equipo:".$movil->equipo_id." - Comando:".$comando." \r\n";
+          $logcadena ="\r\n KeepAlive IMEI:".$movil->imei." - equipo:".$movil->equipo_id." - Comando:".$comando." \r\n";
           HelpMen::report($movil->equipo_id,$logcadena);
         }else{
           Log::error("El IMEI:".$jsonReq["cadena"]. "no Existe en la DDBB, se desecha el reporte");
@@ -52,7 +48,7 @@ class KeepAliveController extends BaseController
         
        }elseif($jsonReq["KEY"]=="KA"){
         //por ahora devuelvo este de ejemplo
-        $comando  ="AT+GETGP?\r\n";
+        $comando  =" \r\n AT+GETGP?\r\n";
       }else{
         return "ERROR:Json mal formado!";
         Log::error("Error:json mal formado, ver palabra clave");
@@ -89,12 +85,12 @@ class KeepAliveController extends BaseController
     if($mensajePendiente){
       //1-obtener comandos con 3 intentos y ponerlos en estado rsp_id=6->sin respuesta
       $esEnTest = $this->isMovilInTest($equipo_id);
-      if( is_null($esEnTest) || count($esEnTest)==0 ){ //si no está en test doy prioridad a los OUTS
+      if( is_null($esEnTest) || $esEnTest[0]->comandos==0 ){ //si no está en test doy prioridad a los OUTS
         $flagEnviarComando  = 1;
         $outmsj             = $this->OUTPendiente($equipo_id);
         $mensaje            = (is_null($outmsj))?$mensajePendiente:$outmsj;
       }else{//si está en test ejecuto uno a uno por prioridad
-        $logcadena ="Ejecutando Test Equipo::".$equipo_id." Comandos en test:".count($esEnTest)." \r\n";
+        $logcadena ="\r\n Ejecutando Test Equipo::".$equipo_id." Comandos en test:".count($esEnTest)." \r\n";
         HelpMen::report($equipo_id,$logcadena);
         $comandoAEnviar15   = $this->kaReportFrecuency($equipo_id,15);
         if($comandoAEnviar15){
@@ -124,13 +120,12 @@ class KeepAliveController extends BaseController
       }catch (\Exception $ex) {
         DB::rollBack();
         $errorSolo  = explode("Stack trace", $ex);
-        $logcadena ="Error al procesar el KA ".$errorSolo[0]." \r\n";
+        $logcadena ="\r\n Error al procesar el KA ".$errorSolo[0]." \r\n";
         HelpMen::report($equipo_id,$logcadena);
       }
     }else{
       $mensaje=false;
     }
-    
     return $mensaje;
   }
   public function OUTPendiente($equipo_id){
@@ -143,16 +138,17 @@ class KeepAliveController extends BaseController
     return $outMs;
   }
   public function isMovilInTest($equipo_id){
-    $movilTest = 0;
+    $movilTest = false;
     if(DB::connection()->getDatabaseName()=='moviles'){
       config()->set('database.default', 'siac');
       $movilTest = DB::table('TEST_COMANDO')
                        ->select(DB::raw('count(*) as comandos'))
                        ->where('fin', '=', 0)->where('modem_id', '=',$equipo_id)
-                       ->groupBy('modem_id')
+                       //->groupBy('modem_id')
                        ->get();
     }
     config()->set('database.default', 'moviles');
+    //Log::error(print_r($movilTest[0],true));
     return $movilTest;
   }
   public function kaReportFrecuency($equipo_id,$aux){
@@ -211,21 +207,57 @@ class KeepAliveController extends BaseController
         
         break;
       case 22://modo corte(aux=1,2->0,1) y modo normal(aux=1,1->0,0)
-        if(isset($auxParams[1]) && !is_null($auxParams[1]) && $auxParams[1]!=''){
-          $valor      = ($auxParams[1]=="2")?"1":"0";
-          $valorSet   = "=0,".$valor;
-        }else{
-          $valorSet   = '?';
-        }
-        $cadenaComando = "+OUTS".$valorSet;
+          /*encontrar el tipo de instalacion...si tiene IOM resolver de otra manera*/
+          if(!$movil->perif_io_id){ //moviles sin IOM 
+              if(isset($auxParams[1]) && !is_null($auxParams[1]) && $auxParams[1]!=''){
+                  $valor      = ($auxParams[1]=="2")?"1":"0";
+                  $valorSet   = "=0,".$valor;
+              }else{
+                  $valorSet   = '?';
+              }
+              $cadenaComando = "+OUTS".$valorSet;
+          }else{ //moviles con IOM
+              switch ($auxParams[1]) {
+                  case 0:
+                      $valorSet="CMD_RESET";
+                      break;
+                  case 1:
+                      $valorSet="CMD_NORMAL";
+                      break;
+                  case 2:
+                      $valorSet="CMD_CORTE";
+                      break;
+                  case 3:
+                      $valorSet="CMD_BLOQINH";
+                      break;
+                  case 4:
+                      $valorSet="CMD_ALARMAS";
+                      break;
+              }
+              $cadenaComando = "+PER=IOM,".$valorSet;
+          }
         break;
       case 100://reset
         $cadenaComando = "+RES=".$auxParams[0];
         break;
+      case 134: //conf.sensores que generan corte
+          $cadenaComando="+PER=IOM,HAS,".$mensaje->auxiliar;
+       break;
+      case 106: //conf.sensores bloqueados
+          $cadenaComando="+PER=IOM,INI,".$mensaje->auxiliar;
+          break;
+      case 112: //conf.sensores bloqueados
+          $cadenaComando="+PER=IOM,CFG_CORTE,".$mensaje->auxiliar;
+          break;
+      case 115: //resetear periferico
+          $cadenaComando="+PER=IOM,RES,".$mensaje->auxiliar;
+          break;
       default:
         $cadenaComando  = "+GETGP?";
         break;
     }
+    $logcadena ="\r\n Comando decodificado en KA->".$cadenaComando." \r\n";
+    HelpMen::report($movil->equipo_id,$logcadena);
     return $cadenaComando;
   }
 }
