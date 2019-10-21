@@ -95,7 +95,7 @@ class HelpMen
             $response 	= $client->post($urlP,['body' => json_encode( $json )] );
             $statuscode = $response->getStatusCode();
 
-            if (200 === $statuscode) {
+            if (200 === $statuscode || 201 === $statuscode) {
               // Do something
             }
             elseif (304 === $statuscode) {
@@ -105,7 +105,7 @@ class HelpMen
               // Clean up DB or something like this
             }
             else {
-                    Log::error("Bad :: code:".$statuscode." reason::".$response->getBody());
+                Log::error("Bad :: code:".$statuscode." reason::".$response->getBody());
             }
                             return $response->getBody();
     }
