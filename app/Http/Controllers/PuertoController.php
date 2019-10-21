@@ -98,7 +98,7 @@ class PuertoController extends BaseController
         $frArr          = explode(',',$fr); 
         $update         = 0;
         if($shmidPos == '0'){
-            //Log::info("creando segmento de memoria posicionesMC");
+            Log::info("creando segmento de memoria posicionesMC");
             $posicionesMC[$imei]=$fecha."|".$velocidad."|0";
             HelpMen::CargarMemoria('posiciones.dat',$posicionesMC);
             $shmid      = MemVar::OpenToRead('posiciones.dat');
@@ -133,15 +133,15 @@ class PuertoController extends BaseController
                             Log::info($imei."..continua detenido");
                             if($arrInternalInfo[2]=="0"){
                                 $posArr->$imei  = $fecha."|".$velocidad."|1";
-                                //Log::info("es el segundo reg con veloc 0-->lo inserto");
+                                Log::info($imei." es el segundo reg con veloc 0-->lo inserto");
                             }else{
                                 $posArr->$imei  = $fecha."|".$velocidad."|2";
-                                Log::info("actualizo fechas, esta detenido hace mas de 2 posiciones");
+                                Log::info($imei." actualizo fechas, esta detenido hace mas de 2 posiciones");
                                 $lastPosition = PosicionesHistoricas::where('movil_id',intval($movil->movilOldId))
                                             ->orderBy('fecha', 'DESC')->first();
                                 $posicionAux    = $lastPosition;
                                 if($lastPosition){
-                                    Log::error("LA POSICION ANTERIOR ENCONTRADAAAA::".$lastPosition->fecha);
+                                    Log::error($imei. " LA POSICION ANTERIOR ENCONTRADAAAA::".$lastPosition->fecha);
                                     if(DB::connection()->getDatabaseName()=='moviles'){
                                     config()->set('database.default', 'siac');
                                     }
@@ -159,7 +159,7 @@ class PuertoController extends BaseController
                                     config()->set('database.default', 'moviles');
                                     $update         = $lastPosition->posicion_id;
                                 }else{
-                                    Log::error("No se encontró la posicion anterior...no modfico fechas");
+                                    Log::error($imei." No se encontró la posicion anterior...no modfico fechas");
                                 }
                                 
                             }
