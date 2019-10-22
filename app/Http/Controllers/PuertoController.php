@@ -290,7 +290,7 @@ class PuertoController extends BaseController
                 //-------si viene el campo PER con IOM ya no le doy bola al IO///////-------
                 /*en esta parte solo busco el modo de presencia*/
                 $info       = array("ltrs"=>0,"mod_presencia"=>$movil->estado_v,"tmg"=>0,"panico"=>0,"desenganche"=>0);
-                if(!$movil->perif_io_id){//tiene instalado IOM
+                if($movil->perif_io_id){//tiene instalado IOM
                     if($perField['PER']!='NULL'){//reportó el iom
                     $info       = self::ModPrecencia($perField['PER'],"IOM");
                     Log::error("El info IOM:".$info['mod_presencia']);
