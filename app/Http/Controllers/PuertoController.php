@@ -42,11 +42,12 @@ class PuertoController extends BaseController
                     case 'GPRMC':
                         Log::info("Normal GPRMC");
                         $posicionID=self::storeGprmc($arrCampos,$movil);
-                        if($posicionID!='0'){
-                           /*no guardo las alarmas en dbPrimaria self::findAndStoreAlarm($arrCampos,$posicionID);*/
-                            $imei="OK";
+                        if($posicionID=='99'){
+                            $imei="OK\r\n +QHTTPPOST: 0,\r\n";
                             Log::info("POSICION IDDDDD::::::::".$posicionID."::::::::::::".$imei);
-                            
+                        }elseif ($posicionID!='0') {
+                        /*no guardo las alarmas en dbPrimaria self::findAndStoreAlarm($arrCampos,$posicionID);*/
+                            $imei="OK";
                         }else{
                             Log::error("Cadena GPRMC vacia");
                             self::findAndSendAlarm($arrCampos,$movil);
@@ -347,7 +348,7 @@ class PuertoController extends BaseController
                         HelpMen::report($movil->equipo_id,$logcadena);
                         //si es error de unique key devuelvo 1, para que el equipo no vuelva a enviar la posicion, sino 0
                         if (strpos($errorSolo[0], 'AK_POSICION') !== false) {
-                            $respuesta=99;
+                            $respuesta='99';
                             HelpMen::report($movil->equipo_id,"ENCONTRADA::::::AK_POSICION");
                         }
                         //$respuesta=(strpos($errorSolo[0], 'AK_POSICION') !== false)?"1":"0";
