@@ -43,7 +43,7 @@ class PuertoController extends BaseController
                         Log::info("Normal GPRMC");
                         $posicionID=self::storeGprmc($arrCampos,$movil);
                         if($posicionID=='99'){
-                            $imei="OK\r\n +QHTTPPOST: 0,\r\n";
+                            $imei="OK   +QHTTPPOST: 0,";
                             Log::info("POSICION IDDDDD::::::::".$posicionID."::::::::::::".$imei);
                         }elseif ($posicionID!='0') {
                         /*no guardo las alarmas en dbPrimaria self::findAndStoreAlarm($arrCampos,$posicionID);*/
