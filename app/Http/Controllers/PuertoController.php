@@ -383,11 +383,18 @@ class PuertoController extends BaseController
                 }
                 /*********para comunicacion con API NAcho********/
                 Log::info("por enviar al api de nacho el movil:".$movil->equipo_id);
+                $movTestings = array(10035, 10036);//posteo a molinos api
+                if (in_array($movil->equipo_id, $movTestings)){
                     $json=  ["movil"=>intval($movil->movilOldId),
                     "point"=> ["type"=>"Point","coordinates"=> [$arrInfoGprmc['longitud'],$arrInfoGprmc['latitud'] ] ],
-                    "received"=>$fecha, "speed"=> $arrInfoGprmc['velocidad'], "direction"=>$arrInfoGprmc['rumbo']
-                    ];
-                HelpMen::posteaPosicion("operativo/positions",$json);      
+                    "received"=>$fecha];
+                    HelpMen::posteaPosicion("positions","molinos",$json);      
+                }
+                $json=  ["movil"=>intval($movil->movilOldId),
+                "point"=> ["type"=>"Point","coordinates"=> [$arrInfoGprmc['longitud'],$arrInfoGprmc['latitud'] ] ],
+                "received"=>$fecha, "speed"=> $arrInfoGprmc['velocidad'], "direction"=>$arrInfoGprmc['rumbo']
+                ];
+                HelpMen::posteaPosicion("operativo/positions","api",$json);      
                 /*********para comunicacion con API NAcho********/
             }else{
                 $respuesta  = "0";
