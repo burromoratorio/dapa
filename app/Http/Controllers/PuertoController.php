@@ -343,6 +343,8 @@ class PuertoController extends BaseController
                         $errorSolo  = explode("Stack trace", $ex);
                         $logcadena = "Error al procesar posicion en puerto controller".$errorSolo[0]."\r\n";
                         HelpMen::report($movil->equipo_id,$logcadena);
+                        //si es error de unique key devuelvo 1, para que el equipo no vuelva a enviar la posicion, sino 0
+                        $respuesta=(strpos($errorSolo[0], 'AK_POSICION') !== false)?"1":"0";
                     }
                 }
                 //Log::info(print_r($posicion,true));
@@ -376,19 +378,10 @@ class PuertoController extends BaseController
                 /*********para comunicacion con API NAcho********/
                 Log::info("por enviar al api de nacho el movil:".$movil->equipo_id);
                     $json=  ["movil"=>intval($movil->movilOldId),
-                        "point"=> ["type"=>"Point","coordinates"=> [$arrInfoGprmc['longitud'],$arrInfoGprmc['latitud'] ] ],
-                        "received"=>$fecha, "speed"=> $arrInfoGprmc['velocidad'], "direction"=>$arrInfoGprmc['rumbo']
-                        ];
+                    "point"=> ["type"=>"Point","coordinates"=> [$arrInfoGprmc['longitud'],$arrInfoGprmc['latitud'] ] ],
+                    "received"=>$fecha, "speed"=> $arrInfoGprmc['velocidad'], "direction"=>$arrInfoGprmc['rumbo']
+                    ];
                 HelpMen::posteaPosicion("operativo/positions",$json);      
-                /*$movTestings = array(10004, 10006, 10033);
-                if (in_array($movil->equipo_id, $movTestings)){
-                    Log::info("por enviar al api de nacho el movil:".$movil->equipo_id);
-                    $json=  ["movil"=>intval($movil->movilOldId),
-                        "point"=> ["type"=>"Point","coordinates"=> [$arrInfoGprmc['longitud'],$arrInfoGprmc['latitud'] ] ],
-                        "received"=>$fecha, "speed"=> $arrInfoGprmc['velocidad'], "direction"=>$arrInfoGprmc['rumbo']
-                        ];
-                HelpMen::posteaPosicion("operativo/positions",$json);
-                }*/
                 /*********para comunicacion con API NAcho********/
             }else{
                 $respuesta  = "0";
