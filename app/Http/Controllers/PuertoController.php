@@ -44,8 +44,9 @@ class PuertoController extends BaseController
                         $posicionID=self::storeGprmc($arrCampos,$movil);
                         if($posicionID!='0'){
                            /*no guardo las alarmas en dbPrimaria self::findAndStoreAlarm($arrCampos,$posicionID);*/
-                            Log::info("POSICION IDDDDD::::::::".$posicionID);
                             $imei="OK";
+                            Log::info("POSICION IDDDDD::::::::".$posicionID."::::::::::::".$imei);
+                            
                         }else{
                             Log::error("Cadena GPRMC vacia");
                             self::findAndSendAlarm($arrCampos,$movil);
