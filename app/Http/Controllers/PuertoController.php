@@ -345,11 +345,12 @@ class PuertoController extends BaseController
                         DB::rollBack();
                         $errorSolo  = explode("Stack trace", $ex);
                         $logcadena = "Error al procesar posicion en puerto controller".$errorSolo[0]."\r\n";
-                        HelpMen::report($movil->equipo_id,$logcadena);
                         //si es error de unique key devuelvo 1, para que el equipo no vuelva a enviar la posicion, sino 0
                         if (strpos($errorSolo[0], 'AK_POSICION') !== false) {
                             $respuesta='99';
-                            HelpMen::report($movil->equipo_id,"ENCONTRADA::::::AK_POSICION");
+                            HelpMen::report($movil->equipo_id,"ERROR DE CLAVE PRIMARIA::::::AK_POSICION UNIQUE KEY:::: puerto controller insert position");
+                        }else{
+                            HelpMen::report($movil->equipo_id,$logcadena);
                         }
                         //$respuesta=(strpos($errorSolo[0], 'AK_POSICION') !== false)?"1":"0";
                     }
