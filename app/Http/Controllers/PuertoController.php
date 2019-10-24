@@ -120,7 +120,7 @@ class PuertoController extends BaseController
                     $internalInfo   = $posArr->$imei;
                     $arrInternalInfo= explode("|", $internalInfo);
                     //Log::info(print_r($arrInternalInfo,true));
-                    Log::info("los datos, velocAnterior:".$arrInternalInfo[1]." velocActual:".$velocidad." FR:".$frArr[0]);
+                    Log::info("los datos,imei:".$imei." fecha:".$fecha." velocAnterior:".$arrInternalInfo[1]." velocActual:".$velocidad." FR:".$frArr[0]);
                     //evaluo frecuencia de repo
     /*Movimiento*/  if($frArr[0]<=120){
                         if($arrInternalInfo[1]<=5){//detenido a movimiento
