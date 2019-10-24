@@ -126,6 +126,7 @@ class PuertoController extends BaseController
                         if($arrInternalInfo[1]<=5){//detenido a movimiento
                             Log::info($imei."=>detenido a movimiento");
                             $posArr->$imei  = $fecha."|".$velocidad."|0";
+                            Log::info(print_r($posArr->$imei, true));
                         }else{//continua en movimiento
                             Log::info($imei."..continua en movimiento");
                         }
