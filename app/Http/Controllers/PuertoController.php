@@ -150,6 +150,8 @@ class PuertoController extends BaseController
                                     if(DB::connection()->getDatabaseName()=='moviles'){
                                     config()->set('database.default', 'siac');
                                     }
+                                    DB::beginTransaction();
+                                    try {
                                     PosicionesHistoricas::where('posicion_id',$lastPosition->posicion_id)->delete();
                                     DB::table('POSICIONES_HISTORICAS')->insert(['posicion_id'=>$lastPosition->posicion_id,
                                                 'movil_id'=>intval($movil->movilOldId),'tipo'=>$lastPosition->tipo,
@@ -161,8 +163,16 @@ class PuertoController extends BaseController
                                                 'estado_w' =>$lastPosition->estado_w, 'km_recorridos' =>$lastPosition->km_recorridos,
                                                 'ltrs_consumidos' =>$lastPosition->ltrs_consumidos,'ltrs_100' =>$lastPosition->ltrs_100
                                                 ]); 
-                                    config()->set('database.default', 'moviles');
+                                    DB::commit();
                                     $update         = $lastPosition->posicion_id;
+                                    }catch (\Exception $ex) {
+                                        DB::rollBack();
+                                        $errorSolo  = explode("Stack trace", $ex);
+                                        $logcadena ="Error en alta de POSICIONES ".$errorSolo[0]." \r\n";
+                                        HelpMen::report($movil->equipo_id,$logcadena);
+                                    }
+                                    config()->set('database.default', 'moviles');
+                                    
                                 }else{
                                     Log::error($imei." No se encontró la posicion anterior...no modfico fechas");
                                 }
