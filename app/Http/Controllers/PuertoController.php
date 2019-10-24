@@ -100,13 +100,14 @@ class PuertoController extends BaseController
         $posicionesMC   = [];
         $frArr          = explode(',',$fr); 
         $update         = 0;
-        if($shmidPos == '0'){
+        if($shmidPos == '0'){//no modifico el update para que inserte la nueva pos
             Log::info("creando segmento de memoria posicionesMC");
             $posicionesMC[$imei]=$fecha."|".$velocidad."|0";
             HelpMen::CargarMemoria('posiciones.dat',$posicionesMC);
             $shmid      = MemVar::OpenToRead('posiciones.dat');
             MemVar::initIdentifier($shmid);
             $memoPos    = MemVar::GetValue();
+            $update         = 0;
         }else{
             MemVar::initIdentifier($shmidPos);
             $memoPos    = MemVar::GetValue();
@@ -134,6 +135,7 @@ class PuertoController extends BaseController
                             $posArr->$imei  = $fecha."|".$velocidad."|0";
                         }else{//continua detenido
                             Log::info($imei."..continua detenido");
+                            $update         = 1;
                             if($arrInternalInfo[2]=="0"){
                                 $posArr->$imei  = $fecha."|".$velocidad."|1";
                                 Log::info($imei." es el segundo reg con veloc 0-->lo inserto");
