@@ -303,6 +303,7 @@ class PuertoController extends BaseController
                 }
                 $arrInfoGprmc   = HelpMen::Gprmc2Data($gprmcData);
                 $validezReporte = self::validezReporte($report['IMEI'],$fecha,$gprmcData[6],$frData['FR'],$movil);
+                HelpMen::report($movil->equipo_id,"VALIDEZ REPORTE TRAE ESTE POSITION ID:".$validezReporte);
                 if($validezReporte>0){
                     Log::info("actualiza hora de posicion en detenido");
                     $posicion               = new Posiciones;
