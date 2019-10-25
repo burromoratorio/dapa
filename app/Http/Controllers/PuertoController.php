@@ -395,7 +395,7 @@ class PuertoController extends BaseController
                     //DB::commit();
                     config()->set('database.default', 'moviles');
                 }
-                /*********para comunicacion con API NAcho********/
+                /*********para comunicacion con API NAcho*******
                 Log::info("por enviar al api de nacho el movil:".$movil->equipo_id);
                 $movTestings = array(10035, 10036);//posteo a molinos api
                 if (in_array($movil->equipo_id, $movTestings)){
@@ -408,7 +408,7 @@ class PuertoController extends BaseController
                 "point"=> ["type"=>"Point","coordinates"=> [$arrInfoGprmc['longitud'],$arrInfoGprmc['latitud'] ] ],
                 "received"=>$fecha, "speed"=> $arrInfoGprmc['velocidad'], "direction"=>$arrInfoGprmc['rumbo']
                 ];
-                HelpMen::posteaPosicion("operativo/positions","api",$json);      
+                HelpMen::posteaPosicion("operativo/positions","api",$json); */     
                 /*********para comunicacion con API NAcho********/
             }else{
                 $respuesta  = "0";
