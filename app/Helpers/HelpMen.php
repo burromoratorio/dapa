@@ -43,6 +43,8 @@ class HelpMen
         $urlP       = env('CODE_URL');
         $client = new Client(['base_uri' => $urlP]);
         $response = $client->request('GET', 'equipos/1');
+                    Log::info(print_r($response,true));
+
         return $response;
     }
     public static function movilesMemoria($imei){
@@ -130,6 +132,18 @@ class HelpMen
         $memvar->init($archivo,$largo);
         $memvar->setValue( $enstring );
     }
+    /*Nuevo entorno con redis*/
+    public static function solicitarMoviles(){
+        $apiRta   = self::obtenerMoviles();
+        if($apiRta->getStatusCode()=="200" && $apiRta->getReasonPhrase()=="OK"){
+            $moviles   = $apiRta->getBody();
+            self::CargarRedis($moviles);
+        }
+    }
+    public static function CargarRedis($dataArray){
+        RedisHelp::storeMoviles($dataArray);
+    }
+    /*fin redis*/
     public static function Gprmc2Data( $arrCadena ){
         //latitud
         $latitud    = self::ConvertirCoordenada( $arrCadena[self::OFFSET_LATITUD], $arrCadena[self::OFFSET_NS] );

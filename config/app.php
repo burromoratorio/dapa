@@ -207,6 +207,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'MemVar' => App\Helpers\MemVar::class,
         'HelpMen' => App\Helpers\HelpMen::class,
+        'RedisHelp' => App\Helpers\RedisHelp::class,
 
     ],
 
