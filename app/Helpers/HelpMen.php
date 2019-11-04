@@ -43,8 +43,6 @@ class HelpMen
         $urlP       = env('CODE_URL');
         $client = new Client(['base_uri' => $urlP]);
         $response = $client->request('GET', 'equipos/1');
-                    Log::info(print_r($response,true));
-
         return $response;
     }
     public static function movilesMemoria($imei){
@@ -136,7 +134,7 @@ class HelpMen
     public static function solicitarMoviles(){
         $apiRta   = self::obtenerMoviles();
         if($apiRta->getStatusCode()=="200" && $apiRta->getReasonPhrase()=="OK"){
-            $moviles   = $apiRta->getBody();
+            $moviles   = json_decode($apiRta->getBody()->getContents());
             self::CargarRedis($moviles);
         }
     }

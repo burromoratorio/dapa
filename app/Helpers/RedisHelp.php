@@ -24,15 +24,12 @@ class RedisHelp {
                 'reknown' => 'linux kernel',
             ]);
             $data = $client->hgetall('linus torvalds');
-            //print_r($data);
             return $data;
-            //$client->set('foo', 'bar');
-            //return 'foo stored as ' . $client->get('foo');
-       }catch( \Exception $e){
+        }catch( \Exception $e){
             Log::error($e);
         }
     }
-    public function setMovil($client,$movil){
+    public static function setMovil($client,$movil){
         try{
             $key = $movil->imei;
              $client->hmset($key, [
@@ -47,19 +44,27 @@ class RedisHelp {
                 'estado_u'=>$movil->estado_u,
                 'estado_v'=>$movil->estado_v
             ]);
-            $data = $client->hgetall($key);
-            return $data;
+            //$data = $client->hgetall($key);
+            //eturn $data;
         }catch( \Exception $e){
             Log::error($e);
         }
     }
     public static function storeMoviles($moviles){
         $client = new \Predis\Client();
-        Log::info(print_r($moviles,true));
         foreach($moviles as $movil){
-            $devuelto=$this->setMovil($client,$movil);
-            
+            $devuelto= self::setMovil($client,$movil);
         }
-        
+        Log::info(":::::::::Moviles en Redis:".count($moviles).":::::::::");
+    }
+    public static function lookForMovil($client,$imei){
+        $movil=false;
+        $data = $client->hgetall($imei);
+        if(isset($data['equipo_id'])){
+            $movil=$data;
+            Log::info(print_r($data, true));
+        }else{
+            Log::error("el movil no esta");
+        }
     }
 }

@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 use App\Helpers\HelpMen;
 use App\Helpers\MemVar;
+use \App\Helpers\RedisHelp;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -144,6 +145,11 @@ class NormalReportController extends BaseController
 
       return $response;
   }
+    public function compruebaMovilRedis($imei){
+        $client = new \Predis\Client();
+        $encontrado=RedisHelp::lookForMovil($client, $imei);
+        return $encontrado;
+    }
   public function compruebaMovilMC($imei,$shmid){
     $encontrado=false;
     MemVar::initIdentifier($shmid);
