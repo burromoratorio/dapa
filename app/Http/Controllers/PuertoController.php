@@ -218,16 +218,24 @@ class PuertoController extends BaseController
         return $typeReport;
     }
     public static function ddmmyy2yyyymmdd($fecha,$hora,$movil){
-        $formatFecha = date("Y-m-d H:i:s", mktime(substr($hora, 0,2), substr($hora, 2,2), substr($hora, 4,2), substr($fecha, 2,2), substr($fecha, 0,2), substr($fecha, -2,2)));
-        $nuevafecha = strtotime ( '-3 hours' , strtotime ( $formatFecha ) ) ;
-        //-----aviso a seba de reporte viejo----//
-        $fechacompara   = date('Y-m-j H:i:s'); 
-        $newDateCompa   = strtotime ( '-10 minute' , strtotime ($fechacompara) ) ; 
-        if($nuevafecha<=$newDateCompa){
-            $logeo  = "^^^<Reporte Historico>^^^";  
+        /*Parche para error 6 de abril en s3000, fecha=200300*/
+        if($fecha='200300'){
+            $logeo  = "^^^<APLICANDO PARCHE 6A>^^^";  
             HelpMen::report($movil->equipo_id,$logeo);
+            $nuevafecha = date ( 'Y-m-d H:i:s' );
+        }else{
+            $formatFecha = date("Y-m-d H:i:s", mktime(substr($hora, 0,2), substr($hora, 2,2), substr($hora, 4,2), substr($fecha, 2,2), substr($fecha, 0,2), substr($fecha, -2,2)));
+            $nuevafecha = strtotime ( '-3 hours' , strtotime ( $formatFecha ) ) ;
+            //-----aviso a seba de reporte viejo----//
+            $fechacompara   = date('Y-m-j H:i:s'); 
+            $newDateCompa   = strtotime ( '-10 minute' , strtotime ($fechacompara) ) ; 
+            if($nuevafecha<=$newDateCompa){
+                $logeo  = "^^^<Reporte Historico>^^^";  
+                HelpMen::report($movil->equipo_id,$logeo);
+            }
+            $nuevafecha = date ( 'Y-m-d H:i:s' , $nuevafecha );
         }
-        $nuevafecha = date ( 'Y-m-d H:i:s' , $nuevafecha );
+        
         return $nuevafecha;
     }
     /*
