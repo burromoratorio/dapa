@@ -219,7 +219,8 @@ class PuertoController extends BaseController
     }
     public static function ddmmyy2yyyymmdd($fecha,$hora,$movil){
         /*Parche para error 6 de abril en s3000, fecha=200300*/
-        if($fecha=='200300'){
+        $anio = substr($fecha, -2,2);
+        if($anio=='00'){
             $formatFecha= date("Y-m-d H:i:s", mktime(substr($hora, 0,2), substr($hora, 2,2), substr($hora, 4,2), substr(date('mdy'), 0,2), substr(date('mdy'), 2,2), substr(date('mdy'), -2,2)));
             $nuevafecha = strtotime ( '-3 hours' , strtotime ( $formatFecha ) ) ;
             $nuevafecha = date ( 'Y-m-d H:i:s' , $nuevafecha );

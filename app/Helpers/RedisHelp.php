@@ -32,7 +32,7 @@ class RedisHelp {
     public static function setMovil($client,$movil){
         try{
             $key = $movil->imei;
-            $client->hmset:moviles($key, [
+            $client->hmset($key,[
                 'equipo_id' => $movil->equipo_id,
                 'movil_id' => $movil->movil_id,
                 'frec_rep_detenido' => $movil->frec_rep_detenido,
@@ -42,7 +42,10 @@ class RedisHelp {
                 'perif_io_id'=>$movil->perif_io_id,
                 'movilOldId'=>$movil->movilOldId,
                 'estado_u'=>$movil->estado_u,
-                'estado_v'=>$movil->estado_v
+                'estado_v'=>$movil->estado_v,
+                'fecha_posicion'=>'',
+                'velocidad'=>'',
+                'indice'=>'',
             ]);
         }catch( \Exception $e){
             Log::error($e);
@@ -78,6 +81,8 @@ class RedisHelp {
         foreach($moviles as $movil){
             $devuelto= self::setMovil($client,$movil);
         }
+        $data = $client->hgetall("moviles");
+        Log::info(print_r($data,true));
         Log::info(":::::::::Moviles en Redis:".count($moviles).":::::::::");
     }
     public static function lookForMovil($client,$imei){

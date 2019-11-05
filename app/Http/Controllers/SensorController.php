@@ -353,6 +353,7 @@ class SensorController extends BaseController {
         }
         $memvar     = MemVar::Instance('sensores.dat');
         $enstring   = json_encode($estados);
+        Log::info($enstring);
         $largo      = (int)strlen($enstring);
         $memvar->init('sensores.dat',$largo);
         $memvar->setValue( $enstring );
