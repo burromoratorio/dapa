@@ -219,10 +219,13 @@ class PuertoController extends BaseController
     }
     public static function ddmmyy2yyyymmdd($fecha,$hora,$movil){
         /*Parche para error 6 de abril en s3000, fecha=200300*/
-        if($fecha='200300'){
-            $logeo  = "^^^<APLICANDO PARCHE 6A>^^^";  
+        if($fecha=='200300'){
+            $formatFecha= date("Y-m-d H:i:s", mktime(substr($hora, 0,2), substr($hora, 2,2), substr($hora, 4,2), substr(date('mdy'), 0,2), substr(date('mdy'), 2,2), substr(date('mdy'), -2,2)));
+            $nuevafecha = strtotime ( '-3 hours' , strtotime ( $formatFecha ) ) ;
+            $nuevafecha = date ( 'Y-m-d H:i:s' , $nuevafecha );
+            $logeo  = "^^^<APLICANDO PARCHE 6A>^^^ Nueva fecha:".$nuevafecha." \r\n"; 
             HelpMen::report($movil->equipo_id,$logeo);
-            $nuevafecha = date ( 'Y-m-d H:i:s' );
+            return $nuevafecha;
         }else{
             $formatFecha = date("Y-m-d H:i:s", mktime(substr($hora, 0,2), substr($hora, 2,2), substr($hora, 4,2), substr($fecha, 2,2), substr($fecha, 0,2), substr($fecha, -2,2)));
             $nuevafecha = strtotime ( '-3 hours' , strtotime ( $formatFecha ) ) ;
@@ -230,13 +233,12 @@ class PuertoController extends BaseController
             $fechacompara   = date('Y-m-j H:i:s'); 
             $newDateCompa   = strtotime ( '-10 minute' , strtotime ($fechacompara) ) ; 
             if($nuevafecha<=$newDateCompa){
-                $logeo  = "^^^<Reporte Historico>^^^";  
+                $logeo  = "^^^<Reporte Historico>^^^ \r\n";  
                 HelpMen::report($movil->equipo_id,$logeo);
             }
             $nuevafecha = date ( 'Y-m-d H:i:s' , $nuevafecha );
+            return $nuevafecha;
         }
-        
-        return $nuevafecha;
     }
     /*
         devuelve un array con los datos del inidice buscado

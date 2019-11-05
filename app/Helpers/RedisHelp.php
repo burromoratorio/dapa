@@ -32,7 +32,7 @@ class RedisHelp {
     public static function setMovil($client,$movil){
         try{
             $key = $movil->imei;
-             $client->hmset($key, [
+            $client->hmset:moviles($key, [
                 'equipo_id' => $movil->equipo_id,
                 'movil_id' => $movil->movil_id,
                 'frec_rep_detenido' => $movil->frec_rep_detenido,
@@ -44,6 +44,29 @@ class RedisHelp {
                 'estado_u'=>$movil->estado_u,
                 'estado_v'=>$movil->estado_v
             ]);
+        }catch( \Exception $e){
+            Log::error($e);
+        }
+    }
+    public static function setPosicionMovil($client,$posicion){
+        try{
+            $key = $posicion['imei'];
+             $client->hmset($key, [
+                'fecha' => $posicion['fecha'],
+                'velocidad' => $posicion['velocidad'],
+                'indice' => $posicion['indice'],
+                ]);
+            //$data = $client->hgetall($key);
+            //eturn $data;
+        }catch( \Exception $e){
+            Log::error($e);
+        }
+    }
+    public static function deletePosicionMovil($client,$posicion){
+        try{
+            $key = $posicion['imei'];
+             $client->hdel('imei',$imei);
+                
             //$data = $client->hgetall($key);
             //eturn $data;
         }catch( \Exception $e){
