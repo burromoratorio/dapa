@@ -25,6 +25,7 @@ class HelpMen
     const OFFSET_EW     = 5;
     const OFFSET_VELOCIDAD= 6;
     const OFFSET_RUMBO  = 7;
+    
     public static function compruebaMovilMC($imei,$shmid){
         //Movil Binary Search 
         $encontrado=false;
@@ -131,6 +132,9 @@ class HelpMen
         $memvar->setValue( $enstring );
     }
     /*Nuevo entorno con redis*/
+    public static function compruebaMovilRedis($imei){
+        return RedisHelp::lookForMovil($imei);
+    }
     public static function solicitarMoviles(){
         $apiRta   = self::obtenerMoviles();
         if($apiRta->getStatusCode()=="200" && $apiRta->getReasonPhrase()=="OK"){
