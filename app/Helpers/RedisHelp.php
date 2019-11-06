@@ -36,7 +36,7 @@ class RedisHelp {
         if(!self::$client)self::setClient();
         try{
             $key = $movil->imei;
-            self::$client->hmset($key,[
+            self::$client->hmset($key,['imei' => $key,
                 'equipo_id' => $movil->equipo_id,
                 'movil_id' => $movil->movil_id,
                 'movilOldId'=>$movil->movilOldId,
