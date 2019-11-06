@@ -49,11 +49,12 @@ class NormalReportController extends BaseController
                 RedisHelp::setMovil($movilFicticio);
                 $movil=$movilFicticio;
               }
-            }elseif ($movil['equipo_id']=="-666") {//en MC pero sin instalacion
-              $movil     = json_encode($movil);
+            }elseif ($movil->equipo_id=="-666") {//en MC pero sin instalacion
+              //$movil     = json_encode($movil);
               Log::info("El IMEI ".$arrCadena['IMEI']." se encuentra sin INSTALACION");
             }else{ 
-              $movil     = json_encode($movil);
+              //$movil     = json_encode($movil);
+                Log::info(print_r($movil,true));
               $logcadena ="::::::::Procesando:".$arrCadena['IMEI']."- Movil_id:".$movil->movil_id."-MovilOld_id:".$movil->movilOldId.":::::::: \r\n";
               HelpMen::report($movil->equipo_id,$logcadena);
             }

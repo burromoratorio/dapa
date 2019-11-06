@@ -107,6 +107,6 @@ class RedisHelp {
         }else{
             Log::error("el movil no esta en REDIS::::::");
         }
-        return $movil;
+        return json_encode($movil);
     }
 }
