@@ -131,7 +131,11 @@ class HelpMen
         $memvar->init($archivo,$largo);
         $memvar->setValue( $enstring );
     }
-    /*Nuevo entorno con redis*/
+    /*
+     * 
+     * Nuevo entorno con redis
+     *
+     *  */
     public static function compruebaMovilRedis($imei){
         Log::info("ENTRANDO A COMPROBAR REDIS");
         return RedisHelp::lookForMovil($imei);
