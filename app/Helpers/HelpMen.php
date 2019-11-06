@@ -133,6 +133,7 @@ class HelpMen
     }
     /*Nuevo entorno con redis*/
     public static function compruebaMovilRedis($imei){
+        Log::info("ENTRANDO A COMPROBAR REDIS");
         return RedisHelp::lookForMovil($imei);
     }
     public static function solicitarMoviles(){
