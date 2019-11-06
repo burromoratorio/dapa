@@ -33,10 +33,10 @@ class NormalReportController extends BaseController
         $requestApi   = '0';
         $mcRta        = '0';
         $movil        = false;
-        if($shmid!='0'){
-          if(isset($arrCadena['IMEI'])){
+        if(isset($arrCadena['IMEI'])){
             Log::info("Verificando validez IMEI ".$arrCadena['IMEI']);
             $movil      = HelpMen::compruebaMovilRedis($arrCadena['IMEI']);
+            Log::info(print_r($movil,true));
             if($movil==false){//no fue encontrado en MC
               Log::info("El IMEI ".$arrCadena['IMEI']." no está en la memoria");
               $requestApi = '1';
@@ -48,13 +48,10 @@ class NormalReportController extends BaseController
               $logcadena ="::::::::Procesando:".$arrCadena['IMEI']."- Movil_id:".$movil->movil_id."-MovilOld_id:".$movil->movilOldId.":::::::: \r\n";
               HelpMen::report($movil->equipo_id,$logcadena);
             }
-          }else{
-              Log::error("CADENA MAL FORMADA SIN IMEI");
-          }
         }else{
-          $requestApi   = '1';
-          Log::info("No existe el shmid->voy a crear nuevo segmento");
+            Log::error("CADENA MAL FORMADA SIN IMEI");
         }
+        
         if($requestApi   == '1'){
           $movilOmoviles  = $this->fijateQueOnda($arrCadena['IMEI']); //devuelve un obj movil, o un json con todos los moviles de ddbb
             if(isset($movilOmoviles->imei)){ //esta en memo

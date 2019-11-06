@@ -105,7 +105,7 @@ class RedisHelp {
             $movil=$data;
             Log::info("Movil encontrado equipo:".$data['equipo_id']);
         }else{
-            Log::error("el movil no esta");
+            Log::error("el movil no esta en REDIS::::::");
         }
         return $movil;
     }
