@@ -90,7 +90,7 @@ class KeepAliveController extends BaseController
         $outmsj             = $this->OUTPendiente($equipo_id);
         $mensaje            = (is_null($outmsj))?$mensajePendiente:$outmsj;
       }else{//si está en test ejecuto uno a uno por prioridad
-        $logcadena ="\r\n Ejecutando Test Equipo::".$equipo_id." Comandos en test:".count($esEnTest)." \r\n";
+        $logcadena ="\r\n Ejecutando Test Equipo::".$equipo_id." Comandos en test:".$esEnTest[0]->comandos." \r\n";
         HelpMen::report($equipo_id,$logcadena);
         $comandoAEnviar15   = $this->kaReportFrecuency($equipo_id,15);
         if($comandoAEnviar15){

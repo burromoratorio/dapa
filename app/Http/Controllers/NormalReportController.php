@@ -36,15 +36,15 @@ class NormalReportController extends BaseController
         if($shmid!='0'){
           if(isset($arrCadena['IMEI'])){
             Log::info("Verificando validez IMEI ".$arrCadena['IMEI']);
-            $mcRta      = $this->compruebaMovilMC($arrCadena['IMEI'],$shmid);
-            if($mcRta==false){//no fue encontrado en MC
+            $movil      = HelpMen::compruebaMovilRedis($arrCadena['IMEI']);
+            if($movil==false){//no fue encontrado en MC
               Log::info("El IMEI ".$arrCadena['IMEI']." no está en la memoria");
               $requestApi = '1';
-            }elseif ($mcRta=="-666") {//en MC pero sin instalacion
+            }elseif ($movil['equipo_id']=="-666") {//en MC pero sin instalacion
               Log::info("El IMEI ".$arrCadena['IMEI']." se encuentra sin INSTALACION");
               $requestApi = '2';
             }else{ 
-              $movil     = $mcRta;
+              $movil     = json_encode($movil);
               $logcadena ="::::::::Procesando:".$arrCadena['IMEI']."- Movil_id:".$movil->movil_id."-MovilOld_id:".$movil->movilOldId.":::::::: \r\n";
               HelpMen::report($movil->equipo_id,$logcadena);
             }

@@ -12,10 +12,13 @@ use Illuminate\Support\Facades\Redis;
  * @author siacadmin
  */
 class RedisHelp {
+    private static $client = null;
     
+    public static function setClient(){
+        self::$client = new \Predis\Client();
+    }
     public function index() {
         try{
-            $client = new \Predis\Client();
             $key = 'linus torvalds';
             $client->hmset($key, [
                 'age' => 44,
@@ -29,70 +32,81 @@ class RedisHelp {
             Log::error($e);
         }
     }
-    public static function setMovil($client,$movil){
+    public static function setMovil($movil){
+        if(!self::$client)self::setClient();
         try{
             $key = $movil->imei;
-            $client->hmset($key,[
+            self::$client->hmset($key,[
                 'equipo_id' => $movil->equipo_id,
                 'movil_id' => $movil->movil_id,
+                'movilOldId'=>$movil->movilOldId,
                 'frec_rep_detenido' => $movil->frec_rep_detenido,
                 'frec_rep_velocidad' => $movil->frec_rep_velocidad,
                 'frec_rep_exceso_vel'=>$movil->frec_rep_exceso_vel,
                 'velocidad_max'=>$movil->velocidad_max,
                 'perif_io_id'=>$movil->perif_io_id,
-                'movilOldId'=>$movil->movilOldId,
                 'estado_u'=>$movil->estado_u,
                 'estado_v'=>$movil->estado_v,
                 'fecha_posicion'=>'',
                 'velocidad'=>'',
                 'indice'=>'',
+                'io'=>'',
+                'iom'=>''
             ]);
+            
         }catch( \Exception $e){
             Log::error($e);
         }
     }
-    public static function setPosicionMovil($client,$posicion){
+    public static function setEstadosMovil($movil,$iom,$io){
+        if(!self::$client)self::setClient();
         try{
-            $key = $posicion['imei'];
-             $client->hmset($key, [
-                'fecha' => $posicion['fecha'],
-                'velocidad' => $posicion['velocidad'],
-                'indice' => $posicion['indice'],
-                ]);
-            //$data = $client->hgetall($key);
-            //eturn $data;
+           self::$client->hSet($movil->imei,'io',$io); 
+           self::$client->hSet($movil->imei,'iom',$iom); 
+        }catch(Exception $e){
+            Log::error("Error al setear estado en redis IMEI:".$movil->imei."--".$e);
+        }
+        //$redis->hGet('h', 'key1'); /* returns "hello" */
+    }
+    public static function setPosicionMovil($posicion){
+        if(!self::$client)self::setClient();
+        try{
+            self::$client->hSet($posicion['imei'],'fecha_posicion',$posicion['fecha']); 
+            self::$client->hSet($posicion['imei'],'velocidad',$posicion['velocidad']);
+            self::$client->hSet($posicion['imei'],'indice',$posicion['indice']);
         }catch( \Exception $e){
-            Log::error($e);
+            Log::error("Error al setear ultima posicion IMEI:".$posicion['imei']."---".$e);
         }
     }
-    public static function deletePosicionMovil($client,$posicion){
+    public static function deletePosicionMovil($posicion){
+        if(!self::$client)self::setClient();
         try{
-            $key = $posicion['imei'];
-             $client->hdel('imei',$imei);
-                
-            //$data = $client->hgetall($key);
-            //eturn $data;
+            self::$client->hDel($posicion['imei'],'fecha_posicion',$posicion['fecha']); 
+            self::$client->hDel($posicion['imei'],'velocidad',$posicion['velocidad']);
+            self::$client->hDel($posicion['imei'],'indice',$posicion['indice']);
         }catch( \Exception $e){
             Log::error($e);
         }
     }
     public static function storeMoviles($moviles){
-        $client = new \Predis\Client();
         foreach($moviles as $movil){
-            $devuelto= self::setMovil($client,$movil);
+            self::$client->del($movil->imei);
+            $devuelto= self::setMovil($movil);
+           // $data = $client->hgetall($movil->imei);
+           // Log::info(print_r($data,true));
         }
-        $data = $client->hgetall("moviles");
-        Log::info(print_r($data,true));
         Log::info(":::::::::Moviles en Redis:".count($moviles).":::::::::");
     }
-    public static function lookForMovil($client,$imei){
+    public static function lookForMovil($imei){
         $movil=false;
-        $data = $client->hgetall($imei);
+        if(!self::$client)self::setClient();
+        $data = self::$client->hgetall($imei);
         if(isset($data['equipo_id'])){
             $movil=$data;
-            Log::info(print_r($data, true));
+            Log::info("Movil encontrado equipo:".$data['equipo_id']);
         }else{
             Log::error("el movil no esta");
         }
+        return $movil;
     }
 }
