@@ -21,7 +21,7 @@ class KeepAliveController extends BaseController
     if ($request->isMethod('post')) {
       $jsonReq      = $request->json()->all();
       if(isset($jsonReq["cadena"])){
-        $movil    = HelpMen::movilesMemoria($jsonReq["cadena"]);
+        $movil      = HelpMen::compruebaMovilRedis($jsonReq["cadena"]);
         if($movil){
           $mensaje  = $this->obtenerComandoPendiente($movil->equipo_id); 
           if($mensaje){
