@@ -100,9 +100,11 @@ class PuertoController extends BaseController
         $posicionesMC   = [];
         $frArr          = explode(',',$fr); 
         $update         = 0;
+        Log::info("la posicion del movilllll:::::::".$movil->fecha_posicion);
         if($shmidPos == '0'){//no modifico el update para que inserte la nueva pos
             Log::info("creando segmento de memoria posicionesMC");
-            $posicionesMC[$imei]=$fecha."|".$velocidad."|0";
+            $posicion   = array("imei"=>$imei,"fecha"=>$fecha,"indice"=>0);
+            RedisHelp::setPosicionMovil($posicion);
             HelpMen::CargarMemoria('posiciones.dat',$posicionesMC);
             $shmid      = MemVar::OpenToRead('posiciones.dat');
             MemVar::initIdentifier($shmid);

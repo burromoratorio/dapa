@@ -35,7 +35,7 @@ class NormalReportController extends BaseController
         if(isset($arrCadena['IMEI'])){
             Log::info("Verificando validez IMEI ".$arrCadena['IMEI']);
             $movil      = HelpMen::compruebaMovilRedis($arrCadena['IMEI']);
-            Log::info(print_r($movil,true));
+            //Log::info(print_r($movil,true));
             if($movil==false){//no fue encontrado en redis
               Log::info("El IMEI ".$arrCadena['IMEI']." no está en Redis");
               HelpMen::solicitarMoviles();
@@ -54,7 +54,7 @@ class NormalReportController extends BaseController
               Log::info("El IMEI ".$arrCadena['IMEI']." se encuentra sin INSTALACION");
             }else{ 
               //$movil     = json_encode($movil);
-                Log::info(print_r($movil,true));
+               // Log::info(print_r($movil,true));
               $logcadena ="::::::::Procesando:".$arrCadena['IMEI']."- Movil_id:".$movil->movil_id."-MovilOld_id:".$movil->movilOldId.":::::::: \r\n";
               HelpMen::report($movil->equipo_id,$logcadena);
             }
