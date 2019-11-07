@@ -103,103 +103,76 @@ class PuertoController extends BaseController
         $frArr          = explode(',',$fr); 
         $update         = 0;
         Log::info("la posicion del movilllll:::::::".$movil->fecha_posicion);
-        if($shmidPos == '0'){//no modifico el update para que inserte la nueva pos
-            Log::info("creando segmento de memoria posicionesMC");
-            $posicion   = array("imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad,"indice"=>0);
+        $posicion   = array("imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad,"indice"=>0);
+        if($movil->fecha_posicion==''){
             RedisHelp::setPosicionMovil($posicion);
-           // HelpMen::CargarMemoria('posiciones.dat',$posicionesMC);
-            $shmid      = MemVar::OpenToRead('posiciones.dat');
-            MemVar::initIdentifier($shmid);
-            $memoPos    = MemVar::GetValue();
-            $update         = 0;
+            Log::info($imei."-Almacenando posicion:".$fecha." velocidad:".$velocidad);
+            //HelpMen::report($movil->equipo_id,"Almacenando posicion:".$fecha." velocidad:".$velocidad);
         }else{
-            MemVar::initIdentifier($shmidPos);
-            $memoPos    = MemVar::GetValue();
-            $posArr     = json_decode($memoPos);
-            //Log::error(print_r($posArr, true));
-            $index      = "-1";
-            $encontrado = 0;
-            if(!is_null($posArr)){
-                if(property_exists($posArr, $imei)){//Log::info("el movil:".$imei." tiene datos en el array de posiciones");
-                    $internalInfo   = $posArr->$imei;
-                    $arrInternalInfo= explode("|", $internalInfo);
-                    //Log::info(print_r($arrInternalInfo,true));
-                    Log::info("los datos,imei:".$imei." fecha:".$fecha." velocAnterior:".$arrInternalInfo[1]." velocActual:".$velocidad." FR:".$frArr[0]);
-                    //evaluo frecuencia de repo
-    /*Movimiento*/  if($frArr[0]<=120){
-                        if($arrInternalInfo[1]<=5){//detenido a movimiento
-                            Log::info($imei."=>detenido a movimiento");
-                            $posArr->$imei  = $fecha."|".$velocidad."|0";
-                            Log::info(print_r($posArr->$imei, true));
-                        }else{//continua en movimiento
-                            Log::info($imei."..continua en movimiento");
-                        }
-    /*detenido*/    }else{
-                        if($arrInternalInfo[1]>=8){//movimiento a detenido
-                            Log::info($imei."=>movimiento a detenido");
-                            $posArr->$imei  = $fecha."|".$velocidad."|0";
-                        }else{//continua detenido
-                            Log::info($imei."..continua detenido");
-                            $update         = 1;
-                            if($arrInternalInfo[2]=="0"){
-                                $posArr->$imei  = $fecha."|".$velocidad."|1";
-                                Log::info($imei." es el segundo reg con veloc 0-->lo inserto");
-                            }else{
-                                $posArr->$imei  = $fecha."|".$velocidad."|2";
-                                Log::info($imei." actualizo fechas, esta detenido hace mas de 2 posiciones");
-                                $lastPosition = PosicionesHistoricas::where('movil_id',intval($movil->movilOldId))
+            $posicionAnterior   = $movil->fecha_posicion;
+/*Movimiento*/  if($frArr[0]<=120){
+                    if($movil->velocidad<=5){//detenido a movimiento
+                        Log::info($imei."=>detenido a movimiento");
+                        RedisHelp::setPosicionMovil($posicion);
+                        Log::info($imei."-Actualizo posicion:".$fecha." velocidad:".$velocidad);
+                        //HelpMen::report($movil->equipo_id,"Almacenando posicion:".$fecha." velocidad:".$velocidad);
+                    }else{//continua en movimiento
+                        Log::info($imei."..continua en movimiento");
+                    }
+/*detenido*/    }else{
+                    if($movil->velocidad>=8){//movimiento a detenido
+                       Log::info($imei."=>movimiento a detenido");
+                       RedisHelp::setPosicionMovil($posicion);
+                       Log::info($imei."-Actualizo posicion:".$fecha." velocidad:".$velocidad);
+                        //HelpMen::report($movil->equipo_id,"Almacenando posicion:".$fecha." velocidad:".$velocidad);
+                    }else{//continua detenido
+                        Log::info($imei."..continua detenido");
+                        $update         = 1;
+                        if($movil->indice=="0"){
+                            $posicion["indice"]=1;
+                            RedisHelp::setPosicionMovil($posicion);
+                            Log::info($imei." es el segundo reg con veloc 0-->lo almaceno");
+                        }else{
+                            $posicion["indice"]=2;
+                            RedisHelp::setPosicionMovil($posicion);
+                            Log::info($imei." actualizo fechas, esta detenido hace mas de 2 posiciones");
+                            $lastPosition = PosicionesHistoricas::where('movil_id',intval($movil->movilOldId))
                                             ->orderBy('fecha', 'DESC')->first();
-                                $posicionAux    = $lastPosition;
-                                if($lastPosition){
-                                    Log::error($imei. " LA POSICION ANTERIOR ENCONTRADAAAA::".$lastPosition->fecha);
-                                    if(DB::connection()->getDatabaseName()=='moviles'){
-                                    config()->set('database.default', 'siac');
-                                    }
-                                    DB::beginTransaction();
-                                    try {
-                                    PosicionesHistoricas::where('posicion_id',$lastPosition->posicion_id)->delete();
-                                    DB::table('POSICIONES_HISTORICAS')->insert(['posicion_id'=>$lastPosition->posicion_id,
-                                                'movil_id'=>intval($movil->movilOldId),'tipo'=>$lastPosition->tipo,
-                                                'rumbo_id'=>$lastPosition->rumbo_id,'fecha'=>$fecha,'velocidad'=>$lastPosition->velocidad,
-                                                'latitud'=>$lastPosition->latitud,'longitud'=>$lastPosition->longitud,
-                                                'valida'=>1,'km_recorridos'=>$lastPosition->km_recorridos,
-                                                'referencia'=>$lastPosition->referencia,'cmd_id'=>$lastPosition->cmd_id,
-                                                'estado_u' =>$lastPosition->estado_u,'estado_v' =>$lastPosition->estado_v,
-                                                'estado_w' =>$lastPosition->estado_w, 'km_recorridos' =>$lastPosition->km_recorridos,
-                                                'ltrs_consumidos' =>$lastPosition->ltrs_consumidos,'ltrs_100' =>$lastPosition->ltrs_100
-                                                ]); 
-                                    DB::commit();
-                                    $update         = $lastPosition->posicion_id;
-                                    }catch (\Exception $ex) {
-                                        DB::rollBack();
-                                        $errorSolo  = explode("Stack trace", $ex);
-                                        $logcadena ="Error en alta de POSICIONES ".$errorSolo[0]." \r\n";
-                                        HelpMen::report($movil->equipo_id,$logcadena);
-                                    }
-                                    config()->set('database.default', 'moviles');
-                                    
-                                }else{
-                                    Log::error($imei." No se encontró la posicion anterior...no modfico fechas");
+                            $posicionAux    = $lastPosition;
+                            if($lastPosition){
+                                Log::error($imei. " LA POSICION ANTERIOR ENCONTRADAAAA::".$lastPosition->fecha);
+                                if(DB::connection()->getDatabaseName()=='moviles')config()->set('database.default', 'siac');
+                                DB::beginTransaction();
+                                try {
+                                PosicionesHistoricas::where('posicion_id',$lastPosition->posicion_id)->delete();
+                                DB::table('POSICIONES_HISTORICAS')->insert(['posicion_id'=>$lastPosition->posicion_id,
+                                            'movil_id'=>intval($movil->movilOldId),'tipo'=>$lastPosition->tipo,
+                                            'rumbo_id'=>$lastPosition->rumbo_id,'fecha'=>$fecha,'velocidad'=>$lastPosition->velocidad,
+                                            'latitud'=>$lastPosition->latitud,'longitud'=>$lastPosition->longitud,
+                                            'valida'=>1,'km_recorridos'=>$lastPosition->km_recorridos,
+                                            'referencia'=>$lastPosition->referencia,'cmd_id'=>$lastPosition->cmd_id,
+                                            'estado_u' =>$lastPosition->estado_u,'estado_v' =>$lastPosition->estado_v,
+                                            'estado_w' =>$lastPosition->estado_w, 'km_recorridos' =>$lastPosition->km_recorridos,
+                                            'ltrs_consumidos' =>$lastPosition->ltrs_consumidos,'ltrs_100' =>$lastPosition->ltrs_100
+                                            ]); 
+                                DB::commit();
+                                $update         = $lastPosition->posicion_id;
+                                }catch (\Exception $ex) {
+                                    DB::rollBack();
+                                    $errorSolo  = explode("Stack trace", $ex);
+                                    $logcadena ="Error en alta de POSICIONES ".$errorSolo[0]." \r\n";
+                                    HelpMen::report($movil->equipo_id,$logcadena);
                                 }
-                                
+                                config()->set('database.default', 'moviles');
+                                    
+                            }else{
+                                Log::error($imei." No se encontró la posicion anterior...no modfico fechas");
                             }
-                            
                         }
                     }
-                    $posicionesMC   = $posArr;
-                }else{//el movil no tiene datos de posiciones->almaceno la info
-                    $logcadena ="movil:".$imei." - equipo:".$movil->equipo_id." - no tiene datos de posiciones-->almaceno \r\n";
-                    HelpMen::report($movil->equipo_id,$logcadena);
-                    $posArr->$imei   = $fecha."|".$velocidad."|0";
-                    $posicionesMC   = $posArr;
                 }
-            }else{
-                $posicionesMC[$imei]=$fecha."|".$velocidad."|0";
-                //Log::info("le pije del mone::".$imei." fecha:".$fecha."- velocidad:".$velocidad);
-            }
-            MemVar::Eliminar( 'posiciones.dat' );
-            HelpMen::CargarMemoria('posiciones.dat',$posicionesMC);
         }
+        
         return $update;
     }
     /*maximo 15 caracteres numericos*/
