@@ -10,6 +10,8 @@ use App\Posiciones;
 use App\PosicionesHistoricas;
 use App\Helpers\HelpMen;
 use App\Helpers\MemVar;
+use \App\Helpers\RedisHelp;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\SensorController;
