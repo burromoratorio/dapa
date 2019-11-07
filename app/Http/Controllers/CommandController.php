@@ -54,7 +54,8 @@ class CommandController extends BaseController
         $estado     = $request->input('estado_comando_id');
         $estadotipo_posicion = 66;
         ///Log::info('recibido en dapa, IMEI:'.$imei.' rta:'.$comandoRta.' estado:'.$estado.' se obtuvo:'.$arrCmdRta[0]." de CMD_ID:".self::$comandoDefinitions[$arrCmdRta[0]]);
-        $movil    = HelpMen::movilesMemoria($imei);
+        $movil    = HelpMen::compruebaMovilRedis($imei);
+        //$movil    = HelpMen::movilesMemoria($imei);
         $equipo_id= $movil->equipo_id;
         //voy a contar las ocurrencias de un determinado caracter en este caso el signi + 
         $contador   = mb_substr_count($comandoRta, "+");
