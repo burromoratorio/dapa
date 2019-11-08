@@ -57,19 +57,7 @@ class KeepAliveController extends BaseController
     }
     return  $comando;
   }
-  public function tratarReporte($cadena,$movil){
-    $rta  = "";
-    try{
-      $logcadena ="Equipo=>".$movil->equipo_id." MOVIL=>".$movil->movilOldId."-Cadena=>".$cadena." \r\n";
-      HelpMen::report($movil->equipo_id,$logcadena);
-      $rta  = app()->Puerto->analizeReport($cadena,$movil) ;
-    }catch(Exception $e){
-      $rta  = "error";
-      Log::error($e);
-    }
-    return $rta;
-  } 
- 
+  
  public function obtenerComandoPendiente($equipo_id){
     $mensaje            = false;
     $flagEnviarComando  = 0;
