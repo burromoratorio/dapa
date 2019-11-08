@@ -284,10 +284,11 @@ class PuertoController extends BaseController
                 $preData    = self::validateIndexCadena("PRE",$report,2);
                 $frData     = self::validateIndexCadena("FR",$report,2);
                 if($frData['FR']=='NULL'){
-                    Log::info("FRNULLLLL");
-
+                    $frData['FR']='-';
+                    $frData[0]=60;
+                    $frData[1]=4;
+                    HelpMen::report($movil->equipo_id,"Frecuencia vacia...posible curva");
                 }
-                Log::info(print_r($frData,true));
                 $lacData    = self::validateIndexCadena("LAC",$report,2);
                 $mcpData    = self::validateIndexCadena("MCP",$report,2);
                 $alaField   = self::validateIndexCadena("ALA",$report);
