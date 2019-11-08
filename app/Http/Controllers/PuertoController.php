@@ -283,7 +283,10 @@ class PuertoController extends BaseController
                 $dcxData    = self::validateIndexCadena("DCX",$report,2);
                 $preData    = self::validateIndexCadena("PRE",$report,2);
                 $frData     = self::validateIndexCadena("FR",$report,2);
-                Log::info("aaaaaaaaaaaaaaaa");
+                if($frData['FR']=='NULL'){
+                    Log::info("FRNULLLLL");
+
+                }
                 Log::info(print_r($frData,true));
                 $lacData    = self::validateIndexCadena("LAC",$report,2);
                 $mcpData    = self::validateIndexCadena("MCP",$report,2);
