@@ -133,7 +133,7 @@ class PuertoController extends BaseController
             if($movil->velocidad>=8){
                 $update['indice']=1;
                 HelpMen::report($movil->equipo_id,"=>Movil se detuvo \r\n");
-                HelpMen::report($movil->equipo_id,"Almacenando posicion:".$fecha." velocidad:".$velocidad." \r\n");
+                HelpMen::report($movil->equipo_id,"=>velocidad anterior:".$movil->velocidad." \r\n");
             }else{
                 $update['update']=0;
             }
