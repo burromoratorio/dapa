@@ -163,7 +163,7 @@ class PuertoController extends BaseController
                                 'ltrs_consumidos' =>$lastPosition->ltrs_consumidos,'ltrs_100' =>$lastPosition->ltrs_100
                                 ]); 
                     DB::commit();
-                    $update         = $lastPosition->posicion_id;
+                    $update['update']= $lastPosition->posicion_id;
                     }catch (\Exception $ex) {
                         DB::rollBack();
                         $errorSolo  = explode("Stack trace", $ex);
