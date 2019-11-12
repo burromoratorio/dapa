@@ -101,17 +101,21 @@ class PuertoController extends BaseController
         $frArr          = explode(',',$fr); 
         $update         = 0;
         Log::info("la posicion del movilllll:::::::".$movil->fecha_posicion);
-        $posicion   = array("imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad,"indice"=>0);
+        $posicion= array("imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad,"indice"=>0);
+        $update  = ["indice"=>$movil->indice,"update"=>0];
         if($movil->fecha_posicion==''){
             RedisHelp::setPosicionMovil($posicion);
             HelpMen::report($movil->equipo_id,"Almacenando posicion:".$fecha." velocidad:".$velocidad);
         }else{
             self::seMueve($frArr[0], $velocidad, $movil);
-            self::seDetuvo($frArr[0], $velocidad, $movil);
-            $update = self::continuaDetenido($frArr[0], $velocidad, $fecha, $movil, $posicion);
+            $update = self::seDetuvo($frArr[0], $velocidad, $movil);
+            if($update['update']==0){
+                $update = self::continuaDetenido($frArr[0], $velocidad, $fecha, $movil);
+            }
+            $posicion->indice=$update['indice'];
             RedisHelp::setPosicionMovil($posicion);
         }
-        return $update;
+        return $update['update'];
     }
     public static function seMueve($frecuencia,$velocidad,$movil){
         if($frecuencia<=120){
@@ -124,43 +128,54 @@ class PuertoController extends BaseController
         }
     }
     public static function seDetuvo($frecuencia,$velocidad,$movil){
-        if($frecuencia>120 && $movil->velocidad>=8){
-            HelpMen::report($movil->equipo_id,"=>Movil se detuvo \r\n");
-            HelpMen::report($movil->equipo_id,"Almacenando posicion:".$fecha." velocidad:".$velocidad." \r\n");
+        $update = array("indice"=>$movil->indice,"update"=>0);
+        if($frecuencia>120 ){
+            if($movil->velocidad>=8){
+                $update['indice']=1;
+                HelpMen::report($movil->equipo_id,"=>Movil se detuvo \r\n");
+                HelpMen::report($movil->equipo_id,"Almacenando posicion:".$fecha." velocidad:".$velocidad." \r\n");
+            }else{
+                $update['update']=1;
+            }
         }
+        return $update;
     }
-    public static function continuaDetenido($frecuencia,$velocidad,$fecha,$movil,$posicion){
-        $update = 0;
+    public static function continuaDetenido($frecuencia,$velocidad,$fecha,$movil){
+        $update = array("indice"=>$movil->indice,"update"=>1);
         if($frecuencia>120 && $movil->velocidad<5 && $velocidad<5){
             HelpMen::report($movil->equipo_id,"=>Movil continua Detenido \r\n");
-            $update = 1;
-            $posicion["indice"]=2;
-            if(DB::connection()->getDatabaseName()=='moviles')config()->set('database.default', 'siac');
-            $lastPosition = PosicionesHistoricas::where('movil_id',intval($movil->movilOldId))->orderBy('fecha', 'DESC')->first();
-            if($lastPosition){
-                DB::beginTransaction();
-                try {
-                PosicionesHistoricas::where('posicion_id',$lastPosition->posicion_id)->delete();
-                DB::table('POSICIONES_HISTORICAS')->insert(['posicion_id'=>$lastPosition->posicion_id,
-                            'movil_id'=>intval($movil->movilOldId),'tipo'=>$lastPosition->tipo,
-                            'rumbo_id'=>$lastPosition->rumbo_id,'fecha'=>$fecha,'velocidad'=>$lastPosition->velocidad,
-                            'latitud'=>$lastPosition->latitud,'longitud'=>$lastPosition->longitud,
-                            'valida'=>1,'km_recorridos'=>$lastPosition->km_recorridos,
-                            'referencia'=>$lastPosition->referencia,'cmd_id'=>$lastPosition->cmd_id,
-                            'estado_u' =>$lastPosition->estado_u,'estado_v' =>$lastPosition->estado_v,
-                            'estado_w' =>$lastPosition->estado_w, 'km_recorridos' =>$lastPosition->km_recorridos,
-                            'ltrs_consumidos' =>$lastPosition->ltrs_consumidos,'ltrs_100' =>$lastPosition->ltrs_100
-                            ]); 
-                DB::commit();
-                $update         = $lastPosition->posicion_id;
-                }catch (\Exception $ex) {
-                    DB::rollBack();
-                    $errorSolo  = explode("Stack trace", $ex);
-                    $logcadena ="Error en alta de POSICIONES ".$errorSolo[0]." \r\n";
-                    HelpMen::report($movil->equipo_id,$logcadena);
+            $update['update']=0;//para reflejar que no se vuelva a insertar 
+            if($movil->indice==2){
+                if(DB::connection()->getDatabaseName()=='moviles')config()->set('database.default', 'siac');
+                $lastPosition = PosicionesHistoricas::where('movil_id',intval($movil->movilOldId))->orderBy('fecha', 'DESC')->first();
+                if($lastPosition){
+                    DB::beginTransaction();
+                    try {
+                    PosicionesHistoricas::where('posicion_id',$lastPosition->posicion_id)->delete();
+                    DB::table('POSICIONES_HISTORICAS')->insert(['posicion_id'=>$lastPosition->posicion_id,
+                                'movil_id'=>intval($movil->movilOldId),'tipo'=>$lastPosition->tipo,
+                                'rumbo_id'=>$lastPosition->rumbo_id,'fecha'=>$fecha,'velocidad'=>$lastPosition->velocidad,
+                                'latitud'=>$lastPosition->latitud,'longitud'=>$lastPosition->longitud,
+                                'valida'=>1,'km_recorridos'=>$lastPosition->km_recorridos,
+                                'referencia'=>$lastPosition->referencia,'cmd_id'=>$lastPosition->cmd_id,
+                                'estado_u' =>$lastPosition->estado_u,'estado_v' =>$lastPosition->estado_v,
+                                'estado_w' =>$lastPosition->estado_w, 'km_recorridos' =>$lastPosition->km_recorridos,
+                                'ltrs_consumidos' =>$lastPosition->ltrs_consumidos,'ltrs_100' =>$lastPosition->ltrs_100
+                                ]); 
+                    DB::commit();
+                    $update         = $lastPosition->posicion_id;
+                    }catch (\Exception $ex) {
+                        DB::rollBack();
+                        $errorSolo  = explode("Stack trace", $ex);
+                        $logcadena ="Error en alta de POSICIONES ".$errorSolo[0]." \r\n";
+                        HelpMen::report($movil->equipo_id,$logcadena);
+                    }
+                    config()->set('database.default', 'moviles');
                 }
-                config()->set('database.default', 'moviles');
+            }else{
+                $update['indice']=2;
             }
+            
         }
         return $update;
     }
