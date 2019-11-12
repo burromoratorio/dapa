@@ -102,49 +102,56 @@ class PuertoController extends BaseController
         $update         = 0;
         Log::info("la posicion del movilllll:::::::".$movil->fecha_posicion);
         $posicion= array("imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad,"indice"=>0);
-        $update  = ["indice"=>$movil->indice,"update"=>0];
+        //$update  = ["indice"=>$movil->indice,"update"=>0];
         if($movil->fecha_posicion==''){
             RedisHelp::setPosicionMovil($posicion);
             HelpMen::report($movil->equipo_id,"Almacenando posicion:".$fecha." velocidad:".$velocidad);
         }else{
-            self::seMueve($frArr[0], $velocidad, $movil);
-            $update = self::seDetuvo($frArr[0], $velocidad, $movil);
-            if($update['update']==0){
-                $update = self::continuaDetenido($frArr[0], $velocidad, $fecha, $movil);
+            if(self::seMueve($frArr[0], $velocidad, $movil,$posicion)==0){//no se mueve
+                if(self::seDetuvo($frArr[0], $movil,$posicion)==1){//se detuvo?
+                    $update=0;
+                }else{//sigue detenido
+                    self::continuaDetenido($frArr[0], $velocidad, $fecha, $movil,$posicion);
+                    $update=1;
+                }
+            }else{//esta en movimiento
+                $update=0;
             }
-            $posicion['indice']=$update['indice'];
-            RedisHelp::setPosicionMovil($posicion);
         }
-        return $update['update'];
+        return $update;
     }
-    public static function seMueve($frecuencia,$velocidad,$movil){
+    public static function seMueve($frecuencia,$velocidad,$movil,$posicion){
+        $mueve=1;
         if($frecuencia<=120){
             if($movil->velocidad<=5){//velocidad posicion anterior en redis
                 HelpMen::report($movil->equipo_id,"=>detenido a movimiento \r\n");
                 Log::info($imei."-Actualizo posicion:".$fecha." velocidad:".$velocidad);
             }else{//continua en movimiento
-                Log::info($imei."..continua en movimiento");
+                HelpMen::report($movil->equipo_id,"=>continua en movimiento velocidad anterior:".$movil->velocidad." \r\n");
             }
+            RedisHelp::setPosicionMovil($posicion);
+        }else{
+            $mueve=0;
         }
+        return $mueve;
     }
-    public static function seDetuvo($frecuencia,$velocidad,$movil){
-        $update = array("indice"=>$movil->indice,"update"=>1);
+    public static function seDetuvo($frecuencia,$movil,$posicion){
+        //$update = array("indice"=>$movil->indice,"update"=>0);
+        $detuvo=0;
         if($frecuencia>120 ){
             if($movil->velocidad>=8){
-                $update['indice']=1;
                 HelpMen::report($movil->equipo_id,"=>Movil se detuvo \r\n");
                 HelpMen::report($movil->equipo_id,"=>velocidad anterior:".$movil->velocidad." \r\n");
-            }else{
-                $update['update']=0;
+                $posicion['indice']=1;
+                RedisHelp::setPosicionMovil($posicion);
+                $detuvo=1;
             }
         }
-        return $update;
+        return $detuvo;
     }
-    public static function continuaDetenido($frecuencia,$velocidad,$fecha,$movil){
-        $update = array("indice"=>$movil->indice,"update"=>1);
+    public static function continuaDetenido($frecuencia,$velocidad,$fecha,$movil,$posicion){
         if($frecuencia>120 && $movil->velocidad<5 && $velocidad<5){
             HelpMen::report($movil->equipo_id,"=>Movil continua Detenido \r\n");
-            $update['update']=0;//para reflejar que no se vuelva a insertar 
             if($movil->indice==2){
                 if(DB::connection()->getDatabaseName()=='moviles')config()->set('database.default', 'siac');
                 $lastPosition = PosicionesHistoricas::where('movil_id',intval($movil->movilOldId))->orderBy('fecha', 'DESC')->first();
@@ -173,9 +180,9 @@ class PuertoController extends BaseController
                     config()->set('database.default', 'moviles');
                 }
             }else{
-                $update['indice']=2;
+                $posicion['indice']=2;
+                RedisHelp::setPosicionMovil($posicion);
             }
-            
         }
         return $update;
     }
