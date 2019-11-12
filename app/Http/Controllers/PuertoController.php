@@ -112,7 +112,7 @@ class PuertoController extends BaseController
             if($update['update']==0){
                 $update = self::continuaDetenido($frArr[0], $velocidad, $fecha, $movil);
             }
-            $posicion->indice=$update['indice'];
+            $posicion['indice']=$update['indice'];
             RedisHelp::setPosicionMovil($posicion);
         }
         return $update['update'];
