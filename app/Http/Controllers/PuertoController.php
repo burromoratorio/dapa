@@ -128,14 +128,14 @@ class PuertoController extends BaseController
         }
     }
     public static function seDetuvo($frecuencia,$velocidad,$movil){
-        $update = array("indice"=>$movil->indice,"update"=>0);
+        $update = array("indice"=>$movil->indice,"update"=>1);
         if($frecuencia>120 ){
             if($movil->velocidad>=8){
                 $update['indice']=1;
                 HelpMen::report($movil->equipo_id,"=>Movil se detuvo \r\n");
                 HelpMen::report($movil->equipo_id,"Almacenando posicion:".$fecha." velocidad:".$velocidad." \r\n");
             }else{
-                $update['update']=1;
+                $update['update']=0;
             }
         }
         return $update;
