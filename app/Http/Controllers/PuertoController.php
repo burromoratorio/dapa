@@ -125,7 +125,6 @@ class PuertoController extends BaseController
         if($frecuencia<=120){
             if($movil->velocidad<=5){//velocidad posicion anterior en redis
                 HelpMen::report($movil->equipo_id,"=>detenido a movimiento \r\n");
-                Log::info($imei."-Actualizo posicion:".$fecha." velocidad:".$velocidad);
             }else{//continua en movimiento
                 HelpMen::report($movil->equipo_id,"=>continua en movimiento velocidad anterior:".$movil->velocidad." \r\n");
             }
