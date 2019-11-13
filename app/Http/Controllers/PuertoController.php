@@ -180,7 +180,6 @@ class PuertoController extends BaseController
                 RedisHelp::setPosicionMovil($posicion);
             }
         }
-        return $update;
     }
     
     /*maximo 15 caracteres numericos*/
