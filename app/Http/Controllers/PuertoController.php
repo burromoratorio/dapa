@@ -100,9 +100,7 @@ class PuertoController extends BaseController
     public static function validezReporte($imei,$fecha,$velocidad,$fr,$movil){
         $frArr          = explode(',',$fr); 
         $update         = 0;
-        Log::info("la posicion del movilllll:::::::".$movil->fecha_posicion);
         $posicion= array("imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad,"indice"=>0);
-        //$update  = ["indice"=>$movil->indice,"update"=>0];
         if($movil->fecha_posicion==''){
             RedisHelp::setPosicionMovil($posicion);
             HelpMen::report($movil->equipo_id,"Almacenando posicion:".$fecha." velocidad:".$velocidad);
@@ -135,7 +133,6 @@ class PuertoController extends BaseController
         return $mueve;
     }
     public static function seDetuvo($frecuencia,$movil,$posicion){
-        //$update = array("indice"=>$movil->indice,"update"=>0);
         $detuvo=0;
         if($frecuencia>120 ){
             if($movil->velocidad>=8){
@@ -321,9 +318,8 @@ class PuertoController extends BaseController
                 }
                 $arrInfoGprmc   = HelpMen::Gprmc2Data($gprmcData);
                 $validezReporte = self::validezReporte($report['IMEI'],$fecha,$gprmcData[6],$frData['FR'],$movil);
-                HelpMen::report($movil->equipo_id,"VALIDEZ REPORTE TRAE ESTE POSITION ID:".$validezReporte);
                 if($validezReporte>0){
-                    Log::info("actualiza hora de posicion en detenido");
+                    HelpMen::report($movil->equipo_id,"Actualizo hora de posicion en detenido \r\n");
                     $posicion               = new Posiciones;
                     $posicion->posicion_id  = $validezReporte;
                     $respuesta              = $validezReporte;
@@ -400,7 +396,7 @@ class PuertoController extends BaseController
                     //DB::commit();
                     config()->set('database.default', 'moviles');
                 }
-                /*********para comunicacion con API NAcho*******
+                /*********para comunicacion con API NAcho*******/
                 Log::info("por enviar al api de nacho el movil:".$movil->equipo_id);
                 $movTestings = array(10035, 10036);//posteo a molinos api
                 if (in_array($movil->equipo_id, $movTestings)){
@@ -409,7 +405,7 @@ class PuertoController extends BaseController
                     "received"=>$fecha];
                     HelpMen::posteaPosicion("positions","molinos",$json);      
                 }
-                $json=  ["movil"=>intval($movil->movilOldId),
+                /*$json=  ["movil"=>intval($movil->movilOldId),
                 "point"=> ["type"=>"Point","coordinates"=> [$arrInfoGprmc['longitud'],$arrInfoGprmc['latitud'] ] ],
                 "received"=>$fecha, "speed"=> $arrInfoGprmc['velocidad'], "direction"=>$arrInfoGprmc['rumbo']
                 ];
