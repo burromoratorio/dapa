@@ -17,8 +17,9 @@ class RedisHelp {
     public static function setClient(){
         self::$client = new \Predis\Client();
     }
-    protected function limpiarBase(){
+    public static function limpiarBase(){
         Log::error(":::::::::::::::LIMPIANDO BASES DE DATOS REDIS:::::::::::::::\r\n");
+        if(!self::$client)self::setClient();
         self::$client->flushdb();
     }
     public function index() {
