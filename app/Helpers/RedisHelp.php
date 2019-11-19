@@ -17,6 +17,10 @@ class RedisHelp {
     public static function setClient(){
         self::$client = new \Predis\Client();
     }
+    protected function limpiarBase(){
+        Log::error(":::::::::::::::LIMPIANDO BASES DE DATOS REDIS:::::::::::::::\r\n");
+        self::$client->flushdb();
+    }
     public function index() {
         try{
             $key = 'linus torvalds';
