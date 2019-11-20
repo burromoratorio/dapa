@@ -21,6 +21,8 @@ class RedisHelp {
         Log::error(":::::::::::::::LIMPIANDO BASES DE DATOS REDIS:::::::::::::::\r\n");
         if(!self::$client)self::setClient();
         self::$client->flushdb();
+        echo "Base de datos Vacia....";
+        
     }
     public function index() {
         try{
