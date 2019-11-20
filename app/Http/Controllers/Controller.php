@@ -15,7 +15,15 @@ class Controller extends BaseController
         $client = new \Predis\Client();
         RedisHelp::lookForMovil($client,'351687030455512');
     }
-    public function limpiar(){
-        RedisHelp::limpiarBase();
+    public function limpiar(Request $request){
+        $method   = $request->method();
+        $rta="nada";
+        if ($request->isMethod('post')) {
+            $jsonReq      = $request->json()->all();
+            if(isset($jsonReq["cadena"]) && $jsonReq["cadena"]=="Mig"){
+                $rta=RedisHelp::limpiarBase();
+            }
+        }
+        return $rta;
     }
 }

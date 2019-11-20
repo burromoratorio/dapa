@@ -23,7 +23,7 @@ $app->post('comandos/{imei}', 'CommandController@update');
 //$app->post('vaciaMemoria', 'NormalReportController@vaciaMemoria');
 $app->get('conectarRedis', 'RedisController@index');
 $app->get('prueba', 'Controller@index');
-$app->get('vaciaMemoria', 'Controller@limpiar');
+$app->post('vaciaMemoria', 'Controller@limpiar');
 /*$app->get('/', function () use ($app) {
     return $app->version();
 });*/
