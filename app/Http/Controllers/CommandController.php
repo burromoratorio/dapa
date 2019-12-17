@@ -176,7 +176,7 @@ class CommandController extends BaseController
             HelpMen::report($equipo_id,"SETEO DE:".$arrVal[1]." ID:".self::$comandoDefinitions[$busqueda]." \r\n");
         }else{
             $OUTPendiente = $this->OUTPendiente($equipo_id);//primero trato el OUT
-            if(!is_null($OUTPendiente)){
+            if(!is_null($OUTPendiente) && isset($arrVal[1])){
                 switch ($arrVal[1]){
                     case'CMD_NORMAL':
                         $logcadena = "Modo normal activado equipo:".$equipo_id." \r\n";
