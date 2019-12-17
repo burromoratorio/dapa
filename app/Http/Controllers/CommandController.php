@@ -3,6 +3,8 @@ namespace App\Http\Controllers;
 use App\ColaMensajes;
 use App\InstalacionSiac;
 use App\Helpers\HelpMen;
+use App\Helpers\RedisHelp;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -57,31 +59,29 @@ class CommandController extends BaseController
         $movil    = HelpMen::compruebaMovilRedis($imei);
         if($movil){
             $equipo_id= $movil->equipo_id;
-            //voy a contar las ocurrencias de un determinado caracter en este caso el signi + 
-            $contador   = mb_substr_count($comandoRta, "+");
-            if($contador>1){
-                //significa que vienen varios comandos concatenados tengo que limpiarlos
-                //3-los comandos en rsp_id=2 e intentos <3 ->los seteo en pendiente rsp_id=1 y les sumo 1 al intentos, excepto al obtenido para rta
-                $logcadena ="IMEI:".$imei.":::Comandos Concatenados:::".$comandoRta." \r\n";
+            if($movil->lastCommand!='NO'){
+                $pendiente    = ColaMensajes::where('tr_id', '=',$movil->lastCommand)->get()->first();
+                $commandoId   = $pendiente->cmd_id;
+                $logcadena = " Respuesta TEST IMEI:".$imei." - Equipo:".$equipo_id." rta:".$comandoRta." de CMD_ID:".$commandoId." \r\n";
                 HelpMen::report($equipo_id,$logcadena);
-                DB::beginTransaction();
-                try {
-                $mensajeSinRta= ColaMensajes::where('modem_id', '=',$equipo_id)
-                                      ->where('rsp_id','=',2)->where('intentos','=',5)
-                                      ->update(['rsp_id'=>5]);
-                $mensajeUP    = ColaMensajes::where('modem_id', '=',$equipo_id)
-                                        ->where('rsp_id','=',2)->where('intentos','<',5)->where('cmd_id','<>',22)
-                                        ->increment('intentos', 1, ['rsp_id'=>1]);
-                DB::commit();
-                }catch (\Exception $ex) {
-                DB::rollBack();
-                $errorSolo  = explode("Stack trace", $ex);
-                $logcadena ="Error al procesar update de comandos ".$errorSolo[0]." \r\n";
-                HelpMen::report($equipo_id,$logcadena);
+                $pendiente->rsp_id      = 3;
+               // $pendiente->comando     = $arrCmdRta[0];
+                $pendiente->respuesta   = $comandoRta;
+                $pendiente->fecha_final = date("Y-m-d H:i:s");
+                $pendiente->save();
+                $logcadena = " actualizacion correcta :AT+OK \r\n";
+                //elimino el comando ya tratado de redis y limpio el lastCommand
+                $arrCmd    = explode(",",$movil->test);
+                if(count($arrCmd)>1){//fifo, elimino el primero ya tratado
+                    array_shift($arrCmd);
+                    $commandList=implode(",",$arrCmd);
+                }else{
+                    $commandList='0';
                 }
-                return "AT+OK \r\n";
+                RedisHelp::setCommandListTest($imei,$commandList);
+                RedisHelp::setLastCommand($imei, "NO");
             }else{
-                $arrCmdRta  = explode(":",$comandoRta);
+               $arrCmdRta  = explode(":",$comandoRta);//esto porque una rta es del tipo +PER:IOM,CMD_CORTE,OK->separo el encabezado para buscar en el array de definiciones
                 HelpMen::report($equipo_id," commandController::".$arrCmdRta[0]." \r\n");
                 $commandoId = (isset(self::$comandoDefinitions[$arrCmdRta[0]]))?self::$comandoDefinitions[$arrCmdRta[0]]:self::$comandoGenerico["+GEN"];
                 if($arrCmdRta[0]=="+PER"){
@@ -129,7 +129,9 @@ class CommandController extends BaseController
                     $logcadena = "No existe comando pendiente \r\n";
                     HelpMen::report($equipo_id,$logcadena);
                 }
+            
             }
+            
         }else{
             Log::error("IMEI:".$imei. " NO TIENE INSTALACION->KA \r\n");
         }

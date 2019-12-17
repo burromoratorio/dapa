@@ -9,6 +9,8 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 use Exception;
 use App\Helpers\HelpMen;
 use App\Helpers\CommandHelp;
+use App\Helpers\RedisHelp;
+
 
 class KeepAliveController extends BaseController
 {
@@ -25,8 +27,8 @@ class KeepAliveController extends BaseController
     if(isset($jsonReq["cadena"])){
         $movil      = HelpMen::compruebaMovilRedis($jsonReq["cadena"]);
         if($movil){
-            $commandHelp= new CommandHelp($this->equipo);
-            $mensaje    = $this->obtenerComandoPendiente($movil->equipo_id,$commandHelp); 
+            $commandHelp= new CommandHelp($movil->equipo_id);
+            $mensaje    = $this->obtenerComandoPendiente($movil,$commandHelp); 
             if($mensaje){
                 $comando= $this->generarCadenaComando($mensaje, $comando,$commandHelp);
             }
@@ -47,7 +49,7 @@ class KeepAliveController extends BaseController
 return  $comando;
 }
   
-public function obtenerComandoPendiente($equipo_id,$commandHelp){
+public function obtenerComandoPendiente($movil,$commandHelp){
     $mensaje            = false;
     $flagEnviarComando  = 0;
     /*primero ver si hay un OUTS pendiente con tipo_posicion!=69 i !=70 =>, mando el outs y lo pongo en 69
@@ -58,22 +60,22 @@ public function obtenerComandoPendiente($equipo_id,$commandHelp){
     /*Identificar si el equipo está en test, si es asi ejecutar los comandos en orden de prioridades
     sino, resolver el OUT con mas alta prioridad*/
     ///ver si hay comando pendiente///
-    $mensajePendiente            = ColaMensajes::where('modem_id', '=',$equipo_id)->where('rsp_id','=',1)
-                                  ->orderBy('prioridad','DESC')->get()->first(); 
-    if($mensajePendiente){
-      //1-obtener comandos con 3 intentos y ponerlos en estado rsp_id=6->sin respuesta
-        $esEnTest    = $commandHelp->isMovilInTest();
-        if( is_null($esEnTest) || $esEnTest[0]->comandos==0 ){ //si no está en test doy prioridad a los OUTS
-            $flagEnviarComando  = 1;
-            $outmsj             = $this->OUTPendiente($equipo_id);
-            $mensaje            = (is_null($outmsj))?$mensajePendiente:$outmsj;
-        }else{//si está en test ejecuto uno a uno por prioridad
-            $mensaje= TestController::tratarTest($mensajePendiente,$equipo_id);
-        }
-        $mensaje    = $commandHelp->intentarComando($mensaje,$equipo_id);
+    
+    Log::info("el movil tiene estos comandos en redis:".$movil->test);
+    if($movil->test!='0'){//el movil esta en test, tomo el primer tr_id de la lista y busco su info en la ddbb
+        $arrComandos        = explode(",",$movil->test);
+        $mensajePendiente   = ColaMensajes::where('tr_id', '=',$arrComandos[0])->get()->first(); 
+        $mensaje            = $mensajePendiente;//TestController::tratarTest($mensajePendiente,$movil->equipo_id);
+        RedisHelp::setLastCommand($movil->imei, $arrComandos[0]);
+        Log::info(print_r(RedisHelp::lookForMovil($movil->imei),true));
     }else{
-      $mensaje=false;
+        $mensajePendiente= ColaMensajes::where('modem_id', '=',$movil->equipo_id)->where('rsp_id','=',1)
+                           ->orderBy('prioridad','DESC')->get()->first(); 
+        $flagEnviarComando  = 1;
+        $outmsj             = $this->OUTPendiente($movil->equipo_id);
+        $mensaje            = (is_null($outmsj))?$mensajePendiente:$outmsj;
     }
+    $mensaje=($mensajePendiente)?$commandHelp->intentarComando($mensaje,$movil->equipo_id):false;
     return $mensaje;
 }
   
