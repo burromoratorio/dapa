@@ -30,7 +30,7 @@ class KeepAliveController extends BaseController
             $commandHelp= new CommandHelp($movil->equipo_id);
             $mensaje    = $this->obtenerComandoPendiente($movil,$commandHelp); 
             if($mensaje){
-                $comando= $this->generarCadenaComando($mensaje, $comando,$commandHelp);
+                $comando= $this->generarCadenaComando($mensaje, $comando,$commandHelp,$movil);
             }
             $logcadena ="\r\n KeepAlive IMEI:".$movil->imei." - equipo:".$movil->equipo_id." - Comando:".$comando." \r\n";
             HelpMen::report($movil->equipo_id,$logcadena);
@@ -93,7 +93,7 @@ public function OUTPendiente($equipo_id){
                                 ->orderBy('prioridad','DESC')->get()->first(); 
     return $outMs;
 }
-public function generarCadenaComando($mensaje,$comando,$commandHelp){
+public function generarCadenaComando($mensaje,$comando,$commandHelp,$movil){
     if($mensaje->comando!="" && !is_null($mensaje->comando)){
         // Log::error(print_r($mensaje, true));
         if(isset($mensaje->auxiliar) && !is_null($mensaje->auxiliar) && $mensaje->auxiliar!=""){
