@@ -76,8 +76,12 @@ public function obtenerComandoPendiente($movil,$commandHelp){
         $mensaje            = (is_null($outmsj))?$mensajePendiente:$outmsj;
     }
     $mensaje=($mensajePendiente)?$commandHelp->intentarComando($mensaje,$movil->equipo_id):false;
+    if(!$mensaje){
+        Log::error("Limpiando datos de comandos");
+        RedisHelp::setCommandListTest($movil->imei,'0');
+        RedisHelp::setLastCommand($movil->imei, "NO");
+    }
     
-    Log::error("el mensaje al comprobar el tes y la garcha da:".$mensaje);
     return $mensaje;
 }
   
