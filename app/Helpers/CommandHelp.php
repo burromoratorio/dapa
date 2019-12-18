@@ -22,6 +22,8 @@ class CommandHelp {
     const CONFIGURAR_FRECUENCIAS=20;
     const CAMBIO_MODO_PRESENCIA_GPRS=22;
     const RESET_GPRMC=100;
+    const EN_MOVIMIENTO = 1;
+    const EN_DETENIDO   = 0;
     static $comandoDefinitions  = array("+GETGP"=>17,"+FR"=>20,"+ALV"=>20,"+RES"=>100,"+OUTS"=>22,"+VER"=>00,
           "+PER=IOM,HAS"=>134,"+PER=IOM,INI"=>106,"+PER=IOM,CMD_NORMAL"=>22,"+PER=IOM,CMD_CORTE"=>22,
           "+PER=IOM,CMD_BLOQINH"=>22,"+PER=IOM,CMD_ALARMAS"=>22,"+PER=IOM,CMD_RESET"=>22,"+PER=IOM,ERROR"=>22,
@@ -85,7 +87,7 @@ class CommandHelp {
     //si el aux viene vacio....es una consulta mandar solo el ?
     //falta guardar en memoria el estado de velocidad max del equipo y tiempo de veloc max
     $auxParams  = explode(",",$mensaje->auxiliar);
-    switch ($mensaje->cmd_id) {
+    switch ($mensaje->cmd_id) { 
         case 17:
           $cadenaComando  = "+GETGP?";
           break;
