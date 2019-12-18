@@ -76,6 +76,8 @@ public function obtenerComandoPendiente($movil,$commandHelp){
         $mensaje            = (is_null($outmsj))?$mensajePendiente:$outmsj;
     }
     $mensaje=($mensajePendiente)?$commandHelp->intentarComando($mensaje,$movil->equipo_id):false;
+    
+    Log::error("el mensaje al comprobar el tes y la garcha da:".$mensaje);
     return $mensaje;
 }
   
