@@ -76,7 +76,7 @@ public function obtenerComandoPendiente($movil,$commandHelp){
         $mensaje            = (is_null($outmsj))?$mensajePendiente:$outmsj;
     }
     $mensaje=($mensajePendiente)?$commandHelp->intentarComando($mensaje,$movil->equipo_id):false;
-    if(!$mensaje){
+    if(!$mensaje && $movil->test!='0'){ //limpio el test, posible error de conexion y queda redis con info anterior no correspondiente
         Log::error("Limpiando datos de comandos");
         RedisHelp::setCommandListTest($movil->imei,'0');
         RedisHelp::setLastCommand($movil->imei, "NO");
