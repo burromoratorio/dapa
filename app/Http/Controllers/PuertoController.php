@@ -403,6 +403,7 @@ class PuertoController extends BaseController
                     $json=  ["movil"=>intval($movil->movilOldId),
                     "point"=> ["type"=>"Point","coordinates"=> [$arrInfoGprmc['longitud'],$arrInfoGprmc['latitud'] ] ],
                     "received"=>$fecha];
+                    Log::info($json);
                     HelpMen::posteaPosicion("positions","molinos",$json);      
                 }
                 /*$json=  ["movil"=>intval($movil->movilOldId),
