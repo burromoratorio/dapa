@@ -93,10 +93,10 @@ public function OUTPendiente($equipo_id){
 }
 public function generarCadenaComando($mensaje,$comando,$commandHelp,$movil){
     if($mensaje->comando!="" && !is_null($mensaje->comando)){
-        // Log::error(print_r($mensaje, true));
-        if(isset($mensaje->auxiliar) && !is_null($mensaje->auxiliar) && $mensaje->auxiliar!=""){
+        Log::error(print_r($mensaje, true));
+        if(isset($mensaje->auxiliar) && !is_null($mensaje->auxiliar) && $mensaje->auxiliar!=''){
             $auxParams = explode(",",$mensaje->auxiliar);
-            $valorSet  = (isset($auxParams[1])&&$auxParams[1]=='2')?"?2,".$auxParams[2]:'='.$mensaje->auxiliar;
+            $valorSet  = (isset($auxParams[1])&& $auxParams[1]=='2')?"?2,".$auxParams[2]:'='.$mensaje->auxiliar;
         }else{
             $valorSet="?";
         }
