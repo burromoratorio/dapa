@@ -67,7 +67,7 @@ public function obtenerComandoPendiente($movil,$commandHelp){
         $mensajePendiente   = ColaMensajes::where('tr_id', '=',$arrComandos[0])->get()->first(); 
         $mensaje            = $mensajePendiente;//TestController::tratarTest($mensajePendiente,$movil->equipo_id);
         RedisHelp::setLastCommand($movil->imei, $arrComandos[0]);
-        Log::info(print_r(RedisHelp::lookForMovil($movil->imei),true));
+        //Log::info(print_r(RedisHelp::lookForMovil($movil->imei),true));
     }else{
         $mensajePendiente= ColaMensajes::where('modem_id', '=',$movil->equipo_id)->where('rsp_id','=',1)
                            ->orderBy('prioridad','DESC')->get()->first(); 
