@@ -20,6 +20,9 @@ $app->get('moviles', 'NormalReportController@dameMoviles');
 $app->get('equipos/{id}', 'EquipoController@findImei');
 $app->patch('comandos/{imei}', 'CommandController@update');
 $app->post('comandos/{imei}', 'CommandController@update');
+//$app->post('test/comandos/{imei}', 'TestController@testStartup');
+$app->post('test/comandos/{imei}', 'TestController@testStartup');
+
 //$app->post('vaciaMemoria', 'NormalReportController@vaciaMemoria');
 $app->get('conectarRedis', 'RedisController@index');
 $app->get('vaciaMemoria', 'Controller@limpiar');

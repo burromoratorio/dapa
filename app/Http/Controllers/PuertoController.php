@@ -396,12 +396,13 @@ class PuertoController extends BaseController
                     config()->set('database.default', 'moviles');
                 }
                 /*********para comunicacion con API NAcho*******/
-                Log::info("por enviar al api de nacho el movil:".$movil->equipo_id);
-                $movTestings = array(10035, 10036);//posteo a molinos api
+                $movTestings = array(10035, 10036,772,1054);//posteo a molinos api
                 if (in_array($movil->equipo_id, $movTestings)){
+                Log::info("por enviar al api de nacho el movil:".$movil->equipo_id);
                     $json=  ["movil"=>intval($movil->movilOldId),
                     "point"=> ["type"=>"Point","coordinates"=> [$arrInfoGprmc['longitud'],$arrInfoGprmc['latitud'] ] ],
                     "received"=>$fecha];
+                    //Log::info(print_r($json,true));
                     HelpMen::posteaPosicion("positions","molinos",$json);      
                 }
                 /*$json=  ["movil"=>intval($movil->movilOldId),

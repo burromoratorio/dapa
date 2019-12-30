@@ -56,7 +56,9 @@ class RedisHelp {
                 'velocidad'=>'',
                 'indice'=>'',
                 'io'=>'',
-                'iom'=>''
+                'iom'=>'',
+                'test'=>'0',
+                'lastCommand'=>'NO'
             ]);
             
         }catch( \Exception $e){
@@ -81,6 +83,30 @@ class RedisHelp {
             self::$client->hSet($posicion['imei'],'indice',$posicion['indice']);
         }catch( \Exception $e){
             Log::error("Error al setear ultima posicion IMEI:".$posicion['imei']."---".$e);
+        }
+    }
+    public static function setTestMovil($imei,$listado){
+        if(!self::$client)self::setClient();
+        try{
+           self::$client->hSet($imei,'test',$listado); 
+        }catch(Exception $e){
+            Log::error("Error al setear estado en redis IMEI:".$movil->imei."--".$e);
+        }
+    }
+    public static function setLastCommand($imei,$tr_id){
+        if(!self::$client)self::setClient();
+        try{
+           self::$client->hSet($imei,'lastCommand',$tr_id); 
+        }catch(Exception $e){
+            Log::error("Error al setear estado en redis IMEI:".$movil->imei."--".$e);
+        }
+    }
+    public static function setCommandListTest($imei,$commandList){
+        if(!self::$client)self::setClient();
+        try{
+           self::$client->hSet($imei,'test',$commandList); 
+        }catch(Exception $e){
+            Log::error("Error al setear estado en redis IMEI:".$movil->imei."--".$e);
         }
     }
     public static function deletePosicionMovil($posicion){
