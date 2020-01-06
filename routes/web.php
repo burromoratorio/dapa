@@ -14,16 +14,15 @@ $app->post('reportes-normales', 'NormalReportController@create');
 $app->post('reportes-curvos', 'CurveReportController@create');
 $app->post('alarmas', 'AlarmController@create');
 $app->post('keep-alives', 'KeepAliveController@create');
-//$app->post('comandos', 'CommandController@send');
 $app->post('listen', 'CommandController@listen');
 $app->get('moviles', 'NormalReportController@dameMoviles');
 $app->get('equipos/{id}', 'EquipoController@findImei');
 $app->patch('comandos/{imei}', 'CommandController@update');
 $app->post('comandos/{imei}', 'CommandController@update');
-//$app->post('vaciaMemoria', 'NormalReportController@vaciaMemoria');
 $app->get('conectarRedis', 'RedisController@index');
 $app->get('prueba', 'Controller@index');
 $app->post('vaciaMemoria', 'Controller@limpiar');
-/*$app->get('/', function () use ($app) {
-    return $app->version();
-});*/
+
+$app->post('test/comandos/{imei}', 'TestController@testStartup');
+
+$app->get('conectarRedis', 'RedisController@index');
