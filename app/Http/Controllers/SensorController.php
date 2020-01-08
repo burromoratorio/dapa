@@ -37,7 +37,9 @@ class SensorController extends BaseController {
     public static function analisisIO($ioData,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
         $movilOldId = intval($movil->movilOldId);//alarma_id=7 (Normal)//estado_movil_id=10(si alarma)
         $rta        = array("rta"=>0,"estado_movil_id"=>$estadoMovilidad,"tipo_alarma_id"=>7); 
-        //si no tiene posicion_id y es una alarma de panico , informar mail?¡
+        $estado_movil_id=$estadoMovilidad;
+        $tipo_alarma_id=7;
+//si no tiene posicion_id y es una alarma de panico , informar mail?¡
         if($ioData[0]=="I00"){//ingreso de alarma de panico bit en 0
             $logcadena = "Panico presionado Equipo:".$imei." - Movil:".$movilOldId."\r\n";
             HelpMen::report($movil->equipo_id,$logcadena);
