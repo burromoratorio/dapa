@@ -72,7 +72,7 @@ class CommandController extends BaseController
                 $logcadena = " actualizacion correcta :AT+OK \r\n";
                 //si tengo un reporte en redis, busco y actualizo el QEA con ese reporte
                 //
-                $this->actualizaQea($equipo_id);
+                $this->actualizaQea($equipo_id,$movil);
                 
                 //elimino el comando ya tratado de redis y limpio el lastCommand
                 $arrCmd    = explode(",",$movil->test);
@@ -216,7 +216,7 @@ class CommandController extends BaseController
         ->get()->first();
         return $outMs;
     }
-    public function actualizaQea($equipo_id){
+    public function actualizaQea($equipo_id,$movil){
         //rta-->+PER:QEA,OK
         $qea    = null;
         $qea    = ColaMensajes::where('modem_id', '=',$equipo_id)
