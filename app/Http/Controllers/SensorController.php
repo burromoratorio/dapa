@@ -43,7 +43,8 @@ class SensorController extends BaseController {
             HelpMen::report($movil->equipo_id,$logcadena);
             DB::beginTransaction();
             try {
-                $alarmaPanico   = Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,'tipo_alarma_id'=>1,'fecha_alarma'=>$fecha,'falsa'=>0]);
+                $alarmaPanico   = Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,'tipo_alarma_id'=>1,
+                                    'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0']);
                 $alarmaPanico->save();
                 DB::commit();
                 }catch (\Exception $ex) {
@@ -114,7 +115,8 @@ class SensorController extends BaseController {
                     $estadoArr = str_split($arrIOM[$keyAlarma+1]);
                     $rta = self::evaluaCampoAla($estadoArr,$movil);
                     if($rta["tipo_alarma_id"]>0){
-                        Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta["tipo_alarma_id"],'fecha_alarma'=>$fecha,'falsa'=>0]);
+                        Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta["tipo_alarma_id"],
+                                        'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0']);
                         $rta["estado_movil_id"]=10;
                         $rta["rta"]            = 1;
                     }
@@ -171,7 +173,8 @@ class SensorController extends BaseController {
             $rta['estado_movil_id']= 10;//estado "en alarma"
             $rta['tipo_alarma_id'] = 32;//modo NB
             HelpMen::report($movil->equipo_id,"***EQUIPO EN MODO SILENCIOSO*** \r\n");
-            Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta['tipo_alarma_id'],'fecha_alarma'=>$fecha,'falsa'=>0]);
+            Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta['tipo_alarma_id'],
+                            'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0']);
         }
         return $rta;
     }
@@ -183,13 +186,15 @@ class SensorController extends BaseController {
             $rta['estado_movil_id']= 10;//estado "en alarma"
             $rta['tipo_alarma_id'] = 1;//panico
             HelpMen::report($movil->equipo_id,"***PANICO ACTIVADO*** \r\n");
-            Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta['tipo_alarma_id'] ,'fecha_alarma'=>$fecha,'falsa'=>0]);
+            Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta['tipo_alarma_id'] ,
+                        'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0']);
         }
         if($perFieldWorkMode== 4 && isset($estadoArr[0]) && $estadoArr[0]=="0" && $estadoArr[0]!="X"){ //si está en modo alarmas darle bola al campo panico en ALA
             $rta['estado_movil_id']= 10;//estado "en alarma"
             $rta['tipo_alarma_id'] = 1;//panico
             HelpMen::report($movil->equipo_id,"***PANICO ACTIVADO*** \r\n");
-            Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta['tipo_alarma_id'] ,'fecha_alarma'=>$fecha,'falsa'=>0]);
+            Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta['tipo_alarma_id'] ,
+                        'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0']);
         }
         return $rta;
     }
@@ -306,8 +311,8 @@ class SensorController extends BaseController {
         DB::beginTransaction();
         try {
             if($tipo_alarma_id!=49 && $tipo_alarma_id!=0 ){//solo si es cualquier alarma distinta de alimentacion ppal
-                Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,
-                            'tipo_alarma_id'=>$tipo_alarma_id,'fecha_alarma'=>$fecha,'falsa'=>0]);
+                Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,'tipo_alarma_id'=>$tipo_alarma_id,
+                            'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0']);
             }
             Movil::where('movil_id', '=', $movil_id)->update(array('estado_movil_id' => $estado_movil_id));
             DB::commit();

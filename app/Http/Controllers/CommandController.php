@@ -70,6 +70,10 @@ class CommandController extends BaseController
                 $pendiente->fecha_final = date("Y-m-d H:i:s");
                 $pendiente->save();
                 $logcadena = " actualizacion correcta :AT+OK \r\n";
+                //si tengo un reporte en redis, busco y actualizo el QEA con ese reporte
+                //
+                $this->actualizaQea($equipo_id);
+                
                 //elimino el comando ya tratado de redis y limpio el lastCommand
                 $arrCmd    = explode(",",$movil->test);
                 if(count($arrCmd)>1){//fifo, elimino el primero ya tratado
@@ -212,6 +216,18 @@ class CommandController extends BaseController
         ->get()->first();
         return $outMs;
     }
-    
+    public function actualizaQea($equipo_id){
+        //rta-->+PER:QEA,OK
+        $qea    = null;
+        $qea    = ColaMensajes::where('modem_id', '=',$equipo_id)
+        ->where('comando','=','+PER')
+        ->orderBy('fecha_inicio','DESC')
+        ->get()->first();
+        if(!is_null($qea)){
+            $qea->respuesta  = $movil->report;
+            $qea->save();
+        }
+        return $outMs;
+    }
 }
 

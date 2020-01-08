@@ -59,7 +59,8 @@ class RedisHelp {
                 'io'=>'',
                 'iom'=>'',
                 'test'=>'0',
-                'lastCommand'=>'NO'
+                'lastCommand'=>'NO',
+                'report'=>''
             ]);
             
         }catch( \Exception $e){
@@ -108,6 +109,14 @@ class RedisHelp {
            self::$client->hSet($imei,'test',$commandList); 
         }catch(Exception $e){
             Log::error("Error al setear estado en redis IMEI:".$movil->imei."--".$e);
+        }
+    }
+    public static function setLastReport($imei,$cadena){
+        if(!self::$client)self::setClient();
+        try{
+           self::$client->hSet($imei,'report',$cadena); 
+        }catch(Exception $e){
+            Log::error("Error al setear ultima cadena en redis IMEI:".$movil->imei."--".$e);
         }
     }
     public static function deletePosicionMovil($posicion){

@@ -10,7 +10,7 @@ use App\Posiciones;
 use App\PosicionesHistoricas;
 use App\Helpers\HelpMen;
 use App\Helpers\MemVar;
-use \App\Helpers\RedisHelp;
+use App\Helpers\RedisHelp;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -317,6 +317,11 @@ class PuertoController extends BaseController
                 }
                 $arrInfoGprmc   = HelpMen::Gprmc2Data($gprmcData);
                 $validezReporte = self::validezReporte($report['IMEI'],$fecha,$gprmcData[6],$frData['FR'],$movil);
+                
+                //voy a almacenar el ultimo reporte del movil
+                $cadenaRedis    = implode(";", $report);
+                RedisHelp::setLastReport($report['IMEI'],$cadenaRedis);
+                
                 if($validezReporte>0){
                     HelpMen::report($movil->equipo_id,"Actualizo hora de posicion en detenido \r\n");
                     $posicion               = new Posiciones;
@@ -350,7 +355,8 @@ class PuertoController extends BaseController
                                         'ltrs_consumidos'=>$info['ltrs']]);
                         $posicion->save();
                         if($alaField["ALA"]=="V"){
-                            $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion->posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>7,'fecha_alarma'=>$fecha,'falsa'=>0]);
+                            $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion->posicion_id,'movil_id'=>intval($movil->movilOldId),
+                                                'tipo_alarma_id'=>7,'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0']);
                             $estadoMovilidad    = 11;
                         }
                         DB::commit();
