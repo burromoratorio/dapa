@@ -227,7 +227,7 @@ class CommandController extends BaseController
             $qea->respuesta  = $movil->report;
             $qea->save();
         }
-        return $outMs;
+        //return $outMs;
     }
 }
 
