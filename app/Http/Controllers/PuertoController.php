@@ -321,11 +321,12 @@ class PuertoController extends BaseController
                 //voy a almacenar el ultimo reporte del movil
                 $cadenaRedis    = implode(";", $report);
                 RedisHelp::setLastReport($report['IMEI'],$cadenaRedis);
-                
+                //si validez reporte da 1, quiere decir que está detenido, traer la ultima posicion_id y meter acá
                 if($validezReporte>0){
                     HelpMen::report($movil->equipo_id,"Actualizo hora de posicion en detenido \r\n");
-                    $posicion               = new Posiciones;
-                    $posicion->posicion_id  = $validezReporte;
+                    $posicion = PosicionesHistoricas::where('movil_id','=',$movil->movilOldId)->orderBy('fecha','DESC')->get()->first(); 
+                    //$posicion               = new Posiciones;
+                    //$posicion->posicion_id  = $validezReporte;
                     $respuesta              = $validezReporte;
                 }else{
                     //Log::info("se inserta nueva posicion");
