@@ -10,7 +10,7 @@ class Alarmas extends Model
     public $timestamps      = false;
     protected $connection   = 'siac';
     protected $primaryKey   = 'alarma_id';    
-    protected $fillable     = array('posicion_id','movil_id','tipo_alarma_id','fecha_alarma','falsa','nombre_estacion');
+    protected $fillable     = array('posicion_id','movil_id','tipo_alarma_id','fecha_alarma','falsa','nombre_estacion','usuario_id');
     protected $dateFormat   = 'Y-m-d H:i:s';
 
     protected $dates = [
