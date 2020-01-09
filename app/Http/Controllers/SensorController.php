@@ -46,7 +46,7 @@ class SensorController extends BaseController {
             DB::beginTransaction();
             try {
                 $alarmaPanico   = Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,'tipo_alarma_id'=>1,
-                                    'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0']);
+                                    'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM01']);
                 $alarmaPanico->save();
                 DB::commit();
                 }catch (\Exception $ex) {
