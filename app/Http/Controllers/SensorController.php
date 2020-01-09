@@ -46,7 +46,7 @@ class SensorController extends BaseController {
             DB::beginTransaction();
             try {
                 $alarmaPanico   = Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,'tipo_alarma_id'=>1,
-                                    'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM01']);
+                                    'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0']);
                 $alarmaPanico->save();
                 DB::commit();
                 }catch (\Exception $ex) {
@@ -118,7 +118,7 @@ class SensorController extends BaseController {
                     $rta = self::evaluaCampoAla($estadoArr,$movil);
                     if($rta["tipo_alarma_id"]>0){
                         Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta["tipo_alarma_id"],
-                                        'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0','usuario_id'=>980]);
+                                        'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM01','usuario_id'=>980]);
                         $rta["estado_movil_id"]=10;
                         $rta["rta"]            = 1;
                     }
