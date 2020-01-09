@@ -176,7 +176,7 @@ class SensorController extends BaseController {
             $rta['tipo_alarma_id'] = 32;//modo NB
             HelpMen::report($movil->equipo_id,"***EQUIPO EN MODO SILENCIOSO*** \r\n");
             Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta['tipo_alarma_id'],
-                            'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0']);
+                            'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0','usuario_id'=>980]);
         }
         return $rta;
     }
@@ -314,7 +314,7 @@ class SensorController extends BaseController {
         try {
             if($tipo_alarma_id!=49 && $tipo_alarma_id!=0 ){//solo si es cualquier alarma distinta de alimentacion ppal
                 Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,'tipo_alarma_id'=>$tipo_alarma_id,
-                            'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0']);
+                            'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0','usuario_id'=>980]);
             }
             Movil::where('movil_id', '=', $movil_id)->update(array('estado_movil_id' => $estado_movil_id));
             DB::commit();
