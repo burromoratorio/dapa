@@ -118,7 +118,7 @@ class SensorController extends BaseController {
                     $rta = self::evaluaCampoAla($estadoArr,$movil);
                     if($rta["tipo_alarma_id"]>0){
                         Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta["tipo_alarma_id"],
-                                        'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0']);
+                                        'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0','usuario_id'=>980]);
                         $rta["estado_movil_id"]=10;
                         $rta["rta"]            = 1;
                     }
@@ -189,14 +189,14 @@ class SensorController extends BaseController {
             $rta['tipo_alarma_id'] = 1;//panico
             HelpMen::report($movil->equipo_id,"***PANICO ACTIVADO*** \r\n");
             Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta['tipo_alarma_id'] ,
-                        'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0']);
+                        'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0','usuario_id'=>980]);
         }
         if($perFieldWorkMode== 4 && isset($estadoArr[0]) && $estadoArr[0]=="0" && $estadoArr[0]!="X"){ //si está en modo alarmas darle bola al campo panico en ALA
             $rta['estado_movil_id']= 10;//estado "en alarma"
             $rta['tipo_alarma_id'] = 1;//panico
             HelpMen::report($movil->equipo_id,"***PANICO ACTIVADO*** \r\n");
             Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta['tipo_alarma_id'] ,
-                        'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0']);
+                        'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0','usuario_id'=>980]);
         }
         return $rta;
     }
