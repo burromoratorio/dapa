@@ -118,7 +118,7 @@ class SensorController extends BaseController {
                     $rta = self::evaluaCampoAla($estadoArr,$movil);
                     if($rta["tipo_alarma_id"]>0){
                         Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta["tipo_alarma_id"],
-                                        'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM01','usuario_id'=>980]);
+                                        'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0','usuario_id'=>980]);
                         $rta["estado_movil_id"]=10;
                         $rta["rta"]            = 1;
                     }
@@ -310,16 +310,17 @@ class SensorController extends BaseController {
     public static function persistSensor($imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id){
         $movilOldId = intval($movil->movilOldId);
         $movil_id   = intval($movil->movil_id);
-        DB::beginTransaction();
+$logcadena = "cargando alarma nuevaaaa lpmmm alarmas persistSensor \r\n";
+            HelpMen::report($movil->equipo_id,$logcadena);        
+//DB::beginTransaction();
         try {
             if($tipo_alarma_id!=49 && $tipo_alarma_id!=0 ){//solo si es cualquier alarma distinta de alimentacion ppal
                 Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,'tipo_alarma_id'=>$tipo_alarma_id,
                             'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0','usuario_id'=>980]);
             }
             Movil::where('movil_id', '=', $movil_id)->update(array('estado_movil_id' => $estado_movil_id));
-            DB::commit();
-            $logcadena = "cargando alarma nuevaaaa lpmmm alarmas persistSensor \r\n";
-            HelpMen::report($movil->equipo_id,$logcadena);
+            //DB::commit();
+            
             self::startupSensores();
         }catch (\Exception $ex) {
             DB::rollBack();
