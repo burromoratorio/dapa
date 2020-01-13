@@ -67,6 +67,13 @@ class RedisHelp {
             Log::error($e);
         }
     }
+    /**
+     * Setea estados de perifericos y IO
+     *
+     * @param  iom String
+     * @param  IO String
+     *
+     */
     public static function setEstadosMovil($movil,$iom,$io){
         if(!self::$client)self::setClient();
         try{

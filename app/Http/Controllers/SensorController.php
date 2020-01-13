@@ -6,6 +6,8 @@ use App\EstadosSensores;
 use App\Movil;
 use App\Helpers\HelpMen;
 use App\Helpers\MemVar;
+use App\Helpers\RedisHelp;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\PerifericoController;
@@ -57,7 +59,7 @@ class SensorController extends BaseController {
         }
         /*cambios de estado IO alarmas de bateria*/
         $io             = str_replace("I", "",$ioData[1] );
-        $sensorEstado   = self::getSensores($imei);
+        $sensorEstado   = $movil->io;//self::getSensores($imei);
         if($io=='10'){ 
             $logcadena = "Movil: ".$imei." - Equipo: ".$movil->equipo_id." - funcionando con bateria auxiliar\r\n";
             HelpMen::report($movil->equipo_id,$logcadena);
@@ -73,7 +75,7 @@ class SensorController extends BaseController {
         }
         $rta["estado_movil_id"]=$estado_movil_id;
         $rta["tipo_alarma_id"] =$tipo_alarma_id;
-        if(!$sensorEstado){
+        if($sensorEstado==''){
             HelpMen::report($movil->equipo_id,"Datos de sensores IO vacios en memoria, generando...");
             DB::beginTransaction();
             try {
@@ -87,11 +89,12 @@ class SensorController extends BaseController {
                 HelpMen::report($movil->equipo_id,$logcadena);
             }
         }else{
-            if($io!=$sensorEstado->io){ //evaluo cambio de bits de sensor IO
+            if($io!=$sensorEstado){ //evaluo cambio de bits de sensor IO
                 $rta["rta"]=1;
                 self::updateSensores($imei,$movil,"",$io,$tipo_alarma_id,$estado_movil_id,$posicion_id,$fecha);
             }
         }
+        RedisHelp::setEstadosMovil($movil, '', $io);
         return $rta;
     }
     /************Analisis de cadena IOM*********/
@@ -100,7 +103,7 @@ class SensorController extends BaseController {
     si algun sendor trae el caracter X entonces no lo tengo en cuenta */
     public static function analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estado_movil_id){
         $arrIOM      = explode(',',$perField);
-        $sensorEstado= self::getSensores($imei);//estado_movil_id=7(normal), 10(Alarma)
+        $sensorEstado= $movil->iom;//self::getSensores($imei);//estado_movil_id=7(normal), 10(Alarma)
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); 
         if($perField!='NULL' && $arrIOM[0]=='IOM'){
             $perFieldInput   = $arrIOM[1];
@@ -127,7 +130,7 @@ class SensorController extends BaseController {
                 $rta = self::evaluaNb($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha);               
                 
                 //luego del analisis actualizo los datos de sensores, primero analiso e informo alarmas, y estado del movil
-                if(!$sensorEstado ){
+                if($sensorEstado!='' ){
                    HelpMen::report($movil->equipo_id,"Datos de sensores vacios en memoria, generando...");
                     DB::beginTransaction();
                     try {
@@ -140,11 +143,11 @@ class SensorController extends BaseController {
                         HelpMen::report($movil->equipo_id,$logcadena);
                     }
                 }else{
-                    if($sensorEstado->iom=="NULL"){
+                    if($sensorEstado=="NULL"){
                         HelpMen::report($movil->equipo_id,"Actualizando datos de IOM en instalacion que antes tenia IO");
                         DB::beginTransaction();
                         try {
-                            $sensorNuevo  = EstadosSensores::where('id', '=',$sensorEstado->id)->get()->first();
+                            $sensorNuevo  = EstadosSensores::where('imei', '=',$movil->imei)->orderBy('updated_at','DESC')->get()->first(); ;
                             $sensorNuevo->iom=$perFieldInput;
                             $sensorNuevo->save();
                             self::persistSensor($imei,$posicion_id,$movil,$fecha,$rta["tipo_alarma_id"],$rta["estado_movil_id"]);
@@ -160,11 +163,13 @@ class SensorController extends BaseController {
                             self::updateSensores($imei,$movil,$perFieldInput,"",$idEstados["tipo_alarma_id"],$idEstados["estado_movil_id"],$posicion_id,$fecha);
                     }
                 }
+                
             }else{
                 /*Dicen que cuando se pone en este modo ahora hay que actualizar los datos...*/
                 HelpMen::report($movil->equipo_id,"\r\n **EQUIPO EN MODO RESET...NO INFORMO ALARMA DE NINGUN TIPO*** \r\n ");
                 self::actualizarPerifericos($movil,$iomArr,$perFieldOutput,$manualRestartMethod);
             }
+            RedisHelp::setEstadosMovil ($movil, $perField, '');
         }
         return $rta;    
     }
@@ -254,7 +259,9 @@ class SensorController extends BaseController {
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); //alarma_id=7 (Normal)
         HelpMen::report($movil->equipo_id,"*Evaluando cambios IOM* \r\n ");
         self::actualizarPerifericos($movil,$iomArr,$perFieldOutput,$manualRestartMethod);
-        if($sensorEstado && $sensorEstado->iom){
+        Log::info(print_r($sensorEstado,true));
+        $iomRedis = explode(',',$sensorEstado);
+        if($iomRedis[0]=='IOM' && $iomRedis[1]){
             $estadoArr = str_split($sensorEstado->iom);
             //Log::info(print_r($estadoArr,true));
             if( $estadoArr[3]==0 && $iomArr[3]==1 && $iomArr[3]!="X"){
@@ -321,7 +328,7 @@ $logcadena = "cargando alarma nuevaaaa lpmmm alarmas persistSensor \r\n";
             Movil::where('movil_id', '=', $movil_id)->update(array('estado_movil_id' => $estado_movil_id));
             //DB::commit();
             
-            self::startupSensores();
+            //self::startupSensores();
         }catch (\Exception $ex) {
             DB::rollBack();
             $logcadena = "Error al tratar alarmas persistSensor \r\n";
