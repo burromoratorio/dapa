@@ -103,9 +103,9 @@ class SensorController extends BaseController {
     si algun sendor trae el caracter X entonces no lo tengo en cuenta */
     public static function analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estado_movil_id){
         $arrIOM      = explode(',',$perField);
-        $sensorEstado= $movil->iom;//self::getSensores($imei);//estado_movil_id=7(normal), 10(Alarma)
+        $sensorEstado= $movil['iom'];//self::getSensores($imei);//estado_movil_id=7(normal), 10(Alarma)
         $sensorDeMemoria=self::getSensores($imei);
-        Log::info(print_r($movil,true));
+        Log::info(print_r($sensorEstado,true));
         Log::info(print_r($sensorDeMemoria,true));
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); 
         if($perField!='' && $arrIOM[0]=='IOM'){
