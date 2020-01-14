@@ -172,6 +172,7 @@ class SensorController extends BaseController {
                 HelpMen::report($movil->equipo_id,"\r\n **EQUIPO EN MODO RESET...NO INFORMO ALARMA DE NINGUN TIPO*** \r\n ");
                 self::actualizarPerifericos($movil,$iomArr,$perFieldOutput,$manualRestartMethod);
             }
+            Log::info("ahora el PERFIELD");
             Log::info(print_r($perField,true));
             RedisHelp::setEstadosMovil ($movil, $perField, '');
         }
