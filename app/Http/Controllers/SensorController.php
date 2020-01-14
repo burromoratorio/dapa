@@ -108,7 +108,7 @@ class SensorController extends BaseController {
         Log::info(print_r($sensorEstado,true));
         Log::info(print_r($sensorDeMemoria,true));
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); 
-        if($perField!='NULL' && $arrIOM[0]=='IOM'){
+        if($perField!='' && $arrIOM[0]=='IOM'){
             $perFieldInput   = $arrIOM[1];
             $perFieldOutput  = $arrIOM[2];
             $perFieldWorkMode= $arrIOM[3];
@@ -172,6 +172,7 @@ class SensorController extends BaseController {
                 HelpMen::report($movil->equipo_id,"\r\n **EQUIPO EN MODO RESET...NO INFORMO ALARMA DE NINGUN TIPO*** \r\n ");
                 self::actualizarPerifericos($movil,$iomArr,$perFieldOutput,$manualRestartMethod);
             }
+            Log::info(print_r($perField,true));
             RedisHelp::setEstadosMovil ($movil, $perField, '');
         }
         return $rta;    
