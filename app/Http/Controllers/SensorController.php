@@ -104,6 +104,9 @@ class SensorController extends BaseController {
     public static function analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estado_movil_id){
         $arrIOM      = explode(',',$perField);
         $sensorEstado= $movil->iom;//self::getSensores($imei);//estado_movil_id=7(normal), 10(Alarma)
+        $sensorDeMemoria=self::getSensores($imei);
+        Log::info(print_r($sendorEstado,true));
+        Log::info(print_r($sensorDeMemoria,true));
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); 
         if($perField!='NULL' && $arrIOM[0]=='IOM'){
             $perFieldInput   = $arrIOM[1];
