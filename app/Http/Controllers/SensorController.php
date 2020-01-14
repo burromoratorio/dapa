@@ -106,7 +106,7 @@ class SensorController extends BaseController {
         $sensorEstado= $movil->iom;//self::getSensores($imei);//estado_movil_id=7(normal), 10(Alarma)
         $sensorDeMemoria=self::getSensores($imei);
         Log::info("el movil iom:".$movil->iom);
-        Log::info(print_r($sensorDeMemoria,true));
+        Log::info(print_r($movil,true));
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); 
         if($perField!='' && $arrIOM[0]=='IOM'){
             $perFieldInput   = $arrIOM[1];
