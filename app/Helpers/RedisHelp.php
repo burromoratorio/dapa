@@ -77,6 +77,7 @@ class RedisHelp {
     public static function setEstadosMovil($movil,$iom,$io){
         if(!self::$client)self::setClient();
         try{
+            Log::error("seteando iom:".$iom);
            self::$client->hSet($movil->imei,'io',$io); 
            self::$client->hSet($movil->imei,'iom',$iom); 
         }catch(Exception $e){
