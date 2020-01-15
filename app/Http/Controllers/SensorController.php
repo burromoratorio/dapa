@@ -101,18 +101,18 @@ class SensorController extends BaseController {
     /*$arrPeriferico[0]=IOM,  $arrPeriferico[1]=I1..I14, $arrPeriferico[2]=O1..O14, $arrPeriferico[3]=E(modo de trabajo del equipo)
     $arrPeriferico[4]=PR(método de restablecimiento Manual),  $arrPeriferico[5]=NB(Normal o backgrond),  $arrPeriferico[6]=P (Panico) 
     si algun sendor trae el caracter X entonces no lo tengo en cuenta */
+    //$perField -->campo PER completo que viene en cadena de posicion
     public static function analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estado_movil_id){
         $arrIOM      = explode(',',$perField);
-        $sensorEstado= $movil->iom;//self::getSensores($imei);//estado_movil_id=7(normal), 10(Alarma)
-        $sensorDeMemoria=self::getSensores($imei);
-        Log::info("el movil iom:".$sensorEstado);
-        Log::info(print_r($movil,true));
+        //string del tipo:IOM,10111000011110,000000XXXX,4,1,ALA,XX1XXXXXXXXXXX    
+        $sensorEstado= $movil->iom;
+        //estado_movil_id=7(normal), 10(Alarma)
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); 
-        if($perField!='' && $arrIOM[0]=='IOM'){
-            $perFieldInput   = $arrIOM[1];
-            $perFieldOutput  = $arrIOM[2];
-            $perFieldWorkMode= $arrIOM[3];
-            $manualRestartMethod= $arrIOM[4];
+        if(!is_null($perField) && $perField!='' && $arrIOM[0]=='IOM'){
+            $perFieldInput   = $arrIOM[1];//entradas
+            $perFieldOutput  = $arrIOM[2];//salidas
+            $perFieldWorkMode= $arrIOM[3];//modo de trabajo
+            $manualRestartMethod= $arrIOM[4];//modo reseteo
             $iomArr = str_split($perFieldInput);
             $keyAlarma=array_search('ALA', $arrIOM);
             /*****si $perFieldWorkMode= 0 =>RESET no informo alertas de nada solo actualizo estado de movil****/
@@ -121,6 +121,7 @@ class SensorController extends BaseController {
                 $estadoArr= null;
                 if( $keyAlarma ){//Evaluo campo ALA
                     $estadoArr = str_split($arrIOM[$keyAlarma+1]);
+                    Log::error(print_r($estadoArr,true));//viendo que genero acá
                     $rta = self::evaluaCampoAla($estadoArr,$movil);
                     if($rta["tipo_alarma_id"]>0){
                         Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta["tipo_alarma_id"],
@@ -132,9 +133,9 @@ class SensorController extends BaseController {
                 $rta = self::evaluaPanico($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha,$estadoArr);
                 $rta = self::evaluaNb($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha);               
                 
-                //luego del analisis actualizo los datos de sensores, primero analiso e informo alarmas, y estado del movil
-                if($sensorEstado!='' ){
-                   HelpMen::report($movil->equipo_id,"Datos de sensores vacios en memoria, generando...");
+                //luego del analisis actualizo los datos de sensores, primero analizo e informo alarmas, y estado del movil
+                if(!is_null($sensorEstado) && $sensorEstado!='' ){
+                   HelpMen::report($movil->equipo_id,"Datos de sensores vacios en DDBB, generando...");
                     DB::beginTransaction();
                     try {
                         EstadosSensores::create(['imei'=>$imei,'movil_id'=>intval($movil->movil_id),'iom'=>$perFieldInput]);
@@ -172,11 +173,11 @@ class SensorController extends BaseController {
                 HelpMen::report($movil->equipo_id,"\r\n **EQUIPO EN MODO RESET...NO INFORMO ALARMA DE NINGUN TIPO*** \r\n ");
                 self::actualizarPerifericos($movil,$iomArr,$perFieldOutput,$manualRestartMethod);
             }
-            if( !is_null($perField) && $perField!='' ){
+            //if( !is_null($perField) && $perField!='' ){
                 Log::info("ahora el PERFIELD");
                 Log::info(print_r($perField,true));
                 RedisHelp::setEstadosMovil ($movil, $perField, '');
-            }
+            //}
            
         }
         return $rta;    
@@ -204,7 +205,8 @@ class SensorController extends BaseController {
             Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta['tipo_alarma_id'] ,
                         'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0','usuario_id'=>980]);
         }
-        if($perFieldWorkMode== 4 && isset($estadoArr[0]) && $estadoArr[0]=="0" && $estadoArr[0]!="X"){ //si está en modo alarmas darle bola al campo panico en ALA
+        //si está en modo alarmas darle bola al campo panico en ALA
+        if($perFieldWorkMode== 4 && isset($estadoArr[0]) && $estadoArr[0]=="0" && $estadoArr[0]!="X"){ 
             $rta['estado_movil_id']= 10;//estado "en alarma"
             $rta['tipo_alarma_id'] = 1;//panico
             HelpMen::report($movil->equipo_id,"***PANICO ACTIVADO*** \r\n");
