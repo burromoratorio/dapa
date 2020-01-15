@@ -145,11 +145,12 @@ class SensorController extends BaseController {
                             $logcadena = "Error al dar de alta sensor IOM..".$ex."\r\n";
                             HelpMen::report($movil->equipo_id,$logcadena);
                         }
+                        self::persistSensor($posicion_id,$movil,$fecha,$rta["tipo_alarma_id"],$rta["estado_movil_id"]);
                     }else{//si tenía pero posiblemente solo de IO, genero el IOM
                         HelpMen::report($movil->equipo_id,"Actualizando datos de IOM en instalacion que antes tenia IO");
                         self::updateSensores($movil,$perFieldInput,"",$rta["tipo_alarma_id"],$rta["estado_movil_id"],$posicion_id,$fecha);
                     }
-                    self::persistSensor($posicion_id,$movil,$fecha,$rta["tipo_alarma_id"],$rta["estado_movil_id"]);
+                    
                 }else{
                     HelpMen::report($movil->equipo_id,"Actualizando datos de IOM en instalacion que antes tenia IO");
                     $rta = self::cambiosInputIOM($iomArr,$sensorEstado,$movil,$estado_movil_id,$perFieldOutput,$manualRestartMethod);
@@ -306,7 +307,7 @@ class SensorController extends BaseController {
             }else{
                 EstadosSensores::where('imei', '=', $movil->imei)->update(array('io' => $io));
             }
-            self::persistSensor($movil->imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id);
+            self::persistSensor($posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id);
             DB::commit();
         }catch (\Exception $ex) {
             DB::rollBack();
