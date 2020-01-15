@@ -80,7 +80,7 @@ class SensorController extends BaseController {
             DB::beginTransaction();
             try {
                 EstadosSensores::create(['imei'=>$imei,'movil_id'=>intval($movil->movil_id),'io'=>$io]);
-                self::persistSensor($imei,$posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id);
+                self::persistSensor($posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id);
                 DB::commit();
                 $rta["rta"]=0;
             }catch (\Exception $ex) {
@@ -91,7 +91,7 @@ class SensorController extends BaseController {
         }else{
             if($io!=$sensorEstado){ //evaluo cambio de bits de sensor IO
                 $rta["rta"]=1;
-                self::updateSensores($imei,$movil,"",$io,$tipo_alarma_id,$estado_movil_id,$posicion_id,$fecha);
+                self::updateSensores($movil,"",$io,$tipo_alarma_id,$estado_movil_id,$posicion_id,$fecha);
             }
         }
         RedisHelp::setEstadosMovil($movil, '', $io);
@@ -315,8 +315,8 @@ class SensorController extends BaseController {
         }
     }
     public static function persistSensor($posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id){
-        $movilOldId = intval($movil->movilOldId);
-        $movil_id   = intval($movil->movil_id);
+        $movilOldId = $movil->movilOldId;
+        $movil_id   = $movil->movil_id;
         $logcadena = "cargando alarma nuevaaaa lpmmm alarmas persistSensor \r\n";
         HelpMen::report($movil->equipo_id,$logcadena);        
         DB::beginTransaction();
