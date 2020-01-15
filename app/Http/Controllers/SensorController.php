@@ -259,6 +259,7 @@ class SensorController extends BaseController {
         HelpMen::report($movil->equipo_id,"*Evaluando cambios IOM* \r\n ");
         self::actualizarPerifericos($movil,$iomArr,$perFieldOutput,$manualRestartMethod);
         $estadoArr = explode(',',$sensorEstado);
+        Log::info(print_r($estadoArr,true));
         if($estadoArr[0]=='IOM' && $estadoArr[1]){
             //$estadoArr = str_split($sensorEstado->iom);
             //Log::info(print_r($estadoArr,true));
