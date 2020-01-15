@@ -163,12 +163,7 @@ class SensorController extends BaseController {
                 HelpMen::report($movil->equipo_id,"\r\n **EQUIPO EN MODO RESET...NO INFORMO ALARMA DE NINGUN TIPO*** \r\n ");
                 self::actualizarPerifericos($movil,$iomArr,$perFieldOutput,$manualRestartMethod);
             }
-            //if( !is_null($perField) && $perField!='' ){
-                Log::info("ahora el PERFIELD");
-                Log::info(print_r($perField,true));
-                RedisHelp::setEstadosMovil ($movil, $perField, '');
-            //}
-           
+            RedisHelp::setEstadosMovil ($movil, $perField, '');
         }
         return $rta;    
     }
@@ -260,8 +255,6 @@ class SensorController extends BaseController {
         HelpMen::report($movil->equipo_id,"*Evaluando cambios IOM* \r\n ");
         self::actualizarPerifericos($movil,$iomArr,$perFieldOutput,$manualRestartMethod);
         $estadoArr = explode(',',$sensorEstado);
-        Log::info(print_r($estadoArr,true));
-        Log::info(print_r($iomArr,true));
         if($estadoArr[0]=='IOM' && $estadoArr[1]){
             $estadoArr = str_split($estadoArr[1]);
             //Log::info(print_r($estadoArr,true));
