@@ -260,8 +260,9 @@ class SensorController extends BaseController {
         self::actualizarPerifericos($movil,$iomArr,$perFieldOutput,$manualRestartMethod);
         $estadoArr = explode(',',$sensorEstado);
         Log::info(print_r($estadoArr,true));
+        Log::info(print_r($iomArr,true));
         if($estadoArr[0]=='IOM' && $estadoArr[1]){
-            //$estadoArr = str_split($sensorEstado->iom);
+            $estadoArr = str_split($estadoArr[1]);
             //Log::info(print_r($estadoArr,true));
             if( $estadoArr[3]==0 && $iomArr[3]==1 && $iomArr[3]!="X"){
                 $rta["tipo_alarma_id"]=12;
