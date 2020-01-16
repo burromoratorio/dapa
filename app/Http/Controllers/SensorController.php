@@ -75,7 +75,7 @@ class SensorController extends BaseController {
         }
         $rta["estado_movil_id"]=$estado_movil_id;
         $rta["tipo_alarma_id"] =$tipo_alarma_id;
-        if(!$movil->perif_io_id && $movil->perif_io_id=='' && $sensorEstado==''){
+        if( (!$movil->perif_io_id || $movil->perif_io_id=='')  && $sensorEstado==''){
             HelpMen::report($movil->equipo_id,"Datos de sensores IO vacios en memoria, generando...");
             DB::beginTransaction();
             try {
