@@ -25,7 +25,7 @@ class SensorController extends BaseController {
     
     public static function sensorAnalisis($ioData,$perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
         $cambioBits = array("rta"=>0,"estado_movil_id"=>$estadoMovilidad,"tipo_alarma_id"=>7); //alarma_id=7 (Normal)
-        if($movil->perif_io_id){//tiene instalado IOM
+        if($movil->perif_io_id && $movil->perif_io_id!=''){//tiene instalado IOM
             if($perField!='NULL'){//analisis en bits sensores IOM y ALA
                 $cambioBits = self::analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
             }else{//evaluo bateria del IO por mas que tenga IOM el equipo
