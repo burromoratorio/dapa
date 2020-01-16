@@ -311,8 +311,6 @@ class SensorController extends BaseController {
     public static function persistSensor($posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id){
         $movilOldId = $movil->movilOldId;
         $movil_id   = $movil->movil_id;
-        $logcadena = "cargando alarma nuevaaaa lpmmm alarmas persistSensor \r\n";
-        HelpMen::report($movil->equipo_id,$logcadena);        
         DB::beginTransaction();
         try {
             if($tipo_alarma_id!=49 && $tipo_alarma_id!=0 ){//solo si es cualquier alarma distinta de alimentacion ppal
