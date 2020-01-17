@@ -56,13 +56,15 @@ class PerifericoController extends BaseController
         $consumer->sensor_pulsador_tablero=$sensores[9];
         $consumer->sensor_llave_tablero=$sensores[10];
         $consumer->sensor_alimentacion_ppal=$sensores[11];
+         $consumer->save();
     }
     public static function setSalidas($consumer,$salidas){
         $consumer->salida_corte=$salidas[0];
         $consumer->salida_frenos=$salidas[1];
         $consumer->salida_sirena=$salidas[2];
         $consumer->salida_auxiliar_1=$salidas[3];
-        $consumer->salida_auxiliar_2=$salidas[4];  
+        $consumer->salida_auxiliar_2=$salidas[4];
+         $consumer->save();
     }
     
 }
