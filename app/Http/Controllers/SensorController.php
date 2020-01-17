@@ -375,14 +375,7 @@ class SensorController extends BaseController {
     }
     public static function actualizarPerifericos($movil,$estadoArr,$perFieldOutput,$manualRestartMethod){
         Log::info(":::::::Actualizando datos de Perifericos:::");
-        try{
-            PerifericoController::setSensores($movil->equipo_id,$estadoArr,$perFieldOutput,$manualRestartMethod);
-        }catch (\Exception $ex) {
-            DB::rollBack();
-            $errorSolo  = explode("Stack trace", $ex);
-            $logcadena ="Error al procesar update de comandos ".$errorSolo[0]." \r\n";
-            Log::info($logcadena);
-        }
+        PerifericoController::setSensores($movil->equipo_id,$estadoArr,$perFieldOutput,$manualRestartMethod);
     }
     
 }
