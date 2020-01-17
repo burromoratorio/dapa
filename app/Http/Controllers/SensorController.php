@@ -26,9 +26,12 @@ class SensorController extends BaseController {
     public static function sensorAnalisis($ioData,$perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
         $cambioBits = array("rta"=>0,"estado_movil_id"=>$estadoMovilidad,"tipo_alarma_id"=>7); //alarma_id=7 (Normal)
         if($movil->perif_io_id && $movil->perif_io_id!=''){//tiene instalado IOM
+            HelpMen::report($movil->equipo_id,"movil con iom");
             if($perField!='NULL'){//analisis en bits sensores IOM y ALA
+                HelpMen::report($movil->equipo_id,"reporte solo de posicion sin reporte de cadena iom");
                 $cambioBits = self::analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
             }else{//evaluo bateria del IO por mas que tenga IOM el equipo
+                HelpMen::report($movil->equipo_id,"reporte solo de posicion evaluo bateria y demas porque tiene iom");
                 $cambioBits = self::analisisIO($ioData,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
             }
         }else{//no tiene iom, le doy bola al equipo//analisis en bits IO
@@ -149,6 +152,8 @@ class SensorController extends BaseController {
                     }else{//si tenía pero posiblemente solo de IO, genero el IOM
                         HelpMen::report($movil->equipo_id,"Actualizando datos de IOM en instalacion que antes tenia IO");
                         self::updateSensores($movil,$perFieldInput,"",$rta["tipo_alarma_id"],$rta["estado_movil_id"],$posicion_id,$fecha);
+                        //poner tambien el actualiza perifericos
+                        self::actualizarPerifericos($movil,$iomArr,$perFieldOutput,$manualRestartMethod);
                     }
                     
                 }else{

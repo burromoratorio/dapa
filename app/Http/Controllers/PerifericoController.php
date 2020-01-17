@@ -5,6 +5,8 @@ use App\Periferico;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Laravel\Lumen\Routing\Controller as BaseController;
+use App\Helpers\HelpMen;
+
 
 /**
  * Encargado de administrar la tabla perif_io
@@ -24,14 +26,14 @@ class PerifericoController extends BaseController
         DB::beginTransaction();
         try{
             $salidasArr = str_split($salidas);
-            Log::info("las salidas:".$salidas);
+            HelpMen::report($equipo_id,"las salidas:".$salidas);
             $perif = self::getSensores($equipo_id);
             $consumer = Periferico::find($perif->perif_io_id);
             self::setEntradas($consumer, $sensores);
             self::setSalidas($consumer, $salidasArr);
             $consumer->restablecimiento_manual=$restabManual;
             $consumer->save();
-            Log::info("Actualizando PerifericoController:::iddd:".$perif->perif_io_id);
+            HelpMen::report($equipo_id,"Actualizando datos de periferico");
             DB::commit();
         }catch (\Exception $ex) {
             DB::rollBack();
