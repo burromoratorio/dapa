@@ -29,6 +29,7 @@ class PerifericoController extends BaseController
             HelpMen::report($equipo_id,"las salidas:".$salidas);
             $perif = self::getSensores($equipo_id);
             $consumer = Periferico::find($perif->perif_io_id);
+            Log::error(print_r($consumer,true));
             self::setEntradas($consumer, $sensores);
             self::setSalidas($consumer, $salidasArr);
             $consumer->restablecimiento_manual=$restabManual;
