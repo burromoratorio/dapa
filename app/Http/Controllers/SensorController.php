@@ -304,7 +304,7 @@ class SensorController extends BaseController {
     }
     public static function updateSensores($movil,$perField,$io,$tipo_alarma_id,$estado_movil_id,$posicion_id,$fecha){
         Log::error("UPDATE SENSORESSSSSSSSS::::::::::::::::::::::::::");
-        Log::error(print_r($perField,true));
+        Log::error(print_r($movil,true));
         DB::beginTransaction();
         try {
             if($perField!=""){
