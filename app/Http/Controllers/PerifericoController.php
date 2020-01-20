@@ -59,6 +59,8 @@ class PerifericoController extends BaseController
         foreach($sensores as $key=>$entrada){
             if($entrada=='X'){
                 Log::error("entrada :".$key." con valor:".$entrada);
+                self::setSensorInhibido( $key);
+                $sensores[$key]=1;
             }
         }
         self::$consumer->sensor_pulsador_panico=$sensores[0];
@@ -84,5 +86,11 @@ class PerifericoController extends BaseController
                             Log::error("TERMINANDO LAS ENTRADAS:::::::::::::::::");
 
     }
-    
+    public static function setSensorInhibido($key){
+        $sensores = array(0=>'inhibicion_pulsador_panico',1=>'inhibicion_puerta_conductor',2=>'inhibicion_puerta_acompaniante',3=>'inhibicion_desenganche',
+            4=>'inhibicion_antisabotaje',5=>'inhibicion_compuerta',6=>'inhibicion_contacto',7=>'inhibicion_encendido',8=>'inhibicion_presencia_tablero',
+            9=>'inhibicion_pulsador_tablero',10=>'inhibicion_llave_tablero',11=>'inhibicion_alimentacion_ppal');
+        $inihibir=$sensores[$key];
+        self::$consumer->$inihibir=1;
+    }
 }
