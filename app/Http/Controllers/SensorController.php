@@ -159,6 +159,7 @@ class SensorController extends BaseController {
                         self::updateSensores($movil,$perFieldInput,"",$rta["tipo_alarma_id"],$rta["estado_movil_id"],$posicion_id,$fecha);
                         //poner tambien el actualiza perifericos
                         self::actualizarPerifericos($movil,$iomArr,$perFieldOutput,$manualRestartMethod);
+                        RedisHelp::setEstadosMovil ($movil, $perField, '');
                     }
                     
                 }else{
