@@ -260,6 +260,8 @@ class SensorController extends BaseController {
         HelpMen::report($movil->equipo_id,"*Evaluando cambios IOM* \r\n ");
         self::actualizarPerifericos($movil,$iomArr,$perFieldOutput,$manualRestartMethod);
         $estadoArr = explode(',',$sensorEstado);
+        Log::error("IOMARRRRRRRRRRRRRRR::::::::::::::::::::::");
+        Log::error(print_r($iomArr,true));
         if($estadoArr[0]=='IOM' && $estadoArr[1]){
             $estadoArr = str_split($estadoArr[1]);
             //Log::info(print_r($estadoArr,true));
@@ -288,7 +290,7 @@ class SensorController extends BaseController {
                 HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA CERRADA*** \r\n");
             }
             //if($iomArr[0]==1)HelpMen::report($movil->equipo_id,"\r\n ***PANICO ACTIVADO*** \r\n");
-            Log::error(print_r($iomArr,true));
+            
             if($iomArr[4]==0 && $iomArr[4]!="X"){
                 $rta["tipo_alarma_id"]=6;
                 $rta["estado_movil_id"]=10;
