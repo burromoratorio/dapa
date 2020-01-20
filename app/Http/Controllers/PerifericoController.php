@@ -33,6 +33,7 @@ class PerifericoController extends BaseController
             self::setSalidas($consumer, $salidasArr);
             $consumer->restablecimiento_manual=$restabManual;
             $consumer->save();
+            Log::error("SET SENSORESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
             HelpMen::report($equipo_id,"Actualizando datos de periferico");
             DB::commit();
         }catch (\Exception $ex) {
