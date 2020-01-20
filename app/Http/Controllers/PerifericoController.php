@@ -15,9 +15,15 @@ use App\Helpers\HelpMen;
  */
 class PerifericoController extends BaseController 
 {
+    private static $consumer = null;
+
     private function __clone() {} //Prevent any copy of this object
     private function __wakeup() {}
     public function __construct() {}
+    
+    public static function setConsumer($perif_io_id){
+        self::$consumer = Periferico::find($perif_io_id);
+    }
     public static function getSensores($equipo_id){
         $periferico = Periferico::obtenerSensores($equipo_id);
         return $periferico;
@@ -28,14 +34,20 @@ class PerifericoController extends BaseController
             $salidasArr = str_split($salidas);
             HelpMen::report($equipo_id,"las salidas:".$salidas);
             $perif = self::getSensores($equipo_id);
-            $consumer = Periferico::find($perif->perif_io_id);
-            $consumer = self::setEntradas($consumer, $sensores);
-            $consumer = self::setSalidas($consumer, $salidasArr);
-            $consumer->restablecimiento_manual=$restabManual;
-            $consumer->save();
-            Log::error("SET SENSORESandOOOOOOOOOOOOOOOOOOOOOOO::::::::::::::::::::::::::::::");
-            HelpMen::report($equipo_id,"Actualizando datos de periferico");
-            DB::commit();
+            if($perif){
+                self::setConsumer($perif->perif_io_id);
+                self::setEntradas( $sensores);
+                self::setSalidas( $salidasArr);
+                self::$consumer->restablecimiento_manual=$restabManual;
+                self::$consumer->save();
+                Log::error("SET SENSORESandOOOOOOOOOOOOOOOOOOOOOOO::::::::::::::::::::::::::::::");
+                HelpMen::report($equipo_id,"Actualizando datos de periferico");
+                DB::commit();
+            }else{
+                Log::error("NO SE SETEO EL PERIFERICOOOO");
+                Log::error(print_r($perif,true));
+            }
+            
         }catch (\Exception $ex) {
             DB::rollBack();
             $errorSolo  = explode("Stack trace", $ex);
@@ -43,28 +55,26 @@ class PerifericoController extends BaseController
             Log::info($logcadena);
         }
     }
-    public static function setEntradas($consumer,$sensores){
-        $consumer->sensor_pulsador_panico=$sensores[0];
-        $consumer->sensor_puerta_conductor=$sensores[1];
-        $consumer->sensor_puerta_acompaniante=$sensores[2];
-        $consumer->sensor_desenganche=$sensores[3];
-        $consumer->sensor_antisabotaje=$sensores[4];
-        $consumer->sensor_compuerta=$sensores[5];
-        $consumer->sensor_contacto=$sensores[6];
-        $consumer->sensor_encendido=$sensores[7];
-        $consumer->sensor_presencia_tablero=$sensores[8];
-        $consumer->sensor_pulsador_tablero=$sensores[9];
-        $consumer->sensor_llave_tablero=$sensores[10];
-        $consumer->sensor_alimentacion_ppal=$sensores[11];
-        return $consumer;
+    public static function setEntradas($sensores){
+        self::$consumer->sensor_pulsador_panico=$sensores[0];
+        self::$consumer->sensor_puerta_conductor=$sensores[1];
+        self::$consumer->sensor_puerta_acompaniante=$sensores[2];
+        self::$consumer->sensor_desenganche=$sensores[3];
+        self::$consumer->sensor_antisabotaje=$sensores[4];
+        self::$consumer->sensor_compuerta=$sensores[5];
+        self::$consumer->sensor_contacto=$sensores[6];
+        self::$consumer->sensor_encendido=$sensores[7];
+        self::$consumer->sensor_presencia_tablero=$sensores[8];
+        self::$consumer->sensor_pulsador_tablero=$sensores[9];
+        self::$consumer->sensor_llave_tablero=$sensores[10];
+        self::$consumer->sensor_alimentacion_ppal=$sensores[11];
     }
-    public static function setSalidas($consumer,$salidas){
-        $consumer->salida_corte=$salidas[0];
-        $consumer->salida_frenos=$salidas[1];
-        $consumer->salida_sirena=$salidas[2];
-        $consumer->salida_auxiliar_1=$salidas[3];
-        $consumer->salida_auxiliar_2=$salidas[4];
-    return $consumer;
+    public static function setSalidas($salidas){
+        self::$consumer->salida_corte=$salidas[0];
+        self::$consumer->salida_frenos=$salidas[1];
+        self::$consumer->salida_sirena=$salidas[2];
+        self::$consumer->salida_auxiliar_1=$salidas[3];
+        self::$consumer->salida_auxiliar_2=$salidas[4];
     }
     
 }
