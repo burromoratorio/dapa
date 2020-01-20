@@ -97,7 +97,7 @@ class SensorController extends BaseController {
                 self::updateSensores($movil,"",$io,$tipo_alarma_id,$estado_movil_id,$posicion_id,$fecha);
             }
         }
-        RedisHelp::setEstadosMovil($movil, '', $io);
+        RedisHelp::setIO($movil, $io);
         return $rta;
     }
     /************Analisis de cadena IOM*********/
@@ -154,7 +154,7 @@ class SensorController extends BaseController {
                         self::updateSensores($movil,$perFieldInput,"",$rta["tipo_alarma_id"],$rta["estado_movil_id"],$posicion_id,$fecha);
                         //poner tambien el actualiza perifericos
                         self::actualizarPerifericos($movil,$iomArr,$perFieldOutput,$manualRestartMethod);
-                        //RedisHelp::setEstadosMovil ($movil, $perField, '');
+                        //RedisHelp::setIOM ($movil, $perField, '');
                     }
                     
                 }else{
@@ -170,7 +170,7 @@ class SensorController extends BaseController {
                 self::actualizarPerifericos($movil,$iomArr,$perFieldOutput,$manualRestartMethod);
             }
             if( $perField!='' && !is_null($perField)){
-                RedisHelp::setEstadosMovil ($movil, $perField, '');
+                RedisHelp::setIOM ($movil, $perField);
             }
         }
         return $rta;    

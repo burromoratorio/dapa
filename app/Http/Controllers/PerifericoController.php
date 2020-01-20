@@ -53,6 +53,7 @@ class PerifericoController extends BaseController
             $errorSolo  = explode("Stack trace", $ex);
             $logcadena ="ERROR SETEANDO SENSORES ".$errorSolo[0]." \r\n";
             Log::info($logcadena);
+            HelpMen::report($equipo_id,$logcadena);
         }
     }
     public static function setEntradas($sensores){

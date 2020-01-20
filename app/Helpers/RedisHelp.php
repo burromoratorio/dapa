@@ -74,11 +74,20 @@ class RedisHelp {
      * @param  IO String
      *
      */
-    public static function setEstadosMovil($movil,$iom,$io){
+    public static function setIO($movil,$io){
         if(!self::$client)self::setClient();
         try{
-            Log::error("seteando iom:".$iom." -- IO:".$io." al movil:".$movil->imei);
+            Log::error("seteando IO:".$io." al movil:".$movil->imei);
            self::$client->hSet($movil->imei,'io',$io); 
+        }catch(Exception $e){
+            Log::error("Error al setear estado en redis IMEI:".$movil->imei."--".$e);
+        }
+        //$redis->hGet('h', 'key1'); /* returns "hello" */
+    }
+    public static function setIOM($movil,$iom){
+        if(!self::$client)self::setClient();
+        try{
+            Log::error("seteando iom:".$iom." al movil:".$movil->imei);
            self::$client->hSet($movil->imei,'iom',$iom); 
         }catch(Exception $e){
             Log::error("Error al setear estado en redis IMEI:".$movil->imei."--".$e);
