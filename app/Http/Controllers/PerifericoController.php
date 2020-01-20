@@ -29,17 +29,17 @@ class PerifericoController extends BaseController
             HelpMen::report($equipo_id,"las salidas:".$salidas);
             $perif = self::getSensores($equipo_id);
             $consumer = Periferico::find($perif->perif_io_id);
-            self::setEntradas($consumer, $sensores);
-            self::setSalidas($consumer, $salidasArr);
+            $consumer = self::setEntradas($consumer, $sensores);
+            $consumer = self::setSalidas($consumer, $salidasArr);
             $consumer->restablecimiento_manual=$restabManual;
             $consumer->save();
-            Log::error("SET SENSORESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
+            Log::error("SET SENSORESandOOOOOOOOOOOOOOOOOOOOOOO::::::::::::::::::::::::::::::");
             HelpMen::report($equipo_id,"Actualizando datos de periferico");
             DB::commit();
         }catch (\Exception $ex) {
             DB::rollBack();
             $errorSolo  = explode("Stack trace", $ex);
-            $logcadena ="Error al procesar update de comandos ".$errorSolo[0]." \r\n";
+            $logcadena ="ERROR SETEANDO SENSORES ".$errorSolo[0]." \r\n";
             Log::info($logcadena);
         }
     }
@@ -56,7 +56,7 @@ class PerifericoController extends BaseController
         $consumer->sensor_pulsador_tablero=$sensores[9];
         $consumer->sensor_llave_tablero=$sensores[10];
         $consumer->sensor_alimentacion_ppal=$sensores[11];
-        $consumer->save();
+        return $consumer;
     }
     public static function setSalidas($consumer,$salidas){
         $consumer->salida_corte=$salidas[0];
@@ -64,7 +64,7 @@ class PerifericoController extends BaseController
         $consumer->salida_sirena=$salidas[2];
         $consumer->salida_auxiliar_1=$salidas[3];
         $consumer->salida_auxiliar_2=$salidas[4];
-        $consumer->save();
+    return $consumer;
     }
     
 }
