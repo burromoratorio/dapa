@@ -23,7 +23,6 @@ class PerifericoController extends BaseController
     
     public static function setConsumer($perif_io_id){
         self::$consumer = Periferico::find($perif_io_id);
-        Log::error(print_r(self::$consumer,true));
     }
     public static function getSensores($equipo_id){
         $periferico = Periferico::obtenerSensores($equipo_id);
@@ -42,7 +41,6 @@ class PerifericoController extends BaseController
                 self::setSalidas( $salidasArr);
                 self::$consumer->restablecimiento_manual=$restabManual;
                 self::$consumer->save();
-                
                 HelpMen::report($equipo_id,"Actualizando datos de periferico");
                 DB::commit();
             }else{
@@ -70,6 +68,8 @@ class PerifericoController extends BaseController
         self::$consumer->sensor_pulsador_tablero=$sensores[9];
         self::$consumer->sensor_llave_tablero=$sensores[10];
         self::$consumer->sensor_alimentacion_ppal=$sensores[11];
+                    Log::error("TERMINANDO LAS ENTRADAS:::::::::::::::::");
+
     }
     public static function setSalidas($salidas){
         self::$consumer->salida_corte=$salidas[0];
