@@ -138,7 +138,7 @@ class SensorController extends BaseController {
                 Log::error("ANTES DE LA PREGUNTAAAAAAAAAAAAAA_::::::::::::::");
                 Log::error(print_r($sensorEstado,true));
                 if(is_null($sensorEstado) || $sensorEstado=='' ){
-                    $sensorNuevo  = EstadosSensores::where('imei', '=',$movil->imei)->orderBy('updated_at','DESC')->first();
+                    $sensorNuevo  = EstadosSensores::where('movil_id', '=',$movil->movil_id)->orderBy('updated_at','DESC')->first();
                     if(!$sensorNuevo){//si no tenia en la ddbb data
                         HelpMen::report($movil->equipo_id,"Datos de sensores vacios en DDBB, generando...");
                         DB::beginTransaction();
@@ -308,9 +308,9 @@ class SensorController extends BaseController {
         DB::beginTransaction();
         try {
             if($perField!=""){
-                EstadosSensores::where('imei', '=',$movil->imei)->update(array('iom' => $perField));
+                EstadosSensores::where('movil_id', '=',$movil->movil_id)->update(array('iom' => $perField));
             }else{
-                EstadosSensores::where('imei', '=', $movil->imei)->update(array('io' => $io));
+                EstadosSensores::where('movil_id', '=', $movil->movil_id)->update(array('io' => $io));
             }
             self::persistSensor($posicion_id,$movil,$fecha,$tipo_alarma_id,$estado_movil_id);
             DB::commit();
