@@ -97,7 +97,9 @@ class SensorController extends BaseController {
                 self::updateSensores($movil,"",$io,$tipo_alarma_id,$estado_movil_id,$posicion_id,$fecha);
             }
         }
-        RedisHelp::setIO($movil, $io);
+        if($io!='NULL' && !is_null($io)){
+            RedisHelp::setIO($movil, $io);
+        }
         return $rta;
     }
     /************Analisis de cadena IOM*********/
