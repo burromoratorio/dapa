@@ -57,8 +57,7 @@ class PerifericoController extends BaseController
     }
     public static function setEntradas($sensores){
         foreach($sensores as $key=>$entrada){
-            if($entrada=='X'){
-                Log::error("entrada :".$key." con valor:".$entrada);
+            if($entrada=='X'){//verifico si el sensor viene con x es porque está inhibido...actualizo la info en la ddbb
                 self::setSensorInhibido( $key);
                 $sensores[$key]=1;
             }
