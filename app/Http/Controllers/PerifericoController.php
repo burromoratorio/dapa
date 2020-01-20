@@ -26,7 +26,6 @@ class PerifericoController extends BaseController
     }
     public static function getSensores($equipo_id){
         $periferico = Periferico::obtenerSensores($equipo_id);
-        Log::error(print_r($periferico,true));
         return $periferico;
     }
     public static function setSensores($equipo_id,$sensores,$salidas,$restabManual){
@@ -35,6 +34,7 @@ class PerifericoController extends BaseController
             $salidasArr = str_split($salidas);
             Log::error("las salidas:".$salidas);
             $perif = self::getSensores($equipo_id);
+            Log::error(print_r($perif,true));
             if($perif){
                 self::setConsumer($perif->perif_io_id);
                 self::setEntradas( $sensores);
