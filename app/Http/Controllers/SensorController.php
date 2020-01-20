@@ -135,6 +135,8 @@ class SensorController extends BaseController {
                 $rta = self::evaluaPanico($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha,$estadoArr);
                 $rta = self::evaluaNb($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha);               
                 //luego del analisis actualizo los datos de sensores, primero analizo e informo alarmas, y estado del movil
+                Log::error("ANTES DE LA PREGUNTAAAAAAAAAAAAAA_::::::::::::::");
+                Log::error(print_r($sensorEstado,true));
                 if(is_null($sensorEstado) || $sensorEstado=='' ){
                     $sensorNuevo  = EstadosSensores::where('imei', '=',$movil->imei)->orderBy('updated_at','DESC')->first();
                     if(!$sensorNuevo){//si no tenia en la ddbb data
