@@ -138,6 +138,9 @@ class SensorController extends BaseController {
                 Log::error("ANTES DE LA PREGUNTAAAAAAAAAAAAAA_::::::::::::::");
                 Log::error(print_r($sensorEstado,true));
                 if(is_null($sensorEstado) || $sensorEstado=='' ){
+                    Log::error("::::::::::::::::se vino aca::::::::::::::::::::::::");
+                    log::error("VA A ACTUALIZAR EN REDIS::::::::::::::::");
+            Log::error("imeiiii:::".$movil->imei." perfield::::::".$perField);
                     $sensorNuevo  = EstadosSensores::where('movil_id', '=',$movil->movil_id)->orderBy('updated_at','DESC')->first();
                     if(!$sensorNuevo){//si no tenia en la ddbb data
                         HelpMen::report($movil->equipo_id,"Datos de sensores vacios en DDBB, generando...");
@@ -170,8 +173,7 @@ class SensorController extends BaseController {
                 HelpMen::report($movil->equipo_id,"\r\n **EQUIPO EN MODO RESET...NO INFORMO ALARMA DE NINGUN TIPO*** \r\n ");
                 self::actualizarPerifericos($movil,$iomArr,$perFieldOutput,$manualRestartMethod);
             }
-            log::error("VA A ACTUALIZAR EN REDIS::::::::::::::::");
-            Log::error("imeiiii:::".$movil->imei." perfield::::::".$perField);
+            
             RedisHelp::setEstadosMovil ($movil, $perField, '');
         }
         return $rta;    
