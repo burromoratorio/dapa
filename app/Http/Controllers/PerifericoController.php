@@ -56,6 +56,11 @@ class PerifericoController extends BaseController
         }
     }
     public static function setEntradas($sensores){
+        foreach($sensores as $key=>$entrada){
+            if($entrada=='X'){
+                Log::error("entrada :".$key." con valor:".$entrada);
+            }
+        }
         self::$consumer->sensor_pulsador_panico=$sensores[0];
         self::$consumer->sensor_puerta_conductor=$sensores[1];
         self::$consumer->sensor_puerta_acompaniante=$sensores[2];
