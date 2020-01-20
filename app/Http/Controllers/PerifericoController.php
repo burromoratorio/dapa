@@ -29,7 +29,7 @@ class PerifericoController extends BaseController
         return $periferico;
     }
     public static function setSensores($equipo_id,$sensores,$salidas,$restabManual){
-        DB::beginTransaction();
+        //DB::beginTransaction();
         try{
             $salidasArr = str_split($salidas);
             Log::error("las salidas:".$salidas);
@@ -42,14 +42,14 @@ class PerifericoController extends BaseController
                 self::$consumer->restablecimiento_manual=$restabManual;
                 self::$consumer->save();
                 HelpMen::report($equipo_id,"Actualizando datos de periferico");
-                DB::commit();
+                //DB::commit();
             }else{
                 Log::error("NO SE SETEO EL PERIFERICOOOO");
                 Log::error(print_r($perif,true));
             }
             
         }catch (\Exception $ex) {
-            DB::rollBack();
+            //DB::rollBack();
             $errorSolo  = explode("Stack trace", $ex);
             $logcadena ="ERROR SETEANDO SENSORES ".$errorSolo[0]." \r\n";
             Log::info($logcadena);
@@ -68,7 +68,6 @@ class PerifericoController extends BaseController
         self::$consumer->sensor_pulsador_tablero=$sensores[9];
         self::$consumer->sensor_llave_tablero=$sensores[10];
         self::$consumer->sensor_alimentacion_ppal=$sensores[11];
-                    Log::error("TERMINANDO LAS ENTRADAS:::::::::::::::::");
 
     }
     public static function setSalidas($salidas){
@@ -77,6 +76,8 @@ class PerifericoController extends BaseController
         self::$consumer->salida_sirena=$salidas[2];
         self::$consumer->salida_auxiliar_1=$salidas[3];
         self::$consumer->salida_auxiliar_2=$salidas[4];
+                            Log::error("TERMINANDO LAS ENTRADAS:::::::::::::::::");
+
     }
     
 }
