@@ -265,8 +265,6 @@ class SensorController extends BaseController {
         HelpMen::report($movil->equipo_id,"*Evaluando cambios IOM* \r\n ");
         self::actualizarPerifericos($movil,$iomArr,$perFieldOutput,$manualRestartMethod);
         $estadoArr = explode(',',$sensorEstado);
-        Log::error("IOMARRRRRRRRRRRRRRR::::::::::::::::::::::");
-        Log::error(print_r($iomArr,true));
         if($estadoArr[0]=='IOM' && $estadoArr[1]){
             $estadoArr = str_split($estadoArr[1]);
             //Log::info(print_r($estadoArr,true));
@@ -306,8 +304,6 @@ class SensorController extends BaseController {
         return $rta;
     }
     public static function updateSensores($movil,$perField,$io,$tipo_alarma_id,$estado_movil_id,$posicion_id,$fecha){
-        Log::error("UPDATE SENSORESSSSSSSSS::::::::::::::::::::::::::");
-        Log::error(print_r($movil,true));
         DB::beginTransaction();
         try {
             if($perField!=""){
@@ -340,49 +336,7 @@ class SensorController extends BaseController {
             HelpMen::report($movil->equipo_id,$logcadena);
         }
     }
-    public static function getSensores($imei) {
-        Log::info("buscando informacion de sensores de IMEI:".$imei);
-        $shmid    = MemVar::OpenToRead('sensores.dat');
-        if($shmid=='0'){
-            $memoEstados    = self::startupSensores();
-            Log::error("Buscando datos de sensores IMEI:".$imei);
-        }else{
-            MemVar::initIdentifier($shmid);
-            $memoEstados    = MemVar::GetValue();
-            $memoEstados    = json_decode($memoEstados);
-        }
-        /*si encuentro el movil y el sensor difiere al enviado por parametro
-        genero un nuevo elemento y lo cargo en el array y en la ddbb
-        elimino el elemento anterior del array, limpio y vuelvo a cargar la memoria
-        */
-        $encontrado     = HelpMen::binarySearch($memoEstados, 0, count($memoEstados) - 1, $imei);
-        return $encontrado;
-        
-    }
-    public static function startupSensores(){
-        $shmidPos       = MemVar::OpenToRead('sensores.dat');
-        if($shmidPos == '0'){
-            Log::info("no hay segmento de memoria");  
-        }else{
-            MemVar::initIdentifier($shmidPos);
-            MemVar::Eliminar( 'sensores.dat' );
-        }
-        $estados  = [];
-        $estadosAll = EstadosSensores::orderBy('imei')->get();
-        $imeisAll   = EstadosSensores::groupBy('imei')->pluck('imei');
-        foreach ($imeisAll as $movilid=>$imei) {
-            array_push($estados, $estadosAll->where('imei',$imei)->last() );
-        }
-        $memvar     = MemVar::Instance('sensores.dat');
-        $enstring   = json_encode($estados);
-        //Log::info($enstring);
-        $largo      = (int)strlen($enstring);
-        $memvar->init('sensores.dat',$largo);
-        $memvar->setValue( $enstring );
-        $memoEstados= json_decode($enstring);
-        return $memoEstados;
     
-    }
     public static function actualizarPerifericos($movil,$estadoArr,$perFieldOutput,$manualRestartMethod){
         Log::info(":::::::Actualizando datos de Perifericos:::");
         PerifericoController::setSensores($movil->equipo_id,$estadoArr,$perFieldOutput,$manualRestartMethod);
