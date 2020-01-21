@@ -356,8 +356,6 @@ class PuertoController extends BaseController
                                         'ltrs_consumidos'=>$info['ltrs']]);
                         $posicion->save();
                         if($alaField["ALA"]=="V"){
-                            HelpMen::report($movil->equipo_id,"QUIERE GENERAR ALARMA DE VELOCIDADDDD");
-                            Log::error(print_r($alaField,true));
                             $alarmaVelocidad    = Alarmas::create(['posicion_id'=>$posicion->posicion_id,'movil_id'=>intval($movil->movilOldId),
                                                 'tipo_alarma_id'=>7,'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0']);
                             $estadoMovilidad    = 11;
