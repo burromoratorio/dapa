@@ -148,7 +148,7 @@ class PuertoController extends BaseController
     public static function continuaDetenido($frecuencia,$velocidad,$fecha,$movil,$posicion){
         if($frecuencia>120 && $movil->velocidad<5 && $velocidad<5){
             HelpMen::report($movil->equipo_id,"=>Movil continua Detenido \r\n");
-            if($movil->indice==2){
+            if($movil->indice < 2){
                 if(DB::connection()->getDatabaseName()=='moviles')config()->set('database.default', 'siac');
                 $lastPosition = PosicionesHistoricas::where('movil_id',intval($movil->movilOldId))->orderBy('fecha', 'DESC')->first();
                 if($lastPosition){
@@ -166,7 +166,6 @@ class PuertoController extends BaseController
                                 'ltrs_consumidos' =>$lastPosition->ltrs_consumidos,'ltrs_100' =>$lastPosition->ltrs_100
                                 ]); 
                     DB::commit();
-                    $update['update']= $lastPosition->posicion_id;
                     }catch (\Exception $ex) {
                         DB::rollBack();
                         $errorSolo  = explode("Stack trace", $ex);
@@ -175,10 +174,12 @@ class PuertoController extends BaseController
                     }
                     config()->set('database.default', 'moviles');
                 }
-            }else{
                 $posicion['indice']=2;
                 RedisHelp::setPosicionMovil($posicion);
-            }
+            }/*else{
+                $posicion['indice']=2;
+                RedisHelp::setPosicionMovil($posicion);
+            }*/
         }
     }
     
@@ -324,10 +325,9 @@ class PuertoController extends BaseController
                 //si validez reporte da 1, quiere decir que está detenido, traer la ultima posicion_id y meter acá
                 if($validezReporte>0){
                     HelpMen::report($movil->equipo_id,"Actualizo hora de posicion en detenido \r\n");
+                    //traigo la ultima posicion para despues insertar con los eventos
                     $posicion = PosicionesHistoricas::where('movil_id','=',$movil->movilOldId)->orderBy('fecha','DESC')->get()->first(); 
-                    //$posicion               = new Posiciones;
-                    //$posicion->posicion_id  = $validezReporte;
-                    $respuesta              = $validezReporte;
+                    $respuesta= $validezReporte;
                 }else{
                     //Log::info("se inserta nueva posicion");
                     $posicionGP = GprmcEntrada::create([
@@ -388,8 +388,7 @@ class PuertoController extends BaseController
                             $estadoMovilidad=($movil->estado_u==0)?1:2;//detenido vacio estado_u=0, otro..detenido cargado2
                         }
                     }
-                    if(DB::connection()->getDatabaseName()=='moviles'){
-                        config()->set('database.default', 'siac');
+                    try{
                         $movilModel = new Movil;
                         $movilModel->setConnection('siac');
                         $updateMovil= $movilModel->where('movil_id','=',intval($movil->movilOldId))
@@ -397,9 +396,18 @@ class PuertoController extends BaseController
                                             'rumbo_id'=>$arrInfoGprmc['rumbo'],'estado'=>$estadoMovilidad,
                                             'velocidad'=>$arrInfoGprmc['velocidad'],'fecha_ult_posicion'=>$fecha,
                                         'estado_v'=>$info['mod_presencia']]);
-                                       
+                        
+                    }catch(\Exception $ex){
+                        $errorSolo  = explode("Stack trace", $ex);
+                        $logcadena = "PUERTO CONTROLLER AL ACTUAIZAR ESTADO MOVIL::::::::::::".$errorSolo[0]."\r\n";
+                        HelpMen::report($movil->equipo_id,$logcadena);
                     }
+                    
                     //DB::commit();
+                    /*if(DB::connection()->getDatabaseName()=='moviles'){
+                        config()->set('database.default', 'siac');
+                        
+                    }*/
                     config()->set('database.default', 'moviles');
                 }
                 /*********para comunicacion con API NAcho*******/
