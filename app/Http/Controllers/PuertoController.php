@@ -107,19 +107,18 @@ class PuertoController extends BaseController
             HelpMen::report($movil->equipo_id,"Almacenando posicion:".$fecha." velocidad:".$velocidad);
         }else{
             if(HelpMen::fechaHistorica($fecha)==1){
-                HelpMen::report($movil->equipo_id,"Reporte de fecha anterior:".$fecha." \r\n");
-            }
-            //2020-02-08 17:57:05 
-            //$fecha
-            if(self::seMueve($frArr[0], $velocidad, $movil,$posicion)==0){//no se mueve
-                if(self::seDetuvo($frArr[0], $movil,$posicion)==1){//se detuvo?
+                HelpMen::report($movil->equipo_id,"Reporte de fecha anterior no evaluo movimiento/detencion:".$fecha." \r\n");
+            }else{
+                if(self::seMueve($frArr[0], $velocidad, $movil,$posicion)==0){//no se mueve
+                    if(self::seDetuvo($frArr[0], $movil,$posicion)==1){//se detuvo?
+                        $update=0;
+                    }else{//sigue detenido
+                        self::continuaDetenido($frArr[0], $velocidad, $fecha, $movil,$posicion);
+                        $update=1;
+                    }
+                }else{//esta en movimiento
                     $update=0;
-                }else{//sigue detenido
-                    self::continuaDetenido($frArr[0], $velocidad, $fecha, $movil,$posicion);
-                    $update=1;
                 }
-            }else{//esta en movimiento
-                $update=0;
             }
         }
         return $update;
@@ -128,6 +127,8 @@ class PuertoController extends BaseController
         $mueve=1;
         if($frecuencia<=120){
             if($movil->velocidad<=5){//velocidad posicion anterior en redis
+                $posicion['indice']=0;
+                RedisHelp::setPosicionMovil($posicion);
                 HelpMen::report($movil->equipo_id,"=>detenido a movimiento \r\n");
             }else{//continua en movimiento
                 HelpMen::report($movil->equipo_id,"=>continua en movimiento velocidad anterior:".$movil->velocidad." \r\n");
@@ -154,38 +155,50 @@ class PuertoController extends BaseController
     public static function continuaDetenido($frecuencia,$velocidad,$fecha,$movil,$posicion){
         if($frecuencia>120 && $movil->velocidad<5 && $velocidad<5){
             HelpMen::report($movil->equipo_id,"=>Movil continua Detenido \r\n");
-            if($movil->indice < 2){
-                if(DB::connection()->getDatabaseName()=='moviles')config()->set('database.default', 'siac');
-                $lastPosition = PosicionesHistoricas::where('movil_id',intval($movil->movilOldId))->orderBy('fecha', 'DESC')->first();
+            if(DB::connection()->getDatabaseName()=='moviles')config()->set('database.default', 'siac');
+            $lastPosition = PosicionesHistoricas::where('movil_id',intval($movil->movilOldId))->orderBy('fecha', 'DESC')->first();
+            if($movil->indice == 2){
                 if($lastPosition){
                     DB::beginTransaction();
                     try {
-                    //PosicionesHistoricas::where('posicion_id',$lastPosition->posicion_id)->delete();
-                    DB::table('POSICIONES_HISTORICAS')->insert(['posicion_id'=>$lastPosition->posicion_id,
-                                'movil_id'=>intval($movil->movilOldId),'tipo'=>$lastPosition->tipo,
-                                'rumbo_id'=>$lastPosition->rumbo_id,'fecha'=>$fecha,'velocidad'=>$lastPosition->velocidad,
-                                'latitud'=>$lastPosition->latitud,'longitud'=>$lastPosition->longitud,
-                                'valida'=>1,'km_recorridos'=>$lastPosition->km_recorridos,
-                                'referencia'=>$lastPosition->referencia,'cmd_id'=>$lastPosition->cmd_id,
-                                'estado_u' =>$lastPosition->estado_u,'estado_v' =>$lastPosition->estado_v,
-                                'estado_w' =>$lastPosition->estado_w, 'km_recorridos' =>$lastPosition->km_recorridos,
-                                'ltrs_consumidos' =>$lastPosition->ltrs_consumidos,'ltrs_100' =>$lastPosition->ltrs_100
-                                ]); 
-                    DB::commit();
+                        PosicionesHistoricas::where('posicion_id',$lastPosition->posicion_id)->delete();
+                        DB::commit();
                     }catch (\Exception $ex) {
                         DB::rollBack();
                         $errorSolo  = explode("Stack trace", $ex);
-                        $logcadena ="Error en alta de POSICIONES ".$errorSolo[0]." \r\n";
+                        $logcadena ="Error al borrar posicion anterior en detenido ".$errorSolo[0]." \r\n";
                         HelpMen::report($movil->equipo_id,$logcadena);
                     }
                     config()->set('database.default', 'moviles');
                 }
+            }else{
                 $posicion['indice']=2;
                 RedisHelp::setPosicionMovil($posicion);
-            }/*else{
-                $posicion['indice']=2;
-                RedisHelp::setPosicionMovil($posicion);
-            }*/
+            }
+            if($lastPosition){
+                DB::beginTransaction();
+                try {
+                    DB::table('POSICIONES_HISTORICAS')->insert(['posicion_id'=>$lastPosition->posicion_id,
+                            'movil_id'=>intval($movil->movilOldId),'tipo'=>$lastPosition->tipo,
+                            'rumbo_id'=>$lastPosition->rumbo_id,'fecha'=>$fecha,'velocidad'=>$lastPosition->velocidad,
+                            'latitud'=>$lastPosition->latitud,'longitud'=>$lastPosition->longitud,
+                            'valida'=>1,'km_recorridos'=>$lastPosition->km_recorridos,
+                            'referencia'=>$lastPosition->referencia,'cmd_id'=>$lastPosition->cmd_id,
+                            'estado_u' =>$lastPosition->estado_u,'estado_v' =>$lastPosition->estado_v,
+                            'estado_w' =>$lastPosition->estado_w, 'km_recorridos' =>$lastPosition->km_recorridos,
+                            'ltrs_consumidos' =>$lastPosition->ltrs_consumidos,'ltrs_100' =>$lastPosition->ltrs_100
+                            ]); 
+                    DB::commit();
+                }catch (\Exception $ex) {
+                    DB::rollBack();
+                    $errorSolo  = explode("Stack trace", $ex);
+                    $logcadena ="Error en alta de POSICIONES ".$errorSolo[0]." \r\n";
+                    HelpMen::report($movil->equipo_id,$logcadena);
+
+                }
+            
+            }
+            
         }
     }
     
