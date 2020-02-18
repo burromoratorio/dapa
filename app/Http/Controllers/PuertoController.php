@@ -169,7 +169,6 @@ class PuertoController extends BaseController
                         $logcadena ="Error al borrar posicion anterior en detenido ".$errorSolo[0]." \r\n";
                         HelpMen::report($movil->equipo_id,$logcadena);
                     }
-                    config()->set('database.default', 'moviles');
                 }
             }else{
                 $posicion['indice']=2;
@@ -196,9 +195,8 @@ class PuertoController extends BaseController
                     HelpMen::report($movil->equipo_id,$logcadena);
 
                 }
-            
             }
-            
+            config()->set('database.default', 'moviles');
         }
     }
     
