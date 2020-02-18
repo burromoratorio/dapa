@@ -105,6 +105,7 @@ class PuertoController extends BaseController
             RedisHelp::setPosicionMovil($posicion);
             HelpMen::report($movil->equipo_id,"Almacenando posicion:".$fecha." velocidad:".$velocidad);
         }else{
+            //$fecha
             if(self::seMueve($frArr[0], $velocidad, $movil,$posicion)==0){//no se mueve
                 if(self::seDetuvo($frArr[0], $movil,$posicion)==1){//se detuvo?
                     $update=0;
@@ -154,7 +155,7 @@ class PuertoController extends BaseController
                 if($lastPosition){
                     DB::beginTransaction();
                     try {
-                    PosicionesHistoricas::where('posicion_id',$lastPosition->posicion_id)->delete();
+                    //PosicionesHistoricas::where('posicion_id',$lastPosition->posicion_id)->delete();
                     DB::table('POSICIONES_HISTORICAS')->insert(['posicion_id'=>$lastPosition->posicion_id,
                                 'movil_id'=>intval($movil->movilOldId),'tipo'=>$lastPosition->tipo,
                                 'rumbo_id'=>$lastPosition->rumbo_id,'fecha'=>$fecha,'velocidad'=>$lastPosition->velocidad,
