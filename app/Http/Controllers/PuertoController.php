@@ -106,6 +106,10 @@ class PuertoController extends BaseController
             RedisHelp::setPosicionMovil($posicion);
             HelpMen::report($movil->equipo_id,"Almacenando posicion:".$fecha." velocidad:".$velocidad);
         }else{
+            if(HelpMen::fechaHistorica($fecha)==1){
+                HelpMen::report($movil->equipo_id,"Reporte de fecha anterior:".$fecha." \r\n");
+            }
+            //2020-02-08 17:57:05 
             //$fecha
             if(self::seMueve($frArr[0], $velocidad, $movil,$posicion)==0){//no se mueve
                 if(self::seDetuvo($frArr[0], $movil,$posicion)==1){//se detuvo?

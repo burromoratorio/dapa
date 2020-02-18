@@ -150,4 +150,16 @@ class HelpMen
         //return $arrRumbo[$intRumbo];
         return $intRumbo;
     }
+    /*@param fecha: yyyy-mm-dd HH:mm:ss-> 2020-02-08 17:57:05 
+     */
+    public static function fechaHistorica($fecha){
+        $fechaVieja     = 0;
+        $fechaRepo      = strtotime ( $fecha ) ; 
+        $hoy            = date('Y-m-j H:i:s'); 
+        $newDateCompa   = strtotime ( '-30 minute' , strtotime ($hoy) ) ; 
+        if($fechaRepo<=$newDateCompa){
+            $fechaVieja     = 1;
+        }
+        return $fechaVieja;
+    }
 }
