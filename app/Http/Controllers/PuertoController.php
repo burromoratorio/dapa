@@ -100,6 +100,7 @@ class PuertoController extends BaseController
     public static function validezReporte($imei,$fecha,$velocidad,$fr,$movil){
         $frArr          = explode(',',$fr); 
         $update         = 0;
+        HelpMen::report($movil->equipo_id,"=>fecha:".$fecha." \r\n");
         $posicion= array("imei"=>$imei,"fecha"=>$fecha,"velocidad"=>$velocidad,"indice"=>0);
         if($movil->fecha_posicion==''){
             RedisHelp::setPosicionMovil($posicion);
