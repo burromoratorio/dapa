@@ -50,7 +50,7 @@ class PuertoController extends BaseController
                             $destinatarios  = "amoratorio@siacseguridad.com";
                             $cuerpo = "Posible error de equipo, con posiciones inválidas equipo:".$movil->equipo_id;
                             $asunto = "Error en posiciones";
-                            self::enviarMail($asunto,$cuerpo,$destinatarios);
+                            //self::enviarMail($asunto,$cuerpo,$destinatarios);
                         }elseif ($posicionID!='0') {
                         /*no guardo las alarmas en dbPrimaria self::findAndStoreAlarm($arrCampos,$posicionID);*/
                             $imei="OK";
