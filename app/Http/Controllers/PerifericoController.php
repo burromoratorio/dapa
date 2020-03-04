@@ -93,4 +93,7 @@ class PerifericoController extends BaseController
         $inihibir=$sensores[$key];
         self::$consumer->$inihibir=1;
     }
+    public static function setSensoresBIO($equipo_id,$sensores,$salidas,$restabManual){
+        
+    }
 }

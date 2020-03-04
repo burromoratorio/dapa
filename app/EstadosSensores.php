@@ -10,7 +10,7 @@ class EstadosSensores extends Model
     protected $primaryKey   = 'id';
     protected $connection   = 'moviles';
     public $timestamps      = true;
-    protected $fillable     = array('movil_id', 'imei', 'iom','io');
+    protected $fillable     = array('movil_id', 'imei', 'iom','io','bio');
     protected $dateFormat   = 'Y-m-d H:i:s';
 
     protected $dates = [

@@ -58,6 +58,7 @@ class RedisHelp {
                 'indice'=>'',
                 'io'=>'',
                 'iom'=>'',
+                'bio'=>'',
                 'test'=>'0',
                 'lastCommand'=>'NO',
                 'report'=>''
@@ -91,6 +92,16 @@ class RedisHelp {
            self::$client->hSet($movil->imei,'iom',$iom); 
         }catch(Exception $e){
             Log::error("Error al setear estado en redis IMEI:".$movil->imei."--".$e);
+        }
+        //$redis->hGet('h', 'key1'); /* returns "hello" */
+    }
+    public static function setBIO($movil,$bio){
+        if(!self::$client)self::setClient();
+        try{
+            Log::error("seteando iom:".$bio." al movil:".$movil->imei);
+           self::$client->hSet($movil->imei,'bio',$bio); 
+        }catch(Exception $e){
+            Log::error("Error al setear BIO en redis IMEI:".$movil->imei."--".$e);
         }
         //$redis->hGet('h', 'key1'); /* returns "hello" */
     }
