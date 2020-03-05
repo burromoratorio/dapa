@@ -68,7 +68,7 @@ class SensorController extends BaseController {
 //si no tiene posicion_id y es una alarma de panico , informar mail?¡
         //$ioData[0]=="I0X"=>eso es panico inibido
         if($ioData[0]=="I0X"){
-            HelpMen::report($movil->equipo_id,"Panico Presionado - Inhibido");
+            HelpMen::report($movil->equipo_id,"Panico - Inhibido");
         }else{
             if($ioData[0]=="I00"){//ingreso de alarma de panico bit en 0
                 $logcadena = "Panico presionado Equipo:".$imei." - Movil:".$movilOldId."\r\n";
