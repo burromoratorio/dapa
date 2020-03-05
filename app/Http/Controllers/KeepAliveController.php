@@ -69,6 +69,7 @@ public function obtenerComandoPendiente($movil,$commandHelp){
         RedisHelp::setLastCommand($movil->imei, $arrComandos[0]);
         //Log::info(print_r(RedisHelp::lookForMovil($movil->imei),true));
     }else{
+        Log::info("Entrando a movil sin comandos test, trayendo comandos pendientes de la ddbb:".$movil->lastCommand);
         $mensajePendiente= ColaMensajes::where('modem_id', '=',$movil->equipo_id)->where('rsp_id','=',1)
                            ->orderBy('prioridad','DESC')->get()->first(); 
         $flagEnviarComando  = 1;

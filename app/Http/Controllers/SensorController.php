@@ -66,20 +66,25 @@ class SensorController extends BaseController {
         $estado_movil_id=$estadoMovilidad;
         $tipo_alarma_id=0;
 //si no tiene posicion_id y es una alarma de panico , informar mail?¡
-        if($ioData[0]=="I00"){//ingreso de alarma de panico bit en 0
-            $logcadena = "Panico presionado Equipo:".$imei." - Movil:".$movilOldId."\r\n";
-            HelpMen::report($movil->equipo_id,$logcadena);
-            DB::beginTransaction();
-            try {
-                $alarmaPanico   = Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,'tipo_alarma_id'=>1,
-                                    'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0']);
-                $alarmaPanico->save();
-                DB::commit();
+        //$ioData[0]=="I0X"=>eso es panico inibido
+        if($ioData[0]=="I0X"){
+            HelpMen::report($movil->equipo_id,"Panico Presionado - Inhibido");
+        }else{
+            if($ioData[0]=="I00"){//ingreso de alarma de panico bit en 0
+                $logcadena = "Panico presionado Equipo:".$imei." - Movil:".$movilOldId."\r\n";
+                HelpMen::report($movil->equipo_id,$logcadena);
+                DB::beginTransaction();
+                try {
+                    $alarmaPanico   = Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>$movilOldId,'tipo_alarma_id'=>1,
+                                        'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0']);
+                    $alarmaPanico->save();
+                    DB::commit();
                 }catch (\Exception $ex) {
-                    DB::rollBack();
-                    $logcadena = "Error al tratar alarmas IO..".$ex;
-                    HelpMen::report($movil->equipo_id,$logcadena);
+                        DB::rollBack();
+                        $logcadena = "Error al tratar alarmas IO..".$ex;
+                        HelpMen::report($movil->equipo_id,$logcadena);
                 }
+            }
         }
         /*cambios de estado IO alarmas de bateria*/
         $io             = str_replace("I", "",$ioData[1] );
