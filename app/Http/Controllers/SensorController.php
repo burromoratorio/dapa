@@ -250,8 +250,8 @@ class SensorController extends BaseController {
                 break;
             case 'NULL':
                 //evaluo bateria del IO por mas que tenga IOM el equipo
-                HelpMen::report($movil->equipo_id,"reporte solo de posicion evaluo bateria y demas porque tiene iom");
-                $rta    = self::analisisIO($ioData,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
+                HelpMen::report($movil->equipo_id,"GENERA SENSORES PERIFERICOS CON TIPO NULL---NO DEBE ENTRAR ACA");
+                //$rta    = self::analisisIO($ioData,$movil->imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
                 break;
             default:
                 break;
@@ -275,6 +275,8 @@ class SensorController extends BaseController {
         }
     }
     public static function updateSensores($movil,$tipo,$perField,$io,$rta,$posicion_id,$fecha){
+        HelpMen::report($movil->equipo_id,"update de sensores :".$tipo." en base de datos tipo:".$io);
+        HelpMen::report($movil->equipo_id,"update de sensores :".$tipo." en base de datos tipo:".$perField);
         DB::beginTransaction();
         try {
             switch ($tipo) {
