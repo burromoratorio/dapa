@@ -47,6 +47,19 @@ class SensorController extends BaseController {
         }
         return $cambioBits["estado_movil_id"];
     }
+     /*@param: string , cadena de periferico
+     * IOM,10111000011110,000000XXXX,4,1,ALA,XX1XXXXXXXXXXX   
+     * BIO,100001,00,1,ALA,1xxxxx
+     */
+    public static function perifericos($perField){
+        $func   = 'iom';
+        $arr    = explode(',',$perField);
+        if($arr[0]=='BIO'){
+            $func='bio';
+        }
+        return $func;
+        //string del tipo:IOM,10111000011110,000000XXXX,4,1,ALA,XX1XXXXXXXXXXX   
+    }
     public static function analisisIO($ioData,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
         $movilOldId = intval($movil->movilOldId);//alarma_id=7 (Normal)//estado_movil_id=10(si alarma)
         $rta        = array("rta"=>0,"estado_movil_id"=>$estadoMovilidad,"tipo_alarma_id"=>0); 
@@ -87,20 +100,8 @@ class SensorController extends BaseController {
         $rta["estado_movil_id"]=$estado_movil_id;
         $rta["tipo_alarma_id"] =$tipo_alarma_id;
         self::generaSensoresIo($posicion_id,$movil,$io,$fecha,$tipo_alarma_id,$estado_movil_id,$sensorEstado);
+        
         return $rta;
-    }
-    /*@param: string , cadena de periferico
-     * IOM,10111000011110,000000XXXX,4,1,ALA,XX1XXXXXXXXXXX   
-     * BIO,100001,00,1,ALA,1xxxxx
-     */
-    public static function perifericos($perField){
-        $func   = 'iom';
-        $arr    = explode(',',$perField);
-        if($arr[0]=='BIO'){
-            $func='bio';
-        }
-        return $func;
-        //string del tipo:IOM,10111000011110,000000XXXX,4,1,ALA,XX1XXXXXXXXXXX   
     }
     /************Analisis de cadena IOM*********/
     /*$arrPeriferico[0]=IOM,  $arrPeriferico[1]=I1..I14, $arrPeriferico[2]=O1..O14, $arrPeriferico[3]=E(modo de trabajo del equipo)
@@ -183,7 +184,7 @@ class SensorController extends BaseController {
     public static function generaSensoresIo($posicion_id,$movil,$io,$fecha,$tipo_alarma_id,$estado_movil_id,$sensorEstado){
         $rta  = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>$tipo_alarma_id); 
         if( (!$movil->perif_io_id || $movil->perif_io_id=='')  && $sensorEstado==''){
-            HelpMen::report($movil->equipo_id,"Datos de sensores IO vacios en memoria, generando...");
+            HelpMen::report($movil->equipo_id,"Datos de sensores IO vacios en memoria, generando...".$io);
             DB::beginTransaction();
             try {
                 EstadosSensores::create(['imei'=>$movil->imei,'movil_id'=>intval($movil->movil_id),'io'=>$io]);
