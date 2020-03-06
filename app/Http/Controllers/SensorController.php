@@ -68,7 +68,7 @@ class SensorController extends BaseController {
 //si no tiene posicion_id y es una alarma de panico , informar mail?¡
         //$ioData[0]=="I0X"=>eso es panico inibido
         if($ioData[0]=="I0X"){
-            HelpMen::report($movil->equipo_id,"Panico - Inhibido");
+            HelpMen::report($movil->equipo_id,"Panico - Inhibido \r\n");
         }else{
             if($ioData[0]=="I00"){//ingreso de alarma de panico bit en 0
                 $logcadena = "Panico presionado Equipo:".$imei." - Movil:".$movilOldId."\r\n";
@@ -90,7 +90,7 @@ class SensorController extends BaseController {
         $io             = str_replace("I", "",$ioData[1] );
         $sensorEstado   = $movil->io;
         if($io=='10'){ 
-            $logcadena = "Movil: ".$imei." - Equipo: ".$movil->equipo_id." - funcionando con bateria auxiliar\r\n";
+            $logcadena = "Movil: ".$imei." - Equipo: ".$movil->equipo_id." - funcionando con bateria auxiliar \r\n";
             HelpMen::report($movil->equipo_id,$logcadena);
             $tipo_alarma_id=50;
             $estado_movil_id=13;
@@ -100,7 +100,7 @@ class SensorController extends BaseController {
             $estado_movil_id=14;
         }
         if($io=='1X'){
-            HelpMen::report($movil->equipo_id,"Alimentacion PPal Inhibida");
+            HelpMen::report($movil->equipo_id,"Alimentacion PPal Inhibida \r\n");
         }
         $rta["estado_movil_id"]=$estado_movil_id;
         $rta["tipo_alarma_id"] =$tipo_alarma_id;
@@ -189,7 +189,7 @@ class SensorController extends BaseController {
     public static function generaSensoresIo($posicion_id,$movil,$io,$fecha,$tipo_alarma_id,$estado_movil_id,$sensorEstado){
         $rta  = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>$tipo_alarma_id); 
         if( (!$movil->perif_io_id || $movil->perif_io_id=='')  && $sensorEstado==''){
-            HelpMen::report($movil->equipo_id,"Datos de sensores IO vacios en memoria, generando...".$io);
+            HelpMen::report($movil->equipo_id,"Datos de sensores IO vacios en memoria, generando...".$io." \r\n");
             DB::beginTransaction();
             try {
                 EstadosSensores::create(['imei'=>$movil->imei,'movil_id'=>intval($movil->movil_id),'io'=>$io]);
@@ -222,12 +222,12 @@ class SensorController extends BaseController {
                         self::createSensores($movil, $perFieldInput, "IOM");
                         self::persistSensor($posicion_id,$movil,$fecha,$rta["tipo_alarma_id"],$rta["estado_movil_id"]);
                     }else{//si tenía pero posiblemente solo de IO, genero el IOM
-                        HelpMen::report($movil->equipo_id,"Actualizando datos de IOM en instalacion que antes tenia IO");
+                        HelpMen::report($movil->equipo_id,"Actualizando datos de IOM en instalacion que antes tenia IO \r\n");
                         self::updateSensores($movil,"iom",$perFieldInput,"",$rta,$posicion_id,$fecha);
                         self::actualizarPerifericos($movil,$arrPer,$perFieldOutput,$manualRestartMethod);
                     }
                 }else{
-                    HelpMen::report($movil->equipo_id,"Actualizando datos de IOM en instalacion que antes tenia IO");
+                    HelpMen::report($movil->equipo_id,"Actualizando datos de IOM en instalacion que antes tenia IO \r\n");
                     self::actualizarPerifericos($movil,$arrPer,$perFieldOutput,$manualRestartMethod);
                     $rta = PerifericoHelp::cambiosInputIOM($arrPer,$movil->iom,$movil,$rta["estado_movil_id"],$perFieldOutput,$manualRestartMethod);
                     if($rta["rta"]==1){
@@ -241,12 +241,12 @@ class SensorController extends BaseController {
                         self::createSensores($movil, $perFieldInput, "BIO");
                         self::persistSensor($posicion_id,$movil,$fecha,$rta["tipo_alarma_id"],$rta["estado_movil_id"]);
                     }else{//si tenía pero posiblemente solo de IO, genero el IOM
-                        HelpMen::report($movil->equipo_id,"Actualizando datos de BIO en instalacion que antes tenia IO");
+                        HelpMen::report($movil->equipo_id,"Actualizando datos de BIO en instalacion que antes tenia IO \r\n");
                         self::updateSensores($movil,"bio",$perFieldInput,"",$rta,$posicion_id,$fecha);
                         self::actualizarPerifericosBIO($movil,$arrPer,$perFieldOutput,$manualRestartMethod);
                     }
                 }else{
-                    HelpMen::report($movil->equipo_id,"Actualizando datos de IOM en instalacion que antes tenia IO");
+                    HelpMen::report($movil->equipo_id,"Actualizando datos de IOM en instalacion que antes tenia IO \r\n");
                     self::actualizarPerifericos($movil,$arrPer,$perFieldOutput,$manualRestartMethod);
                     $rta = PerifericoHelp::cambiosBitBIO($arrPer,$movil->bio,$movil,$rta["estado_movil_id"],$perFieldOutput,$manualRestartMethod);
                     if($rta["rta"]==1){
@@ -264,7 +264,7 @@ class SensorController extends BaseController {
         }
     }
     public static function createSensores($movil,$perFieldInput,$tipo){
-        HelpMen::report($movil->equipo_id,"Datos de sensores vacios en DDBB, generando...");
+        HelpMen::report($movil->equipo_id,"Datos de sensores vacios en DDBB, generando...\r\n");
         DB::beginTransaction();
         try {
             EstadosSensores::where('imei',$movil->imei)->delete();
