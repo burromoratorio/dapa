@@ -120,8 +120,6 @@ class SensorController extends BaseController {
         //string del tipo:IOM,10111000011110,000000XXXX,4,1,ALA,XX1XXXXXXXXXXX    
         //$sensorEstado= $movil->iom;
         //estado_movil_id=7(normal), 10(Alarma)
-                     log::error(print_r($arrIOM,true));
-
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); 
         if(!is_null($perField) && $perField!='' && $arrIOM[0]=='IOM'){
             $perFieldInput   = $arrIOM[1];//entradas
@@ -136,7 +134,7 @@ class SensorController extends BaseController {
                 $estadoArr= null;
                 if( $keyAlarma ){//Evaluo campo ALA
                     $estadoArr = str_split($arrIOM[$keyAlarma+1]);//genero un array con el vector de alarma(ALA,0XXXXXXXXXXXXX)del perif
-                   
+                    log::error(print_r($estadoArr,true));
                     $rta       = PerifericoHelp::evaluaCampoAlaIOM($estadoArr,$movil);
                     if($rta["tipo_alarma_id"]>0){
                         Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta["tipo_alarma_id"],
