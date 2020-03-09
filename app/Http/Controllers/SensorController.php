@@ -230,7 +230,7 @@ class SensorController extends BaseController {
                 }else{
                     HelpMen::report($movil->equipo_id,"Actualizando datos de IOM en instalacion que antes tenia IO \r\n");
                     self::actualizarPerifericos($movil,$arrPer,$perFieldOutput,$manualRestartMethod);
-                    $rta = PerifericoHelp::cambiosInputIOM($arrPer,$movil->iom,$movil,$rta["estado_movil_id"],$perFieldOutput,$manualRestartMethod);
+                    $rta = PerifericoHelp::cambiosInputIOM($arrPer,$movil->iom,$movil,$rta['estado_movil_id']);
                     HelpMen::report($movil->equipo_id,"\r\n :::::::::entranmdo por rta1:::::: ".$rta["rta"]);
                     if($rta["rta"]==1){
                         
