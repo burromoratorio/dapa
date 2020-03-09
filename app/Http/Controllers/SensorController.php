@@ -232,6 +232,7 @@ class SensorController extends BaseController {
                     self::actualizarPerifericos($movil,$arrPer,$perFieldOutput,$manualRestartMethod);
                     $rta = PerifericoHelp::cambiosInputIOM($arrPer,$movil->iom,$movil,$rta["estado_movil_id"],$perFieldOutput,$manualRestartMethod);
                     if($rta["rta"]==1){
+                        HelpMen::report($movil->equipo_id,"\r\n :::::::::entranmdo por rta1:::::: ");
                         self::updateSensores($movil,"iom",$perFieldInput,"",$rta,$posicion_id,$fecha);
                     }
                 }
