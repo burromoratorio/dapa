@@ -30,7 +30,6 @@ class SensorController extends BaseController {
             HelpMen::report($movil->equipo_id,"movil con iom");
             switch ($perifData[0]) {
                 case 'IOM':
-                    log::error("PUTO EL QUE LEEEEEEEEEEEEEEEEEEE");
                     $cambioBits = self::analisisIOM($perField,$posicion_id,$movil,$fecha,$estadoMovilidad);
                     break;
                 case 'BIO':
@@ -134,7 +133,6 @@ class SensorController extends BaseController {
                 $alarmaArr= null;
                 if( $keyAlarma ){//Evaluo campo ALA
                     $alarmaArr = str_split($arrIOM[$keyAlarma+1]);//genero un array con el vector de alarma(ALA,0XXXXXXXXXXXXX)del perif
-                    log::error(print_r($alarmaArr,true));
                     $rta       = PerifericoHelp::evaluaCampoAlaIOM($alarmaArr,$movil);
                     if($rta["tipo_alarma_id"]>0){
                         Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta["tipo_alarma_id"],
