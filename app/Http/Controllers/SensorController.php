@@ -66,6 +66,7 @@ class SensorController extends BaseController {
         $rta        = array("rta"=>0,"estado_movil_id"=>$estadoMovilidad,"tipo_alarma_id"=>0); 
         $estado_movil_id=$estadoMovilidad;
         $tipo_alarma_id=0;
+        log::error("PUTO EL QUE LEEEEEEEEEEEEEEEEEEE");
 //si no tiene posicion_id y es una alarma de panico , informar mail?¡
         //$ioData[0]=="I0X"=>eso es panico inibido
         if($ioData[0]=="I0X"){
