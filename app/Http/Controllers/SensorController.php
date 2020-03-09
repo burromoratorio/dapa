@@ -29,21 +29,21 @@ class SensorController extends BaseController {
             HelpMen::report($movil->equipo_id,"movil con iom");
             switch ($perField) {
                 case 'iom':
-                    $cambioBits = self::analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
+                    $cambioBits = self::analisisIOM($perField,$posicion_id,$movil,$fecha,$estadoMovilidad);
                     break;
                 case 'bio':
-                    $cambioBits = self::analisisBIO($perField,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
+                    $cambioBits = self::analisisBIO($perField,$posicion_id,$movil,$fecha,$estadoMovilidad);
                     break;
                 case 'NULL':
                     //evaluo bateria del IO por mas que tenga IOM el equipo
                     HelpMen::report($movil->equipo_id,"reporte solo de posicion evaluo bateria y demas porque tiene iom");
-                    $cambioBits = self::analisisIO($ioData,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
+                    $cambioBits = self::analisisIO($ioData,$posicion_id,$movil,$fecha,$estadoMovilidad);
                     break;
                 default:
                     break;
             }
         }else{//no tiene iom, le doy bola al equipo//analisis en bits IO
-            $cambioBits = self::analisisIO($ioData,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad);
+            $cambioBits = self::analisisIO($ioData,$posicion_id,$movil,$fecha,$estadoMovilidad);
         }
         return $cambioBits["estado_movil_id"];
     }
@@ -60,7 +60,7 @@ class SensorController extends BaseController {
         return $func;
         //string del tipo:IOM,10111000011110,000000XXXX,4,1,ALA,XX1XXXXXXXXXXX   
     }
-    public static function analisisIO($ioData,$imei,$posicion_id,$movil,$fecha,$estadoMovilidad){
+    public static function analisisIO($ioData,$posicion_id,$movil,$fecha,$estadoMovilidad){
         $movilOldId = intval($movil->movilOldId);//alarma_id=7 (Normal)//estado_movil_id=10(si alarma)
         $rta        = array("rta"=>0,"estado_movil_id"=>$estadoMovilidad,"tipo_alarma_id"=>0); 
         $estado_movil_id=$estadoMovilidad;
@@ -71,7 +71,7 @@ class SensorController extends BaseController {
             HelpMen::report($movil->equipo_id,"Panico - Inhibido \r\n");
         }else{
             if($ioData[0]=="I00"){//ingreso de alarma de panico bit en 0
-                $logcadena = "Panico presionado Equipo:".$imei." - Movil:".$movilOldId."\r\n";
+                $logcadena = "Panico presionado Equipo:".$movil->imei." - Movil:".$movilOldId."\r\n";
                 HelpMen::report($movil->equipo_id,$logcadena);
                 DB::beginTransaction();
                 try {
@@ -90,7 +90,7 @@ class SensorController extends BaseController {
         $io             = str_replace("I", "",$ioData[1] );
         $sensorEstado   = $movil->io;
         if($io=='10'){ 
-            $logcadena = "Movil: ".$imei." - Equipo: ".$movil->equipo_id." - funcionando con bateria auxiliar \r\n";
+            $logcadena = "Movil: ".$movil->imei." - Equipo: ".$movil->equipo_id." - funcionando con bateria auxiliar \r\n";
             HelpMen::report($movil->equipo_id,$logcadena);
             $tipo_alarma_id=50;
             $estado_movil_id=13;
@@ -113,11 +113,13 @@ class SensorController extends BaseController {
     $arrPeriferico[4]=PR(método de restablecimiento Manual),  $arrPeriferico[5]=NB(Normal o backgrond),  $arrPeriferico[6]=P (Panico) 
     si algun sendor trae el caracter X entonces no lo tengo en cuenta */
     //$perField -->campo PER completo que viene en cadena de posicion
-    public static function analisisIOM($perField,$imei,$posicion_id,$movil,$fecha,$estado_movil_id){
+    public static function analisisIOM($perField,$posicion_id,$movil,$fecha,$estado_movil_id){
         $arrIOM      = explode(',',$perField);
         //string del tipo:IOM,10111000011110,000000XXXX,4,1,ALA,XX1XXXXXXXXXXX    
         //$sensorEstado= $movil->iom;
         //estado_movil_id=7(normal), 10(Alarma)
+                     log::error(print_r($arrIOM,true));
+
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); 
         if(!is_null($perField) && $perField!='' && $arrIOM[0]=='IOM'){
             $perFieldInput   = $arrIOM[1];//entradas
@@ -126,7 +128,6 @@ class SensorController extends BaseController {
             $manualRestartMethod= $arrIOM[4];//modo reseteo
             $iomArr = str_split($perFieldInput);
             $keyAlarma=array_search('ALA', $arrIOM);
-             log::error(print_r($keyAlarma,true));
             /*****si $perFieldWorkMode= 0 =>RESET no informo alertas de nada solo actualizo estado de movil****/
             if($perFieldWorkMode!= 0 ){
                 //se usa el campo input de la cadena salvo en estado de Panico "P" "ALA" y NB
