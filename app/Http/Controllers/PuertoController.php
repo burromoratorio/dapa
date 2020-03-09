@@ -398,8 +398,7 @@ class PuertoController extends BaseController
                 //Log::info(print_r($posicion,true));
                 if(isset($posicion)){
                     //inserto alarma de panico!!
-                    $estadoMovilidad = SensorController::sensorAnalisis($ioData,$perField['PER'],$report['IMEI'],$posicion->posicion_id,
-                                            $movil,$fecha,$estadoMovilidad);
+                    $estadoMovilidad = SensorController::sensorAnalisis($ioData,$perField['PER'],$posicion->posicion_id,$movil,$fecha,$estadoMovilidad);
                     if( $estadoMovilidad==7 ){
                         if($arrInfoGprmc['velocidad']>12){
                             $estadoMovilidad=($movil->estado_u==0)?3:4;//movimiento vacio estado_u=0, otro..movimiento cargado
