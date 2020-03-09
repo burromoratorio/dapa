@@ -112,7 +112,7 @@ class PerifericoHelp {
     /*I4: Desenganche=>0 = ENGANCHADO; 1 = DESENGANCHADO | I5: Antisabotaje=>0 = VIOLACION; 1 = NORMAL | I6: Compuerta=>0 = CERRADA; 1 = ABIERTA*/
     public static function cambiosInputIOM($iomArr,$sensorEstado,$movil,$estado_movil_id){
         $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); //alarma_id=7 (Normal)
-        HelpMen::report($movil->equipo_id,"*Evaluando cambios IOM* \r\n ");
+        HelpMen::report($movil->equipo_id,"\r\n *Evaluando cambios IOM* \r\n ");
         $estadoArr = explode(',',$sensorEstado);
         if($estadoArr[0]=='IOM' && $estadoArr[1]){
             $estadoArr = str_split($estadoArr[1]);

@@ -144,7 +144,7 @@ class SensorController extends BaseController {
                 $rta = PerifericoHelp::evaluaPanicoIOM($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha,$alarmaArr);
                 $rta = PerifericoHelp::evaluaNb($arrIOM,$posicion_id,$movil,$fecha);               
                 //luego del analisis actualizo los datos de sensores, primero analizo e informo alarmas, y estado del movil
-                $rta = self::generaSensoresPerifericos($posicion_id,$movil,$perFieldInput,$perFieldOutput,$manualRestartMethod,$fecha,$rta["tipo_alarma_id"],$rta["estado_movil_id"],"IOM");
+                $rta = self::generaSensoresPerifericos($posicion_id,$movil,$perFieldInput,$perFieldOutput,$manualRestartMethod,$fecha,$rta,"IOM");
                 
             }else{
                 /*Dicen que cuando se pone en este modo ahora hay que actualizar los datos...*/
@@ -217,7 +217,7 @@ class SensorController extends BaseController {
         $arrPer = str_split($perFieldInput);
         $sensorNuevo  = EstadosSensores::where('movil_id', '=',$movil->movil_id)->orderBy('updated_at','DESC')->first();
         switch ($tipoPeriferico) {
-            case 'iom':
+            case 'IOM':
                 if(is_null($movil->iom) || $movil->iom=='' ){
                     if(!$sensorNuevo){//si no tenia en la ddbb data
                         self::createSensores($movil, $perFieldInput, "IOM");
@@ -238,7 +238,7 @@ class SensorController extends BaseController {
                     }
                 }
                 break;
-            case 'bio':
+            case 'BIO':
                 if(is_null($movil->bio) || $movil->bio=='' ){
                     if(!$sensorNuevo){//si no tenia en la ddbb data
                         self::createSensores($movil, $perFieldInput, "BIO");
