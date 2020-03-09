@@ -124,6 +124,7 @@ class PuertoController extends BaseController
         }
         return $update;
     }
+    /*Indice compenente de frecuencua FR:120,<indice> 0=ALARMA,1=RESPUESTA,2=NORMAL,3=RECTO,4=CURVA,5=IO,6=DAD,7:PERIFERICO*/
     public static function seMueve($frecuencia,$velocidad,$movil,$posicion){
         $mueve=1;
         if($frecuencia<=120){
