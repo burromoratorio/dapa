@@ -126,13 +126,14 @@ class SensorController extends BaseController {
             $manualRestartMethod= $arrIOM[4];//modo reseteo
             $iomArr = str_split($perFieldInput);
             $keyAlarma=array_search('ALA', $arrIOM);
+             log::error(print_r($keyAlarma,true));
             /*****si $perFieldWorkMode= 0 =>RESET no informo alertas de nada solo actualizo estado de movil****/
             if($perFieldWorkMode!= 0 ){
                 //se usa el campo input de la cadena salvo en estado de Panico "P" "ALA" y NB
                 $estadoArr= null;
                 if( $keyAlarma ){//Evaluo campo ALA
                     $estadoArr = str_split($arrIOM[$keyAlarma+1]);//genero un array con el vector de alarma(ALA,0XXXXXXXXXXXXX)del perif
-                    log::error(print_r($estadoArr,true));
+                   
                     $rta       = PerifericoHelp::evaluaCampoAlaIOM($estadoArr,$movil);
                     if($rta["tipo_alarma_id"]>0){
                         Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta["tipo_alarma_id"],
