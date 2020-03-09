@@ -327,7 +327,7 @@ class SensorController extends BaseController {
     
     public static function actualizarPerifericos($movil,$estadoArr,$perFieldOutput,$manualRestartMethod){
         Log::info(":::::::Actualizando datos de Perifericos:::");
-        PerifericoController::setSensores("IOM",$movil->equipo_id,$estadoArr,$perFieldOutput,$manualRestartMethod);
+        //PerifericoController::setSensores("IOM",$movil->equipo_id,$estadoArr,$perFieldOutput,$manualRestartMethod);
     }
     public static function actualizarPerifericosBIO($movil,$estadoArr,$perFieldOutput){
         Log::info(":::::::Actualizando datos de Perifericos BIO:::");

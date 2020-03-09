@@ -146,9 +146,7 @@ class PerifericoHelp {
                 $rta["rta"]           = 1;
                 HelpMen::report($movil->equipo_id,"\r\n ***ANTISABOTAJE ACTIVADO*** \r\n");
             }
-            if($rta["tipo_alarma_id"]>0){
-                $rta["rta"]  = 1;
-            }
+            
         }
         HelpMen::report($movil->equipo_id,"\r\n *VALOR DE EVALUACION:*".$rta['rta']." \r\n ");
         return $rta;
@@ -237,10 +235,6 @@ class PerifericoHelp {
             $rta['tipo_alarma_id'] = 11;
             HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA CERRADA*** \r\n");
         }
-        if($rta["tipo_alarma_id"]>0){
-            $rta["rta"]  = 1;
-        }
-        
         return $rta;
     }
 }
