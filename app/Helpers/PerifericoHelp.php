@@ -147,6 +147,7 @@ class PerifericoHelp {
                 HelpMen::report($movil->equipo_id,"\r\n ***ANTISABOTAJE ACTIVADO*** \r\n");
             }
         }
+        HelpMen::report($movil->equipo_id,"\r\n *VALOR DE EVALUACION:*".$rta['rta']." \r\n ");
         return $rta;
     }
     /*****si $perFieldWorkMode= 0 =>RESET no informo alertas de nada solo actualizo estado de movil****/
