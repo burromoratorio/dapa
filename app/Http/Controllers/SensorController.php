@@ -26,7 +26,7 @@ class SensorController extends BaseController {
     public static function sensorAnalisis($ioData,$perField,$posicion_id,$movil,$fecha,$estadoMovilidad){
         $cambioBits = array("rta"=>0,"estado_movil_id"=>$estadoMovilidad,"tipo_alarma_id"=>7); //alarma_id=7 (Normal)
         $perifData      = explode(',',$perField);
-        log::error(print_r($perField,true));
+        //log::error(print_r($perField,true));
         if($movil->perif_io_id && $movil->perif_io_id!=''){//tiene instalado IOM/BIO
             HelpMen::report($movil->equipo_id,"movil con iom");
             switch ($perifData[0]) {
