@@ -131,11 +131,11 @@ class SensorController extends BaseController {
             /*****si $perFieldWorkMode= 0 =>RESET no informo alertas de nada solo actualizo estado de movil****/
             if($perFieldWorkMode!= 0 ){
                 //se usa el campo input de la cadena salvo en estado de Panico "P" "ALA" y NB
-                $estadoArr= null;
+                $alarmaArr= null;
                 if( $keyAlarma ){//Evaluo campo ALA
-                    $estadoArr = str_split($arrIOM[$keyAlarma+1]);//genero un array con el vector de alarma(ALA,0XXXXXXXXXXXXX)del perif
+                    $alarmaArr = str_split($arrIOM[$keyAlarma+1]);//genero un array con el vector de alarma(ALA,0XXXXXXXXXXXXX)del perif
                     log::error(print_r($estadoArr,true));
-                    $rta       = PerifericoHelp::evaluaCampoAlaIOM($estadoArr,$movil);
+                    $rta       = PerifericoHelp::evaluaCampoAlaIOM($alarmaArr,$movil);
                     if($rta["tipo_alarma_id"]>0){
                         Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta["tipo_alarma_id"],
                                         'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0']);
@@ -143,7 +143,7 @@ class SensorController extends BaseController {
                         $rta["rta"]            = 1;
                     }
                 }
-                $rta = PerifericoHelp::evaluaCampoAlaIOM($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha,$estadoArr);
+                $rta = PerifericoHelp::evaluaPanicoIOM($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha,$alarmaArr);
                 $rta = PerifericoHelp::evaluaNb($arrIOM,$posicion_id,$movil,$fecha);               
                 //luego del analisis actualizo los datos de sensores, primero analizo e informo alarmas, y estado del movil
                 $rta = self::generaSensoresPerifericos($posicion_id,$movil,$perFieldInput,$perFieldOutput,$manualRestartMethod,$fecha,$rta["tipo_alarma_id"],$rta["estado_movil_id"],"IOM");
