@@ -133,7 +133,7 @@ class SensorController extends BaseController {
                 $alarmaArr= null;
                 if( $keyAlarma ){//Evaluo campo ALA
                     $alarmaArr = str_split($arrIOM[$keyAlarma+1]);//genero un array con el vector de alarma(ALA,0XXXXXXXXXXXXX)del perif
-                    $rta       = PerifericoHelp::evaluaCampoAlaIOM($alarmaArr,$movil);
+                    $rta       = PerifericoHelp::evaluaCampoAlaIOM($alarmaArr,$movil,$rta);
                     if($rta["tipo_alarma_id"]>0){
                         Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta["tipo_alarma_id"],
                                         'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0']);

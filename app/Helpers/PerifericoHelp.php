@@ -189,9 +189,9 @@ class PerifericoHelp {
         }
         return $rta;
     }
-    public static function evaluaCampoAlaIOM($estadoArr,$movil){
+    public static function evaluaCampoAlaIOM($estadoArr,$movil,$rta){
         //log::error(print_r($estadoArr,true));
-        $rta         = array("rta"=>0,"estado_movil_id"=>7,"tipo_alarma_id"=>0); 
+       // $rta         = array("rta"=>0,"estado_movil_id"=>7,"tipo_alarma_id"=>0); 
         if($estadoArr[1]=="0" && $estadoArr[1]!="X"){
             $rta['estado_movil_id']= 10;
             $rta['tipo_alarma_id'] = 4;
