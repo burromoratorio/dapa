@@ -146,6 +146,9 @@ class PerifericoHelp {
                 $rta["rta"]           = 1;
                 HelpMen::report($movil->equipo_id,"\r\n ***ANTISABOTAJE ACTIVADO*** \r\n");
             }
+            if($rta["tipo_alarma_id"]>0){
+                $rta["rta"]  = 1;
+            }
         }
         HelpMen::report($movil->equipo_id,"\r\n *VALOR DE EVALUACION:*".$rta['rta']." \r\n ");
         return $rta;
@@ -157,6 +160,7 @@ class PerifericoHelp {
         if( $keyNB ){
             $rta['estado_movil_id']= 10;//estado "en alarma"
             $rta['tipo_alarma_id'] = 32;//modo NB
+            $rta["rta"]           = 1;
             HelpMen::report($movil->equipo_id,"***EQUIPO EN MODO SILENCIOSO*** \r\n");
             Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta['tipo_alarma_id'],
                             'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0']);
@@ -169,6 +173,7 @@ class PerifericoHelp {
         if( $keyPanico ){
             $rta['estado_movil_id']= 10;//estado "en alarma"
             $rta['tipo_alarma_id'] = 1;//panico
+            $rta["rta"]           = 1;
             HelpMen::report($movil->equipo_id,"***PANICO ACTIVADO*** \r\n");
             Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta['tipo_alarma_id'] ,
                         'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0']);
@@ -177,6 +182,7 @@ class PerifericoHelp {
         if($perFieldWorkMode== 4 && isset($estadoArr[0]) && $estadoArr[0]=="0" && $estadoArr[0]!="X"){ 
             $rta['estado_movil_id']= 10;//estado "en alarma"
             $rta['tipo_alarma_id'] = 1;//panico
+            $rta["rta"]           = 1;
             HelpMen::report($movil->equipo_id,"***PANICO ACTIVADO*** \r\n");
             Alarmas::create(['posicion_id'=>$posicion_id,'movil_id'=>intval($movil->movilOldId),'tipo_alarma_id'=>$rta['tipo_alarma_id'] ,
                         'fecha_alarma'=>$fecha,'falsa'=>0,'nombre_estacion'=>'GSM0']);
@@ -231,6 +237,10 @@ class PerifericoHelp {
             $rta['tipo_alarma_id'] = 11;
             HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA CERRADA*** \r\n");
         }
+        if($rta["tipo_alarma_id"]>0){
+            $rta["rta"]  = 1;
+        }
+        
         return $rta;
     }
 }
