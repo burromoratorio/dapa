@@ -140,12 +140,12 @@ class SensorController extends BaseController {
                         $rta["estado_movil_id"]=10;
                         $rta["rta"]            = 1;
                     }
-                    HelpMen::report($movil->equipo_id,"\r\n :::::::::DESUES DE ALARMA EL RTA TIENE:::::: ".$rta["rta"]);
+                    //HelpMen::report($movil->equipo_id,"\r\n :::::::::DESUES DE ALARMA EL RTA TIENE:::::: ".$rta["rta"]);
                    // $rta = self::generaSensoresPerifericos($posicion_id,$movil,$perFieldInput,$perFieldOutput,$manualRestartMethod,$fecha,$rta,"IOM");
                 }
                 
-                $rta = PerifericoHelp::evaluaPanicoIOM($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha,$alarmaArr);
-                $rta = PerifericoHelp::evaluaNb($arrIOM,$posicion_id,$movil,$fecha);               
+                $rta = PerifericoHelp::evaluaPanicoIOM($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha,$alarmaArr,$rta);
+                $rta = PerifericoHelp::evaluaNb($arrIOM,$posicion_id,$movil,$fecha,$rta);               
                 //luego del analisis actualizo los datos de sensores, primero analizo e informo alarmas, y estado del movil
                 $rta = self::generaSensoresPerifericos($posicion_id,$movil,$perFieldInput,$perFieldOutput,$manualRestartMethod,$fecha,$rta,"IOM");
                 

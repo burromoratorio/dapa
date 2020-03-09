@@ -152,8 +152,8 @@ class PerifericoHelp {
         return $rta;
     }
     /*****si $perFieldWorkMode= 0 =>RESET no informo alertas de nada solo actualizo estado de movil****/
-    public static function evaluaNb($arrIOM,$posicion_id,$movil,$fecha){
-        $rta        = array("rta"=>0,"estado_movil_id"=>7,"tipo_alarma_id"=>0);
+    public static function evaluaNb($arrIOM,$posicion_id,$movil,$fecha,$rta){
+        //$rta        = array("rta"=>0,"estado_movil_id"=>7,"tipo_alarma_id"=>0);
         $keyNB      = array_search('NB', $arrIOM);
         if( $keyNB ){
             $rta['estado_movil_id']= 10;//estado "en alarma"
@@ -165,8 +165,8 @@ class PerifericoHelp {
         }
         return $rta;
     }
-    public static function evaluaPanicoIOM($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha,$estadoArr){
-        $rta        = array("rta"=>0,"estado_movil_id"=>7,"tipo_alarma_id"=>0); 
+    public static function evaluaPanicoIOM($arrIOM,$perFieldWorkMode,$posicion_id,$movil,$fecha,$estadoArr,$rta){
+        //$rta        = array("rta"=>0,"estado_movil_id"=>7,"tipo_alarma_id"=>0); 
         $keyPanico  = array_search('P', $arrIOM);
         if( $keyPanico ){
             $rta['estado_movil_id']= 10;//estado "en alarma"
