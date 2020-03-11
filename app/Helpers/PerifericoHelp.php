@@ -20,8 +20,8 @@ use Illuminate\Support\Facades\Redis;
  */
 class PerifericoHelp {
   /*ANALISIS BIO*/
-    public static function evaluaCampoAlaBIO($estadoArr,$movil,$fecha,$posicion_id){
-        $rta         = array("rta"=>0,"estado_movil_id"=>7,"tipo_alarma_id"=>0); 
+    public static function evaluaCampoAlaBIO($estadoArr,$movil,$fecha,$posicion_id,$rta){
+        //$rta         = array("rta"=>0,"estado_movil_id"=>7,"tipo_alarma_id"=>0); 
         if($estadoArr[0]=="0" && $estadoArr[0]!="X"){
             $rta['estado_movil_id']= 10;
             $rta['tipo_alarma_id'] = 4;
@@ -61,8 +61,8 @@ class PerifericoHelp {
         return $rta;
     }
     /*****si $perFieldWorkMode= 0 =>RESET no informo alertas de nada solo actualizo estado de movil****/
-    public static function evaluaPanicoBIO($arrBIO,$posicion_id,$movil,$fecha){
-        $rta         = array("rta"=>0,"estado_movil_id"=>7,"tipo_alarma_id"=>0); 
+    public static function evaluaPanicoBIO($arrBIO,$posicion_id,$movil,$fecha,$rta){
+        //$rta         = array("rta"=>0,"estado_movil_id"=>7,"tipo_alarma_id"=>0); 
         $keyPanico=array_search('P', $arrBIO);
         if( $keyPanico ){
             $rta['estado_movil_id']= 10;//estado "en alarma"
@@ -74,8 +74,8 @@ class PerifericoHelp {
         return $rta;
     }
     /*I3: Desenganche=>0 = ENGANCHADO; 1 = DESENGANCHADO |I1: Compuerta=>0 = CERRADA; 1 = ABIERTA*/
-    public static function cambiosBitBIO($bioArr,$sensorEstado,$movil,$estado_movil_id,$perFieldOutput){
-        $rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); //alarma_id=7 (Normal)
+    public static function cambiosBitBIO($bioArr,$sensorEstado,$movil,$rta){
+        //$rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); //alarma_id=7 (Normal)
         HelpMen::report($movil->equipo_id,"*Evaluando cambios bit BIO* \r\n ");
         //self::actualizarPerifericosBIO($movil,$bioArr,$perFieldOutput);
         $estadoArr = explode(',',$sensorEstado);
