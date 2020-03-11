@@ -177,7 +177,7 @@ class SensorController extends BaseController {
                     $rta        = PerifericoHelp::evaluaCampoAlaBIO($estadoArr,$movil,$fecha,$posicion_id,$rta);
                 }
                 $rta = PerifericoHelp::evaluaPanicoBIO($arrBIO,$posicion_id,$movil,$fecha,$rta);
-                $rta = PerifericoHelp::cambiosBitBIO($bioArr,$sensorEstado,$movil,$rta);
+                //$rta = PerifericoHelp::cambiosBitBIO($bioArr,$sensorEstado,$movil,$rta);
                 $rta = self::generaSensoresPerifericos($posicion_id,$movil,$perFieldInput,$perFieldOutput,0,$fecha,$rta,"BIO");
             }
         }
@@ -248,9 +248,9 @@ class SensorController extends BaseController {
                         self::actualizarPerifericosBIO($movil,$arrPer,$perFieldOutput,$manualRestartMethod);
                     }
                 }else{
-                    HelpMen::report($movil->equipo_id,"Actualizando datos de IOM en instalacion que antes tenia IO \r\n");
+                    HelpMen::report($movil->equipo_id,"Actualizando datos de BIO en instalacion que antes tenia IO \r\n");
                     self::actualizarPerifericos($movil,$arrPer,$perFieldOutput,$manualRestartMethod);
-                    $rta = PerifericoHelp::cambiosBitBIO($arrPer,$movil->bio,$movil,$rta["estado_movil_id"],$perFieldOutput,$manualRestartMethod);
+                    $rta = PerifericoHelp::cambiosBitBIO($arrPer,$movil->bio,$movil,$rta);
                     if($rta["rta"]==1){
                         self::updateSensores($movil,"bio",$perFieldInput,"",$rta,$posicion_id,$fecha);
                     }
