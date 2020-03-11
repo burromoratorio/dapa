@@ -177,7 +177,6 @@ class SensorController extends BaseController {
                     $rta        = PerifericoHelp::evaluaCampoAlaBIO($estadoArr,$movil,$fecha,$posicion_id,$rta);
                 }
                 $rta = PerifericoHelp::evaluaPanicoBIO($arrBIO,$posicion_id,$movil,$fecha,$rta);
-                //$rta = PerifericoHelp::cambiosBitBIO($bioArr,$sensorEstado,$movil,$rta);
                 $rta = self::generaSensoresPerifericos($posicion_id,$movil,$perFieldInput,$perFieldOutput,0,$fecha,$rta,"BIO");
             }
         }
