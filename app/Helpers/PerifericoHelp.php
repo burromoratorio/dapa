@@ -78,7 +78,7 @@ class PerifericoHelp {
         //$rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); //alarma_id=7 (Normal)
         log::info(print_r($sensorEstado,true));
         log::info(print_r($bioArr,true));
-        
+        log::info(print_r($rta,true));
         HelpMen::report($movil->equipo_id,"*Evaluando cambios bit BIO* \r\n ");
         //self::actualizarPerifericosBIO($movil,$bioArr,$perFieldOutput);
         $estadoArr = explode(',',$sensorEstado);
