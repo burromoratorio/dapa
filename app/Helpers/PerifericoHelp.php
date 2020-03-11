@@ -76,6 +76,9 @@ class PerifericoHelp {
     /*I3: Desenganche=>0 = ENGANCHADO; 1 = DESENGANCHADO |I1: Compuerta=>0 = CERRADA; 1 = ABIERTA*/
     public static function cambiosBitBIO($bioArr,$sensorEstado,$movil,$rta){
         //$rta         = array("rta"=>0,"estado_movil_id"=>$estado_movil_id,"tipo_alarma_id"=>0); //alarma_id=7 (Normal)
+        log::info(print_r($sensorEstado,true));
+        log::info(print_r($bioArr,true));
+        
         HelpMen::report($movil->equipo_id,"*Evaluando cambios bit BIO* \r\n ");
         //self::actualizarPerifericosBIO($movil,$bioArr,$perFieldOutput);
         $estadoArr = explode(',',$sensorEstado);
