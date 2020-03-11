@@ -22,12 +22,12 @@ class PerifericoHelp {
   /*ANALISIS BIO*/
     public static function evaluaCampoAlaBIO($estadoArr,$movil,$fecha,$posicion_id,$rta){
         //$rta         = array("rta"=>0,"estado_movil_id"=>7,"tipo_alarma_id"=>0); 
-        if($estadoArr[0]=="0" && $estadoArr[0]!="X"){
+        if($estadoArr[0]==0 && $estadoArr[0]!="X"){
             $rta['estado_movil_id']= 10;
             $rta['tipo_alarma_id'] = 4;
             HelpMen::report($movil->equipo_id,"\r\n ***PUERTA CONDUCTOR ABIERTA*** \r\n ");
         }
-        if($estadoArr[0]=="1" && $estadoArr[0]!="X"){
+        if($estadoArr[0]==1 && $estadoArr[0]!="X"){
             $rta['estado_movil_id']= 10;
             $rta['tipo_alarma_id'] = 10;
             HelpMen::report($movil->equipo_id,"\r\n ***PUERTA CONDUCTOR CERRADA*** \r\n ");
@@ -42,12 +42,12 @@ class PerifericoHelp {
             $rta['tipo_alarma_id'] = 5;
             HelpMen::report($movil->equipo_id,"\r\n ***MOVIL ENGANCHADO*** \r\n ");
          }
-        if( $estadoArr[1]==1 && $estadoArr[1]!="X" ){
+        if( $estadoArr[1]==0 && $estadoArr[1]!="X" ){
             $rta['estado_movil_id']= 10;
             $rta['tipo_alarma_id'] = 9;
             HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA ABIERTA*** \r\n");
         }
-        if( $estadoArr[1]==0 && $estadoArr[1]!="X" ){
+        if( $estadoArr[1]==1 && $estadoArr[1]!="X" ){
             $rta['estado_movil_id']= 10;
             $rta['tipo_alarma_id'] = 11;
             HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA CERRADA*** \r\n");
@@ -93,13 +93,13 @@ class PerifericoHelp {
                 $rta["rta"]           = 1;
                 HelpMen::report($movil->equipo_id,"\r\n ***MOVIL ENGANCHADO*** \r\n");
             }
-            if( $estadoArr[1]==0 && $bioArr[1]==1 && $bioArr[1]!="X" ){
+            if( $estadoArr[1]==1 && $bioArr[1]==0 && $bioArr[1]!="X" ){
                 $rta["tipo_alarma_id"]=9;
                 $rta["estado_movil_id"]=10;
                 $rta["rta"]           = 1;
                 HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA ABIERTA*** \r\n");
             }
-            if( $estadoArr[1]==1 && $bioArr[1]==0 && $bioArr[1]!="X"){
+            if( $estadoArr[1]==0 && $bioArr[1]==1 && $bioArr[1]!="X"){
                 $rta["tipo_alarma_id"]=11;
                 $rta["estado_movil_id"]=7;
                 $rta["rta"]           = 1;
