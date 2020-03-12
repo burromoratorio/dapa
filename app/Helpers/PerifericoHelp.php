@@ -103,6 +103,12 @@ class PerifericoHelp {
                 $rta["rta"]           = 1;
                 HelpMen::report($movil->equipo_id,"\r\n ***COMPUERTA CERRADA*** \r\n");
             }
+            if( $estadoArr[2]==1 && $bioArr[2]==0 && $bioArr[1]!="X"){
+                $rta["tipo_alarma_id"]=51;
+                $rta["estado_movil_id"]=7;
+                $rta["rta"]           = 1;
+                HelpMen::report($movil->equipo_id,"\r\n ***MOTOR EN MARCHA*** \r\n");
+            }
         }
         return $rta;
     }

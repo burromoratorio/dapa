@@ -150,7 +150,7 @@ class SensorController extends BaseController {
                 HelpMen::report($movil->equipo_id,"\r\n **EQUIPO EN MODO RESET...NO INFORMO ALARMA DE NINGUN TIPO*** \r\n ");
                 self::actualizarPerifericos($movil,$iomArr,$perFieldOutput,$manualRestartMethod);
             }
-            if( $perField!='' && !is_null($perField)){
+            if( $perField!='' && !is_null($perField) && $rta['rta']==1 ){
                 RedisHelp::setIOM ($movil, $perField);
             }
         }
@@ -180,7 +180,7 @@ class SensorController extends BaseController {
                 $rta = self::generaSensoresPerifericos($posicion_id,$movil,$perFieldInput,$perFieldOutput,0,$fecha,$rta,"BIO");
             }
         }
-        if( $perField!='' && !is_null($perField)){
+        if( $perField!='' && !is_null($perField) && $rta['rta']==1){
             RedisHelp::setBIO ($movil, $perField);
         }
         return $rta;
